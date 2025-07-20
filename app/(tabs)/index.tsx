@@ -13,6 +13,8 @@ export default function HomeScreen() {
   const [isRecording, setIsRecording] = useState(false);
   const [recognizedText, setRecognizedText] = useState('');
   const [liveText, setLiveText] = useState('');
+  const [isRecordingAnimationDelayFinished, setIsRecordingAnimationDelayFinished] = useState(false);
+
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const outerCircleAnim = useRef(new Animated.Value(1)).current;
   const middleCircleAnim = useRef(new Animated.Value(1)).current;
@@ -44,6 +46,7 @@ export default function HomeScreen() {
   }, []);
 
   const onSpeechStart = () => {
+    console.log('onSpeechStart');
     setIsRecording(true);
     startPulseAnimation();
     moveMicrophoneToCenter();
@@ -57,6 +60,7 @@ export default function HomeScreen() {
 
   const onSpeechEnd = () => {
     setIsRecording(false);
+    setIsRecordingAnimationDelayFinished(false);
     stopPulseAnimation();
     moveMicrophoneBack();
     showContent();
@@ -86,7 +90,7 @@ export default function HomeScreen() {
       toValue: 1,
       duration: 500,
       useNativeDriver: true,
-    });
+    }).start();
   };
 
   const moveMicrophoneBack = () => {
@@ -94,7 +98,7 @@ export default function HomeScreen() {
       toValue: 0,
       duration: 500,
       useNativeDriver: true,
-    });
+    }).start();
   };
 
   const hideContent = () => {
@@ -165,14 +169,6 @@ export default function HomeScreen() {
         useNativeDriver: true,
       }),
     ]).start();
-  };
-
-  const getLastWords = (text: string, count: number = 20) => {
-    const words = text.trim().split(/\s+/);
-    if (words.length <= count) {
-      return text;
-    }
-    return words.slice(-count).join(' ');
   };
 
   const renderLiveText = (text: string) => {
@@ -288,21 +284,17 @@ export default function HomeScreen() {
       if (!isAvailable) {
         // Fallback pour le développement
         setIsRecording(true);
-        startPulseAnimation();
+        setTimeout(() => {
+          setIsRecordingAnimationDelayFinished(true);
+        }, 1000);
         moveMicrophoneToCenter();
+        startPulseAnimation();
         hideContent();
         showStopButton();
         // Masquer la tabbar
         if ((global as any).setTabBarVisibility) {
           (global as any).setTabBarVisibility(false);
         }
-        // Simuler un texte reconnu après 3 secondes
-        setTimeout(() => {
-          const demoText = i18n.language === 'fr' ? "poulet, riz, tomates, oignons" : "chicken, rice, tomatoes, onions";
-          setRecognizedText(demoText);
-          setLiveText(demoText);
-          setIsRecording(false);
-        }, 3000);
         return;
       }
 
@@ -313,6 +305,7 @@ export default function HomeScreen() {
       console.error('Erreur lors du démarrage de l\'enregistrement:', error);
       // Fallback en cas d'erreur
       setIsRecording(true);
+      setIsRecordingAnimationDelayFinished(true);
       startPulseAnimation();
       moveMicrophoneToCenter();
       hideContent();
@@ -321,18 +314,14 @@ export default function HomeScreen() {
       if ((global as any).setTabBarVisibility) {
         (global as any).setTabBarVisibility(false);
       }
-      setTimeout(() => {
-        const demoText = i18n.language === 'fr' ? "poulet, riz, tomates, oignons" : "chicken, rice, tomatoes, onions";
-        setRecognizedText(demoText);
-        setLiveText(demoText);
-        setIsRecording(false);
-      }, 3000);
     }
   };
 
   const stopRecording = async () => {
     try {
       await Voice.stop();
+      setIsRecording(false);
+      setIsRecordingAnimationDelayFinished(false);
       moveMicrophoneBack();
       showContent();
       hideStopButton();
@@ -450,7 +439,7 @@ export default function HomeScreen() {
             {/* Le micro unique qui se transforme avec ses cercles */}
             <View style={styles.microphoneWithCircles}>
               {/* Cercles d'animation qui apparaissent seulement pendant l'enregistrement */}
-              {isRecording && (
+              {isRecordingAnimationDelayFinished && (
                 <>
                   <Animated.View
                     style={[
