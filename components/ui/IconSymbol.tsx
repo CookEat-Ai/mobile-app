@@ -1,16 +1,8 @@
-// Fallback for using MaterialIcons on Android and web.
-
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolWeight } from 'expo-symbols';
-import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
+import { SymbolView, SymbolWeight } from 'expo-symbols';
+import { Platform } from 'react-native';
 
-type IconSymbolName = keyof typeof MAPPING;
-
-/**
- * Add your SF Symbols to Material Icons mappings here.
- * - see Material Icons in the [Icons Directory](https://icons.expo.fyi).
- * - see SF Symbols in the [SF Symbols](https://developer.apple.com/sf-symbols/) app.
- */
+// Mapping pour MaterialIcons (Android/Web)
 const MAPPING = {
   'house': 'home',
   'house.fill': 'home',
@@ -29,6 +21,8 @@ const MAPPING = {
   'person.fill': 'person',
 } as const;
 
+type IconSymbolName = keyof typeof MAPPING;
+
 /**
  * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.
  * This ensures a consistent look across platforms, and optimal resource usage.
@@ -39,12 +33,30 @@ export function IconSymbol({
   size = 24,
   color,
   style,
+  weight,
 }: {
-  name: IconSymbolName;
+  name: any;//IconSymbolName | SymbolViewProps['name'];
   size?: number;
-  color: string | OpaqueColorValue;
-  style?: StyleProp<TextStyle>;
+  color: any;//string | OpaqueColorValue;
+  style?: any;//StyleProp<TextStyle> | StyleProp<ViewStyle>;
   weight?: SymbolWeight;
 }) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name] as any} style={style} />;
+  if (Platform.OS === 'ios') {
+    // Utiliser SF Symbols sur iOS
+    return <SymbolView
+      resizeMode="scaleAspectFit"
+      name={name}
+      size={size}
+      tintColor={color}
+      style={[
+        {
+          width: size,
+          height: size,
+        },
+        style,
+      ]} weight={weight} />;
+  } else {
+    // Utiliser Material Icons sur Android et Web
+    return <MaterialIcons color={color} size={size} name={MAPPING[name] as any} style={style} />;
+  }
 }

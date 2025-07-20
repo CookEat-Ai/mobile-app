@@ -1,7 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../constants/Colors';
+import { IconSymbol } from './ui/IconSymbol';
 
 interface RecipeCardProps {
   title: string;
@@ -19,7 +19,7 @@ export default function RecipeCard({ title, image, isLiked = false, onPress, onL
       <View style={styles.imageContainer}>
         <Image src={image} style={styles.image} />
         <TouchableOpacity style={styles.likeButton} onPress={onLikePress}>
-          <Ionicons
+          <IconSymbol
             name={isLiked ? "heart" : "heart-outline"}
             size={20}
             color={isLiked ? "#FF6B6B" : "#FFFFFF"}

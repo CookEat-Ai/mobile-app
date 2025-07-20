@@ -41,12 +41,10 @@ const styles = StyleSheet.create({
   container: {
     aspectRatio: 1,
     width: '23.9%',
-    // flexGrow: 1,
     borderRadius: 16,
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    // borderWidth: 1,
   },
   title: {
     fontSize: 12,

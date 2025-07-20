@@ -1,11 +1,11 @@
 import { Tabs } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Animated, StyleSheet, View } from 'react-native';
-
 import { HapticTab } from '../../components/HapticTab';
-import { IconSymbol } from '../../components/ui/IconSymbol';
-// import TabBarBackground from '../../components/ui/TabBarBackground';
+import { IconSymbol } from "../../components/ui/IconSymbol";
 import { Colors } from '../../constants/Colors';
+import '../../i18n';
 
 // Composant personnalisé pour l'icône avec rond autour de l'icône active
 const TabIcon = ({ name, focused, color }: { name: any; focused: boolean; color: string }) => {
@@ -22,6 +22,8 @@ const TabIcon = ({ name, focused, color }: { name: any; focused: boolean; color:
 };
 
 export default function TabLayout() {
+  const colors = Colors.light;
+  const { t } = useTranslation();
   const [showTabBar, setShowTabBar] = useState(true);
   const tabBarOpacity = useRef(new Animated.Value(1)).current;
   const tabBarTranslateY = useRef(new Animated.Value(0)).current;
@@ -89,46 +91,36 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="house" focused={focused} color={color} />
-          ),
+          title: t('tabs.home'),
+          tabBarIcon: ({ color, focused }) => <TabIcon name="house" focused={focused} color={color} />,
         }}
       />
       <Tabs.Screen
         name="search"
         options={{
-          title: 'Search',
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="magnifyingglass" focused={focused} color={color} />
-          ),
+          title: t('tabs.search'),
+          tabBarIcon: ({ color, focused }) => <TabIcon name="magnifyingglass" focused={focused} color={color} />,
         }}
       />
       <Tabs.Screen
         name="favorites"
         options={{
-          title: 'Favorites',
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="heart" focused={focused} color={color} />
-          ),
+          title: t('tabs.favorites'),
+          tabBarIcon: ({ color, focused }) => <TabIcon name="heart" focused={focused} color={color} />,
         }}
       />
       <Tabs.Screen
         name="recipes"
         options={{
-          title: 'Recipes',
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="square.grid.2x2" focused={focused} color={color} />
-          ),
+          title: t('tabs.recipes'),
+          tabBarIcon: ({ color, focused }) => <TabIcon name="square.grid.2x2" focused={focused} color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon name="person" focused={focused} color={color} />
-          ),
+          title: t('tabs.profile'),
+          tabBarIcon: ({ color, focused }) => <TabIcon name="person" focused={focused} color={color} />,
         }}
       />
     </Tabs>

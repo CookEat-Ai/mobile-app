@@ -1,12 +1,15 @@
-import { Ionicons } from '@expo/vector-icons';
 import Voice from '@react-native-voice/voice';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Animated, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { IconSymbol } from "../../components/ui/IconSymbol";
 import UserHeader from '../../components/UserHeader';
 import { Colors } from '../../constants/Colors';
+import '../../i18n';
 
 export default function HomeScreen() {
   const colors = Colors.light;
+  const { t } = useTranslation();
   const [isRecording, setIsRecording] = useState(false);
   const [recognizedText, setRecognizedText] = useState('');
   const [liveText, setLiveText] = useState('');
@@ -19,6 +22,7 @@ export default function HomeScreen() {
   const stopButtonOpacity = useRef(new Animated.Value(0)).current;
   const stopButtonTranslateY = useRef(new Animated.Value(100)).current;
   const microphonePosition = useRef(new Animated.Value(0)).current; // 0 = position initiale, 1 = centre
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     try {
@@ -69,35 +73,27 @@ export default function HomeScreen() {
       const newText = event.value[0];
       setRecognizedText(newText);
       setLiveText(newText);
-      console.log('Texte reconnu:', newText);
     }
   };
 
   const onSpeechError = (error: any) => {
-    console.error('Erreur de reconnaissance vocale:', error);
     setIsRecording(false);
     stopPulseAnimation();
   };
 
   const moveMicrophoneToCenter = () => {
-    console.log('Début animation vers le centre');
     Animated.timing(microphonePosition, {
       toValue: 1,
       duration: 500,
       useNativeDriver: true,
-    }).start(() => {
-      console.log('Animation vers le centre terminée');
     });
   };
 
   const moveMicrophoneBack = () => {
-    console.log('Début animation retour');
     Animated.timing(microphonePosition, {
       toValue: 0,
       duration: 500,
       useNativeDriver: true,
-    }).start(() => {
-      console.log('Animation retour terminée');
     });
   };
 
@@ -286,7 +282,6 @@ export default function HomeScreen() {
   };
 
   const startRecording = async () => {
-    console.log('Début startRecording');
     try {
       // Vérifier si Voice est disponible
       const isAvailable = await Voice.isAvailable();
@@ -303,14 +298,17 @@ export default function HomeScreen() {
         }
         // Simuler un texte reconnu après 3 secondes
         setTimeout(() => {
-          setRecognizedText("poulet, riz, tomates, oignons");
-          setLiveText("poulet, riz, tomates, oignons");
+          const demoText = i18n.language === 'fr' ? "poulet, riz, tomates, oignons" : "chicken, rice, tomatoes, onions";
+          setRecognizedText(demoText);
+          setLiveText(demoText);
           setIsRecording(false);
         }, 3000);
         return;
       }
 
-      await Voice.start('fr-FR');
+      // Utiliser la langue détectée par i18n pour la reconnaissance vocale
+      const voiceLanguage = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+      await Voice.start(voiceLanguage);
     } catch (error) {
       console.error('Erreur lors du démarrage de l\'enregistrement:', error);
       // Fallback en cas d'erreur
@@ -324,8 +322,9 @@ export default function HomeScreen() {
         (global as any).setTabBarVisibility(false);
       }
       setTimeout(() => {
-        setRecognizedText("poulet, riz, tomates, oignons");
-        setLiveText("poulet, riz, tomates, oignons");
+        const demoText = i18n.language === 'fr' ? "poulet, riz, tomates, oignons" : "chicken, rice, tomatoes, onions";
+        setRecognizedText(demoText);
+        setLiveText(demoText);
         setIsRecording(false);
       }, 3000);
     }
@@ -422,7 +421,7 @@ export default function HomeScreen() {
             ]}
           >
             <Text style={[styles.mainTitle, { color: colors.button }]}>
-              What do you want to eat today?
+              {t('home.title')}
             </Text>
           </Animated.View>
 
@@ -442,7 +441,7 @@ export default function HomeScreen() {
             ]}
           >
             <Text style={[styles.introText, { color: colors.button }]}>
-              Dites-nous ce que vous avez dans votre frigo et on vous donne des idées de plats
+              {t('home.intro')}
             </Text>
           </Animated.View>
 
@@ -509,7 +508,7 @@ export default function HomeScreen() {
                   style={[styles.microphoneInner, { backgroundColor: isRecording ? "#DB5244" : colors.button }]}
                   onPress={isRecording ? stopRecording : startRecording}
                 >
-                  <Ionicons
+                  <IconSymbol
                     name={"mic"}
                     size={isRecording ? 40 : 30}
                     color={colors.background}
@@ -534,7 +533,7 @@ export default function HomeScreen() {
                 }
               ]}
             >
-              {isRecording ? "Donner nous la liste de vos ingrédients, on vous écoute... 👂🏼" : "Appuyez pour commencer"}
+              {isRecording ? t('home.voice.recording') : t('home.voice.start')}
             </Animated.Text>
           </View>
 
@@ -557,7 +556,7 @@ export default function HomeScreen() {
           style={styles.stopButton}
           onPress={stopRecording}
         >
-          <Ionicons name="close" size={24} color="white" />
+          <IconSymbol name="xmark" size={24} color="white" />
         </TouchableOpacity>
       </Animated.View>
     </SafeAreaView>

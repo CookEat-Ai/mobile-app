@@ -1,7 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import { Colors } from '../constants/Colors';
+import { IconSymbol } from './ui/IconSymbol';
 
 interface SearchBarProps {
   value: string;
@@ -15,7 +15,7 @@ export default function SearchBar({ value, onChangeText, placeholder = "Search h
 
   return (
     <View style={[styles.container, { backgroundColor: colors.card, borderColor: colors.border }]}>
-      <Ionicons
+      <IconSymbol
         name="search"
         size={20}
         color={colors.icon}

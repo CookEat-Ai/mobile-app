@@ -1,0 +1,26 @@
+{
+  "home": {
+    "title": "What do you want to eat today?",
+    "intro": "Tell us what you have in your fridge and we'll give you meal ideas",
+    "voice": {
+      "start": "Press to start",
+      "recording": "Give us the list of your ingredients, we're listening... 👂🏼",
+      "speaking": "Speak now..."
+    }
+  },
+  "tabs": {
+    "home": "Home",
+    "recipes": "Recipes",
+    "favorites": "Favorites",
+    "search": "Search",
+    "profile": "Profile"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit"
+  }
+}

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import CategoryButton from '../../components/CategoryButton';
 import RecipeCard from '../../components/RecipeCard';
@@ -34,6 +35,7 @@ const categories = [
 ];
 
 export default function SearchScreen() {
+  const { t } = useTranslation();
   const colors = Colors.light;
   const [searchText, setSearchText] = useState('');
   const [likedRecipes, setLikedRecipes] = useState<Set<string>>(new Set(['2']));
@@ -74,7 +76,7 @@ export default function SearchScreen() {
         {/* Titre principal */}
         <View style={styles.titleContainer}>
           <Text style={[styles.mainTitle, { color: colors.button }]}>
-            What&apos;s cooking today?
+            {t('search.title')}
           </Text>
         </View>
 

@@ -1,7 +1,7 @@
-import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../constants/Colors';
+import { IconSymbol } from './ui/IconSymbol';
 
 interface UserHeaderProps {
   userName: string;
@@ -25,7 +25,7 @@ export default function UserHeader({
           {userImage ? (
             <Image source={userImage} style={styles.avatarImage} />
           ) : (
-            <Ionicons name="person" size={24} color={colors.primary} />
+            <IconSymbol name="person" size={24} color={colors.primary} />
           )}
         </View>
         <Text style={[styles.userName, { color: colors.text }]}>
@@ -34,7 +34,7 @@ export default function UserHeader({
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.notificationButton} onPress={onNotificationPress}>
-        <Ionicons name="notifications-outline" size={24} color={colors.text} />
+        <IconSymbol name="notifications-outline" size={24} color={colors.text} />
       </TouchableOpacity>
     </View>
   );
