@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CategoryButton from '../../components/CategoryButton';
 import RecipeCard from '../../components/RecipeCard';
 import SearchBar from '../../components/SearchBar';
@@ -229,6 +230,7 @@ const categories = [
 export default function SearchScreen() {
   const { t } = useTranslation();
   const colors = Colors.light;
+  const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState('');
   const [likedRecipes, setLikedRecipes] = useState<Set<string>>(new Set(['2']));
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -303,7 +305,10 @@ export default function SearchScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, {
+      backgroundColor: colors.background,
+      paddingTop: insets.top
+    }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Titre principal */}
         <View style={styles.titleContainer}>
@@ -371,7 +376,7 @@ export default function SearchScreen() {
         {/* Espace en bas pour la barre de navigation */}
         <View style={styles.bottomSpacer} />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

@@ -36,6 +36,17 @@
     "ingredients": "Ingrédients",
     "addToFavorites": "Ajouter aux favoris"
   },
+  "favorites": {
+    "title": "Toutes les recettes",
+    "noResults": "Aucune recette trouvée",
+    "categories": {
+      "All": "Toutes",
+      "Breakfast": "Petit-déjeuner",
+      "Lunch": "Déjeuner",
+      "Dinner": "Dîner",
+      "Snack": "Collation"
+    }
+  },
   "tabs": {
     "home": "Accueil",
     "recipes": "Recettes",
@@ -44,6 +55,7 @@
     "profile": "Profil"
   },
   "common": {
+    "searchPlaceholder": "Rechercher ici",
     "loading": "Chargement...",
     "error": "Erreur",
     "cancel": "Annuler",

@@ -36,6 +36,17 @@
     "ingredients": "Ingredients",
     "addToFavorites": "Add to favorites"
   },
+  "favorites": {
+    "title": "All recipes",
+    "noResults": "No recipes found",
+    "categories": {
+      "All": "All",
+      "Breakfast": "Breakfast",
+      "Lunch": "Lunch",
+      "Dinner": "Dinner",
+      "Snack": "Snack"
+    }
+  },
   "tabs": {
     "home": "Home",
     "recipes": "Recipes",
@@ -44,6 +55,7 @@
     "profile": "Profile"
   },
   "common": {
+    "searchPlaceholder": "Search here",
     "loading": "Loading...",
     "error": "Error",
     "cancel": "Cancel",

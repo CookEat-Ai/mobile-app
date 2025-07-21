@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, TextInput, View } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from './ui/IconSymbol';
@@ -10,8 +11,9 @@ interface SearchBarProps {
   onSearch?: () => void;
 }
 
-export default function SearchBar({ value, onChangeText, placeholder = "Search here", onSearch }: SearchBarProps) {
+export default function SearchBar({ value, onChangeText, onSearch }: SearchBarProps) {
   const colors = Colors.light;
+  const { t } = useTranslation();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -25,7 +27,7 @@ export default function SearchBar({ value, onChangeText, placeholder = "Search h
         style={[styles.input, { color: colors.text }]}
         value={value}
         onChangeText={onChangeText}
-        placeholder={placeholder}
+        placeholder={t(`common.searchPlaceholder`)}
         placeholderTextColor={colors.icon}
         onSubmitEditing={onSearch}
         returnKeyType="search"

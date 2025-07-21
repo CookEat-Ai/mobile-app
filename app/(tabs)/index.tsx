@@ -1,7 +1,8 @@
 import Voice from '@react-native-voice/voice';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import UserHeader from '../../components/UserHeader';
 import { Colors } from '../../constants/Colors';
@@ -11,6 +12,7 @@ let timeout: any;
 export default function HomeScreen() {
   const colors = Colors.light;
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [isRecording, setIsRecording] = useState(false);
   const [recognizedText, setRecognizedText] = useState('');
   const [liveText, setLiveText] = useState('');
@@ -342,7 +344,10 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, {
+      backgroundColor: colors.background,
+      paddingTop: insets.top
+    }]}>
       {/* Texte en temps réel pendant l'enregistrement */}
       {isRecording && liveText && (
         <Animated.View
@@ -538,7 +543,7 @@ export default function HomeScreen() {
           <IconSymbol name="xmark" size={24} color="white" />
         </TouchableOpacity>
       </Animated.View>
-    </SafeAreaView>
+    </View>
   );
 }
 
