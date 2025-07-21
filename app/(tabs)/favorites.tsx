@@ -191,6 +191,8 @@ export default function FavoritesScreen() {
           )}
         />
       )}
+      {/* Espace en bas pour la barre de navigation */}
+      <View style={styles.bottomSpacer} />
     </View>
   );
 }
@@ -230,8 +232,7 @@ const styles = StyleSheet.create({
   },
   recipesList: {
     marginTop: 10,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingHorizontal: 20
   },
   categoryButton: {
     paddingHorizontal: 15,
@@ -249,5 +250,8 @@ const styles = StyleSheet.create({
   noResultsText: {
     fontSize: 16,
     textAlign: 'center',
+  },
+  bottomSpacer: {
+    height: 120,
   },
 }); 

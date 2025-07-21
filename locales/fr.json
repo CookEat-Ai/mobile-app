@@ -37,7 +37,7 @@
     "addToFavorites": "Ajouter aux favoris"
   },
   "favorites": {
-    "title": "Toutes les recettes",
+    "title": "Toutes vos recettes préférées",
     "noResults": "Aucune recette trouvée",
     "categories": {
       "All": "Toutes",
@@ -62,5 +62,28 @@
     "save": "Enregistrer",
     "delete": "Supprimer",
     "edit": "Modifier"
+  },
+  "profile": {
+    "guest": "Invité",
+    "login": "Se connecter",
+    "logout": "Se déconnecter",
+    "preferences": "Préférences alimentaires",
+    "halal": "Halal",
+    "halalDescription": "Afficher seulement les recettes halal",
+    "vegetarian": "Végétarien",
+    "vegetarianDescription": "Afficher seulement les recettes végétariennes",
+    "plan": "Plan d'abonnement",
+    "changePlan": "Changer",
+    "plans": {
+      "free": "Gratuit",
+      "premium": "Premium",
+      "pro": "Pro",
+      "freePrice": "Gratuit",
+      "premiumPrice": "9,99€/mois",
+      "proPrice": "19,99€/mois"
+    },
+    "settings": "Paramètres",
+    "notifications": "Notifications",
+    "generalSettings": "Paramètres généraux"
   }
 }
