@@ -1,5 +1,6 @@
+import { t } from "i18next";
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from './ui/IconSymbol';
 
@@ -20,21 +21,22 @@ export default function UserHeader({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.profileSection} onPress={onProfilePress}>
-        <View style={[styles.avatar, { borderColor: colors.border }]}>
+      <View style={styles.profileSection}>
+        {/* <View style={[styles.avatar, { borderColor: colors.border }]}>
           {userImage ? (
             <Image source={userImage} style={styles.avatarImage} />
           ) : (
-            <IconSymbol name="person" size={24} color={colors.primary} />
+            <IconSymbol name="person" size={24} color={colors.button} />
           )}
-        </View>
+        </View> */}
+        <Text style={{ fontSize: 24, fontWeight: 'bold', marginRight: 12 }}>👋🏼</Text>
         <Text style={[styles.userName, { color: colors.text }]}>
-          {userName}
+          {t('home.hi')} {userName},
         </Text>
-      </TouchableOpacity>
+      </View>
 
       <TouchableOpacity style={styles.notificationButton} onPress={onNotificationPress}>
-        <IconSymbol name="notifications-outline" size={24} color={colors.text} />
+        <IconSymbol name={Platform.OS === 'ios' ? "bell" : "notifications-outline"} size={24} color={colors.button} />
       </TouchableOpacity>
     </View>
   );

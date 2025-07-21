@@ -8,6 +8,16 @@
       "speaking": "Speak now..."
     }
   },
+  "search": {
+    "title": "Search"
+  },
+  "recipe": {
+    "cookingTime": "Cooking time",
+    "difficulty": "Difficulty",
+    "servings": "Servings",
+    "ingredients": "Ingredients",
+    "rateRecipe": "Rate Recipe"
+  },
   "tabs": {
     "home": "Home",
     "recipes": "Recipes",

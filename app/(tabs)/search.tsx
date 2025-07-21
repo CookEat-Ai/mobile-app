@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -39,6 +40,7 @@ export default function SearchScreen() {
   const colors = Colors.light;
   const [searchText, setSearchText] = useState('');
   const [likedRecipes, setLikedRecipes] = useState<Set<string>>(new Set(['2']));
+  const router = useRouter();
 
   const handleLikePress = (recipeId: string) => {
     const newLikedRecipes = new Set(likedRecipes);
@@ -56,6 +58,10 @@ export default function SearchScreen() {
 
   const handleRecipePress = (recipe: any) => {
     console.log('Recipe pressed:', recipe.title);
+    router.push({
+      pathname: '/recipe-detail',
+      params: { id: recipe.id }
+    });
   };
 
   const handleSearch = () => {

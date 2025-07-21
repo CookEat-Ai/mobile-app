@@ -1,6 +1,6 @@
 {
   "home": {
-    "title": "Que voulez-vous manger aujourd'hui ?",
+    "title": "What do you want to eat today?",
     "intro": "Dites-nous ce que vous avez dans votre frigo et on vous donne des idées de plats",
     "voice": {
       "start": "Appuyez pour commencer",
@@ -8,15 +8,22 @@
       "speaking": "Parlez maintenant..."
     }
   },
+  "search": {
+    "title": "Recherche"
+  },
+  "recipe": {
+    "cookingTime": "Temps de cuisson",
+    "difficulty": "Difficulté",
+    "servings": "Portions",
+    "ingredients": "Ingrédients",
+    "rateRecipe": "Noter la recette"
+  },
   "tabs": {
     "home": "Accueil",
     "recipes": "Recettes",
     "favorites": "Favoris",
     "search": "Recherche",
     "profile": "Profil"
-  },
-  "search": {
-    "title": "Les recettes préférées de nos utilisateurs"
   },
   "common": {
     "loading": "Chargement...",
