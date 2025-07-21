@@ -75,7 +75,7 @@
     "plan": "Subscription Plan",
     "changePlan": "Change",
     "plans": {
-      "free": "Free",
+      "basic": "Free",
       "premium": "Premium",
       "pro": "Pro",
       "freePrice": "Free",
@@ -85,5 +85,26 @@
     "settings": "Settings",
     "notifications": "Notifications",
     "generalSettings": "General Settings"
+  },
+  "offers": {
+    "title": "Choose your plan",
+    "subtitle": "Select the plan that best suits you",
+    "popular": "Popular",
+    "select": "Select",
+    "selected": "Selected",
+    "features": {
+      "freeFeature1": "Access to basic recipes",
+      "freeFeature2": "Limited search",
+      "freeFeature3": "Ads included",
+      "premiumFeature1": "All recipes",
+      "premiumFeature2": "Unlimited search",
+      "premiumFeature3": "No ads",
+      "premiumFeature4": "Exclusive recipes",
+      "proFeature1": "Everything from Premium plan",
+      "proFeature2": "Personalized recipes",
+      "proFeature3": "Priority support",
+      "proFeature4": "Early access to new features",
+      "proFeature5": "Nutritionist consultation"
+    }
   }
 }

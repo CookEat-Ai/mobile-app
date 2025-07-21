@@ -110,9 +110,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="recipes"
+        name="offers"
         options={{
-          title: t('tabs.recipes'),
+          title: t('tabs.offers'),
           tabBarIcon: ({ color, focused }) => <TabIcon name="square.grid.2x2" focused={focused} color={color} />,
         }}
       />

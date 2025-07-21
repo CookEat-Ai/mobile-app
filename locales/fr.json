@@ -75,15 +75,36 @@
     "plan": "Plan d'abonnement",
     "changePlan": "Changer",
     "plans": {
-      "free": "Gratuit",
+      "basic": "Gratuit",
       "premium": "Premium",
       "pro": "Pro",
       "freePrice": "Gratuit",
-      "premiumPrice": "9,99€/mois",
-      "proPrice": "19,99€/mois"
+      "premiumPrice": "8,99€/mois",
+      "proPrice": "6,99€/mois"
     },
     "settings": "Paramètres",
     "notifications": "Notifications",
     "generalSettings": "Paramètres généraux"
+  },
+  "offers": {
+    "title": "Choisissez votre plan",
+    "subtitle": "Sélectionnez le plan qui vous convient le mieux",
+    "popular": "Populaire",
+    "select": "Sélectionner",
+    "selected": "Sélectionné",
+    "features": {
+      "freeFeature1": "Accès aux recettes de base",
+      "freeFeature2": "Recherche limitée",
+      "freeFeature3": "Publicités incluses",
+      "premiumFeature1": "Toutes les recettes",
+      "premiumFeature2": "Recherche illimitée",
+      "premiumFeature3": "Sans publicités",
+      "premiumFeature4": "Recettes exclusives",
+      "proFeature1": "Tout du plan Premium",
+      "proFeature2": "Recettes personnalisées",
+      "proFeature3": "Support prioritaire",
+      "proFeature4": "Accès anticipé aux nouvelles fonctionnalités",
+      "proFeature5": "Consultation nutritionniste"
+    }
   }
 }

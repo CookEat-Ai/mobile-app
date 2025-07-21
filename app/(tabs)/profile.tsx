@@ -25,7 +25,7 @@ const userData = {
     halal: false,
     vegetarian: false,
   },
-  plan: 'free', // 'free', 'premium', 'pro'
+  plan: 'basic', // 'free', 'premium', 'pro'
 };
 
 export default function ProfileScreen() {
@@ -72,20 +72,11 @@ export default function ProfileScreen() {
     }
   };
 
-  const getPlanName = (plan: string) => {
-    switch (plan) {
-      case 'free': return t('profile.plans.free');
-      case 'premium': return t('profile.plans.premium');
-      case 'pro': return t('profile.plans.pro');
-      default: return t('profile.plans.free');
-    }
-  };
-
   const getPlanPrice = (plan: string) => {
     switch (plan) {
-      case 'free': return t('profile.plans.freePrice');
-      case 'premium': return t('profile.plans.premiumPrice');
-      case 'pro': return t('profile.plans.proPrice');
+      case 'basic': return t('profile.plans.freePrice');
+      case '3 mois': return t('profile.plans.premiumPrice');
+      case '6 mois': return t('profile.plans.proPrice');
       default: return t('profile.plans.freePrice');
     }
   };
@@ -189,26 +180,26 @@ export default function ProfileScreen() {
         <View style={styles.planContainer}>
           <View style={styles.currentPlan}>
             <Text style={[styles.planName, { color: colors.text }]}>
-              {getPlanName(currentPlan)}
+              {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}
             </Text>
             <Text style={[styles.planPrice, { color: colors.textSecondary }]}>
-              {getPlanPrice(currentPlan)}
+              {currentPlan !== "basic" && "Pro" + " "}{getPlanPrice(currentPlan)}
             </Text>
           </View>
 
-          {/* <TouchableOpacity
+          <TouchableOpacity
             style={[styles.changePlanButton, { borderColor: colors.button }]}
             onPress={() => handlePlanChange('premium')}
           >
             <Text style={[styles.changePlanText, { color: colors.button }]}>
               {t('profile.changePlan')}
             </Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
 
         {/* Options de plans */}
         <View style={styles.planOptions}>
-          {['free', 'premium', 'pro'].map((plan) => (
+          {['basic', '3 mois', '6 mois'].map((plan) => (
             <TouchableOpacity
               key={plan}
               style={[
@@ -224,7 +215,7 @@ export default function ProfileScreen() {
                 styles.planOptionText,
                 { color: currentPlan === plan ? colors.background : colors.text }
               ]}>
-                {getPlanName(plan)}
+                {plan !== "basic" && "Pro ("}{plan.charAt(0).toUpperCase() + plan.slice(1)}{plan !== "basic" && ")"}
               </Text>
               <Text style={[
                 styles.planOptionPrice,
