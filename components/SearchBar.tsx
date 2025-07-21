@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { Platform, StyleSheet, TextInput, View } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from './ui/IconSymbol';
 
@@ -16,7 +16,7 @@ export default function SearchBar({ value, onChangeText, placeholder = "Search h
   return (
     <View style={[styles.container, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <IconSymbol
-        name="search"
+        name={Platform.OS === 'ios' ? 'magnifyingglass' : "search"}
         size={20}
         color={colors.icon}
         style={styles.searchIcon}

@@ -46,8 +46,10 @@ export default function HomeScreen() {
   }, []);
 
   const onSpeechStart = () => {
-    console.log('onSpeechStart');
     setIsRecording(true);
+    setTimeout(() => {
+      setIsRecordingAnimationDelayFinished(true);
+    }, 1000);
     startPulseAnimation();
     moveMicrophoneToCenter();
     hideContent();
@@ -282,37 +284,21 @@ export default function HomeScreen() {
       // Vérifier si Voice est disponible
       const isAvailable = await Voice.isAvailable();
       if (!isAvailable) {
-        // Fallback pour le développement
-        setIsRecording(true);
-        setTimeout(() => {
-          setIsRecordingAnimationDelayFinished(true);
-        }, 1000);
-        moveMicrophoneToCenter();
-        startPulseAnimation();
-        hideContent();
-        showStopButton();
-        // Masquer la tabbar
-        if ((global as any).setTabBarVisibility) {
-          (global as any).setTabBarVisibility(false);
-        }
         return;
       }
-
-      // Utiliser la langue détectée par i18n pour la reconnaissance vocale
-      const voiceLanguage = i18n.language === 'fr' ? 'fr-FR' : 'en-US';
-      await Voice.start(voiceLanguage);
+      await Voice.start(i18n.language === 'fr' ? 'fr-FR' : 'en-US');
     } catch (error) {
       console.error('Erreur lors du démarrage de l\'enregistrement:', error);
       // Fallback en cas d'erreur
-      setIsRecording(true);
-      setIsRecordingAnimationDelayFinished(true);
-      startPulseAnimation();
-      moveMicrophoneToCenter();
-      hideContent();
-      showStopButton();
-      // Masquer la tabbar
+      setIsRecording(false);
+      setIsRecordingAnimationDelayFinished(false);
+      moveMicrophoneBack();
+      showContent();
+      hideStopButton();
+      setLiveText(''); // Réinitialiser le texte en temps réel
+      // Afficher la tabbar
       if ((global as any).setTabBarVisibility) {
-        (global as any).setTabBarVisibility(false);
+        (global as any).setTabBarVisibility(true);
       }
     }
   };
