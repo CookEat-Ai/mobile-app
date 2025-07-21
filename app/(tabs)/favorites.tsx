@@ -127,72 +127,75 @@ export default function FavoritesScreen() {
       backgroundColor: colors.background,
       paddingTop: insets.top
     }]}>
-      <View style={styles.titleContainer}>
-        <Text style={[styles.mainTitle, { color: colors.button }]}>
-          {t('favorites.title')}
-        </Text>
-      </View>
-
-      {/* Barre de recherche */}
-      <SearchBar
-        value={searchText}
-        onChangeText={setSearchText}
-        onSearch={handleSearch}
-      />
-
-      {/* Catégories */}
-      <View style={styles.categoriesContainer}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoriesScroll}
-        >
-          {categories.map((category) => (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              key={category.id}
-              style={[
-                styles.categoryButton,
-                {
-                  backgroundColor: selectedCategory === category.title.toLowerCase() ? colors.button : 'transparent',
-                  borderColor: selectedCategory === category.title.toLowerCase() ? colors.button : '#DCDFE0'
-                }
-              ]}
-              onPress={() => handleCategoryPress(category)}
-            >
-              <Text style={{ color: selectedCategory === category.title.toLowerCase() ? 'white' : 'black', fontSize: 16 }}>
-                {t(`favorites.categories.${category.title}`)}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-
-      {/* Liste des recettes */}
-      {getFilteredRecipes().length === 0 ? (
-        <View style={styles.noResultsContainer}>
-          <Text style={[styles.noResultsText, { color: colors.textSecondary }]}>
-            {t('favorites.noResults')}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.titleContainer}>
+          <Text style={[styles.mainTitle, { color: colors.button }]}>
+            {t('favorites.title')}
           </Text>
         </View>
-      ) : (
-        <FlatList
-          data={getFilteredRecipes()}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.recipesList}
-          renderItem={({ item }) => (
-            <FavoriteRecipeCard
-              title={item.title}
-              image={item.image}
-              cookingTime={item.cookingTime}
-              rating={item.rating}
-              onPress={() => handleRecipePress(item)}
-            />
-          )}
+
+        {/* Barre de recherche */}
+        <SearchBar
+          value={searchText}
+          onChangeText={setSearchText}
+          onSearch={handleSearch}
         />
-      )}
-      {/* Espace en bas pour la barre de navigation */}
-      <View style={styles.bottomSpacer} />
+
+        {/* Catégories */}
+        <View style={styles.categoriesContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoriesScroll}
+          >
+            {categories.map((category) => (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                key={category.id}
+                style={[
+                  styles.categoryButton,
+                  {
+                    backgroundColor: selectedCategory === category.title.toLowerCase() ? colors.button : 'transparent',
+                    borderColor: selectedCategory === category.title.toLowerCase() ? colors.button : '#DCDFE0'
+                  }
+                ]}
+                onPress={() => handleCategoryPress(category)}
+              >
+                <Text style={{ color: selectedCategory === category.title.toLowerCase() ? 'white' : 'black', fontSize: 16 }}>
+                  {t(`favorites.categories.${category.title}`)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Liste des recettes */}
+        {getFilteredRecipes().length === 0 ? (
+          <View style={styles.noResultsContainer}>
+            <Text style={[styles.noResultsText, { color: colors.textSecondary }]}>
+              {t('favorites.noResults')}
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            data={getFilteredRecipes()}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.recipesList}
+            renderItem={({ item }) => (
+              <FavoriteRecipeCard
+                title={item.title}
+                image={item.image}
+                cookingTime={item.cookingTime}
+                rating={item.rating}
+                onPress={() => handleRecipePress(item)}
+              />
+            )}
+          />
+        )}
+
+        {/* Espace en bas pour la barre de navigation */}
+        <View style={styles.bottomSpacer} />
+      </ScrollView>
     </View>
   );
 }

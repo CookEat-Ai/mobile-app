@@ -75,8 +75,8 @@ export default function ProfileScreen() {
   const getPlanPrice = (plan: string) => {
     switch (plan) {
       case 'basic': return t('profile.plans.freePrice');
-      case '3 mois': return t('profile.plans.premiumPrice');
-      case '6 mois': return t('profile.plans.proPrice');
+      case 'proQuarter': return t('profile.plans.quarterPrice');
+      case 'proYear': return t('profile.plans.yearPrice');
       default: return t('profile.plans.freePrice');
     }
   };
@@ -180,26 +180,26 @@ export default function ProfileScreen() {
         <View style={styles.planContainer}>
           <View style={styles.currentPlan}>
             <Text style={[styles.planName, { color: colors.text }]}>
-              {currentPlan.charAt(0).toUpperCase() + currentPlan.slice(1)}
+              {t(`profile.plans.${currentPlan}`)}
             </Text>
             <Text style={[styles.planPrice, { color: colors.textSecondary }]}>
-              {currentPlan !== "basic" && "Pro" + " "}{getPlanPrice(currentPlan)}
+              {getPlanPrice(currentPlan)}
             </Text>
           </View>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={[styles.changePlanButton, { borderColor: colors.button }]}
-            onPress={() => handlePlanChange('premium')}
+            onPress={() => handlePlanChange('proQuarter')}
           >
             <Text style={[styles.changePlanText, { color: colors.button }]}>
               {t('profile.changePlan')}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {/* Options de plans */}
         <View style={styles.planOptions}>
-          {['basic', '3 mois', '6 mois'].map((plan) => (
+          {['basic', 'proQuarter', 'proYear'].map((plan) => (
             <TouchableOpacity
               key={plan}
               style={[
@@ -215,7 +215,7 @@ export default function ProfileScreen() {
                 styles.planOptionText,
                 { color: currentPlan === plan ? colors.background : colors.text }
               ]}>
-                {plan !== "basic" && "Pro ("}{plan.charAt(0).toUpperCase() + plan.slice(1)}{plan !== "basic" && ")"}
+                {t(`profile.plans.${plan}`)}
               </Text>
               <Text style={[
                 styles.planOptionPrice,

@@ -22,16 +22,16 @@ const plans = [
   },
   {
     id: 'premium',
-    name: 'pro',
-    price: 'premiumPrice',
-    features: ['premiumFeature1', 'premiumFeature2', 'premiumFeature3', 'premiumFeature4'],
+    name: 'proYear',
+    price: 'yearPrice',
+    features: ['proFeature1', 'proFeature2', 'proFeature3', 'proFeature4'],
     popular: true,
   },
   {
     id: 'pro',
-    name: 'pro',
-    price: 'proPrice',
-    features: ['proFeature1', 'proFeature2', 'proFeature3', 'proFeature4', 'proFeature5'],
+    name: 'proQuarter',
+    price: 'quarterPrice',
+    features: ['proFeature1', 'proFeature2', 'proFeature3', 'proFeature4'],
     popular: false,
   },
 ];

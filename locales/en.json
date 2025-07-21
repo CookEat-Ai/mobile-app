@@ -75,12 +75,13 @@
     "plan": "Subscription Plan",
     "changePlan": "Change",
     "plans": {
-      "basic": "Free",
-      "premium": "Premium",
+      "basic": "Basic",
       "pro": "Pro",
       "freePrice": "Free",
-      "premiumPrice": "$9.99/month",
-      "proPrice": "$19.99/month"
+      "quarterPrice": "$9.99/month",
+      "proPrice": "$19.99/month",
+      "proQuarter": "Pro (3 months)",
+      "proYear": "Pro (1 year)"
     },
     "settings": "Settings",
     "notifications": "Notifications",
@@ -96,15 +97,10 @@
       "freeFeature1": "Access to basic recipes",
       "freeFeature2": "Limited search",
       "freeFeature3": "Ads included",
-      "premiumFeature1": "All recipes",
-      "premiumFeature2": "Unlimited search",
-      "premiumFeature3": "No ads",
-      "premiumFeature4": "Exclusive recipes",
-      "proFeature1": "Everything from Premium plan",
-      "proFeature2": "Personalized recipes",
-      "proFeature3": "Priority support",
-      "proFeature4": "Early access to new features",
-      "proFeature5": "Nutritionist consultation"
+      "proFeature1": "All recipes",
+      "proFeature2": "Unlimited search",
+      "proFeature3": "No ads",
+      "proFeature4": "Exclusive recipes"
     }
   }
 }
