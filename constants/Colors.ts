@@ -7,7 +7,8 @@ const tintColorLight = '#2D5A27'; // Dark green
 
 export const Colors = {
   light: {
-    // text: '#081A10', // Dark green text
+    text: '#081A10', // Dark green text
+    textSecondary: '#687076', // Secondary text color
     background: '#F1F2F5',
     tint: tintColorLight,
     icon: '#687076',

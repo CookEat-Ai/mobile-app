@@ -77,11 +77,11 @@
     "plans": {
       "basic": "Basic",
       "pro": "Pro",
+      "freePrice": "Gratuit",
       "proQuarter": "Pro (3 mois)",
       "proYear": "Pro (1 an)",
-      "freePrice": "Gratuit",
-      "quarterPrice": "8,99€/mois",
-      "yearPrice": "6,99€/mois"
+      "quarterPrice": "7,99€/mois",
+      "yearPrice": "5,99€/mois"
     },
     "settings": "Paramètres",
     "notifications": "Notifications",
@@ -94,13 +94,39 @@
     "select": "Sélectionner",
     "selected": "Sélectionné",
     "features": {
-      "freeFeature1": "Accès aux recettes de base",
-      "freeFeature2": "Recherche limitée",
-      "freeFeature3": "Publicités incluses",
-      "proFeature1": "Toutes les recettes",
-      "proFeature2": "Recherche illimitée",
-      "proFeature3": "Sans publicités",
-      "proFeature4": "Recettes exclusives"
+      "free": {
+        "1": "Accès aux recettes de base",
+        "2": "Recherche limitée",
+        "3": "Publicités incluses"
+      },
+      "XKJXATBXR": {
+        "1": "Toutes les recettes",
+        "2": "Recherche illimitée",
+        "3": "Sans publicités",
+        "4": "Recettes exclusives"
+      },
+      "XKSRATBQW": {
+        "1": "Toutes les recettes",
+        "2": "Recherche illimitée",
+        "3": "Sans publicités",
+        "4": "Recettes exclusives"
+      }
     }
+  },
+  "payment": {
+    "title": "Paiement sécurisé",
+    "free": "Gratuit",
+    "activateFree": "Activer le plan gratuit",
+    "cancel": "Annuler",
+    "successTitle": "Paiement réussi",
+    "successMessage": "Votre plan a été activé avec succès !",
+    "guestCheckout": "Paiement invité",
+    "guestCheckoutDescription": "Entrez vos informations pour continuer avec le paiement",
+    "firstName": "Prénom",
+    "firstNamePlaceholder": "Votre prénom",
+    "email": "Email",
+    "emailPlaceholder": "votre@email.com",
+    "continue": "Continuer",
+    "processing": "Traitement du paiement..."
   }
 }

@@ -78,10 +78,10 @@
       "basic": "Basic",
       "pro": "Pro",
       "freePrice": "Free",
-      "quarterPrice": "$9.99/month",
-      "proPrice": "$19.99/month",
       "proQuarter": "Pro (3 months)",
-      "proYear": "Pro (1 year)"
+      "proYear": "Pro (1 year)",
+      "quarterPrice": "$7.99/month",
+      "yearPrice": "$5.99/month"
     },
     "settings": "Settings",
     "notifications": "Notifications",
@@ -94,13 +94,39 @@
     "select": "Select",
     "selected": "Selected",
     "features": {
-      "freeFeature1": "Access to basic recipes",
-      "freeFeature2": "Limited search",
-      "freeFeature3": "Ads included",
-      "proFeature1": "All recipes",
-      "proFeature2": "Unlimited search",
-      "proFeature3": "No ads",
-      "proFeature4": "Exclusive recipes"
+      "free": {
+        "1": "Access to basic recipes",
+        "2": "Limited search",
+        "3": "Ads included"
+      },
+      "XKJXATBXR": {
+        "1": "All recipes",
+        "2": "Unlimited search",
+        "3": "No ads",
+        "4": "Exclusive recipes"
+      },
+      "XKSRATBQW": {
+        "1": "All recipes",
+        "2": "Unlimited search",
+        "3": "No ads",
+        "4": "Exclusive recipes"
+      }
     }
+  },
+  "payment": {
+    "title": "Secure Payment",
+    "free": "Free",
+    "activateFree": "Activate free plan",
+    "cancel": "Cancel",
+    "successTitle": "Payment successful",
+    "successMessage": "Your plan has been activated successfully!",
+    "guestCheckout": "Guest Checkout",
+    "guestCheckoutDescription": "Enter your information to continue with payment",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "Your first name",
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "continue": "Continue",
+    "processing": "Processing payment..."
   }
 }

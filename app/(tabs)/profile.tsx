@@ -14,6 +14,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
+import { useAuth } from '../../hooks/useAuth';
+import { useSubscription } from '../../hooks/useSubscription';
 
 // Données utilisateur (à remplacer par un vrai système d'auth)
 const userData = {
@@ -32,24 +34,28 @@ export default function ProfileScreen() {
   const { t } = useTranslation();
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
-  const [isLoggedIn, setIsLoggedIn] = useState(userData.isLoggedIn);
+  const { user, isAuthenticated, isLoading, login, logout } = useAuth();
+  const { subscription, hasSubscription, isLoading: subscriptionLoading } = useSubscription();
   const [halal, setHalal] = useState(userData.preferences.halal);
   const [vegetarian, setVegetarian] = useState(userData.preferences.vegetarian);
-  const [currentPlan, setCurrentPlan] = useState(userData.plan);
 
   const handleLogin = () => {
-    setIsLoggedIn(true);
     // Ici vous ajouteriez la logique de connexion réelle
+    // Pour l'instant, on utilise les données mock
+    console.log('Login clicked');
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    // Ici vous ajouteriez la logique de déconnexion réelle
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    }
   };
 
   const handlePlanChange = (newPlan: string) => {
-    setCurrentPlan(newPlan);
     // Ici vous ajouteriez la logique de changement de plan
+    console.log('Plan changed to:', newPlan);
   };
 
   const handleNotificationsPress = async () => {
@@ -70,6 +76,13 @@ export default function ProfileScreen() {
         console.error('Erreur lors de l\'ouverture des paramètres généraux:', fallbackError);
       }
     }
+  };
+
+  const getCurrentPlan = () => {
+    if (!hasSubscription) return 'basic';
+    // Logique pour déterminer le plan basé sur l'abonnement
+    // À adapter selon votre logique métier
+    return 'pro'; // Par défaut
   };
 
   const getPlanPrice = (plan: string) => {
@@ -95,7 +108,7 @@ export default function ProfileScreen() {
           />
         </View>
 
-        {isLoggedIn ? (
+        {isAuthenticated ? (
           <>
             <Text style={[styles.userName, { color: colors.text }]}>
               {userData.name}
@@ -180,10 +193,10 @@ export default function ProfileScreen() {
         <View style={styles.planContainer}>
           <View style={styles.currentPlan}>
             <Text style={[styles.planName, { color: colors.text }]}>
-              {t(`profile.plans.${currentPlan}`)}
+              {t(`profile.plans.${getCurrentPlan()}`)}
             </Text>
             <Text style={[styles.planPrice, { color: colors.textSecondary }]}>
-              {getPlanPrice(currentPlan)}
+              {getPlanPrice(getCurrentPlan())}
             </Text>
           </View>
 
@@ -205,21 +218,21 @@ export default function ProfileScreen() {
               style={[
                 styles.planOption,
                 {
-                  backgroundColor: currentPlan === plan ? colors.button : colors.surface,
-                  borderColor: currentPlan === plan ? colors.button : colors.border,
+                  backgroundColor: getCurrentPlan() === plan ? colors.button : colors.surface,
+                  borderColor: getCurrentPlan() === plan ? colors.button : colors.border,
                 }
               ]}
               onPress={() => handlePlanChange(plan)}
             >
               <Text style={[
                 styles.planOptionText,
-                { color: currentPlan === plan ? colors.background : colors.text }
+                { color: getCurrentPlan() === plan ? colors.background : colors.text }
               ]}>
                 {t(`profile.plans.${plan}`)}
               </Text>
               <Text style={[
                 styles.planOptionPrice,
-                { color: currentPlan === plan ? colors.background : colors.textSecondary }
+                { color: getCurrentPlan() === plan ? colors.background : colors.textSecondary }
               ]}>
                 {getPlanPrice(plan)}
               </Text>

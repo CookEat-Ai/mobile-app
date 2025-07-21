@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+  Alert,
+  Modal,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,160 +11,200 @@ import {
   View
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Checkout from '../../components/Checkout';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
+import { useIAP } from "expo-iap";
 
-// Données des plans
-const plans = [
-  {
-    id: 'basic',
-    name: 'basic',
-    price: 'freePrice',
-    features: ['freeFeature1', 'freeFeature2', 'freeFeature3'],
-    popular: false,
-  },
-  {
-    id: 'premium',
-    name: 'proYear',
-    price: 'yearPrice',
-    features: ['proFeature1', 'proFeature2', 'proFeature3', 'proFeature4'],
-    popular: true,
-  },
-  {
-    id: 'pro',
-    name: 'proQuarter',
-    price: 'quarterPrice',
-    features: ['proFeature1', 'proFeature2', 'proFeature3', 'proFeature4'],
-    popular: false,
-  },
+// Données des plans avec prix
+const productIds = [
+  'XKJXATBXR',
+  'XKSRATBQW',
 ];
 
 export default function OffersScreen() {
   const { t } = useTranslation();
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+  const [showGuestCheckout, setShowGuestCheckout] = useState(false);
 
-  const handlePlanSelect = (planId: string) => {
-    setSelectedPlan(planId);
-    // Ici vous ajouteriez la logique pour souscrire au plan
-    console.log('Plan sélectionné:', planId);
+  let { connected, products, getProducts, requestPurchase, validateReceipt } =
+    useIAP({
+      onPurchaseSuccess: (purchase) => {
+        console.log('Purchase successful:', purchase);
+        // Handle successful purchase
+        validatePurchase(purchase);
+      },
+      onPurchaseError: (error) => {
+        console.error('Purchase failed:', error);
+        // Handle purchase error
+      },
+    });
+
+  useEffect(() => {
+    if (connected) {
+      getProducts(productIds);
+      console.log(products);
+
+      products.push({
+        id: 'free',
+        title: 'Free',
+        displayPrice: 'Free'
+      } as any)
+
+      products.push({
+        id: 'XKJXATBXR',
+        title: 'Pro Monthly',
+        displayPrice: '$7.99/month'
+      } as any)
+
+      products.push({
+        id: 'XKSRATBQW',
+        title: 'Pro Yearly',
+        displayPrice: '$5.99/month'
+      } as any)
+    }
+    // products.push({
+    //   id: 'free',
+    //   title: 'Free',
+    //   displayPrice: 'Free'
+    // } as any)
+  }, [connected]);
+
+  const validatePurchase = async (purchase: any) => {
+    try {
+      const result = await validateReceipt(purchase.transactionId);
+      if (result.isValid) {
+        // Grant user the purchased content
+        console.log('Receipt is valid');
+      }
+    } catch (error) {
+      console.error('Validation failed:', error);
+    }
   };
 
-  const getPlanName = (plan: string) => {
-    return t(`profile.plans.${plan}`);
+  const handleGuestCheckoutContinue = (email: string, firstName: string) => {
+    setShowGuestCheckout(false);
   };
 
-  const getPlanPrice = (plan: string) => {
-    return t(`profile.plans.${plan}`);
-  };
-
-  const getFeatureText = (featureKey: string) => {
-    return t(`offers.features.${featureKey}`);
+  const handleGuestCheckoutCancel = () => {
+    setShowGuestCheckout(false);
+    setSelectedProduct(null);
   };
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: colors.background }]}
-      contentContainerStyle={{ paddingTop: insets.top }}
-    >
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>
-          {t('offers.title')}
-        </Text>
-        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-          {t('offers.subtitle')}
-        </Text>
-      </View>
+    <View style={[styles.container, {
+      backgroundColor: colors.background,
+      paddingTop: insets.top
+    }]}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={[styles.title, { color: colors.text }]}>
+            {t('offers.title')}
+          </Text>
+          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+            {t('offers.subtitle')}
+          </Text>
+        </View>
 
-      {/* Plans */}
-      <View style={styles.plansContainer}>
-        {plans.map((plan) => (
-          <TouchableOpacity
-            key={plan.id}
-            style={[
-              styles.planCard,
-              {
-                backgroundColor: colors.surface,
-                borderColor: selectedPlan === plan.id ? colors.button : colors.border,
-                borderWidth: selectedPlan === plan.id ? 2 : 1,
-              }
-            ]}
-            onPress={() => handlePlanSelect(plan.id)}
-            activeOpacity={0.8}
-          >
-            {/* Badge Popular */}
-            {plan.popular && (
-              <View style={[styles.popularBadge, { backgroundColor: colors.button }]}>
-                <Text style={[styles.popularText, { color: colors.background }]}>
-                  {t('offers.popular')}
-                </Text>
-              </View>
-            )}
-
-            {/* Header du plan */}
-            <View style={styles.planHeader}>
-              <View style={styles.planInfo}>
-                <Text style={[styles.planName, { color: colors.text }]}>
-                  {getPlanName(plan.name)}
-                </Text>
-                <Text style={[styles.planPrice, { color: colors.textSecondary }]}>
-                  {getPlanPrice(plan.price)}
-                </Text>
-              </View>
-
-              {/* Checkmark si sélectionné */}
-              {selectedPlan === plan.id && (
-                <View style={[styles.checkmark, { backgroundColor: colors.button }]}>
-                  <IconSymbol name="checkmark" size={16} color={colors.background} />
-                </View>
-              )}
-            </View>
-
-            {/* Features */}
-            <View style={styles.featuresContainer}>
-              {plan.features.map((feature, index) => (
-                <View key={index} style={styles.featureItem}>
-                  <IconSymbol
-                    name="checkmark"
-                    size={16}
-                    color={colors.button}
-                  />
-                  <Text style={[styles.featureText, { color: colors.text }]}>
-                    {getFeatureText(feature)}
-                  </Text>
-                </View>
-              ))}
-            </View>
-
-            {/* Bouton de sélection */}
+        {/* Plans */}
+        <View style={styles.plansContainer}>
+          {products.map((product) => (
             <TouchableOpacity
+              key={product.id}
               style={[
-                styles.selectButton,
+                styles.planCard,
                 {
-                  backgroundColor: selectedPlan === plan.id ? colors.button : 'transparent',
-                  borderColor: colors.button,
+                  backgroundColor: colors.surface,
+                  borderColor: selectedProduct === product.id ? colors.button : colors.border,
+                  borderWidth: selectedProduct === product.id ? 2 : 1,
                 }
               ]}
-              onPress={() => handlePlanSelect(plan.id)}
+              onPress={() => setSelectedProduct(product.id)}
+              activeOpacity={0.8}
             >
-              <Text style={[
-                styles.selectButtonText,
-                {
-                  color: selectedPlan === plan.id ? colors.background : colors.button
-                }
-              ]}>
-                {selectedPlan === plan.id ? t('offers.selected') : t('offers.select')}
-              </Text>
-            </TouchableOpacity>
-          </TouchableOpacity>
-        ))}
-      </View>
+              {/* Badge Popular */}
+              {product.id === "XKSRATBQW" && (
+                <View style={[styles.popularBadge, { backgroundColor: colors.button }]}>
+                  <Text style={[styles.popularText, { color: colors.background }]}>
+                    {t('offers.popular')}
+                  </Text>
+                </View>
+              )}
 
-      {/* Espace en bas */}
-      <View style={styles.bottomSpacer} />
-    </ScrollView>
+              {/* Header du plan */}
+              <View style={styles.planHeader}>
+                <View style={styles.planInfo}>
+                  <Text style={[styles.planName, { color: colors.text }]}>
+                    {product.title}
+                  </Text>
+                  <Text style={[styles.planPrice, { color: colors.textSecondary }]}>
+                    {product.price || product.displayPrice}
+                  </Text>
+                </View>
+
+                {/* Checkmark si sélectionné */}
+                {selectedProduct === product.id && (
+                  <View style={[styles.checkmark, { backgroundColor: colors.button }]}>
+                    <IconSymbol name="checkmark" size={16} color={colors.background} />
+                  </View>
+                )}
+              </View>
+
+              {/* Features */}
+              <View style={styles.featuresContainer}>
+                {products.map((product, index) => (
+                  <View key={index} style={styles.featureItem}>
+                    <IconSymbol
+                      name="checkmark"
+                      size={16}
+                      color={colors.button}
+                    />
+                    <Text style={[styles.featureText, { color: colors.text }]}>
+                      {t(`offers.features.${product.id}.${index + 1}`) || ''}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+
+              {/* Bouton de sélection */}
+              <TouchableOpacity
+                style={[
+                  styles.selectButton,
+                  {
+                    backgroundColor: selectedProduct === product.id ? colors.button : 'transparent',
+                    borderColor: colors.button,
+                  }
+                ]}
+                onPress={() => setSelectedProduct(product.id)}
+              >
+                <Text style={[
+                  styles.selectButtonText,
+                  {
+                    color: selectedProduct === product.id ? colors.background : colors.button
+                  }
+                ]}>
+                  {selectedProduct === product.id ? t('offers.selected') : t('offers.select')}
+                </Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Espace en bas */}
+        <View style={styles.bottomSpacer} />
+      </ScrollView>
+
+
+      {/* Modal de checkout */}
+      <Checkout
+        visible={showGuestCheckout}
+        onCancel={handleGuestCheckoutCancel}
+        onContinue={handleGuestCheckoutContinue}
+      />
+    </View>
   );
 }
 
@@ -252,5 +295,10 @@ const styles = StyleSheet.create({
   },
   bottomSpacer: {
     height: 120,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingTop: Platform.OS === 'ios' ? 50 : 0, // Espace pour la status bar
   },
 }); 
