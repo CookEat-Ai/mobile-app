@@ -9,17 +9,32 @@ interface CategoryButtonProps {
   onPress?: () => void;
   isMore?: boolean;
   colorIcon?: string;
+  isSelected?: boolean;
 }
 
-export default function CategoryButton({ title, icon, colorIcon, onPress, isMore = false }: CategoryButtonProps) {
+export default function CategoryButton({
+  title,
+  icon,
+  colorIcon,
+  onPress,
+  isMore = false,
+  isSelected = false
+}: CategoryButtonProps) {
   const colors = Colors.light;
+
+  const getBackgroundColor = () => {
+    if (isSelected)
+      return colors.accent;
+
+    return colors.surface;
+  };
 
   return (
     <TouchableOpacity
       style={[
         styles.container,
         {
-          backgroundColor: isMore ? colors.accent : colors.surface,
+          backgroundColor: getBackgroundColor(),
           borderColor: colors.border
         }
       ]}
@@ -30,7 +45,7 @@ export default function CategoryButton({ title, icon, colorIcon, onPress, isMore
         size={26}
         color={colorIcon}
       />
-      <Text style={[styles.title, { color: colors.button }]}>
+      <Text style={[styles.title]}>
         {title}
       </Text>
     </TouchableOpacity>

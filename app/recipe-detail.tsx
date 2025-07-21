@@ -50,8 +50,8 @@ export default function RecipeDetailScreen() {
     setIsLiked(!isLiked);
   };
 
-  const handleRateRecipe = () => {
-    console.log('Rate recipe pressed');
+  const handleAddToFavorites = () => {
+    setIsLiked(!isLiked);
   };
 
   return (
@@ -84,6 +84,7 @@ export default function RecipeDetailScreen() {
 
             {/* Bouton like */}
             <TouchableOpacity
+              activeOpacity={0.8}
               style={styles.likeButton}
               onPress={handleLikePress}
             >
@@ -156,11 +157,11 @@ export default function RecipeDetailScreen() {
         <View style={styles.bottomButtonContainer}>
           <TouchableOpacity
             activeOpacity={0.9}
-            style={styles.rateButton}
-            onPress={handleRateRecipe}
+            style={styles.favoriteButton}
+            onPress={handleAddToFavorites}
           >
-            <Ionicons name="star" size={20} color="#FFD700" />
-            <Text style={styles.rateButtonText}>{t('recipe.rateRecipe')}</Text>
+            <Ionicons name="heart" size={20} color={isLiked ? "red" : "white"} />
+            <Text style={styles.rateButtonText}>{t('recipe.addToFavorites')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -342,7 +343,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
     paddingVertical: 40,
   },
-  rateButton: {
+  favoriteButton: {
     backgroundColor: '#333',
     borderRadius: 2000,
     paddingVertical: 16,

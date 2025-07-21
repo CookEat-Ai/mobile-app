@@ -7,6 +7,7 @@ import UserHeader from '../../components/UserHeader';
 import { Colors } from '../../constants/Colors';
 import '../../i18n';
 
+let timeout: any;
 export default function HomeScreen() {
   const colors = Colors.light;
   const { t } = useTranslation();
@@ -47,7 +48,7 @@ export default function HomeScreen() {
 
   const onSpeechStart = () => {
     setIsRecording(true);
-    setTimeout(() => {
+    timeout = setTimeout(() => {
       setIsRecordingAnimationDelayFinished(true);
     }, 1000);
     startPulseAnimation();
@@ -307,6 +308,7 @@ export default function HomeScreen() {
     try {
       await Voice.stop();
       setIsRecording(false);
+      clearTimeout(timeout);
       setIsRecordingAnimationDelayFinished(false);
       moveMicrophoneBack();
       showContent();
@@ -318,6 +320,8 @@ export default function HomeScreen() {
       }
     } catch (error) {
       console.error('Erreur lors de l\'arrêt de l\'enregistrement:', error);
+      clearTimeout(timeout);
+      setIsRecordingAnimationDelayFinished(false);
       moveMicrophoneBack();
       showContent();
       hideStopButton();

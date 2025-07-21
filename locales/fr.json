@@ -1,5 +1,6 @@
 {
   "home": {
+    "hi": "Coucou",
     "title": "What do you want to eat today?",
     "intro": "Dites-nous ce que vous avez dans votre frigo et on vous donne des idées de plats",
     "voice": {
@@ -9,14 +10,31 @@
     }
   },
   "search": {
-    "title": "Recherche"
+    "title": "Recherche",
+    "categories": {
+      "Breakfast": "Petit-déjeuner",
+      "Lunch": "Déjeuner",
+      "Dinner": "Dîner",
+      "Snack": "Collation",
+      "FastFood": "Fast Food",
+      "Smoothies": "Smoothies",
+      "Dessert": "Dessert",
+      "All": "Toutes",
+      "breakfast": "Petit-déjeuner",
+      "lunch": "Déjeuner",
+      "dinner": "Dîner",
+      "snack": "Collation",
+      "fastfood": "Fast Food",
+      "smoothies": "Smoothies",
+      "dessert": "Dessert"
+    }
   },
   "recipe": {
     "cookingTime": "Temps de cuisson",
     "difficulty": "Difficulté",
     "servings": "Portions",
     "ingredients": "Ingrédients",
-    "rateRecipe": "Noter la recette"
+    "addToFavorites": "Ajouter aux favoris"
   },
   "tabs": {
     "home": "Accueil",

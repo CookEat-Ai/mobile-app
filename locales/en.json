@@ -1,5 +1,6 @@
 {
   "home": {
+    "hi": "Hi",
     "title": "What do you want to eat today?",
     "intro": "Tell us what you have in your fridge and we'll give you meal ideas",
     "voice": {
@@ -9,14 +10,31 @@
     }
   },
   "search": {
-    "title": "Search"
+    "title": "Search",
+    "categories": {
+      "Breakfast": "Breakfast",
+      "Lunch": "Lunch",
+      "Dinner": "Dinner",
+      "Snack": "Snack",
+      "FastFood": "Fast Food",
+      "Smoothies": "Smoothies",
+      "Dessert": "Dessert",
+      "All": "All",
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner",
+      "snack": "Snack",
+      "fastfood": "Fast Food",
+      "smoothies": "Smoothies",
+      "dessert": "Dessert"
+    }
   },
   "recipe": {
     "cookingTime": "Cooking time",
     "difficulty": "Difficulty",
     "servings": "Servings",
     "ingredients": "Ingredients",
-    "rateRecipe": "Rate Recipe"
+    "addToFavorites": "Add to favorites"
   },
   "tabs": {
     "home": "Home",

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from './ui/IconSymbol';
 
@@ -9,27 +9,65 @@ interface RecipeCardProps {
   isLiked?: boolean;
   onPress?: () => void;
   onLikePress?: () => void;
+  cookingTime?: number; // en minutes
+  difficulty?: 'easy' | 'medium' | 'hard';
+  rating?: number; // note sur 5
 }
 
-export default function RecipeCard({ title, image, isLiked = false, onPress, onLikePress }: RecipeCardProps) {
+export default function RecipeCard({
+  title,
+  image,
+  isLiked = false,
+  onPress,
+  onLikePress,
+  cookingTime,
+  difficulty,
+  rating
+}: RecipeCardProps) {
   const colors = Colors.light;
+
+  const formatCookingTime = (minutes: number) => {
+    if (minutes < 60) {
+      return `${minutes}min`;
+    }
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    if (remainingMinutes === 0) {
+      return `${hours}h`;
+    }
+    return `${hours}h${remainingMinutes}min`;
+  };
 
   return (
     <TouchableOpacity style={[styles.container, { backgroundColor: colors.card }]} onPress={onPress}>
       <View style={styles.imageContainer}>
         <Image src={image} style={styles.image} />
-        <TouchableOpacity style={styles.likeButton} onPress={onLikePress}>
-          <IconSymbol
-            name={isLiked ? "heart" : "heart-outline"}
-            size={20}
-            color={isLiked ? "#FF6B6B" : "#FFFFFF"}
-          />
-        </TouchableOpacity>
+
+        {/* Note en haut à droite */}
+        {rating && (
+          <View style={styles.ratingContainer}>
+            <View style={styles.starsContainer}>
+              <IconSymbol
+                name={Platform.OS === 'ios' ? "star.fill" : "star"}
+                size={16}
+                color="#FFD700"
+              />
+            </View>
+            <Text style={styles.ratingText}>{rating.toFixed(1)}</Text>
+          </View>
+        )}
       </View>
       <View style={styles.content}>
-        <Text style={[styles.title, { color: colors.text }]} numberOfLines={2}>
-          {title}
-        </Text>
+        <View style={styles.titleRow}>
+          <Text style={[styles.title, { color: colors.text }]} numberOfLines={2} style={styles.titleText}>
+            {title}
+          </Text>
+          {cookingTime && (
+            <Text style={[styles.cookingTime, { color: colors.textSecondary }]}>
+              {formatCookingTime(cookingTime)}
+            </Text>
+          )}
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -58,23 +96,44 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
   },
-  likeButton: {
+  ratingContainer: {
     position: 'absolute',
     top: 12,
     right: 12,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    borderRadius: 20,
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    borderRadius: 12,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    flexDirection: 'row',
     alignItems: 'center',
+  },
+  starsContainer: {
+    flexDirection: 'row',
+    marginRight: 4,
+  },
+  ratingText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '600',
   },
   content: {
     padding: 16,
   },
-  title: {
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  titleText: {
     fontSize: 16,
     fontWeight: '600',
     lineHeight: 20,
+    flex: 1,
+    marginRight: 8,
+  },
+  cookingTime: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginTop: 2,
   },
 }); 
