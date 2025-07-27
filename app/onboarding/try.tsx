@@ -21,6 +21,7 @@ import RecordDisplay from "../../components/RecordDisplay";
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import { Colors } from '../../constants/Colors';
 import { generateRecipesFromText } from '../../services/chatgpt';
+import { useRecipeContext } from '../../contexts/RecipeContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -29,7 +30,7 @@ export default function TryScreen() {
   const [isRecording, setIsRecording] = useState(false);
   const [liveText, setLiveText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [recipes, setRecipes] = useState<any[]>([]);
+  const { recipes, addRecipe } = useRecipeContext();
 
   // Animations pour masquer/afficher le contenu
   const titleOpacity = useRef(new Animated.Value(1)).current;
@@ -51,7 +52,21 @@ export default function TryScreen() {
     }, 300);
     try {
       const generatedRecipes = await generateRecipesFromText(ingredients);
-      setRecipes(generatedRecipes);
+      // Ajouter chaque recette au contexte
+      generatedRecipes.forEach((recipe: any) => {
+        const recipeId = uuid.v4() as string;
+        addRecipe({
+          id: recipeId,
+          title: recipe.title,
+          difficulty: recipe.difficulty,
+          cookingTime: recipe.cooking_time,
+          icon: recipe.icon,
+          image: '',
+          calories: Number(recipe.calories) || 0,
+          lipids: Number(recipe.lipides) || 0,
+          proteins: Number(recipe.proteines) || 0,
+        });
+      });
     } catch (error) {
       console.error('Erreur lors de la génération:', error);
       Alert.alert('Erreur', 'Impossible de générer les recettes. Vérifiez votre connexion internet.');
@@ -215,22 +230,22 @@ export default function TryScreen() {
               <Text style={styles.recipesTitle}>Recettes générées :</Text>
               {recipes.map((recipe, index) => (
                 <FavoriteRecipeCard
-                  key={index}
+                  key={recipe.id}
                   title={recipe.title}
                   icon={recipe.icon}
-                  cookingTime={recipe.cooking_time}
+                  cookingTime={parseInt(recipe.cookingTime)}
                   rating={4.5}
                   onPress={() => {
                     router.push({
                       pathname: '/recipe-detail',
                       params: {
-                        id: uuid.v4(),
+                        id: recipe.id,
                         title: recipe.title,
                         difficulty: recipe.difficulty,
-                        cookingTime: recipe.cooking_time,
+                        cookingTime: recipe.cookingTime,
                         calories: recipe.calories || 0,
-                        lipides: recipe.lipides || 0,
-                        proteines: recipe.proteines || 0,
+                        lipids: recipe.lipids || 0,
+                        proteins: recipe.proteins || 0,
                         icon: recipe.icon
                       }
                     });

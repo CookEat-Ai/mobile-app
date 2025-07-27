@@ -10,12 +10,8 @@ export async function searchImage(keywords: string) {
     const htmlData = await res.text();
     const searchObj = htmlData.match(/vqd="([\d-]+)"/);
 
-    if (!searchObj) {
-      console.log("Token Parsing Failed !");
+    if (!searchObj)
       return -1;
-    }
-
-    console.log("Obtained Token");
 
     const searchParams = new URLSearchParams({
       l: 'wt-wt',
@@ -48,7 +44,7 @@ export async function searchImage(keywords: string) {
 
     while (notFound) {
       for (const result of results) {
-        if (result.width > width)
+        if (result.width > width && result.image.includes("https"))
           return result.image;
       }
       width -= 300;

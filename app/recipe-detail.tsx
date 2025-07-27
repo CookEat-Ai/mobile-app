@@ -16,6 +16,7 @@ import uuid from 'react-native-uuid';
 import { getRecipeIngredients, getRecipeSteps } from "../services/chatgpt";
 import { Wave } from "react-native-animated-spinkit";
 import { searchImage } from "../services/image";
+import { useRecipeContext } from '../contexts/RecipeContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -47,9 +48,11 @@ export default function RecipeDetailScreen() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const [isLiked, setIsLiked] = useState(false);
+  const { getRecipe, addRecipe, updateRecipe } = useRecipeContext();
 
-  // Données de la recette depuis les paramètres
-  const [recipe, setRecipe] = useState<Recipe>({
+  // Récupérer la recette depuis le contexte ou créer une nouvelle
+  const existingRecipe = getRecipe(params.id as string);
+  const [recipe, setRecipe] = useState<Recipe>(existingRecipe || {
     id: params.id as string,
     title: params.title as string || 'Recette',
     difficulty: params.difficulty as string || 'Medium',
@@ -60,25 +63,45 @@ export default function RecipeDetailScreen() {
     lipids: parseInt(params.lipids as string) || 0,
     proteins: parseInt(params.proteins as string) || 0,
   });
-  const [loadingIngredients, setLoadingIngredients] = useState(true);
-  const [loadingSteps, setLoadingSteps] = useState(true);
-  const [loadingImage, setLoadingImage] = useState(true);
+
+  const [loadingIngredients, setLoadingIngredients] = useState(!existingRecipe?.ingredients);
+  const [loadingSteps, setLoadingSteps] = useState(!existingRecipe?.steps);
+  const [loadingImage, setLoadingImage] = useState(!existingRecipe?.image);
 
   useEffect(() => {
-    getRecipeIngredients(recipe as any).then((details) => {
-      setRecipe((prevRecipe) => ({ ...prevRecipe, ...details }));
-      setLoadingIngredients(false);
-    });
+    // Ajouter la recette au contexte si elle n'existe pas
+    if (!existingRecipe) {
+      addRecipe(recipe);
+    }
 
-    getRecipeSteps(recipe as any).then((details) => {
-      setRecipe((prevRecipe) => ({ ...prevRecipe, ...details }));
-      setLoadingSteps(false);
-    });
+    // Charger les ingrédients si nécessaire
+    if (!recipe.ingredients && loadingIngredients) {
+      getRecipeIngredients(recipe as any).then((details) => {
+        setRecipe((prevRecipe) => ({ ...prevRecipe, ...details }));
+        updateRecipe(recipe.id, details as Partial<Recipe>);
+        setLoadingIngredients(false);
+      });
+    }
 
-    searchImage(recipe.title).then((image) => {
-      setRecipe((prevRecipe) => ({ ...prevRecipe, image }));
-      setLoadingImage(false);
-    });
+    // Charger les étapes si nécessaire
+    if (!recipe.steps && loadingSteps) {
+      getRecipeSteps(recipe as any).then((details) => {
+        setRecipe((prevRecipe) => ({ ...prevRecipe, ...details }));
+        updateRecipe(recipe.id, details as Partial<Recipe>);
+        setLoadingSteps(false);
+      });
+    }
+
+    // Charger l'image si nécessaire
+    if (!recipe.image && loadingImage) {
+      searchImage(recipe.title).then((image) => {
+        if (image) {
+          setRecipe((prevRecipe) => ({ ...prevRecipe, image }));
+          updateRecipe(recipe.id, { image });
+        }
+        setLoadingImage(false);
+      });
+    }
   }, []);
 
   const handleBackPress = () => {
