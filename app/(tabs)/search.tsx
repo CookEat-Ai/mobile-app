@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { router } from "expo-router";
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -227,14 +227,13 @@ const categories = [
   { id: '8', title: 'All', icon: 'ellipsis-horizontal' as const, isMore: true, colorIcon: '#738725' },
 ];
 
-export default function SearchScreen() {
+export default function SearchScreen({ navigation }: { navigation: any }) {
   const { t } = useTranslation();
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState('');
   const [likedRecipes, setLikedRecipes] = useState<Set<string>>(new Set(['2']));
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const router = useRouter();
 
   // Fonction pour filtrer les recettes par texte de recherche
   const getFilteredRecipes = () => {

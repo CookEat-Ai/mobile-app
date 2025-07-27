@@ -38,3 +38,4 @@ yarn-error.*
 
 app-example
 TO DO.txt
+.env

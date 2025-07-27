@@ -1637,6 +1637,19 @@
   dependencies:
     nanoid "^3.3.11"
 
+"@react-navigation/stack@^7.4.2":
+  version "7.4.2"
+  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-7.4.2.tgz#55f64bc1131eb86528a3509f77779a0c2fb2e327"
+  integrity sha512-QlqBxKBfKVx/XRH04pRRGQ92tO1fV0RL7YEw5G4pew6CNY26102dVQl5A39ZztvlvEDQbCQkatyDS7i2xR1QiA==
+  dependencies:
+    "@react-navigation/elements" "^2.5.2"
+    color "^4.2.3"
+
+"@revenuecat/purchases-typescript-internal@15.0.0":
+  version "15.0.0"
+  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-typescript-internal/-/purchases-typescript-internal-15.0.0.tgz#9197fb1218238ac695a799b8c06d648430214f13"
+  integrity sha512-EUR2jD8zk59MNON3vYpU90J+rvLxP09jO1/x2rSMV8w6dd5BGoxIP5x5So5HdISfz5Lz1egeVbc2LQ+5Ord4fw==
+
 "@rtsao/scc@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@rtsao/scc/-/scc-1.1.0.tgz#927dd2fae9bc3361403ac2c7a00c32ddce9ad7e8"
@@ -3395,11 +3408,6 @@ expo-haptics@~14.1.4:
   version "14.1.4"
   resolved "https://registry.yarnpkg.com/expo-haptics/-/expo-haptics-14.1.4.tgz#442f48b1bdf83484d4fcadc653445aaae6049b70"
   integrity sha512-QZdE3NMX74rTuIl82I+n12XGwpDWKb8zfs5EpwsnGi/D/n7O2Jd4tO5ivH+muEG/OCJOMq5aeaVDqqaQOhTkcA==
-
-expo-iap@2.5.3:
-  version "2.5.3"
-  resolved "https://registry.yarnpkg.com/expo-iap/-/expo-iap-2.5.3.tgz#570af0aaecf239f1ab08aeb898158d4b42dcb9af"
-  integrity sha512-Kpz2vTTJgvDikP0TbosGEsvJimVxHiiOZKLAOu5RrvTslP+MWOUMNz1uB9MraD8NAwYzgiFYm8yzqqZMBTDYZQ==
 
 expo-image@~2.3.2:
   version "2.3.2"
@@ -5252,6 +5260,11 @@ open@^8.0.4:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
+openai@^5.10.2:
+  version "5.10.2"
+  resolved "https://registry.yarnpkg.com/openai/-/openai-5.10.2.tgz#5391ac067bc0a96fc6d2909bed86630960d0041c"
+  integrity sha512-n+vi74LzHtvlKcDPn9aApgELGiu5CwhaLG40zxLTlFQdoSJCLACORIPC2uVQ3JEYAbqapM+XyRKFy2Thej7bIw==
+
 optionator@^0.9.3:
   version "0.9.4"
   resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.9.4.tgz#7ea1c1a5d91d764fb282139c88fe11e182a3a734"
@@ -5591,6 +5604,11 @@ react-is@^19.1.0:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-19.1.0.tgz#805bce321546b7e14c084989c77022351bbdd11b"
   integrity sha512-Oe56aUPnkHyyDxxkvqtd7KkdQP5uIUfHxd5XTb3wE9d/kRnZLmKbDB0GWk919tdQ+mxxPtG6EAs6RMT6i1qtHg==
 
+react-native-animated-spinkit@^1.5.2:
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/react-native-animated-spinkit/-/react-native-animated-spinkit-1.5.2.tgz#b1c00ecbadf48634273e6a843f8dfbcb7c006186"
+  integrity sha512-YCQGR3HzEQvyaAnepiyf/hv88Sta3UIZ2CFZPtFqwu+VbFJfMgjJZniOx4157TuR5AAYajEJP9Fgy+JLIU3jzQ==
+
 react-native-edge-to-edge@1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/react-native-edge-to-edge/-/react-native-edge-to-edge-1.6.0.tgz#2ba63b941704a7f713e298185c26cde4d9e4b973"
@@ -5614,6 +5632,20 @@ react-native-is-edge-to-edge@^1.1.6, react-native-is-edge-to-edge@^1.1.7:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/react-native-is-edge-to-edge/-/react-native-is-edge-to-edge-1.2.1.tgz#64e10851abd9d176cbf2b40562f751622bde3358"
   integrity sha512-FLbPWl/MyYQWz+KwqOZsSyj2JmLKglHatd3xLZWskXOpRaio4LfEDEz8E/A6uD8QoTHW6Aobw1jbEwK7KMgR7Q==
+
+react-native-purchases-ui@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-purchases-ui/-/react-native-purchases-ui-9.0.0.tgz#96e373c51223e7e66200db1a99c3d297532406eb"
+  integrity sha512-vgrI5F8R8diYCjt5F1JzDHRc/LDT43gMegDfzDYZvfF3qCzKdDEviaVKOsn3I3PTU1mI8uMSflA4H7cYeF9h3g==
+  dependencies:
+    "@revenuecat/purchases-typescript-internal" "15.0.0"
+
+react-native-purchases@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-purchases/-/react-native-purchases-9.0.0.tgz#5fa2eb8163fec063bda40950bbce7921774b4e3e"
+  integrity sha512-zBcP15n07CujuYAwEX3kWWjo5O9xwME6WLhuGAsQ5zbkP3eNM3TQtIM1O4HDxNZxkRlpZn1Z3YYWtJ1v/ljqMQ==
+  dependencies:
+    "@revenuecat/purchases-typescript-internal" "15.0.0"
 
 react-native-reanimated@~3.17.4:
   version "3.17.5"
@@ -5646,6 +5678,11 @@ react-native-screens@~4.11.1:
     react-freeze "^1.0.0"
     react-native-is-edge-to-edge "^1.1.7"
     warn-once "^0.1.0"
+
+react-native-uuid@^2.0.3:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-uuid/-/react-native-uuid-2.0.3.tgz#f85f8a8d68e52e3f1c18ba0f02ec7776f9d4a0da"
+  integrity sha512-f/YfIS2f5UB+gut7t/9BKGSCYbRA9/74A5R1MDp+FLYsuS+OSWoiM/D8Jko6OJB6Jcu3v6ONuddvZKHdIGpeiw==
 
 react-native-web@~0.20.0:
   version "0.20.0"
@@ -7030,3 +7067,8 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zod@^4.0.10:
+  version "4.0.10"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-4.0.10.tgz#b609ee8807c1fe6a9d8beec2be51220cc7a8f0ca"
+  integrity sha512-3vB+UU3/VmLL2lvwcY/4RV2i9z/YU0DTV/tDuYjrwmx5WeJ7hwy+rGEEx8glHp6Yxw7ibRbKSaIFBgReRPe5KA==

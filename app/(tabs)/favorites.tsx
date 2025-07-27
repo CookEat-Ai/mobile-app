@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { router } from "expo-router";
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -74,7 +74,6 @@ export default function FavoritesScreen() {
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>('all');
-  const router = useRouter();
 
   const handleBackPress = () => {
     router.back();

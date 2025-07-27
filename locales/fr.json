@@ -1,7 +1,7 @@
 {
   "home": {
     "hi": "Coucou",
-    "title": "What do you want to eat today?",
+    "title": "Qu'est-ce que vous voulez manger aujourd'hui ?🍳",
     "intro": "Dites-nous ce que vous avez dans votre frigo et on vous donne des idées de plats",
     "voice": {
       "start": "Appuyez pour commencer",

@@ -5,7 +5,8 @@ import { IconSymbol } from './ui/IconSymbol';
 
 interface FavoriteRecipeCardProps {
   title: string;
-  image: any;
+  image?: any;
+  icon?: string;
   cookingTime: number; // en minutes
   rating: number; // note sur 5
   onPress?: () => void;
@@ -14,6 +15,7 @@ interface FavoriteRecipeCardProps {
 export default function FavoriteRecipeCard({
   title,
   image,
+  icon,
   cookingTime,
   rating,
   onPress
@@ -35,7 +37,13 @@ export default function FavoriteRecipeCard({
   return (
     <TouchableOpacity style={[styles.container, { backgroundColor: colors.card }]} onPress={onPress}>
       <View style={styles.imageContainer}>
-        <Image src={image} style={styles.image} />
+        {
+          icon
+            ? <Text style={{ fontSize: 34 }}>{icon}</Text>
+            : image
+              ? <Image src={image} style={styles.image} />
+              : <Text style={{ fontSize: 34 }}>🍲</Text>
+        }
       </View>
       <View style={styles.content}>
         <Text style={[styles.title, { color: colors.text }]} numberOfLines={2}>
@@ -81,6 +89,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   imageContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 12,
   },
   image: {

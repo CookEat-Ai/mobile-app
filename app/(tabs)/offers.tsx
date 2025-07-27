@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Alert,
-  Modal,
   Platform,
   ScrollView,
   StyleSheet,
@@ -14,75 +12,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Checkout from '../../components/Checkout';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
-import { useIAP } from "expo-iap";
 
-// Données des plans avec prix
-const productIds = [
-  'XKJXATBXR',
-  'XKSRATBQW',
-];
+const subscriptions: any = [];
 
 export default function OffersScreen() {
   const { t } = useTranslation();
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
-  const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+  const [selectedSubscription, setSelectedSubscription] = useState<string | null>(null);
   const [showGuestCheckout, setShowGuestCheckout] = useState(false);
-
-  let { connected, products, getProducts, requestPurchase, validateReceipt } =
-    useIAP({
-      onPurchaseSuccess: (purchase) => {
-        console.log('Purchase successful:', purchase);
-        // Handle successful purchase
-        validatePurchase(purchase);
-      },
-      onPurchaseError: (error) => {
-        console.error('Purchase failed:', error);
-        // Handle purchase error
-      },
-    });
-
-  useEffect(() => {
-    if (connected) {
-      getProducts(productIds);
-      console.log(products);
-
-      products.push({
-        id: 'free',
-        title: 'Free',
-        displayPrice: 'Free'
-      } as any)
-
-      products.push({
-        id: 'XKJXATBXR',
-        title: 'Pro Monthly',
-        displayPrice: '$7.99/month'
-      } as any)
-
-      products.push({
-        id: 'XKSRATBQW',
-        title: 'Pro Yearly',
-        displayPrice: '$5.99/month'
-      } as any)
-    }
-    // products.push({
-    //   id: 'free',
-    //   title: 'Free',
-    //   displayPrice: 'Free'
-    // } as any)
-  }, [connected]);
-
-  const validatePurchase = async (purchase: any) => {
-    try {
-      const result = await validateReceipt(purchase.transactionId);
-      if (result.isValid) {
-        // Grant user the purchased content
-        console.log('Receipt is valid');
-      }
-    } catch (error) {
-      console.error('Validation failed:', error);
-    }
-  };
 
   const handleGuestCheckoutContinue = (email: string, firstName: string) => {
     setShowGuestCheckout(false);
@@ -90,7 +28,7 @@ export default function OffersScreen() {
 
   const handleGuestCheckoutCancel = () => {
     setShowGuestCheckout(false);
-    setSelectedProduct(null);
+    setSelectedSubscription(null);
   };
 
   return (
@@ -111,22 +49,22 @@ export default function OffersScreen() {
 
         {/* Plans */}
         <View style={styles.plansContainer}>
-          {products.map((product) => (
+          {subscriptions.map((subscription: any) => (
             <TouchableOpacity
-              key={product.id}
+              key={subscription.id}
               style={[
                 styles.planCard,
                 {
                   backgroundColor: colors.surface,
-                  borderColor: selectedProduct === product.id ? colors.button : colors.border,
-                  borderWidth: selectedProduct === product.id ? 2 : 1,
+                  borderColor: selectedSubscription === subscription.id ? colors.button : colors.border,
+                  borderWidth: selectedSubscription === subscription.id ? 2 : 1,
                 }
               ]}
-              onPress={() => setSelectedProduct(product.id)}
+              onPress={() => setSelectedSubscription(subscription.id)}
               activeOpacity={0.8}
             >
               {/* Badge Popular */}
-              {product.id === "XKSRATBQW" && (
+              {subscription.id === "XKSRATBQW" && (
                 <View style={[styles.popularBadge, { backgroundColor: colors.button }]}>
                   <Text style={[styles.popularText, { color: colors.background }]}>
                     {t('offers.popular')}
@@ -138,15 +76,15 @@ export default function OffersScreen() {
               <View style={styles.planHeader}>
                 <View style={styles.planInfo}>
                   <Text style={[styles.planName, { color: colors.text }]}>
-                    {product.title}
+                    {subscription.title}
                   </Text>
                   <Text style={[styles.planPrice, { color: colors.textSecondary }]}>
-                    {product.price || product.displayPrice}
+                    {subscription.price || subscription.displayPrice}
                   </Text>
                 </View>
 
                 {/* Checkmark si sélectionné */}
-                {selectedProduct === product.id && (
+                {selectedSubscription === subscription.id && (
                   <View style={[styles.checkmark, { backgroundColor: colors.button }]}>
                     <IconSymbol name="checkmark" size={16} color={colors.background} />
                   </View>
@@ -155,7 +93,7 @@ export default function OffersScreen() {
 
               {/* Features */}
               <View style={styles.featuresContainer}>
-                {products.map((product, index) => (
+                {subscriptions.map((subscription: any, index: number) => (
                   <View key={index} style={styles.featureItem}>
                     <IconSymbol
                       name="checkmark"
@@ -163,7 +101,7 @@ export default function OffersScreen() {
                       color={colors.button}
                     />
                     <Text style={[styles.featureText, { color: colors.text }]}>
-                      {t(`offers.features.${product.id}.${index + 1}`) || ''}
+                      {t(`offers.features.${subscription.id}.${index + 1}`) || ''}
                     </Text>
                   </View>
                 ))}
@@ -174,19 +112,19 @@ export default function OffersScreen() {
                 style={[
                   styles.selectButton,
                   {
-                    backgroundColor: selectedProduct === product.id ? colors.button : 'transparent',
+                    backgroundColor: selectedSubscription === subscription.id ? colors.button : 'transparent',
                     borderColor: colors.button,
                   }
                 ]}
-                onPress={() => setSelectedProduct(product.id)}
+                onPress={() => setSelectedSubscription(subscription.id)}
               >
                 <Text style={[
                   styles.selectButtonText,
                   {
-                    color: selectedProduct === product.id ? colors.background : colors.button
+                    color: selectedSubscription === subscription.id ? colors.background : colors.button
                   }
                 ]}>
-                  {selectedProduct === product.id ? t('offers.selected') : t('offers.select')}
+                  {selectedSubscription === subscription.id ? t('offers.selected') : t('offers.select')}
                 </Text>
               </TouchableOpacity>
             </TouchableOpacity>
@@ -196,7 +134,6 @@ export default function OffersScreen() {
         {/* Espace en bas */}
         <View style={styles.bottomSpacer} />
       </ScrollView>
-
 
       {/* Modal de checkout */}
       <Checkout

@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Dimensions,
@@ -12,35 +12,74 @@ import {
   View
 } from 'react-native';
 import { Colors } from '../constants/Colors';
+import uuid from 'react-native-uuid';
+import { getRecipeIngredients, getRecipeSteps } from "../services/chatgpt";
+import { Wave } from "react-native-animated-spinkit";
+import { searchImage } from "../services/image";
 
 const { width, height } = Dimensions.get('window');
+
+interface Recipe {
+  id: string;
+  title: string;
+  difficulty: string;
+  cookingTime: string;
+  icon: string;
+  image: string;
+  calories: number;
+  lipids: number;
+  proteins: number;
+  ingredients?: {
+    name: string;
+    quantity: string;
+    icon: string;
+    tags: string[];
+  }[];
+  steps?: {
+    title: string;
+    description: string;
+  }[];
+}
 
 export default function RecipeDetailScreen() {
   const { t } = useTranslation();
   const colors = Colors.light;
-  const router = useRouter();
   const params = useLocalSearchParams();
+  const router = useRouter();
   const [isLiked, setIsLiked] = useState(false);
 
-  // Données de la recette (à remplacer par les vraies données)
-  const recipe = {
+  // Données de la recette depuis les paramètres
+  const [recipe, setRecipe] = useState<Recipe>({
     id: params.id as string,
-    title: 'Gourmet dessert',
-    description: 'Elegant layered mousse cake with fresh fruit toppings, including blueberries, kiwi.',
-    image: 'https://img.cuisineaz.com/660x660/2015/02/28/i113047-photo-de-poulet-a-la-creme-fraiche.jpeg',
-    cookingTime: '30 mins',
-    difficulty: 'Medium',
-    servings: '4 people',
-    ingredients: [
-      {
-        id: '1',
-        name: 'Salmon',
-        quantity: '300 gr',
-        image: 'https://img.cuisineaz.com/660x660/2015/02/28/i113047-photo-de-poulet-a-la-creme-fraiche.jpeg',
-        tags: ['Protein', 'Fat', 'Omega-3']
-      }
-    ]
-  };
+    title: params.title as string || 'Recette',
+    difficulty: params.difficulty as string || 'Medium',
+    cookingTime: params.cookingTime as string || '30 mins',
+    icon: params.icon as string || '🍲',
+    image: params.image as string,
+    calories: parseInt(params.calories as string) || 0,
+    lipids: parseInt(params.lipids as string) || 0,
+    proteins: parseInt(params.proteins as string) || 0,
+  });
+  const [loadingIngredients, setLoadingIngredients] = useState(true);
+  const [loadingSteps, setLoadingSteps] = useState(true);
+  const [loadingImage, setLoadingImage] = useState(true);
+
+  useEffect(() => {
+    getRecipeIngredients(recipe as any).then((details) => {
+      setRecipe((prevRecipe) => ({ ...prevRecipe, ...details }));
+      setLoadingIngredients(false);
+    });
+
+    getRecipeSteps(recipe as any).then((details) => {
+      setRecipe((prevRecipe) => ({ ...prevRecipe, ...details }));
+      setLoadingSteps(false);
+    });
+
+    searchImage(recipe.title).then((image) => {
+      setRecipe((prevRecipe) => ({ ...prevRecipe, image }));
+      setLoadingImage(false);
+    });
+  }, []);
 
   const handleBackPress = () => {
     router.back();
@@ -55,93 +94,93 @@ export default function RecipeDetailScreen() {
   };
 
   return (
-    <>
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          {/* Section Image avec boutons overlay */}
-          <View style={styles.imageContainer}>
-            <Image
-              source={{ uri: recipe.image }}
-              style={styles.recipeImage}
-              resizeMode="cover"
-            />
-
-            {/* Overlay sombre pour les boutons */}
-            <View style={styles.imageOverlay} />
-
-            {/* Bouton retour */}
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={handleBackPress}
-            >
-              <Ionicons name="arrow-back" size={24} color="#000" />
-            </TouchableOpacity>
-
-            {/* Bouton like */}
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.likeButton}
-              onPress={handleLikePress}
-            >
-              <Ionicons
-                name={isLiked ? "heart" : "heart-outline"}
-                size={24}
-                color={isLiked ? "#FF0000" : "#000"}
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Section Image avec boutons overlay */}
+        <View style={styles.imageContainer}>
+          {loadingImage
+            ? <Wave size={50} color={colors.text} />
+            : recipe.image
+              ? <Image
+                source={{ uri: recipe.image }}
+                style={styles.recipeImage}
+                resizeMode="cover"
               />
-            </TouchableOpacity>
-          </View>
+              : <Text style={{ fontSize: width * 0.5 }}>{recipe.icon}</Text>
+          }
 
-          {/* Section Informations */}
-          <View style={styles.infoContainer}>
-            {/* Titre */}
-            <Text style={styles.recipeTitle}>{recipe.title}</Text>
+          {/* Overlay sombre pour les boutons */}
+          <View style={styles.imageOverlay} />
 
-            {/* Description */}
-            <Text style={styles.recipeDescription}>{recipe.description}</Text>
+          {/* Bouton retour */}
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={handleBackPress}
+          >
+            <Ionicons name="arrow-back" size={24} color="#000" />
+          </TouchableOpacity>
 
-            {/* Métriques */}
-            <View style={styles.metricsContainer}>
-              <View style={styles.metricCard}>
-                <Ionicons name="time-outline" size={24} color="#666" />
-                <Text style={styles.metricLabel}>{t('recipe.cookingTime')}</Text>
-                <Text style={styles.metricValue}>{recipe.cookingTime}</Text>
-              </View>
+          {/* Bouton like */}
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.likeButton}
+            onPress={handleLikePress}
+          >
+            <Ionicons
+              name={isLiked ? "heart" : "heart-outline"}
+              size={24}
+              color={isLiked ? "#FF0000" : "#000"}
+            />
+          </TouchableOpacity>
+        </View>
 
-              <View style={styles.metricCard}>
-                <Ionicons name="star-outline" size={24} color="#666" />
-                <Text style={styles.metricLabel}>{t('recipe.difficulty')}</Text>
-                <Text style={styles.metricValue}>{recipe.difficulty}</Text>
-              </View>
+        {/* Section Informations */}
+        <View style={styles.infoContainer}>
+          {/* Titre */}
+          <Text style={styles.recipeTitle}>{recipe.title}</Text>
 
-              <View style={styles.metricCard}>
-                <Ionicons name="people-outline" size={24} color="#666" />
-                <Text style={styles.metricLabel}>{t('recipe.servings')}</Text>
-                <Text style={styles.metricValue}>{recipe.servings}</Text>
-              </View>
+          {/* Description */}
+          {/* <Text style={styles.recipeDescription}>{recipe.description}</Text> */}
+
+          {/* Métriques */}
+          <View style={styles.metricsContainer}>
+            <View style={styles.metricCard}>
+              <Ionicons name="time-outline" size={24} color="#666" />
+              <Text style={styles.metricLabel}>{t('recipe.cookingTime')}</Text>
+              <Text style={styles.metricValue}>{recipe.cookingTime}</Text>
             </View>
 
-            {/* Section Ingrédients */}
-            <View style={styles.ingredientsSection}>
-              <Text style={styles.ingredientsTitle}>{t('recipe.ingredients')} ({recipe.ingredients.length})</Text>
+            <View style={styles.metricCard}>
+              <Ionicons name="star-outline" size={24} color="#666" />
+              <Text style={styles.metricLabel}>{t('recipe.difficulty')}</Text>
+              <Text style={styles.metricValue}>{recipe.difficulty}</Text>
+            </View>
 
-              {recipe.ingredients.map((ingredient) => (
-                <View key={ingredient.id} style={styles.ingredientItem}>
-                  <Image
-                    source={{ uri: ingredient.image }}
-                    style={styles.ingredientImage}
-                    resizeMode="cover"
-                  />
+            <View style={styles.metricCard}>
+              <Ionicons name="people-outline" size={24} color="#666" />
+              <Text style={styles.metricLabel}>{t('recipe.servings')}</Text>
+              {/* <Text style={styles.metricValue}>{recipe.servings}</Text> */}
+            </View>
+          </View>
+
+          {/* Section Ingrédients */}
+          <View style={styles.ingredientsSection}>
+            <Text style={styles.ingredientsTitle}>{t('recipe.ingredients')} {!loadingIngredients && `(${recipe.ingredients?.length})`}</Text>
+
+            {loadingIngredients
+              ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Wave size={50} color={colors.text} />
+              </View>
+              : recipe.ingredients?.map((ingredient: any) => (
+                <View key={uuid.v4()} style={styles.ingredientItem}>
+                  <Text style={{ fontSize: 24 }}>{ingredient.icon}</Text>
+
                   <View style={styles.ingredientInfo}>
                     <Text style={styles.ingredientName}>{ingredient.name}</Text>
                     <Text style={styles.ingredientQuantity}>{ingredient.quantity}</Text>
                   </View>
                   <View style={styles.ingredientTags}>
-                    {ingredient.tags.map((tag, index) => (
+                    {ingredient.tags?.map((tag: string, index: number) => (
                       <View key={index} style={[styles.tag, { backgroundColor: getTagColor(tag) }]}>
                         <Text style={styles.tagText}>{tag}</Text>
                       </View>
@@ -149,23 +188,39 @@ export default function RecipeDetailScreen() {
                   </View>
                 </View>
               ))}
-            </View>
           </View>
-        </ScrollView>
 
-        {/* Bouton Rate Recipe */}
-        <View style={styles.bottomButtonContainer}>
-          <TouchableOpacity
-            activeOpacity={0.9}
-            style={styles.favoriteButton}
-            onPress={handleAddToFavorites}
-          >
-            <Ionicons name="heart" size={20} color={isLiked ? "red" : "white"} />
-            <Text style={styles.rateButtonText}>{t('recipe.addToFavorites')}</Text>
-          </TouchableOpacity>
+          {/* Section Étapes de préparation */}
+          <View style={styles.stepsSection}>
+            <Text style={styles.stepsTitle}>Etapes {!loadingSteps && `(${recipe.steps?.length})`}</Text>
+
+            {loadingSteps
+              ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Wave size={50} color={colors.text} />
+              </View>
+              : recipe.steps?.map((step: any) => (
+                <View key={uuid.v4()} style={styles.stepItem}>
+                  <Text style={styles.stepTitle}>{step.title}</Text>
+                  <Text style={styles.stepDescription}>{step.description}</Text>
+                </View>
+              ))}
+          </View>
+
         </View>
+      </ScrollView>
+
+      {/* Bouton Rate Recipe */}
+      <View style={styles.bottomButtonContainer}>
+        <TouchableOpacity
+          activeOpacity={0.9}
+          style={styles.favoriteButton}
+          onPress={handleAddToFavorites}
+        >
+          <Ionicons name="heart" size={20} color={isLiked ? "red" : "white"} />
+          <Text style={styles.rateButtonText}>{t('recipe.addToFavorites')}</Text>
+        </TouchableOpacity>
       </View>
-    </>
+    </View>
   );
 }
 
@@ -177,6 +232,13 @@ const getTagColor = (tag: string) => {
       return '#FFB6C1';
     case 'Omega-3':
       return '#87CEEB';
+    case 'Carbohydrate':
+      return '#FFD700';
+    case 'Sugar':
+      return '#FF69B4';
+    case 'Vitamin':
+      return '#FF2970';
+    case 'Mineral':
     default:
       return '#E0E0E0';
   }
@@ -189,6 +251,8 @@ const styles = StyleSheet.create({
   imageContainer: {
     position: 'relative',
     height: height * 0.4,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   recipeImage: {
     width: '100%',
@@ -280,7 +344,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   ingredientsSection: {
-    marginBottom: 100,
+    marginBottom: 30,
   },
   ingredientsTitle: {
     fontSize: 20,
@@ -356,5 +420,32 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '600',
+  },
+  stepsSection: {
+    marginBottom: 100,
+  },
+  stepsTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#000',
+    marginBottom: 16,
+  },
+  stepItem: {
+    // flexDirection: 'row',
+    // alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 18,
+    marginBottom: 12,
+  },
+  stepTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+    marginBottom: 4,
+  },
+  stepDescription: {
+    fontSize: 16,
+    color: '#666',
   },
 }); 
