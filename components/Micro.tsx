@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import {
   Animated,
   Dimensions,
+  StyleProp,
   StyleSheet,
+  ViewStyle,
   TouchableOpacity,
   View
 } from 'react-native';
@@ -14,6 +16,7 @@ import { IconSymbol } from "./ui/IconSymbol";
 const { width, height } = Dimensions.get('window');
 
 interface MicroProps {
+  style?: StyleProp<ViewStyle>;
   onTextReceived?: (text: string) => void;
   onRecordingStateChange?: (isRecording: boolean) => void;
   onLiveTextChange?: (text: string) => void;
@@ -22,6 +25,7 @@ interface MicroProps {
 
 let timeout: any = null;
 export default function Micro({
+  style,
   onTextReceived,
   onRecordingStateChange,
   onLiveTextChange,
@@ -33,11 +37,16 @@ export default function Micro({
   const [isRecording, setIsRecording] = useState(false);
   const [isRecordingAnimationDelayFinished, setIsRecordingAnimationDelayFinished] = useState(false);
 
+  // Calculer la hauteur de base approximative basée sur les styles
+  // marginTop: 60 + marginBottom: 20 + micro: 90 + texte: ~60 = ~230
+  const baseHeight = height * 0.145;
+
   // Animations
   const pulseAnim = useRef(new Animated.Value(1)).current;
   const outerCircleAnim = useRef(new Animated.Value(1)).current;
   const middleCircleAnim = useRef(new Animated.Value(1)).current;
   const microphonePosition = useRef(new Animated.Value(0)).current;
+  const containerHeight = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     try {
@@ -68,6 +77,7 @@ export default function Micro({
 
     startPulseAnimation();
     moveMicrophoneToCenter();
+    expandContainer();
 
     // Masquer la tabbar
     if ((global as any).setTabBarVisibility) {
@@ -81,6 +91,7 @@ export default function Micro({
     setIsRecordingAnimationDelayFinished(false);
     stopPulseAnimation();
     moveMicrophoneBack();
+    shrinkContainer();
 
     // Afficher la tabbar
     if ((global as any).setTabBarVisibility) {
@@ -100,6 +111,7 @@ export default function Micro({
     setIsRecording(false);
     onRecordingStateChange?.(false);
     stopPulseAnimation();
+    shrinkContainer();
   };
 
   const moveMicrophoneToCenter = () => {
@@ -118,7 +130,21 @@ export default function Micro({
     }).start();
   };
 
+  const expandContainer = () => {
+    Animated.timing(containerHeight, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
+  };
 
+  const shrinkContainer = () => {
+    Animated.timing(containerHeight, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: false,
+    }).start();
+  };
 
   const startPulseAnimation = () => {
     // Animation du micro principal
@@ -188,12 +214,12 @@ export default function Micro({
       }
       await Voice.start(i18n.language === 'fr' ? 'fr-FR' : 'en-US');
     } catch (error) {
-      console.error('Erreur lors du démarrage de l\'enregistrement:', error);
       // Fallback en cas d'erreur
       setIsRecording(false);
       onRecordingStateChange?.(false);
       setIsRecordingAnimationDelayFinished(false);
       moveMicrophoneBack();
+      shrinkContainer();
       // Afficher la tabbar
       if ((global as any).setTabBarVisibility) {
         (global as any).setTabBarVisibility(true);
@@ -211,17 +237,18 @@ export default function Micro({
       }
       setIsRecordingAnimationDelayFinished(false);
       moveMicrophoneBack();
+      shrinkContainer();
       // Afficher la tabbar
       if ((global as any).setTabBarVisibility) {
         (global as any).setTabBarVisibility(true);
       }
     } catch (error) {
-      console.error('Erreur lors de l\'arrêt de l\'enregistrement:', error);
       if (timeout) {
         clearTimeout(timeout);
       }
       setIsRecordingAnimationDelayFinished(false);
       moveMicrophoneBack();
+      shrinkContainer();
       // Afficher la tabbar
       if ((global as any).setTabBarVisibility) {
         (global as any).setTabBarVisibility(true);
@@ -230,9 +257,32 @@ export default function Micro({
   };
 
   return (
-    <>
+    <Animated.View
+      style={[
+        styles.container,
+        style,
+        {
+          height: containerHeight.interpolate({
+            inputRange: [0, 1],
+            outputRange: [baseHeight, height],
+          }),
+        }
+      ]}
+    >
       {/* Interface vocale */}
-      <View style={styles.voiceInterfaceContainer}>
+      <Animated.View
+        style={[
+          styles.voiceInterfaceContainer,
+          {
+            transform: [{
+              translateY: containerHeight.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, height * 0.3], // Centre le contenu quand l'écran s'étend
+              })
+            }]
+          }
+        ]}
+      >
         {/* Le micro unique qui se transforme avec ses cercles */}
         <View style={styles.microphoneWithCircles}>
           {/* Cercles d'animation qui apparaissent seulement pendant l'enregistrement */}
@@ -320,21 +370,26 @@ export default function Micro({
                   outputRange: [10, 60],
                 })
               }],
-              color: colors.button,
+              color: colors.textSecondary,
             }
           ]}
         >
           {isRecording ? 'Donner nous la liste de vos ingrédients, on vous écoute... 👂🏼' : 'Appuyez pour commencer'}
         </Animated.Text>
-      </View>
+      </Animated.View>
 
       {/* Bouton d'arrêt qui apparaît en bas */}
-      <Animated.View
+      {/* <Animated.View
         style={[
           styles.stopButtonContainer,
           {
             opacity: isRecording ? 1 : 0,
-            transform: [{ translateY: isRecording ? 0 : 100 }],
+            transform: [{
+              translateY: containerHeight.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 100], // Apparaît depuis le bas
+              })
+            }],
           }
         ]}
       >
@@ -344,16 +399,17 @@ export default function Micro({
         >
           <IconSymbol name="xmark" size={24} color="white" />
         </TouchableOpacity>
-      </Animated.View>
-    </>
+      </Animated.View> */}
+    </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    position: 'relative',
+  },
   voiceInterfaceContainer: {
     alignItems: 'center',
-    marginBottom: 20,
-    marginTop: 60, // Ajouter de l'espace au-dessus du micro
     position: 'relative', // Pour le positionnement absolu des cercles
   },
   microphoneWithCircles: {
@@ -399,7 +455,7 @@ const styles = StyleSheet.create({
   },
   stopButtonContainer: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 50,
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -417,10 +473,10 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-
   voiceText: {
     paddingHorizontal: 20,
     fontSize: 20,
     textAlign: 'center',
+    fontFamily: 'Cronos Pro',
   },
 }); 

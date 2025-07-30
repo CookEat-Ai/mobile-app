@@ -108,7 +108,7 @@ export default function ProfileScreen() {
           />
         </View>
 
-        {isAuthenticated ? (
+        {/* {isAuthenticated ? (
           <>
             <Text style={[styles.userName, { color: colors.text }]}>
               {userData.name}
@@ -140,7 +140,7 @@ export default function ProfileScreen() {
               </Text>
             </TouchableOpacity>
           </>
-        )}
+        )} */}
       </View>
 
       {/* Section Préférences */}

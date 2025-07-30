@@ -15,7 +15,8 @@ const TabIcon = ({ name, focused, color }: { name: any; focused: boolean; color:
       <IconSymbol
         size={28}
         name={focused ? name.includes('magnifyingglass') ? name : `${name}.fill` : name}
-        color={focused ? Colors.light.button : color}
+        // color={focused ? Colors.light.button : color}
+        color={focused ? Colors.light.button : 'white'}
       />
     </View>
   );
@@ -139,6 +140,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 300,
-    backgroundColor: Colors.light.accent,
+    backgroundColor: 'white',
   },
 });

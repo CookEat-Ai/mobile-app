@@ -104,6 +104,12 @@ export default function RecipeDetailScreen() {
     }
   }, []);
 
+  useEffect(() => {
+    if (recipe.image && recipe.ingredients && recipe.steps) {
+      console.log('save recipe to api');
+    }
+  }, [recipe]);
+
   const handleBackPress = () => {
     router.back();
   };

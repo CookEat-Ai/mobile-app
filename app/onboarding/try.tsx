@@ -255,7 +255,7 @@ export default function TryScreen() {
             </View>
           </ScrollView>
 
-          <TouchableOpacity style={{ ...styles.continueButton, bottom: insets.bottom + 20 }} onPress={() => router.replace('/onboarding/socialProof')}>
+          <TouchableOpacity style={{ ...styles.continueButton, bottom: insets.bottom + 20 }} onPress={() => router.replace('/onboarding/offer7days')}>
             <Text style={styles.buttonText}>Commencer</Text>
             <IconSymbol
               style={{ position: 'absolute', right: 20 }}

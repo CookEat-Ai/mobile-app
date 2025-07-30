@@ -311,7 +311,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Titre principal */}
         <View style={styles.titleContainer}>
-          <Text style={[styles.mainTitle, { color: colors.button }]}>
+          <Text style={[styles.mainTitle, { color: colors.text }]}>
             {t('search.title')}
           </Text>
         </View>
@@ -347,7 +347,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
         {/* Sections des recettes par catégorie */}
         {getFilteredRecipes().map(([categoryKey, recipes]) => (
           <View key={categoryKey} style={styles.categorySection}>
-            <Text style={[styles.sectionTitle, { color: colors.button }]}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
               {t(`search.categories.${categoryKey}`)}
             </Text>
             <FlatList

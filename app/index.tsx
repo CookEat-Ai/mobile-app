@@ -39,6 +39,6 @@ export default function RootLayout() {
     return <Redirect href="/(tabs)" />
 
   return (
-    <Redirect href="/onboarding/try" />
+    <Redirect href="/onboarding/offer7days" />
   );
 }

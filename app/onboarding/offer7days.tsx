@@ -15,7 +15,7 @@ import { Colors } from '../../constants/Colors';
 
 const { width, height } = Dimensions.get('window');
 
-export default function paywallScreen() {
+export default function Offer7DaysScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={{
@@ -33,36 +33,31 @@ export default function paywallScreen() {
       <View style={styles.content}>
         {/* Section principale */}
         <View style={styles.mainSection}>
-          <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
-            <Image
-              source={require('../../assets/images/step4.png')}
-              style={styles.illustration}
-            />
-          </View>
 
-          <View style={{ flex: 1, justifyContent: 'flex-end', gap: 16, marginBottom: 30 }}>
-            {/* <Text style={{}}>Propulsé par CookEat AI</Text> */}
-
-            <View style={{}}>
-              <View style={{ marginBottom: 16 }}>
-                <Text style={styles.title}>Personnalisons maintenant votre expérience !</Text>
-              </View>
-              <View>
-                <Text style={styles.description}>
-                  Repondez à quelques questions.
-                </Text>
-              </View>
-
-              <TouchableOpacity style={styles.continueButton} onPress={() => router.replace('/(tabs)')}>
-                <Text style={styles.buttonText}>Commencer</Text>
-                <IconSymbol
-                  style={{ position: 'absolute', right: 20 }}
-                  name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}
-                  size={24}
-                  color="white"
-                />
-              </TouchableOpacity>
+          <View style={{ flex: 1, marginBottom: 30 }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+              <Text style={styles.title}>
+                On vous offre{"\n"}
+                <Text style={{ fontFamily: 'Degular', color: Colors.light.button }}>7 jours</Text> d&apos;essai gratuit pour tester notre IA !
+              </Text>
             </View>
+
+            {/* <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
+              <Image
+                source={require('../../assets/images/step4.png')}
+                style={styles.illustration}
+              />
+            </View> */}
+
+            <TouchableOpacity style={styles.continueButton} onPress={() => router.replace('/onboarding/reminder')}>
+              <Text style={styles.buttonText}>Commencer</Text>
+              <IconSymbol
+                style={{ position: 'absolute', right: 20 }}
+                name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}
+                size={24}
+                color="white"
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -95,11 +90,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: {
-    textAlign: 'left',
+    textAlign: 'center',
     fontSize: width * 0.09,
     fontFamily: 'Degular',
     color: Colors.light.text,
     lineHeight: 36,
+    paddingHorizontal: 20,
   },
   descriptionSection: {
     marginBottom: 48,

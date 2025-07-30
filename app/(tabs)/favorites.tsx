@@ -128,7 +128,7 @@ export default function FavoritesScreen() {
     }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.titleContainer}>
-          <Text style={[styles.mainTitle, { color: colors.button }]}>
+          <Text style={[styles.mainTitle, { color: colors.text }]}>
             {t('favorites.title')}
           </Text>
         </View>

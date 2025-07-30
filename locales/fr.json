@@ -1,8 +1,12 @@
 {
   "home": {
     "hi": "Coucou",
-    "title": "Qu'est-ce que vous voulez manger aujourd'hui ?🍳",
+    "title": "Qu'est-ce que vous voulez manger aujourd'hui ? 🍳",
     "intro": "Dites-nous ce que vous avez dans votre frigo et on vous donne des idées de plats",
+    "micro": "Mode vocale",
+    "microDescription": "Dictez-nous vos ingrédients",
+    "manual": "Mode manuel",
+    "manualDescription": "Selectionnez vos ingrédients",
     "voice": {
       "start": "Appuyez pour commencer",
       "recording": "Donner nous la liste de vos ingrédients, on vous écoute... 👂🏼",

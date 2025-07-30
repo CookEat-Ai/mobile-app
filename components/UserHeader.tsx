@@ -29,9 +29,9 @@ export default function UserHeader({
             <IconSymbol name="person" size={24} color={colors.button} />
           )}
         </View> */}
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginRight: 12 }}>👋🏼</Text>
+        <Text style={{ fontSize: 24, fontWeight: 'bold', marginRight: 12, fontFamily: 'Degular' }}>👋🏼</Text>
         <Text style={[styles.userName, { color: colors.text }]}>
-          {t('home.hi')} {userName},
+          {t('home.hi')},
         </Text>
       </View>
 
@@ -47,7 +47,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
     paddingVertical: 16,
   },
   profileSection: {
@@ -70,8 +69,8 @@ const styles = StyleSheet.create({
     borderRadius: 18,
   },
   userName: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontFamily: 'Degular',
   },
   notificationButton: {
     padding: 8,
