@@ -17,7 +17,7 @@ export default function RootLayout() {
   const checkOnboardingStatus = async () => {
     try {
       // test
-      await AsyncStorage.setItem(ONBOARDING_COMPLETED_KEY, 'false');
+      await AsyncStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
 
       let completed = await AsyncStorage.getItem(ONBOARDING_COMPLETED_KEY);
       if (completed === null) {

@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: 8,
     textAlign: 'center',
+    fontFamily: 'Cronos Pro',
   },
   moreContainer: {
     alignItems: 'center',

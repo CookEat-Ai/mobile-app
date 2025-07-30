@@ -83,7 +83,7 @@ export default function TabLayout() {
           borderRadius: 1000,
           height: 70,
           paddingHorizontal: 5,
-          marginHorizontal: "10%",
+          marginHorizontal: "18%",
           marginBottom: "5%",
           opacity: tabBarOpacity,
           transform: [{ translateY: tabBarTranslateY }],
@@ -110,13 +110,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => <TabIcon name="heart" focused={focused} color={color} />,
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="offers"
         options={{
           title: t('tabs.offers'),
           tabBarIcon: ({ color, focused }) => <TabIcon name="square.grid.2x2" focused={focused} color={color} />,
         }}
-      />
+      /> */}
       <Tabs.Screen
         name="profile"
         options={{

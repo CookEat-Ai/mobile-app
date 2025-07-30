@@ -59,13 +59,20 @@ export default function RecipeCard({
       </View>
       <View style={styles.content}>
         <View style={styles.titleRow}>
-          <Text style={[styles.title, { color: colors.text }]} numberOfLines={2} style={styles.titleText}>
+          <Text style={styles.titleText} numberOfLines={2}>
             {title}
           </Text>
           {cookingTime && (
-            <Text style={[styles.cookingTime, { color: colors.textSecondary }]}>
-              {formatCookingTime(cookingTime)}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <IconSymbol
+                name="clock"
+                size={18}
+                color={colors.textSecondary}
+              />
+              <Text style={[styles.cookingTime, { color: colors.textSecondary }]}>
+                {formatCookingTime(cookingTime)}
+              </Text>
+            </View>
           )}
         </View>
       </View>
@@ -122,9 +129,10 @@ const styles = StyleSheet.create({
   titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   titleText: {
+    fontFamily: 'Degular',
     fontSize: 16,
     fontWeight: '600',
     lineHeight: 20,
@@ -132,8 +140,10 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   cookingTime: {
+    fontFamily: 'Cronos Pro',
     fontSize: 14,
     fontWeight: '500',
     marginTop: 2,
+    marginLeft: 4,
   },
 }); 

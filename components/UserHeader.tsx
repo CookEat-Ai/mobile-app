@@ -31,7 +31,7 @@ export default function UserHeader({
         </View> */}
         <Text style={{ fontSize: 24, fontWeight: 'bold', marginRight: 12, fontFamily: 'Degular' }}>👋🏼</Text>
         <Text style={[styles.userName, { color: colors.text }]}>
-          {t('home.hi')},
+          {t('home.hi')}
         </Text>
       </View>
 
@@ -47,7 +47,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 16,
   },
   profileSection: {
     flexDirection: 'row',

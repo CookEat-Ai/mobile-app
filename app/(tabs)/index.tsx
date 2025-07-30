@@ -1,31 +1,21 @@
+import { router } from "expo-router";
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, FlatList } from 'react-native';
+import { Animated, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Wave } from 'react-native-animated-spinkit';
 import Micro from '../../components/Micro';
 import RecordDisplay from '../../components/RecordDisplay';
 import UserHeader from '../../components/UserHeader';
 import { Colors } from '../../constants/Colors';
-import { IconSymbol } from '../../components/ui/IconSymbol';
+import { generateRecipesFromText } from '../../services/chatgpt';
+import { useRecipeContext } from '../../contexts/RecipeContext';
 import '../../i18n';
 
 const { width } = Dimensions.get('window');
 
 // Données des catégories d'ingrédients
 const ingredientCategories = [
-  {
-    id: 'viandes',
-    title: 'Viandes',
-    icon: '🍖',
-    ingredients: [
-      { id: 'poulet', name: 'Poulet', icon: '🍗' },
-      { id: 'boeuf', name: 'Bœuf', icon: '🥩' },
-      { id: 'porc', name: 'Porc', icon: '🥓' },
-      { id: 'agneau', name: 'Agneau', icon: '🐑' },
-      { id: 'dinde', name: 'Dinde', icon: '🦃' },
-      { id: 'veau', name: 'Veau', icon: '🐄' },
-    ]
-  },
   {
     id: 'legumes',
     title: 'Légumes',
@@ -39,6 +29,23 @@ const ingredientCategories = [
       { id: 'brocoli', name: 'Brocoli', icon: '🥦' },
       { id: 'epinard', name: 'Épinard', icon: '🥬' },
       { id: 'poireau', name: 'Poireau', icon: '🧄' },
+      { id: 'ail', name: 'Ail', icon: '🧄' },
+      { id: 'champignon', name: 'Champignon', icon: '🍄' },
+      { id: 'concombre', name: 'Concombre', icon: '🥒' },
+      { id: 'chou-fleur', name: 'Chou-fleur', icon: '🥬' },
+    ]
+  },
+  {
+    id: 'viandes',
+    title: 'Viandes',
+    icon: '🍖',
+    ingredients: [
+      { id: 'poulet', name: 'Poulet', icon: '🍗' },
+      { id: 'boeuf', name: 'Bœuf', icon: '🥩' },
+      { id: 'porc', name: 'Porc', icon: '🥓' },
+      { id: 'agneau', name: 'Agneau', icon: '🐑' },
+      { id: 'dinde', name: 'Dinde', icon: '🦃' },
+      { id: 'veau', name: 'Veau', icon: '🐄' },
     ]
   },
   {
@@ -56,17 +63,18 @@ const ingredientCategories = [
   },
   {
     id: 'necessites',
-    title: 'Nécessités',
-    icon: '🧈',
+    title: 'Les essentiels',
+    icon: '🍚',
     ingredients: [
-      { id: 'beurre', name: 'Beurre', icon: '🧈' },
+      { id: 'pates', name: 'Pâtes', icon: '🍝' },
+      { id: 'riz', name: 'Riz', icon: '🍚' },
+      { id: 'semoule', name: 'Semoule', icon: '🍚' },
       { id: 'creme', name: 'Crème fraîche', icon: '🥛' },
+      { id: 'lait', name: 'Lait', icon: '🥛' },
       { id: 'huile', name: 'Huile d\'olive', icon: '🫒' },
-      { id: 'sel', name: 'Sel', icon: '🧂' },
-      { id: 'poivre', name: 'Poivre', icon: '🌶️' },
-      { id: 'ail', name: 'Ail', icon: '🧄' },
-      { id: 'farine', name: 'Farine', icon: '🌾' },
+      { id: 'beurre', name: 'Beurre', icon: '🧈' },
       { id: 'oeufs', name: 'Œufs', icon: '🥚' },
+      { id: 'farine', name: 'Farine', icon: '🌾' },
     ]
   },
   {
@@ -105,11 +113,12 @@ export default function HomeScreen() {
   const colors = Colors.light;
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const [recognizedText, setRecognizedText] = useState('');
+  const { addRecipe } = useRecipeContext();
   const [liveText, setLiveText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
+  const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
 
   // Référence pour le FlatList du carrousel
   const carouselRef = useRef<FlatList>(null);
@@ -118,10 +127,39 @@ export default function HomeScreen() {
   const headerOpacity = useRef(new Animated.Value(1)).current;
   const titleOpacity = useRef(new Animated.Value(1)).current;
   const introOpacity = useRef(new Animated.Value(1)).current;
+  const microCardOpacity = useRef(new Animated.Value(1)).current;
+  const manualCardOpacity = useRef(new Animated.Value(1)).current;
 
-  const handleTextReceived = (text: string) => {
-    setRecognizedText(text);
-    console.log('Texte reçu:', text);
+  const generateRecipes = async (ingredients: string) => {
+    setIsLoadingRecipes(true);
+    try {
+      const recipes = await generateRecipesFromText(ingredients);
+      console.log('Recettes générées:', recipes);
+
+      // Ajouter chaque recette au contexte
+      recipes.forEach((recipe: any) => {
+        const recipeId = Math.random().toString(36).substr(2, 9);
+        addRecipe({
+          id: recipeId,
+          title: recipe.title,
+          difficulty: recipe.difficulty,
+          cookingTime: recipe.cooking_time,
+          icon: recipe.icon,
+          image: '',
+          calories: Number(recipe.calories) || 0,
+          lipids: Number(recipe.lipides) || 0,
+          proteins: Number(recipe.proteines) || 0,
+        });
+      });
+
+      // Naviguer vers la page des résultats
+      router.push('/results');
+    } catch (error) {
+      console.error('Erreur lors de la génération des recettes:', error);
+      Alert.alert('Erreur', 'Impossible de générer les recettes. Veuillez réessayer.');
+    } finally {
+      setIsLoadingRecipes(false);
+    }
   };
 
   const handleLiveTextChange = (text: string) => {
@@ -134,10 +172,14 @@ export default function HomeScreen() {
     if (recording) {
       // Effacer le texte précédent quand l'enregistrement commence
       setLiveText('');
-      setRecognizedText('');
       hideContent();
     } else {
       showContent();
+      // Générer automatiquement les recettes quand le texte est reçu
+      if (liveText.length > 20)
+        generateRecipes(liveText);
+      else
+        Alert.alert('Erreur', 'La liste des ingrédients est trop courte');
     }
   };
 
@@ -158,6 +200,16 @@ export default function HomeScreen() {
         duration: 300,
         useNativeDriver: true,
       }),
+      Animated.timing(microCardOpacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(manualCardOpacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
     ]).start();
   };
 
@@ -174,6 +226,16 @@ export default function HomeScreen() {
         useNativeDriver: true,
       }),
       Animated.timing(introOpacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(microCardOpacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(manualCardOpacity, {
         toValue: 1,
         duration: 300,
         useNativeDriver: true,
@@ -236,7 +298,6 @@ export default function HomeScreen() {
         numColumns={3}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.ingredientsGrid}
-        scrollEnabled={false}
       />
     </View>
   );
@@ -245,21 +306,33 @@ export default function HomeScreen() {
     <View style={[styles.container, {
       paddingTop: insets.top
     }]}>
+      {isRecording && <View style={{
+        position: 'absolute', top: insets.top, left: 0, right: 0, zIndex: 1000
+      }}>
+        <RecordDisplay liveText={liveText} isRecording={isRecording} />
+      </View>}
+
+      {/* Loading overlay avec flou */}
+      {isLoadingRecipes && (
+        <View style={styles.modalOverlay}>
+          <Wave color={Colors.light.button} size={100} />
+          <Text style={styles.loadingText}>Génération des recettes en cours...</Text>
+        </View>
+      )}
+
       <ScrollView showsVerticalScrollIndicator={false} style={{ overflow: 'visible' }}>
         {/* Header avec profil utilisateur */}
         <Animated.View
-          style={[
-            styles.headerContainer,
-            {
-              opacity: headerOpacity,
-              transform: [{
-                translateY: headerOpacity.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [-50, 0], // Déplace le header vers le haut
-                })
-              }]
-            }
-          ]}
+          style={{
+            paddingBottom: 8,
+            opacity: headerOpacity,
+            transform: [{
+              translateY: headerOpacity.interpolate({
+                inputRange: [0, 1],
+                outputRange: [-50, 0], // Déplace le header vers le haut
+              })
+            }]
+          }}
         >
           <UserHeader
             userName="Samantha"
@@ -309,19 +382,56 @@ export default function HomeScreen() {
         </Animated.View>
 
         {/* Composant Micro réutilisable */}
-        <View style={{ ...styles.cardContainer, marginTop: 30 }}>
-          <Text style={styles.cardTitle}>{t('home.micro')}</Text>
-          <Text style={styles.cardDescription}>{t('home.microDescription')}</Text>
-
+        <View
+          style={[
+            { ...styles.cardContainer, marginTop: 30 },
+            {
+              backgroundColor: isRecording ? Colors.light.background : 'white',
+              borderWidth: isRecording ? 1 : 0,
+              borderColor: isRecording ? Colors.light.background : '#E9E9E9',
+              shadowColor: isRecording ? 'transparent' : 'grey',
+              shadowOffset: isRecording ? { width: 0, height: 0 } : { width: 2, height: 10 },
+              shadowOpacity: isRecording ? 0 : 0.1,
+              shadowRadius: isRecording ? 0 : 10,
+              elevation: isRecording ? 0 : 1
+            }
+          ]}
+        >
+          <Animated.View
+            style={{
+              opacity: microCardOpacity,
+              transform: [{
+                translateY: microCardOpacity.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-20, 0],
+                })
+              }]
+            }}
+          >
+            <Text style={styles.cardTitle}>{t('home.micro')}</Text>
+            <Text style={styles.cardDescription}>{t('home.microDescription')}</Text>
+          </Animated.View>
           <Micro
             style={{ marginTop: 20 }}
-            onTextReceived={handleTextReceived}
             onRecordingStateChange={handleRecordingStateChange}
             onLiveTextChange={handleLiveTextChange}
           />
         </View>
 
-        <View style={{ ...styles.cardContainer, marginTop: 20, paddingRight: 0 }}>
+        <Animated.View
+          style={[
+            { ...styles.cardContainer, marginTop: 20, paddingRight: 0 },
+            {
+              opacity: manualCardOpacity,
+              transform: [{
+                translateY: manualCardOpacity.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-50, 0],
+                })
+              }]
+            }
+          ]}
+        >
           <Text style={styles.cardTitle}>{t('home.manual')}</Text>
           <Text style={styles.cardDescription}>{t('home.manualDescription')}</Text>
 
@@ -366,20 +476,38 @@ export default function HomeScreen() {
             />
 
             {/* Bouton de validation */}
-            {selectedIngredients.length > 0 && (
-              <TouchableOpacity style={styles.validateButton}>
-                <Text style={styles.validateButtonText}>
-                  Valider ({selectedIngredients.length} ingrédients)
-                </Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              disabled={selectedIngredients.length === 0 || isLoadingRecipes}
+              style={{
+                ...styles.validateButton,
+                backgroundColor: selectedIngredients.length === 0 || isLoadingRecipes ? '#E9E9E9' : Colors.light.button
+              }}
+              onPress={() => {
+                console.log('Validation des ingrédients:', selectedIngredients);
+                // Convertir les IDs en noms d'ingrédients
+                const ingredientNames = selectedIngredients.map(id => {
+                  const category = ingredientCategories.find(cat =>
+                    cat.ingredients.some(ing => ing.id === id)
+                  );
+                  const ingredient = category?.ingredients.find(ing => ing.id === id);
+                  return ingredient?.name || id;
+                });
+
+                const ingredientsText = ingredientNames.join(', ');
+                generateRecipes(ingredientsText);
+              }}
+            >
+              <Text style={styles.validateButtonText}>
+                {isLoadingRecipes ? 'Génération...' : `Valider (${selectedIngredients.length} ingrédients)`}
+              </Text>
+            </TouchableOpacity>
           </View>
-        </View>
+        </Animated.View>
 
         {/* Espace en bas pour la barre de navigation */}
         <View style={styles.bottomSpacer} />
       </ScrollView>
-    </View>
+    </View >
   );
 }
 
@@ -389,9 +517,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: Colors.light.background,
     marginBottom: 50,
-  },
-  headerContainer: {
-    // Pas de position absolue pour rester dans le flux normal
   },
   titleContainer: {
     paddingBottom: 20,
@@ -488,7 +613,6 @@ const styles = StyleSheet.create({
   },
   ingredientsGrid: {
     paddingBottom: 20,
-    maxHeight: 230, // Augmenté pour accommoder 3 lignes complètes
   },
   ingredientItem: {
     flex: 1,
@@ -539,5 +663,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Degular',
     fontWeight: 'bold',
+  },
+  modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1000,
+    backgroundColor: 'rgba(238, 238, 238, 0.82)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 40,
+    fontSize: 20,
+    color: Colors.light.text,
+    fontFamily: 'Degular',
+    textAlign: 'center',
   },
 });

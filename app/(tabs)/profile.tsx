@@ -328,6 +328,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#F0F0F0',
   },
   sectionTitle: {
+    fontFamily: 'Degular',
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 16,
@@ -343,11 +344,13 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   preferenceLabel: {
+    fontFamily: 'Cronos Pro',
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 4,
   },
   preferenceDescription: {
+    fontFamily: 'Cronos Pro',
     fontSize: 14,
   },
   planContainer: {
@@ -360,11 +363,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   planName: {
+    fontFamily: 'Degular',
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 4,
   },
   planPrice: {
+    fontFamily: 'Cronos Pro',
     fontSize: 14,
   },
   changePlanButton: {
@@ -374,6 +379,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   changePlanText: {
+    fontFamily: 'Cronos Pro',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -391,11 +397,13 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   planOptionText: {
+    fontFamily: 'Degular',
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 4,
   },
   planOptionPrice: {
+    fontFamily: 'Cronos Pro',
     fontSize: 12,
   },
   settingItem: {
@@ -404,6 +412,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   settingText: {
+    fontFamily: 'Cronos Pro',
     fontSize: 16,
     flex: 1,
     marginLeft: 12,

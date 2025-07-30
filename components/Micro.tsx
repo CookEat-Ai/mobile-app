@@ -87,7 +87,6 @@ export default function Micro({
 
   const onSpeechEnd = () => {
     setIsRecording(false);
-    onRecordingStateChange?.(false);
     setIsRecordingAnimationDelayFinished(false);
     stopPulseAnimation();
     moveMicrophoneBack();
@@ -109,7 +108,6 @@ export default function Micro({
 
   const onSpeechError = (error: any) => {
     setIsRecording(false);
-    onRecordingStateChange?.(false);
     stopPulseAnimation();
     shrinkContainer();
   };
@@ -277,7 +275,7 @@ export default function Micro({
             transform: [{
               translateY: containerHeight.interpolate({
                 inputRange: [0, 1],
-                outputRange: [0, height * 0.3], // Centre le contenu quand l'écran s'étend
+                outputRange: [0, height * 0.2], // Centre le contenu quand l'écran s'étend
               })
             }]
           }
@@ -293,7 +291,6 @@ export default function Micro({
                   styles.outerCircle,
                   {
                     transform: [{ scale: outerCircleAnim }],
-                    borderColor: "grey",
                     opacity: outerCircleAnim.interpolate({
                       inputRange: [1, 1.4, 1.8],
                       outputRange: [0.6, 0.3, 0],
@@ -306,7 +303,6 @@ export default function Micro({
                   styles.middleCircle,
                   {
                     transform: [{ scale: middleCircleAnim }],
-                    borderColor: "grey",
                     opacity: middleCircleAnim.interpolate({
                       inputRange: [1, 1.25, 1.5],
                       outputRange: [0.7, 0.4, 0.1],
@@ -439,7 +435,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: 50,
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: '#e3e3e3',
     top: 5,
     left: -5,
   },
@@ -449,7 +445,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: '#e3e3e3',
     top: -5,
     left: -15,
   },

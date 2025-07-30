@@ -160,7 +160,7 @@ export default function FavoritesScreen() {
                 ]}
                 onPress={() => handleCategoryPress(category)}
               >
-                <Text style={{ color: selectedCategory === category.title.toLowerCase() ? 'white' : 'black', fontSize: 16 }}>
+                <Text style={{ fontFamily: 'Cronos Pro', color: selectedCategory === category.title.toLowerCase() ? 'white' : 'black', fontSize: 16 }}>
                   {t(`favorites.categories.${category.title}`)}
                 </Text>
               </TouchableOpacity>
@@ -208,6 +208,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   mainTitle: {
+    fontFamily: 'Degular',
     fontSize: 28,
     fontWeight: 'bold',
     lineHeight: 34,

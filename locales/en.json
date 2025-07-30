@@ -3,6 +3,10 @@
     "hi": "Hi",
     "title": "What do you want to eat today?",
     "intro": "Tell us what you have in your fridge and we'll give you meal ideas",
+    "micro": "Voice mode",
+    "microDescription": "Dictate your ingredients",
+    "manual": "Manual mode",
+    "manualDescription": "Select your ingredients",
     "voice": {
       "start": "Press to start",
       "recording": "Give us the list of your ingredients, we're listening... 👂🏼",

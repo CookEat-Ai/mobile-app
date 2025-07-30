@@ -9,9 +9,9 @@ import {
   View
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Checkout from '../../components/Checkout';
-import { IconSymbol } from '../../components/ui/IconSymbol';
-import { Colors } from '../../constants/Colors';
+import Checkout from '../components/Checkout';
+import { IconSymbol } from '../components/ui/IconSymbol';
+import { Colors } from '../constants/Colors';
 
 const subscriptions: any = [];
 

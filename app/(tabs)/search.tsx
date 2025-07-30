@@ -388,6 +388,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   mainTitle: {
+    fontFamily: 'Degular',
     fontSize: 28,
     fontWeight: 'bold',
     lineHeight: 34,
@@ -406,6 +407,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
+    fontFamily: 'Degular',
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 16,

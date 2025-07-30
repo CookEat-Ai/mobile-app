@@ -80,9 +80,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   liveText: {
-    color: Colors.light.button, // Utiliser la couleur du texte de l'app
+    fontFamily: 'Cronos Pro',
+    color: Colors.light.textSecondary, // Utiliser la couleur du texte de l'app
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '400',
     textAlign: 'center',
     marginBottom: 2, // Espace entre les lignes
   },

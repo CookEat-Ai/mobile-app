@@ -51,13 +51,13 @@ export default function FavoriteRecipeCard({
         </Text>
         <View style={styles.detailsRow}>
           <View style={styles.timeContainer}>
-            <IconSymbol name={Platform.OS === 'ios' ? "timer" : "time"} size={16} color={colors.button} />
+            <IconSymbol name={Platform.OS === 'ios' ? "timer" : "time"} size={18} color={colors.button} />
             <Text style={[styles.cookingTime, { color: colors.textSecondary }]}>
               {formatCookingTime(cookingTime)}
             </Text>
           </View>
           <View style={styles.ratingContainer}>
-            <IconSymbol name={Platform.OS === 'ios' ? "star.fill" : "star"} size={16} color={"#FFD700"} />
+            <IconSymbol name={Platform.OS === 'ios' ? "star.fill" : "star"} size={18} color={"#FFD700"} />
             <Text style={[styles.ratingText, { color: colors.text }]}>
               {rating.toFixed(1)}
             </Text>
@@ -103,7 +103,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontSize: 16,
+    fontFamily: 'Degular',
+    fontSize: 18,
     fontWeight: '600',
     marginBottom: 8,
     lineHeight: 20,
@@ -118,7 +119,8 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   cookingTime: {
-    fontSize: 14,
+    fontFamily: 'Cronos Pro',
+    fontSize: 16,
     marginLeft: 4,
   },
   ratingContainer: {
@@ -126,7 +128,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ratingText: {
-    fontSize: 14,
+    fontFamily: 'Cronos Pro',
+    fontSize: 16,
     marginLeft: 4,
   },
   arrowContainer: {

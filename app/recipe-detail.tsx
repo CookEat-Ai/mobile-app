@@ -174,20 +174,28 @@ export default function RecipeDetailScreen() {
           {/* Métriques */}
           <View style={styles.metricsContainer}>
             <View style={styles.metricCard}>
-              <Ionicons name="time-outline" size={24} color="#666" />
-              <Text style={styles.metricLabel}>{t('recipe.cookingTime')}</Text>
+              <View style={{ alignItems: 'center', marginBottom: 8 }}>
+                <Ionicons name="time-outline" size={24} color="#666" />
+                <Text style={styles.metricLabel}>{t('recipe.cookingTime')}</Text>
+              </View>
+
               <Text style={styles.metricValue}>{recipe.cookingTime}</Text>
             </View>
 
             <View style={styles.metricCard}>
-              <Ionicons name="star-outline" size={24} color="#666" />
-              <Text style={styles.metricLabel}>{t('recipe.difficulty')}</Text>
+              <View style={{ alignItems: 'center', marginBottom: 8 }}>
+                <Ionicons name="star-outline" size={24} color="#666" />
+                <Text style={styles.metricLabel}>{t('recipe.difficulty')}</Text>
+              </View>
               <Text style={styles.metricValue}>{recipe.difficulty}</Text>
             </View>
 
             <View style={styles.metricCard}>
-              <Ionicons name="people-outline" size={24} color="#666" />
-              <Text style={styles.metricLabel}>{t('recipe.servings')}</Text>
+              <View style={{ alignItems: 'center', marginBottom: 8 }}>
+                <Ionicons name="people-outline" size={24} color="#666" />
+                <Text style={styles.metricLabel}>{t('recipe.servings')}</Text>
+              </View>
+
               {/* <Text style={styles.metricValue}>{recipe.servings}</Text> */}
             </View>
           </View>
@@ -241,7 +249,7 @@ export default function RecipeDetailScreen() {
       {/* Bouton Rate Recipe */}
       <View style={styles.bottomButtonContainer}>
         <TouchableOpacity
-          activeOpacity={0.9}
+          activeOpacity={0.8}
           style={styles.favoriteButton}
           onPress={handleAddToFavorites}
         >
@@ -332,12 +340,14 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   recipeTitle: {
+    fontFamily: 'Degular',
     fontSize: 28,
     fontWeight: 'bold',
     color: '#000',
     marginBottom: 8,
   },
   recipeDescription: {
+    fontFamily: 'Cronos Pro',
     fontSize: 16,
     color: '#666',
     lineHeight: 22,
@@ -350,11 +360,12 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 12,
     padding: 16,
     marginHorizontal: 4,
-    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -362,12 +373,16 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   metricLabel: {
+    textAlign: 'center',
+    fontFamily: 'Cronos Pro',
     fontSize: 12,
     color: '#666',
     marginTop: 8,
     marginBottom: 4,
   },
   metricValue: {
+    textAlign: 'center',
+    fontFamily: 'Cronos Pro',
     fontSize: 14,
     fontWeight: 'bold',
     color: '#000',
@@ -376,6 +391,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   ingredientsTitle: {
+    fontFamily: 'Degular',
     fontSize: 20,
     fontWeight: 'bold',
     color: '#000',
@@ -404,12 +420,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   ingredientName: {
+    fontFamily: 'Cronos Pro',
     fontSize: 16,
     fontWeight: '600',
     color: '#000',
     marginBottom: 4,
   },
   ingredientQuantity: {
+    fontFamily: 'Cronos Pro',
     fontSize: 14,
     color: '#666',
   },
@@ -424,6 +442,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   tagText: {
+    fontFamily: 'Cronos Pro',
     fontSize: 10,
     color: '#000',
     fontWeight: '500',
@@ -437,7 +456,7 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   favoriteButton: {
-    backgroundColor: '#333',
+    backgroundColor: Colors.light.button,
     borderRadius: 2000,
     paddingVertical: 16,
     flexDirection: 'row',
@@ -447,6 +466,7 @@ const styles = StyleSheet.create({
   },
   rateButtonText: {
     color: 'white',
+    fontFamily: 'Cronos Pro',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -454,6 +474,7 @@ const styles = StyleSheet.create({
     marginBottom: 100,
   },
   stepsTitle: {
+    fontFamily: 'Degular',
     fontSize: 20,
     fontWeight: 'bold',
     color: '#000',
@@ -468,6 +489,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   stepTitle: {
+    fontFamily: 'Cronos Pro',
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
