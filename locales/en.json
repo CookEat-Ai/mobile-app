@@ -132,5 +132,23 @@
     "emailPlaceholder": "your@email.com",
     "continue": "Continue",
     "processing": "Processing payment..."
+  },
+  "pantry": {
+    "title": "My Pantry",
+    "ingredients": "Ingredients",
+    "myIngredients": "My Ingredients",
+    "emptyTitle": "Your pantry is empty",
+    "emptyDescription": "Add your first ingredients to get started",
+    "addIngredient": "Add an ingredient",
+    "cancel": "Cancel",
+    "ingredientName": "Ingredient name",
+    "ingredientNamePlaceholder": "Ex: Cherry tomatoes",
+    "icon": "Icon",
+    "add": "Add",
+    "deleteTitle": "Delete ingredient",
+    "deleteMessage": "Are you sure you want to remove this ingredient from your pantry?",
+    "delete": "Delete",
+    "error": "Error",
+    "nameRequired": "Please enter an ingredient name"
   }
 }

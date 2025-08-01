@@ -1,4 +1,3 @@
-import Voice from '@react-native-voice/voice';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -12,6 +11,7 @@ import {
 } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from "./ui/IconSymbol";
+import { useVoice, resetVoiceCompletely } from '../hooks/useVoice';
 
 const { width, height } = Dimensions.get('window');
 
@@ -34,8 +34,14 @@ export default function Micro({
   const colors = Colors.light;
   const { i18n } = useTranslation();
 
-  const [isRecording, setIsRecording] = useState(false);
   const [isRecordingAnimationDelayFinished, setIsRecordingAnimationDelayFinished] = useState(false);
+
+  // Utiliser le hook useVoice
+  const { isRecording, startRecording, stopRecording } = useVoice({
+    onTextReceived,
+    onRecordingStateChange,
+    onLiveTextChange
+  });
 
   // Calculer la hauteur de base approximative basée sur les styles
   // marginTop: 60 + marginBottom: 20 + micro: 90 + texte: ~60 = ~230
@@ -48,69 +54,33 @@ export default function Micro({
   const microphonePosition = useRef(new Animated.Value(0)).current;
   const containerHeight = useRef(new Animated.Value(0)).current;
 
+  // Effet pour gérer les changements d'état d'enregistrement
   useEffect(() => {
-    try {
-      Voice.onSpeechStart = onSpeechStart;
-      Voice.onSpeechEnd = onSpeechEnd;
-      Voice.onSpeechResults = onSpeechResults;
-      Voice.onSpeechError = onSpeechError;
-    } catch (error) {
-      console.error('Erreur lors de l\'initialisation de Voice:', error);
-    }
+    if (isRecording) {
+      timeout = setTimeout(() => {
+        setIsRecordingAnimationDelayFinished(true);
+      }, 1000);
 
-    return () => {
-      try {
-        Voice.destroy().then(Voice.removeAllListeners);
-      } catch (error) {
-        console.error('Erreur lors de la destruction de Voice:', error);
+      startPulseAnimation();
+      moveMicrophoneToCenter();
+      expandContainer();
+
+      // Masquer la tabbar
+      if ((global as any).setTabBarVisibility) {
+        (global as any).setTabBarVisibility(false);
       }
-    };
-  }, []);
+    } else {
+      setIsRecordingAnimationDelayFinished(false);
+      stopPulseAnimation();
+      moveMicrophoneBack();
+      shrinkContainer();
 
-  const onSpeechStart = () => {
-    setIsRecording(true);
-    onRecordingStateChange?.(true);
-
-    timeout = setTimeout(() => {
-      setIsRecordingAnimationDelayFinished(true);
-    }, 1000);
-
-    startPulseAnimation();
-    moveMicrophoneToCenter();
-    expandContainer();
-
-    // Masquer la tabbar
-    if ((global as any).setTabBarVisibility) {
-      (global as any).setTabBarVisibility(false);
+      // Afficher la tabbar
+      if ((global as any).setTabBarVisibility) {
+        (global as any).setTabBarVisibility(true);
+      }
     }
-  };
-
-  const onSpeechEnd = () => {
-    setIsRecording(false);
-    setIsRecordingAnimationDelayFinished(false);
-    stopPulseAnimation();
-    moveMicrophoneBack();
-    shrinkContainer();
-
-    // Afficher la tabbar
-    if ((global as any).setTabBarVisibility) {
-      (global as any).setTabBarVisibility(true);
-    }
-  };
-
-  const onSpeechResults = (event: any) => {
-    if (event.value && event.value.length > 0) {
-      const newText = event.value[0];
-      onTextReceived?.(newText);
-      onLiveTextChange?.(newText);
-    }
-  };
-
-  const onSpeechError = (error: any) => {
-    setIsRecording(false);
-    stopPulseAnimation();
-    shrinkContainer();
-  };
+  }, [isRecording]);
 
   const moveMicrophoneToCenter = () => {
     Animated.timing(microphonePosition, {
@@ -203,53 +173,27 @@ export default function Micro({
     middleCircleAnim.setValue(1);
   };
 
-  const startRecording = async () => {
+  // Fonctions wrapper pour gérer les animations et la tabbar
+  const handleStartRecording = async () => {
     try {
-      // Vérifier si Voice est disponible
-      const isAvailable = await Voice.isAvailable();
-      if (!isAvailable) {
-        return;
-      }
-      await Voice.start(i18n.language === 'fr' ? 'fr-FR' : 'en-US');
+      // Réinitialiser Voice avant de commencer
+      await resetVoiceCompletely();
+      await startRecording();
     } catch (error) {
-      // Fallback en cas d'erreur
-      setIsRecording(false);
-      onRecordingStateChange?.(false);
-      setIsRecordingAnimationDelayFinished(false);
-      moveMicrophoneBack();
-      shrinkContainer();
-      // Afficher la tabbar
-      if ((global as any).setTabBarVisibility) {
-        (global as any).setTabBarVisibility(true);
-      }
+      console.error('Erreur lors du démarrage de l\'enregistrement:', error);
     }
   };
 
-  const stopRecording = async () => {
+  const handleStopRecording = async () => {
     try {
-      await Voice.stop();
-      setIsRecording(false);
-      onRecordingStateChange?.(false);
+      await stopRecording();
       if (timeout) {
         clearTimeout(timeout);
-      }
-      setIsRecordingAnimationDelayFinished(false);
-      moveMicrophoneBack();
-      shrinkContainer();
-      // Afficher la tabbar
-      if ((global as any).setTabBarVisibility) {
-        (global as any).setTabBarVisibility(true);
       }
     } catch (error) {
+      console.error('Erreur lors de l\'arrêt de l\'enregistrement:', error);
       if (timeout) {
         clearTimeout(timeout);
-      }
-      setIsRecordingAnimationDelayFinished(false);
-      moveMicrophoneBack();
-      shrinkContainer();
-      // Afficher la tabbar
-      if ((global as any).setTabBarVisibility) {
-        (global as any).setTabBarVisibility(true);
       }
     }
   };
@@ -264,6 +208,10 @@ export default function Micro({
             inputRange: [0, 1],
             outputRange: [baseHeight, height],
           }),
+          // marginBottom: containerHeight.interpolate({
+          //   inputRange: [0, 1],
+          //   outputRange: [0, 20],
+          // }),
         }
       ]}
     >
@@ -341,9 +289,9 @@ export default function Micro({
               onPress={() => {
                 onClick?.();
                 if (isRecording)
-                  stopRecording();
+                  handleStopRecording();
                 else
-                  startRecording();
+                  handleStartRecording();
               }}
             >
               <IconSymbol

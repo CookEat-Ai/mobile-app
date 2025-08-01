@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import CategoryButton from '../../components/CategoryButton';
-import RecipeCard from '../../components/RecipeCard';
-import SearchBar from '../../components/SearchBar';
-import { Colors } from '../../constants/Colors';
+import CategoryButton from '../components/CategoryButton';
+import RecipeCard from '../components/RecipeCard';
+import SearchBar from '../components/SearchBar';
+import { Colors } from '../constants/Colors';
 
 // Données de recettes par catégorie
 const recipesByCategory = {

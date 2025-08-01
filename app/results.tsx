@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from 'react';
 import {
   Platform,
@@ -7,20 +7,79 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
+  Alert
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Wave } from 'react-native-animated-spinkit';
 import FavoriteRecipeCard from "../components/FavoriteRecipeCard";
 import { IconSymbol } from "../components/ui/IconSymbol";
 import { Colors } from '../constants/Colors';
 import { useRecipeContext } from '../contexts/RecipeContext';
+import { generateRecipesFromText } from '../services/chatgpt';
 
 export default function ResultsScreen() {
   const insets = useSafeAreaInsets();
-  const { recipes } = useRecipeContext();
+  const { recipes, addRecipe } = useRecipeContext();
+  const [isGeneratingMore, setIsGeneratingMore] = useState(false);
+  const params = useLocalSearchParams();
+  const originalIngredients = params.ingredients as string || '';
+  console.log(recipes);
+  const generateMoreRecipes = async () => {
+    if (!originalIngredients.length) {
+      Alert.alert('Erreur', 'Aucun ingrédient disponible pour générer d\'autres recettes');
+      return;
+    }
+
+    setIsGeneratingMore(true);
+    try {
+      // Adapter les recettes au format attendu par l'API
+      const existingRecipesForAPI = recipes.map(recipe => ({
+        title: recipe.title,
+        difficulty: recipe.difficulty,
+        cooking_time: recipe.cookingTime,
+        icon: recipe.icon,
+        calories: recipe.calories,
+        lipides: recipe.lipids,
+        proteines: recipe.proteins,
+      }));
+
+      // Passer les recettes existantes pour éviter les doublons
+      const newRecipes = await generateRecipesFromText(originalIngredients, existingRecipesForAPI);
+
+      // Ajouter chaque nouvelle recette au contexte
+      newRecipes.forEach((recipe: any) => {
+        const recipeId = Math.random().toString(36).substr(2, 9);
+        addRecipe({
+          id: recipeId,
+          title: recipe.title,
+          difficulty: recipe.difficulty,
+          cookingTime: recipe.cooking_time,
+          icon: recipe.icon,
+          image: '',
+          calories: Number(recipe.calories) || 0,
+          lipids: Number(recipe.lipides) || 0,
+          proteins: Number(recipe.proteines) || 0,
+        });
+      });
+    } catch (error) {
+      console.error('Erreur lors de la génération de nouvelles recettes:', error);
+      Alert.alert('Erreur', 'Impossible de générer de nouvelles recettes. Veuillez réessayer.');
+    } finally {
+      setIsGeneratingMore(false);
+    }
+  };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      {/* Loading overlay avec flou */}
+      {isGeneratingMore && (
+        <View style={styles.modalOverlay}>
+          <Wave color={Colors.light.button} size={100} />
+          <Text style={styles.loadingText}>Génération de nouvelles recettes...</Text>
+        </View>
+      )}
+
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -32,7 +91,10 @@ export default function ResultsScreen() {
         <View style={styles.placeholder} />
       </View>
 
-      <ScrollView style={styles.recipesScrollView}>
+      <ScrollView
+        style={styles.recipesScrollView}
+        contentContainerStyle={{ paddingBottom: recipes.length < 30 ? 130 : 50 }}
+      >
         <View style={styles.recipesContainer}>
           <Text style={styles.recipesTitle}>
             {recipes.length} recette{recipes.length > 1 ? 's' : ''} générée{recipes.length > 1 ? 's' : ''} :
@@ -64,20 +126,16 @@ export default function ResultsScreen() {
         </View>
       </ScrollView>
 
-      <TouchableOpacity
+      {recipes.length < 30 && <TouchableOpacity
         style={[styles.continueButton, { bottom: insets.bottom + 20 }]}
-        onPress={() => {
-          // if free plan, show ad
-          if (true) {
-            // show ad
-          } else {
-            // generate recipes
-          }
-        }}
+        onPress={generateMoreRecipes}
+        disabled={isGeneratingMore}
       >
-        <Text style={styles.buttonText}>Générer d&apos;autres recettes</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+        <Text style={styles.buttonText}>
+          {isGeneratingMore ? 'Génération...' : 'Générer d\'autres recettes'}
+        </Text>
+      </TouchableOpacity>}
+    </View>
   );
 }
 
@@ -146,5 +204,23 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     fontFamily: 'Degular',
+  },
+  modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1000,
+    backgroundColor: 'rgba(238, 238, 238, 0.82)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 40,
+    fontSize: 20,
+    color: Colors.light.text,
+    fontFamily: 'Degular',
+    textAlign: 'center',
   },
 }); 

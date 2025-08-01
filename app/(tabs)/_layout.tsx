@@ -1,11 +1,13 @@
 import { Tabs } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, StyleSheet, View } from 'react-native';
+import { Animated, StyleSheet, View, Dimensions } from 'react-native';
 import { HapticTab } from '../../components/HapticTab';
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import { Colors } from '../../constants/Colors';
 import '../../i18n';
+
+const { width } = Dimensions.get('window');
 
 // Composant personnalisé pour l'icône avec rond autour de l'icône active
 const TabIcon = ({ name, focused, color }: { name: any; focused: boolean; color: string }) => {
@@ -72,8 +74,8 @@ export default function TabLayout() {
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarLabel: '',
+        tabBarPosition: 'bottom',
         tabBarStyle: {
-          // display: showTabBar ? 'flex' : 'none',
           position: 'absolute',
           flexDirection: "row",
           justifyContent: 'center',
@@ -83,7 +85,7 @@ export default function TabLayout() {
           borderRadius: 1000,
           height: 70,
           paddingHorizontal: 5,
-          marginHorizontal: "18%",
+          marginHorizontal: "26%",
           marginBottom: "5%",
           opacity: tabBarOpacity,
           transform: [{ translateY: tabBarTranslateY }],
@@ -96,13 +98,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => <TabIcon name="house" focused={focused} color={color} />,
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="search"
         options={{
           title: t('tabs.search'),
           tabBarIcon: ({ color, focused }) => <TabIcon name="magnifyingglass" focused={focused} color={color} />,
         }}
-      />
+      /> */}
       <Tabs.Screen
         name="favorites"
         options={{

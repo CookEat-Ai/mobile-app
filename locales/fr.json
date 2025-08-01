@@ -41,7 +41,7 @@
     "addToFavorites": "Ajouter aux favoris"
   },
   "favorites": {
-    "title": "Toutes vos recettes préférées",
+    "title": "Vos recettes préférées",
     "noResults": "Aucune recette trouvée",
     "categories": {
       "All": "Toutes",
@@ -76,6 +76,8 @@
     "halalDescription": "Afficher seulement les recettes halal",
     "vegetarian": "Végétarien",
     "vegetarianDescription": "Afficher seulement les recettes végétariennes",
+    "vegan": "Végétalien",
+    "veganDescription": "Afficher seulement les recettes végétaliennes",
     "plan": "Plan d'abonnement",
     "changePlan": "Changer",
     "plans": {
@@ -132,5 +134,25 @@
     "emailPlaceholder": "votre@email.com",
     "continue": "Continuer",
     "processing": "Traitement du paiement..."
+  },
+  "pantry": {
+    "title": "Mon Garde-Manger",
+    "ingredients": "Ingrédients",
+    "myIngredients": "Mes ingrédients",
+    "emptyTitle": "Votre garde-manger est vide",
+    "emptyDescription": "Ajoutez vos premiers ingrédients pour commencer",
+    "addIngredient": "Ajouter un ingrédient",
+    "cancel": "Annuler",
+    "ingredientName": "Nom de l'ingrédient",
+    "ingredientNamePlaceholder": "Ex: Tomates cerises",
+    "icon": "Icône",
+    "add": "Ajouter",
+    "deleteTitle": "Supprimer l'ingrédient",
+    "deleteMessage": "Êtes-vous sûr de vouloir supprimer cet ingrédient de votre garde-manger ?",
+    "delete": "Supprimer",
+    "error": "Erreur",
+    "nameRequired": "Veuillez saisir un nom d'ingrédient",
+    "voice": "Dicter une nouvelle liste",
+    "voiceTooShort": "La liste est trop courte"
   }
 }

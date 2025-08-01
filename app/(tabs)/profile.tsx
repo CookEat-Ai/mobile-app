@@ -26,6 +26,7 @@ const userData = {
   preferences: {
     halal: false,
     vegetarian: false,
+    vegan: false,
   },
   plan: 'basic', // 'free', 'premium', 'pro'
 };
@@ -38,7 +39,7 @@ export default function ProfileScreen() {
   const { subscription, hasSubscription, isLoading: subscriptionLoading } = useSubscription();
   const [halal, setHalal] = useState(userData.preferences.halal);
   const [vegetarian, setVegetarian] = useState(userData.preferences.vegetarian);
-
+  const [vegan, setVegan] = useState(userData.preferences.vegan);
   const handleLogin = () => {
     // Ici vous ajouteriez la logique de connexion réelle
     // Pour l'instant, on utilise les données mock
@@ -178,6 +179,23 @@ export default function ProfileScreen() {
           <Switch
             value={vegetarian}
             onValueChange={setVegetarian}
+            trackColor={{ false: colors.border, true: colors.button }}
+            thumbColor={colors.background}
+          />
+        </View>
+        {/* Vegan */}
+        <View style={styles.preferenceItem}>
+          <View style={styles.preferenceInfo}>
+            <Text style={[styles.preferenceLabel, { color: colors.text }]}>
+              {t('profile.vegan')}
+            </Text>
+            <Text style={[styles.preferenceDescription, { color: colors.textSecondary }]}>
+              {t('profile.veganDescription')}
+            </Text>
+          </View>
+          <Switch
+            value={vegan}
+            onValueChange={setVegan}
             trackColor={{ false: colors.border, true: colors.button }}
             thumbColor={colors.background}
           />

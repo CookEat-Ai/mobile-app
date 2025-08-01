@@ -186,6 +186,35 @@ class ApiService {
   isAuthenticated(): boolean {
     return !!this.token;
   }
+
+  // Recettes
+  async generateRecipes(ingredients: string, existingRecipes?: any[]) {
+    return this.request<{ recipes: any[] }>('/recipe/generate', {
+      method: 'POST',
+      body: JSON.stringify({ ingredients, existingRecipes }),
+    });
+  }
+
+  async getRecipeIngredients(recipe: any) {
+    return this.request<any>('/recipe/ingredients', {
+      method: 'POST',
+      body: JSON.stringify({ recipe }),
+    });
+  }
+
+  async getRecipeSteps(recipe: any) {
+    return this.request<any>('/recipe/steps', {
+      method: 'POST',
+      body: JSON.stringify({ recipe }),
+    });
+  }
+
+  async processVoiceIngredients(voiceText: string) {
+    return this.request<{ ingredients: string[] }>('/recipe/process-voice-ingredients', {
+      method: 'POST',
+      body: JSON.stringify({ voiceText }),
+    });
+  }
 }
 
 export const apiService = new ApiService();

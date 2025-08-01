@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, FlatList, Alert } from 'react-native';
+import { Animated, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, FlatList, Alert, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Wave } from 'react-native-animated-spinkit';
 import Micro from '../../components/Micro';
@@ -11,6 +11,7 @@ import { Colors } from '../../constants/Colors';
 import { generateRecipesFromText } from '../../services/chatgpt';
 import { useRecipeContext } from '../../contexts/RecipeContext';
 import '../../i18n';
+import { IconSymbol } from "../../components/ui/IconSymbol";
 
 const { width } = Dimensions.get('window');
 
@@ -113,7 +114,7 @@ export default function HomeScreen() {
   const colors = Colors.light;
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const { addRecipe } = useRecipeContext();
+  const { addRecipe, clearRecipes } = useRecipeContext();
   const [liveText, setLiveText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
@@ -152,8 +153,11 @@ export default function HomeScreen() {
         });
       });
 
-      // Naviguer vers la page des résultats
-      router.push('/results');
+      // Naviguer vers la page des résultats avec les ingrédients
+      router.push({
+        pathname: '/results',
+        params: { ingredients }
+      });
     } catch (error) {
       console.error('Erreur lors de la génération des recettes:', error);
       Alert.alert('Erreur', 'Impossible de générer les recettes. Veuillez réessayer.');
@@ -170,16 +174,19 @@ export default function HomeScreen() {
     setIsRecording(recording);
 
     if (recording) {
-      // Effacer le texte précédent quand l'enregistrement commence
+      // Effacer le texte précédent et les anciens résultats quand l'enregistrement commence
       setLiveText('');
+      clearRecipes(); // Supprimer les anciens résultats
       hideContent();
     } else {
       showContent();
-      // Générer automatiquement les recettes quand le texte est reçu
-      if (liveText.length > 20)
-        generateRecipes(liveText);
-      else
-        Alert.alert('Erreur', 'La liste des ingrédients est trop courte');
+      // Naviguer vers la page récapitulative quand le texte est reçu
+      if (liveText.length > 20) {
+        router.push({
+          pathname: '/recipe-summary',
+          params: { ingredients: liveText }
+        });
+      }
     }
   };
 
@@ -381,7 +388,36 @@ export default function HomeScreen() {
           </Text>
         </Animated.View>
 
-        {/* Composant Micro réutilisable */}
+        {/* Mode manuel */}
+        <Animated.View
+          style={[
+            { ...styles.cardContainer, marginTop: 20, padding: 0 },
+            {
+              opacity: manualCardOpacity,
+              transform: [{
+                translateY: manualCardOpacity.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-50, 0],
+                })
+              }]
+            }
+          ]}
+        >
+          <TouchableOpacity
+            style={{ ...styles.cardContainer, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+            onPress={() => {
+              router.push('/pantry');
+            }}
+          >
+            <View>
+              <Text style={styles.cardTitle}>Gérer votre garde-manger</Text>
+              <Text style={styles.cardDescription}>Ajoutez, retirez, modifiez vos ingrédients</Text>
+            </View>
+            <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} weight="bold" />
+          </TouchableOpacity>
+        </Animated.View>
+
+        {/* Mode vocal */}
         <View
           style={[
             { ...styles.cardContainer, marginTop: 30 },
@@ -399,6 +435,7 @@ export default function HomeScreen() {
         >
           <Animated.View
             style={{
+              marginBottom: 20,
               opacity: microCardOpacity,
               transform: [{
                 translateY: microCardOpacity.interpolate({
@@ -412,12 +449,12 @@ export default function HomeScreen() {
             <Text style={styles.cardDescription}>{t('home.microDescription')}</Text>
           </Animated.View>
           <Micro
-            style={{ marginTop: 20 }}
             onRecordingStateChange={handleRecordingStateChange}
             onLiveTextChange={handleLiveTextChange}
           />
         </View>
 
+        {/* Mode manuel */}
         <Animated.View
           style={[
             { ...styles.cardContainer, marginTop: 20, paddingRight: 0 },
@@ -435,7 +472,6 @@ export default function HomeScreen() {
           <Text style={styles.cardTitle}>{t('home.manual')}</Text>
           <Text style={styles.cardDescription}>{t('home.manualDescription')}</Text>
 
-          {/* Sélection manuelle des ingrédients */}
           <View style={styles.manualSelectionContainer}>
             {/* Indicateurs de catégories */}
             <View style={styles.categoryIndicators}>
@@ -477,13 +513,14 @@ export default function HomeScreen() {
 
             {/* Bouton de validation */}
             <TouchableOpacity
-              disabled={selectedIngredients.length === 0 || isLoadingRecipes}
+              disabled={selectedIngredients.length === 0}
               style={{
                 ...styles.validateButton,
-                backgroundColor: selectedIngredients.length === 0 || isLoadingRecipes ? '#E9E9E9' : Colors.light.button
+                backgroundColor: selectedIngredients.length === 0 ? '#E9E9E9' : Colors.light.button
               }}
               onPress={() => {
                 console.log('Validation des ingrédients:', selectedIngredients);
+
                 // Convertir les IDs en noms d'ingrédients
                 const ingredientNames = selectedIngredients.map(id => {
                   const category = ingredientCategories.find(cat =>
@@ -494,11 +531,16 @@ export default function HomeScreen() {
                 });
 
                 const ingredientsText = ingredientNames.join(', ');
-                generateRecipes(ingredientsText);
+
+                // Naviguer vers la page récapitulative
+                router.push({
+                  pathname: '/recipe-summary',
+                  params: { ingredients: ingredientsText }
+                });
               }}
             >
               <Text style={styles.validateButtonText}>
-                {isLoadingRecipes ? 'Génération...' : `Valider (${selectedIngredients.length} ingrédients)`}
+                Continuer ({selectedIngredients.length} ingrédients)
               </Text>
             </TouchableOpacity>
           </View>

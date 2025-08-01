@@ -3,6 +3,7 @@ import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import 'react-native-reanimated';
+import { resetVoiceCompletely } from '../hooks/useVoice';
 
 const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 
@@ -12,6 +13,9 @@ export default function RootLayout() {
 
   useEffect(() => {
     checkOnboardingStatus();
+
+    // Réinitialiser complètement Voice quand on arrive sur cette page
+    resetVoiceCompletely();
   }, []);
 
   const checkOnboardingStatus = async () => {

@@ -174,7 +174,7 @@ export default function RecipeDetailScreen() {
           {/* Métriques */}
           <View style={styles.metricsContainer}>
             <View style={styles.metricCard}>
-              <View style={{ alignItems: 'center', marginBottom: 8 }}>
+              <View style={{ alignItems: 'center' }}>
                 <Ionicons name="time-outline" size={24} color="#666" />
                 <Text style={styles.metricLabel}>{t('recipe.cookingTime')}</Text>
               </View>
@@ -183,7 +183,7 @@ export default function RecipeDetailScreen() {
             </View>
 
             <View style={styles.metricCard}>
-              <View style={{ alignItems: 'center', marginBottom: 8 }}>
+              <View style={{ alignItems: 'center' }}>
                 <Ionicons name="star-outline" size={24} color="#666" />
                 <Text style={styles.metricLabel}>{t('recipe.difficulty')}</Text>
               </View>
@@ -191,7 +191,7 @@ export default function RecipeDetailScreen() {
             </View>
 
             <View style={styles.metricCard}>
-              <View style={{ alignItems: 'center', marginBottom: 8 }}>
+              <View style={{ alignItems: 'center' }}>
                 <Ionicons name="people-outline" size={24} color="#666" />
                 <Text style={styles.metricLabel}>{t('recipe.servings')}</Text>
               </View>
@@ -210,7 +210,7 @@ export default function RecipeDetailScreen() {
               </View>
               : recipe.ingredients?.map((ingredient: any) => (
                 <View key={uuid.v4()} style={styles.ingredientItem}>
-                  <Text style={{ fontSize: 24 }}>{ingredient.icon}</Text>
+                  <Text style={{ fontSize: 24, marginRight: 8 }}>{ingredient.icon}</Text>
 
                   <View style={styles.ingredientInfo}>
                     <Text style={styles.ingredientName}>{ingredient.name}</Text>
@@ -382,8 +382,8 @@ const styles = StyleSheet.create({
   },
   metricValue: {
     textAlign: 'center',
-    fontFamily: 'Cronos Pro',
-    fontSize: 14,
+    fontFamily: 'Degular',
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
   },
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
-    marginBottom: 4,
+    marginBottom: 8,
   },
   stepDescription: {
     fontSize: 16,

@@ -10,14 +10,15 @@ interface Recipe {
   icon: string;
 }
 
-export async function generateRecipesFromText(ingredients: string): Promise<Recipe[]> {
+export async function generateRecipesFromText(ingredients: string, existingRecipes?: Recipe[]): Promise<Recipe[]> {
   try {
-    const response = await apiService.request<{ recipes: Recipe[] }>('/recipe/generate', {
-      method: 'POST',
-      body: JSON.stringify({ ingredients }),
-    });
+    const response = await apiService.generateRecipes(ingredients, existingRecipes);
 
-    return response.data.recipes;
+    if (response.error) {
+      throw new Error(response.error);
+    }
+
+    return response.data?.recipes || [];
   } catch (error) {
     console.error('Erreur lors de la génération des recettes:', error);
     throw error;
@@ -26,10 +27,11 @@ export async function generateRecipesFromText(ingredients: string): Promise<Reci
 
 export async function getRecipeIngredients(recipe: Recipe): Promise<any> {
   try {
-    const response = await apiService.request<any>('/recipe/ingredients', {
-      method: 'POST',
-      body: JSON.stringify({ recipe }),
-    });
+    const response = await apiService.getRecipeIngredients(recipe);
+
+    if (response.error) {
+      throw new Error(response.error);
+    }
 
     return response.data;
   } catch (error) {
@@ -40,14 +42,30 @@ export async function getRecipeIngredients(recipe: Recipe): Promise<any> {
 
 export async function getRecipeSteps(recipe: Recipe): Promise<any> {
   try {
-    const response = await apiService.request<any>('/recipe/steps', {
-      method: 'POST',
-      body: JSON.stringify({ recipe }),
-    });
+    const response = await apiService.getRecipeSteps(recipe);
+
+    if (response.error) {
+      throw new Error(response.error);
+    }
 
     return response.data;
   } catch (error) {
     console.error('Erreur lors de la génération des étapes:', error);
+    throw error;
+  }
+}
+
+export async function processVoiceIngredients(voiceText: string): Promise<string[]> {
+  try {
+    const response = await apiService.processVoiceIngredients(voiceText);
+
+    if (response.error) {
+      throw new Error(response.error);
+    }
+
+    return response.data?.ingredients || [];
+  } catch (error) {
+    console.error('Erreur lors du traitement des ingrédients vocaux:', error);
     throw error;
   }
 }
