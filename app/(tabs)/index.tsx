@@ -8,10 +8,11 @@ import Micro from '../../components/Micro';
 import RecordDisplay from '../../components/RecordDisplay';
 import UserHeader from '../../components/UserHeader';
 import { Colors } from '../../constants/Colors';
-import { generateRecipesFromText } from '../../services/chatgpt';
 import { useRecipeContext } from '../../contexts/RecipeContext';
 import '../../i18n';
 import { IconSymbol } from "../../components/ui/IconSymbol";
+import { useSubscription } from '../../hooks/useSubscription';
+import revenueCatService from '../../config/revenuecat';
 
 const { width } = Dimensions.get('window');
 
@@ -130,41 +131,6 @@ export default function HomeScreen() {
   const introOpacity = useRef(new Animated.Value(1)).current;
   const microCardOpacity = useRef(new Animated.Value(1)).current;
   const manualCardOpacity = useRef(new Animated.Value(1)).current;
-
-  const generateRecipes = async (ingredients: string) => {
-    setIsLoadingRecipes(true);
-    try {
-      const recipes = await generateRecipesFromText(ingredients);
-      console.log('Recettes générées:', recipes);
-
-      // Ajouter chaque recette au contexte
-      recipes.forEach((recipe: any) => {
-        const recipeId = Math.random().toString(36).substr(2, 9);
-        addRecipe({
-          id: recipeId,
-          title: recipe.title,
-          difficulty: recipe.difficulty,
-          cookingTime: recipe.cooking_time,
-          icon: recipe.icon,
-          image: '',
-          calories: Number(recipe.calories) || 0,
-          lipids: Number(recipe.lipides) || 0,
-          proteins: Number(recipe.proteines) || 0,
-        });
-      });
-
-      // Naviguer vers la page des résultats avec les ingrédients
-      router.push({
-        pathname: '/results',
-        params: { ingredients }
-      });
-    } catch (error) {
-      console.error('Erreur lors de la génération des recettes:', error);
-      Alert.alert('Erreur', 'Impossible de générer les recettes. Veuillez réessayer.');
-    } finally {
-      setIsLoadingRecipes(false);
-    }
-  };
 
   const handleLiveTextChange = (text: string) => {
     setLiveText(text);
@@ -309,6 +275,15 @@ export default function HomeScreen() {
     </View>
   );
 
+  const handlePantryPress = async () => {
+    if (!(await revenueCatService.getSubscriptionStatus()).isSubscribed) {
+      router.push('/paywall')
+      return;
+    }
+
+    router.push('/pantry');
+  };
+
   return (
     <View style={[styles.container, {
       paddingTop: insets.top
@@ -388,7 +363,7 @@ export default function HomeScreen() {
           </Text>
         </Animated.View>
 
-        {/* Mode manuel */}
+        {/* Garde-manger */}
         <Animated.View
           style={[
             { ...styles.cardContainer, marginTop: 20, padding: 0 },
@@ -405,9 +380,7 @@ export default function HomeScreen() {
         >
           <TouchableOpacity
             style={{ ...styles.cardContainer, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
-            onPress={() => {
-              router.push('/pantry');
-            }}
+            onPress={handlePantryPress}
           >
             <View>
               <Text style={styles.cardTitle}>Gérer votre garde-manger</Text>
@@ -420,7 +393,7 @@ export default function HomeScreen() {
         {/* Mode vocal */}
         <View
           style={[
-            { ...styles.cardContainer, marginTop: 30 },
+            { ...styles.cardContainer, marginTop: 20 },
             {
               backgroundColor: isRecording ? Colors.light.background : 'white',
               borderWidth: isRecording ? 1 : 0,

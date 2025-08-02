@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_BASE_URL } from '../config/api';
+import i18n from '../i18n';
 
 interface ApiResponse<T> {
   data?: T;
@@ -191,28 +192,105 @@ class ApiService {
   async generateRecipes(ingredients: string, existingRecipes?: any[]) {
     return this.request<{ recipes: any[] }>('/recipe/generate', {
       method: 'POST',
-      body: JSON.stringify({ ingredients, existingRecipes }),
+      body: JSON.stringify({ 
+        ingredients, 
+        existingRecipes,
+        language: i18n.language || 'fr'
+      }),
+    });
+  }
+
+  async generateSingleRecipeWithFilters(
+    ingredients: string,
+    dishType: string,
+    duration: string,
+    servings: number,
+    cuisineStyle: string,
+    diet: string,
+    calories: string,
+    allowOtherIngredients: boolean,
+    existingRecipes?: any[]
+  ) {
+    return this.request<{ recipe: any }>('/recipe/generate-single', {
+      method: 'POST',
+      body: JSON.stringify({
+        ingredients,
+        dishType,
+        duration,
+        servings,
+        cuisineStyle,
+        diet,
+        calories,
+        allowOtherIngredients,
+        existingRecipes,
+        language: i18n.language || 'fr'
+      }),
     });
   }
 
   async getRecipeIngredients(recipe: any) {
     return this.request<any>('/recipe/ingredients', {
       method: 'POST',
-      body: JSON.stringify({ recipe }),
+      body: JSON.stringify({ 
+        recipe,
+        language: i18n.language || 'fr'
+      }),
     });
   }
 
   async getRecipeSteps(recipe: any) {
     return this.request<any>('/recipe/steps', {
       method: 'POST',
-      body: JSON.stringify({ recipe }),
+      body: JSON.stringify({ 
+        recipe,
+        language: i18n.language || 'fr'
+      }),
     });
   }
 
   async processVoiceIngredients(voiceText: string) {
     return this.request<{ ingredients: string[] }>('/recipe/process-voice-ingredients', {
       method: 'POST',
-      body: JSON.stringify({ voiceText }),
+      body: JSON.stringify({ 
+        voiceText,
+        language: i18n.language || 'fr'
+      }),
+    });
+  }
+
+  async saveRecipe(recipe: any, userId?: string) {
+    return this.request<{ success: boolean; message: string; recipe: any }>('/recipe/save', {
+      method: 'POST',
+      body: JSON.stringify({ recipe, userId }),
+    });
+  }
+
+  async getRecipes(userId?: string, isFavorite?: boolean) {
+    const params = new URLSearchParams();
+    if (userId) params.append('userId', userId);
+    if (isFavorite !== undefined) params.append('isFavorite', isFavorite.toString());
+
+    return this.request<{ success: boolean; recipes: any[] }>(`/recipe?${params.toString()}`, {
+      method: 'GET',
+    });
+  }
+
+  async updateRecipe(recipeId: string, updates: any) {
+    return this.request<{ success: boolean; message: string; recipe: any }>(`/recipe/${recipeId}`, {
+      method: 'PUT',
+      body: JSON.stringify(updates),
+    });
+  }
+
+  async deleteRecipe(recipeId: string) {
+    return this.request<{ success: boolean; message: string }>(`/recipe/${recipeId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async likeRecipe(recipeId: string) {
+    return this.request<{ success: boolean; message: string; recipe: any }>(`/recipe/like/${recipeId}`, {
+      method: 'POST',
     });
   }
 }

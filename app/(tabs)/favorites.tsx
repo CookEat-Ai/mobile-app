@@ -1,71 +1,34 @@
 import { router } from "expo-router";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FavoriteRecipeCard from '../../components/FavoriteRecipeCard';
 import SearchBar from '../../components/SearchBar';
 import { Colors } from '../../constants/Colors';
+import apiService from '../../services/api';
+import { Wave } from "react-native-animated-spinkit";
 
-// Données des recettes favorites
-const favoriteRecipes = [
-  {
-    id: '1',
-    title: 'Telor ceplok',
-    image: "https://img.cuisineaz.com/660x660/2015/02/28/i113047-photo-de-poulet-a-la-creme-fraiche.jpeg",
-    cookingTime: 9,
-    rating: 4.3,
-    category: 'breakfast',
-  },
-  {
-    id: '2',
-    title: 'Salad vegetarian',
-    image: "https://img.cuisineaz.com/1024x576/2015/09/10/i89762-poulet-a-la-creme-et-aux-champignons.webp",
-    cookingTime: 10,
-    rating: 4.3,
-    category: 'lunch',
-  },
-  {
-    id: '3',
-    title: 'Toast with egg',
-    image: "https://img.cuisineaz.com/660x660/2015/02/28/i113047-photo-de-poulet-a-la-creme-fraiche.jpeg",
-    cookingTime: 30,
-    rating: 4.3,
-    category: 'breakfast',
-  },
-  {
-    id: '4',
-    title: 'Salmon sauce',
-    image: "https://img.cuisineaz.com/1024x576/2015/09/10/i89762-poulet-a-la-creme-et-aux-champignons.webp",
-    cookingTime: 45,
-    rating: 4.3,
-    category: 'dinner',
-  },
-  {
-    id: '5',
-    title: 'Mashroom soup',
-    image: "https://img.cuisineaz.com/660x660/2015/02/28/i113047-photo-de-poulet-a-la-creme-fraiche.jpeg",
-    cookingTime: 15,
-    rating: 4.3,
-    category: 'dinner',
-  },
-  {
-    id: '6',
-    title: 'Gourmet dessert',
-    image: "https://img.cuisineaz.com/1024x576/2015/09/10/i89762-poulet-a-la-creme-et-aux-champignons.webp",
-    cookingTime: 25,
-    rating: 4.3,
-    category: 'snack',
-  },
-];
+// Interface pour les recettes
+interface Recipe {
+  _id: string;
+  id: string;
+  title: string;
+  image?: string;
+  icon?: string;
+  cooking_time: string;
+  difficulty: string;
+  servings?: number;
+  likedBy: number;
+  createdAt: string;
+}
 
-// Données pour les catégories
+// Données pour les catégories (difficultés)
 const categories = [
   { id: '0', title: 'All' },
-  { id: '1', title: 'Breakfast' },
-  { id: '2', title: 'Lunch' },
-  { id: '3', title: 'Dinner' },
-  { id: '4', title: 'Snack' },
+  { id: '1', title: 'facile' },
+  { id: '2', title: 'moyen' },
+  { id: '3', title: 'difficile' },
 ];
 
 export default function FavoritesScreen() {
@@ -74,6 +37,40 @@ export default function FavoritesScreen() {
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>('all');
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Charger les recettes depuis l'API
+  const loadRecipes = async () => {
+    try {
+      setLoading(true);
+      const response = await apiService.getRecipes();
+
+      if (response.data?.recipes) {
+        setRecipes(response.data.recipes);
+      } else {
+        setRecipes([]);
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des recettes:', error);
+      Alert.alert('Erreur', 'Impossible de charger les recettes favorites');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Rafraîchir les recettes
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await loadRecipes();
+    setRefreshing(false);
+  };
+
+  // Charger les recettes au montage du composant
+  useEffect(() => {
+    loadRecipes();
+  }, []);
 
   const handleBackPress = () => {
     router.back();
@@ -88,11 +85,14 @@ export default function FavoritesScreen() {
     }
   };
 
-  const handleRecipePress = (recipe: any) => {
+  const handleRecipePress = (recipe: Recipe) => {
     console.log('Recipe pressed:', recipe.title);
     router.push({
       pathname: '/recipe-detail',
-      params: { id: recipe.id }
+      params: {
+        id: recipe._id,
+        recipe: JSON.stringify(recipe)
+      }
     });
   };
 
@@ -102,7 +102,7 @@ export default function FavoritesScreen() {
 
   // Filtrer les recettes par catégorie et recherche
   const getFilteredRecipes = () => {
-    let filtered = favoriteRecipes;
+    let filtered = recipes;
 
     // Filtre par recherche
     if (searchText.trim()) {
@@ -111,14 +111,20 @@ export default function FavoritesScreen() {
       );
     }
 
-    // Filtre par catégorie
+    // Filtre par catégorie (difficulté)
     if (selectedCategory && selectedCategory !== 'all') {
       filtered = filtered.filter(recipe =>
-        recipe.category === selectedCategory
+        recipe.difficulty === selectedCategory
       );
     }
 
     return filtered;
+  };
+
+  // Convertir le temps de cuisson en minutes
+  const parseCookingTime = (cookingTime: string): number => {
+    const match = cookingTime.match(/(\d+)/);
+    return match ? parseInt(match[1]) : 0;
   };
 
   return (
@@ -169,23 +175,32 @@ export default function FavoritesScreen() {
         </View>
 
         {/* Liste des recettes */}
-        {getFilteredRecipes().length === 0 ? (
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <Wave size={50} color={colors.button} />
+            <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+              Chargement des recettes...
+            </Text>
+          </View>
+        ) : getFilteredRecipes().length === 0 ? (
           <View style={styles.noResultsContainer}>
             <Text style={[styles.noResultsText, { color: colors.textSecondary }]}>
-              {t('favorites.noResults')}
+              {recipes.length === 0 ? 'Aucune recette favorite trouvée' : t('favorites.noResults')}
             </Text>
           </View>
         ) : (
           <FlatList
             data={getFilteredRecipes()}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item._id}
             contentContainerStyle={styles.recipesList}
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
             renderItem={({ item }) => (
               <FavoriteRecipeCard
                 title={item.title}
-                image={item.image}
-                cookingTime={item.cookingTime}
-                rating={item.rating}
+                image={item.image || item.icon}
+                cookingTime={parseCookingTime(item.cooking_time)}
+                rating={item.likedBy || 0}
                 onPress={() => handleRecipePress(item)}
               />
             )}
@@ -253,6 +268,17 @@ const styles = StyleSheet.create({
   noResultsText: {
     fontSize: 16,
     textAlign: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 50,
+  },
+  loadingText: {
+    fontSize: 16,
+    fontFamily: 'Cronos Pro',
+    marginTop: 16,
   },
   bottomSpacer: {
     height: 120,

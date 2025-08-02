@@ -38,7 +38,15 @@
     "difficulty": "Difficulty",
     "servings": "Servings",
     "ingredients": "Ingredients",
-    "addToFavorites": "Add to favorites"
+    "addToFavorites": "Add to favorites",
+    "difficultyLevels": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard",
+      "EASY": "Easy",
+      "MEDIUM": "Medium",
+      "HARD": "Hard"
+    }
   },
   "favorites": {
     "title": "All your favorite recipes",
@@ -150,5 +158,35 @@
     "delete": "Delete",
     "error": "Error",
     "nameRequired": "Please enter an ingredient name"
+  },
+  "paywall": {
+    "title": "Less waste, More taste!",
+    "subtitle": "Choose your plan",
+    "features": {
+      "unlimited": "Unlimited recipes",
+      "favorites": "Save your favorites",
+      "refine": "Refine result",
+      "diet": "Personal diet",
+      "world": "World cuisine",
+      "pantry": "Pantry"
+    },
+    "plans": {
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "annual": "Annual",
+      "best": "Best",
+      "perWeek": "/ week",
+      "perMonth": "/ month",
+      "perYear": "/ year"
+    },
+    "cta": "Try for free",
+    "restore": "Restore",
+    "promoCode": "Promo Code",
+    "closeConfirm": {
+      "title": "Close paywall",
+      "message": "Are you sure you want to close? You can always subscribe later.",
+      "cancel": "Cancel",
+      "close": "Close"
+    }
   }
 }

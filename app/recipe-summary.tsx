@@ -7,16 +7,25 @@ import {
   FlatList,
   ScrollView,
   Alert,
+  Switch,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from '../components/ui/IconSymbol';
+import { Wave } from "react-native-animated-spinkit";
+import apiService from '../services/api';
+import { useRecipeContext } from '../contexts/RecipeContext';
 import '../i18n';
+import uuid from 'react-native-uuid';
+import { useSubscription } from '../hooks/useSubscription';
+import revenueCatService from '../config/revenuecat';
+import recipeStorageService from '../services/recipeStorage';
 
 type RecipeSummaryParams = {
   ingredients: string;
+  existingRecipes?: string; // Recettes existantes passées depuis pantry.tsx
 };
 
 interface Ingredient {
@@ -30,10 +39,12 @@ interface RecipePreferences {
   servings: number;
   cuisineStyle: string;
   diet: string;
-  difficulty: string;
+  calories: string;
+  allowOtherIngredients: boolean;
 }
 
 const DISH_TYPES = [
+  { id: 'tout', label: 'Tout' },
   { id: 'soupe', label: 'Soupe' },
   { id: 'gratin', label: 'Gratin' },
   { id: 'repas', label: 'Repas' },
@@ -50,9 +61,9 @@ const DURATIONS = [
 
 const CUISINE_STYLES = [
   { id: 'toutes', label: 'Toutes' },
+  { id: 'epicee', label: 'Épicée' },
   { id: 'italien', label: 'Italien' },
   { id: 'mexicain', label: 'Mexicain' },
-  { id: 'epicee', label: 'Épicée' },
   { id: 'francais', label: 'Français' },
   { id: 'asiatique', label: 'Asiatique' },
   { id: 'mediterraneen', label: 'Méditerranéen' },
@@ -64,13 +75,14 @@ const DIETS = [
   { id: 'vegetarien', label: 'Végétarien' },
   { id: 'vegetalien', label: 'Végétalien' },
   { id: 'sans_gluten', label: 'Sans gluten' },
-  { id: 'autre', label: 'Autre' },
+  // { id: 'autre', label: 'Autre' },
 ];
 
-const DIFFICULTIES = [
-  { id: 'facile', label: 'Facile' },
-  { id: 'moyen', label: 'Moyen' },
-  { id: 'difficile', label: 'Difficile' },
+const CALORIES = [
+  { id: '600', label: '< 600 cal' },
+  { id: '800', label: '< 800 cal' },
+  { id: '1000', label: '< 1000 cal' },
+  { id: '1200', label: '< 1200 cal' },
 ];
 
 export default function RecipeSummaryScreen() {
@@ -78,15 +90,18 @@ export default function RecipeSummaryScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<RecipeSummaryParams>();
+  const { checkPremiumAccess } = useSubscription();
 
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [preferences, setPreferences] = useState<RecipePreferences>({
-    dishType: '',
+    dishType: 'tout',
     duration: 'rapide',
     servings: 2,
     cuisineStyle: 'toutes',
     diet: 'aucun',
-    difficulty: 'facile',
+    calories: '500',
+    allowOtherIngredients: false,
   });
 
   useEffect(() => {
@@ -154,8 +169,43 @@ export default function RecipeSummaryScreen() {
     );
   };
 
-  const updatePreference = (key: keyof RecipePreferences, value: string | number) => {
+  const updatePreference = (key: keyof RecipePreferences, value: string | number | boolean) => {
     setPreferences(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleDishTypeSelection = () => {
+    const currentIndex = DISH_TYPES.findIndex(d => d.id === preferences.dishType);
+    const nextIndex = (currentIndex + 1) % DISH_TYPES.length;
+    updatePreference('dishType', DISH_TYPES[nextIndex].id);
+  };
+
+  const handleDurationSelection = () => {
+    const currentIndex = DURATIONS.findIndex(d => d.id === preferences.duration);
+    const nextIndex = (currentIndex + 1) % DURATIONS.length;
+    updatePreference('duration', DURATIONS[nextIndex].id);
+  };
+
+  const handleServingsSelection = () => {
+    const newServings = preferences.servings >= 6 ? 1 : preferences.servings + 1;
+    updatePreference('servings', newServings);
+  };
+
+  const handleCuisineSelection = () => {
+    const currentIndex = CUISINE_STYLES.findIndex(c => c.id === preferences.cuisineStyle);
+    const nextIndex = (currentIndex + 1) % CUISINE_STYLES.length;
+    updatePreference('cuisineStyle', CUISINE_STYLES[nextIndex].id);
+  };
+
+  const handleDietSelection = () => {
+    const currentIndex = DIETS.findIndex(d => d.id === preferences.diet);
+    const nextIndex = (currentIndex + 1) % DIETS.length;
+    updatePreference('diet', DIETS[nextIndex].id);
+  };
+
+  const handleCaloriesSelection = () => {
+    const currentIndex = CALORIES.findIndex(c => c.id === preferences.calories);
+    const nextIndex = (currentIndex + 1) % CALORIES.length;
+    updatePreference('calories', CALORIES[nextIndex].id);
   };
 
   const renderIngredient = ({ item }: { item: Ingredient }) => (
@@ -178,12 +228,19 @@ export default function RecipeSummaryScreen() {
   ) => (
     <TouchableOpacity style={styles.filterCard} onPress={onPress}>
       <View style={styles.filterCardContent}>
-        <IconSymbol name={icon} size={20} color={Colors.light.textSecondary} weight="regular" />
+        <IconSymbol name={icon} size={22} color={Colors.light.textSecondary} weight="regular" />
         <Text style={styles.filterCardLabel}>{label}</Text>
 
         <View style={styles.filterCardText}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center', gap: 5 }}>
-            <Text style={styles.filterCardValue}>{value}</Text>
+            <Text
+              style={styles.filterCardValue}
+              adjustsFontSizeToFit={true}
+              numberOfLines={1}
+              minimumFontScale={0.7}
+            >
+              {value}
+            </Text>
             <IconSymbol name="chevron.down" size={16} color={Colors.light.textSecondary} weight="regular" />
           </View>
         </View>
@@ -191,7 +248,7 @@ export default function RecipeSummaryScreen() {
     </TouchableOpacity>
   );
 
-  const handleGenerateRecipe = () => {
+  const handleGenerateRecipe = async () => {
     if (ingredients.length === 0) {
       Alert.alert('Erreur', 'Veuillez ajouter au moins un ingrédient.');
       return;
@@ -202,13 +259,91 @@ export default function RecipeSummaryScreen() {
       return;
     }
 
-    // TODO: Naviguer vers la page de génération de recette avec les paramètres
-    console.log('Générer recette avec:', { ingredients, preferences });
-    Alert.alert('Génération', 'Fonctionnalité à implémenter');
+    setIsLoading(true);
+
+    try {
+      const ingredientsList = ingredients.map(ing => ing.name).join(', ');
+      const ingredientsArray = ingredients.map(ing => ing.name);
+
+      // Récupérer les recettes existantes
+      const existingRecipes: any[] = await recipeStorageService.findExistingRecipes(ingredientsArray);
+
+      const response = await apiService.generateSingleRecipeWithFilters(
+        ingredientsList,
+        preferences.dishType,
+        preferences.duration,
+        preferences.servings,
+        preferences.cuisineStyle,
+        preferences.diet,
+        preferences.calories,
+        preferences.allowOtherIngredients,
+        existingRecipes
+      );
+
+      if (response.data?.recipe) {
+        const recipe = response.data.recipe;
+
+        // Sauvegarder la nouvelle recette générée
+        await recipeStorageService.saveGeneratedRecipe(recipe, ingredientsArray);
+
+        // Naviguer vers recipe-detail avec la recette générée
+        router.push({
+          pathname: '/recipe-detail',
+          params: {
+            recipe: JSON.stringify(recipe),
+            ingredients: JSON.stringify(ingredientsArray),
+            preferences: JSON.stringify(preferences),
+            existingRecipesWithSameIngredients: JSON.stringify(existingRecipes)
+          }
+        });
+      } else {
+        Alert.alert('Erreur', response.error || 'Impossible de générer une recette. Veuillez réessayer.');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la génération de la recette:', error);
+      Alert.alert('Erreur', 'Impossible de générer la recette. Veuillez réessayer.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFilterPress = async (filterType: string) => {
+    if (!(await revenueCatService.getSubscriptionStatus()).isSubscribed) {
+      router.push('/paywall');
+      return;
+    }
+
+    // Logique existante pour les filtres
+    switch (filterType) {
+      case 'dishType':
+        handleDishTypeSelection();
+        break;
+      case 'duration':
+        handleDurationSelection();
+        break;
+      case 'servings':
+        handleServingsSelection();
+        break;
+      case 'cuisineStyle':
+        handleCuisineSelection();
+        break;
+      case 'diet':
+        handleDietSelection();
+        break;
+      case 'calories':
+        handleCaloriesSelection();
+        break;
+    }
   };
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
+      {/* Modale de chargement */}
+      {isLoading && <View style={styles.modalOverlay}>
+        <Wave color={Colors.light.button} size={100} />
+        <Text style={styles.loadingText}>Génération de la recette...</Text>
+      </View>}
+
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -221,7 +356,7 @@ export default function RecipeSummaryScreen() {
         <View style={styles.headerSpacer} />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.content} contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
         {/* Cartes de filtres */}
         <View style={styles.filtersContainer}>
           <View style={styles.filtersRow}>
@@ -229,62 +364,44 @@ export default function RecipeSummaryScreen() {
               'fork.knife',
               'Type de plat',
               preferences.dishType ? DISH_TYPES.find(d => d.id === preferences.dishType)?.label || '' : 'Tout',
-              () => {
-                // TODO: Ouvrir modal pour sélectionner le type de plat
-                Alert.alert('Type de plat', 'Fonctionnalité à implémenter');
-              }
+              handleFilterPress.bind(null, 'dishType')
             )}
 
             {renderFilterCard(
               'clock',
               'Durée',
               DURATIONS.find(d => d.id === preferences.duration)?.label || 'Rapide',
-              () => {
-                // TODO: Ouvrir modal pour sélectionner la durée
-                Alert.alert('Durée', 'Fonctionnalité à implémenter');
-              }
+              handleFilterPress.bind(null, 'duration')
             )}
 
             {renderFilterCard(
-              'star',
-              'Difficulté',
-              DIFFICULTIES.find(d => d.id === preferences.difficulty)?.label || 'Facile',
-              () => {
-                // TODO: Ouvrir modal pour sélectionner la difficulté
-                Alert.alert('Difficulté', 'Fonctionnalité à implémenter');
-              }
+              'flame',
+              'Calories',
+              CALORIES.find(c => c.id === preferences.calories)?.label || '< 500 cal',
+              handleFilterPress.bind(null, 'calories')
             )}
           </View>
 
           <View style={styles.filtersRow}>
             {renderFilterCard(
               'person.2',
-              'Convives',
+              'Personnes',
               preferences.servings.toString(),
-              () => {
-                // TODO: Ouvrir modal pour sélectionner le nombre de convives
-                Alert.alert('Convives', 'Fonctionnalité à implémenter');
-              }
+              handleFilterPress.bind(null, 'servings')
             )}
 
             {renderFilterCard(
               'globe',
               'Cuisine',
               CUISINE_STYLES.find(c => c.id === preferences.cuisineStyle)?.label || 'Toutes',
-              () => {
-                // TODO: Ouvrir modal pour sélectionner la cuisine
-                Alert.alert('Cuisine', 'Fonctionnalité à implémenter');
-              }
+              handleFilterPress.bind(null, 'cuisineStyle')
             )}
 
             {renderFilterCard(
               'leaf',
               'Régime',
               DIETS.find(d => d.id === preferences.diet)?.label || 'Aucun',
-              () => {
-                // TODO: Ouvrir modal pour sélectionner le régime
-                Alert.alert('Régime', 'Fonctionnalité à implémenter');
-              }
+              handleFilterPress.bind(null, 'diet')
             )}
           </View>
         </View>
@@ -313,21 +430,44 @@ export default function RecipeSummaryScreen() {
             />
           )}
         </View>
+
+        {/* Section switch pour autres ingrédients */}
+        <View style={styles.section}>
+          <View style={styles.switchContainer}>
+            <View style={styles.switchTextContainer}>
+              <Text style={styles.switchLabel}>Permettre d&apos;autres ingrédients</Text>
+              <Text style={styles.switchDescription}>
+                Permettre à l&apos;IA de suggérer des ingrédients supplémentaires pour enrichir la recette
+              </Text>
+            </View>
+            <Switch
+              value={preferences.allowOtherIngredients}
+              onValueChange={(value) => updatePreference('allowOtherIngredients', value)}
+              trackColor={{ false: '#E0E0E0', true: Colors.light.button }}
+              thumbColor={preferences.allowOtherIngredients ? '#FFFFFF' : '#FFFFFF'}
+              ios_backgroundColor="#E0E0E0"
+            />
+          </View>
+        </View>
       </ScrollView>
 
       {/* Bouton générer */}
       <TouchableOpacity
-        style={styles.generateButton}
+        style={[
+          styles.generateButton,
+          isLoading && styles.generateButtonDisabled
+        ]}
         onPress={handleGenerateRecipe}
+        disabled={isLoading}
       >
         <IconSymbol
-          name="sparkles"
+          name={isLoading ? "clock" : "sparkles"}
           size={20}
           color="white"
           weight="bold"
         />
         <Text style={styles.generateButtonText}>
-          Générer ma recette
+          {isLoading ? 'Génération...' : 'Générer ma recette'}
         </Text>
       </TouchableOpacity>
     </View >
@@ -395,6 +535,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   filterCardLabel: {
+    marginTop: 5,
     fontSize: 14,
     fontFamily: 'Cronos Pro',
     color: Colors.light.textSecondary,
@@ -498,9 +639,60 @@ const styles = StyleSheet.create({
   },
   generateButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: 'Degular',
     fontWeight: 'bold',
     marginLeft: 8,
+  },
+  generateButtonDisabled: {
+    backgroundColor: '#ccc',
+  },
+  switchContainer: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 20,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  switchTextContainer: {
+    flex: 1,
+    marginRight: 15,
+  },
+  switchLabel: {
+    fontSize: 18,
+    fontFamily: 'Degular',
+    fontWeight: 'bold',
+    color: Colors.light.text,
+    marginBottom: 4,
+  },
+  switchDescription: {
+    fontSize: 14,
+    fontFamily: 'Cronos Pro',
+    color: Colors.light.textSecondary,
+    lineHeight: 20,
+  },
+  modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1000,
+    backgroundColor: 'rgba(238, 238, 238, 0.82)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 40,
+    fontSize: 20,
+    color: Colors.light.text,
+    fontFamily: 'Degular',
+    textAlign: 'center',
   },
 }); 

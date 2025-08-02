@@ -54,7 +54,6 @@ export const cleanupVoiceGlobally = async () => {
     await Voice.destroy();
     Voice.removeAllListeners();
     voiceInstance = null;
-    console.log('Voice nettoyé globalement');
   } catch (error) {
     console.error('Erreur lors du nettoyage global de Voice:', error);
     voiceInstance = null;
@@ -77,8 +76,6 @@ export const resetVoiceCompletely = async () => {
 
     // Attendre un peu pour s'assurer que tout est nettoyé
     await new Promise(resolve => setTimeout(resolve, 300));
-
-    console.log('Voice complètement réinitialisé');
   } catch (error) {
     console.error('Erreur lors de la réinitialisation de Voice:', error);
     globalIsRecording = false;

@@ -38,17 +38,24 @@
     "difficulty": "Difficulté",
     "servings": "Portions",
     "ingredients": "Ingrédients",
-    "addToFavorites": "Ajouter aux favoris"
+    "addToFavorites": "Ajouter aux favoris",
+    "difficultyLevels": {
+      "easy": "Facile",
+      "medium": "Moyen",
+      "hard": "Difficile",
+      "EASY": "Facile",
+      "MEDIUM": "Moyen",
+      "HARD": "Difficile"
+    }
   },
   "favorites": {
     "title": "Vos recettes préférées",
     "noResults": "Aucune recette trouvée",
     "categories": {
       "All": "Toutes",
-      "Breakfast": "Petit-déjeuner",
-      "Lunch": "Déjeuner",
-      "Dinner": "Dîner",
-      "Snack": "Collation"
+      "facile": "Facile",
+      "moyen": "Moyen",
+      "difficile": "Difficile"
     }
   },
   "tabs": {
@@ -153,6 +160,37 @@
     "error": "Erreur",
     "nameRequired": "Veuillez saisir un nom d'ingrédient",
     "voice": "Dicter une nouvelle liste",
-    "voiceTooShort": "La liste est trop courte"
+    "voiceTooShort": "La liste est trop courte",
+    "continue": "Continuer"
+  },
+  "paywall": {
+    "title": "Moins de gaspi, Plus de goût !",
+    "subtitle": "Choisissez votre plan",
+    "features": {
+      "unlimited": "Recettes illimitées",
+      "favorites": "Sauve tes favoris",
+      "refine": "Affiner résultat",
+      "diet": "Régime perso",
+      "world": "Cuisine du monde",
+      "pantry": "Garde manger"
+    },
+    "plans": {
+      "weekly": "Hebdo",
+      "monthly": "Mensuel",
+      "annual": "Annuel",
+      "best": "Meilleur",
+      "perWeek": "/ semaine",
+      "perMonth": "/ mois",
+      "perYear": "/ an"
+    },
+    "cta": "Essaie gratuitement",
+    "restore": "Restaurer",
+    "promoCode": "Code Promo",
+    "closeConfirm": {
+      "title": "Fermer le paywall",
+      "message": "Êtes-vous sûr de vouloir fermer ? Vous pourrez toujours souscrire plus tard.",
+      "cancel": "Annuler",
+      "close": "Fermer"
+    }
   }
 }

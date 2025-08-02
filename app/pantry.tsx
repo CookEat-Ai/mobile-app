@@ -186,10 +186,19 @@ export default function PantryScreen() {
         style={styles.removeButton}
         onPress={() => removeItem(item.id)}
       >
-        <IconSymbol name="trash" size={20} color="#FF6B6B" weight="regular" />
+        <IconSymbol name="trash" size={24} color='gray' weight="bold" />
       </TouchableOpacity>
     </View>
   );
+
+  const handleContinue = () => {
+    router.push({
+      pathname: '/recipe-summary',
+      params: {
+        ingredients: pantryItems.map(item => item.name).join(','),
+      },
+    });
+  };
 
   return (
     <KeyboardAvoidingView
@@ -226,7 +235,7 @@ export default function PantryScreen() {
         </View> */}
 
         {/* Liste des ingrédients */}
-        <View style={styles.section}>
+        <View style={{ ...styles.section, marginBottom: 0 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 15 }}>
             <Text style={styles.sectionTitle}>{t('pantry.myIngredients')}</Text>
 
@@ -289,29 +298,23 @@ export default function PantryScreen() {
             </Text>
           </TouchableOpacity>
         </View>
-
-        {/* Bouton generation */}
-        <View style={styles.section}>
-          <TouchableOpacity
-            style={[
-              styles.addButton,
-            ]}
-            onPress={() => {
-              // TO DO : Générer la recette
-            }}
-          >
-            <IconSymbol
-              name={'sparkles'}
-              size={20}
-              color="white"
-              weight="bold"
-            />
-            <Text style={styles.addButtonText}>
-              Générer ma recette
-            </Text>
-          </TouchableOpacity>
-        </View>
       </ScrollView>
+
+      {/* Bouton generation */}
+      <TouchableOpacity
+        style={styles.continueButton}
+        onPress={handleContinue}
+      >
+        <Text style={{ ...styles.addButtonText, fontSize: 18, marginRight: 10, marginLeft: 0 }}>
+          {t('pantry.continue')}
+        </Text>
+        <IconSymbol
+          name={'arrow.right'}
+          size={20}
+          color="white"
+          weight="bold"
+        />
+      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 }
@@ -379,10 +382,10 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 28,
     fontFamily: 'Degular',
     fontWeight: 'bold',
-    color: Colors.light.text,
+    color: Colors.light.button,
   },
   emptyState: {
     backgroundColor: 'white',
@@ -435,7 +438,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   itemName: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: 'Cronos Pro',
     color: Colors.light.text,
   },
@@ -464,6 +467,24 @@ const styles = StyleSheet.create({
     fontFamily: 'Degular',
     fontWeight: 'bold',
     marginLeft: 8,
+  },
+  continueButton: {
+    position: 'absolute',
+    bottom: 40,
+    left: 0,
+    right: 0,
+    marginHorizontal: 20,
+    backgroundColor: Colors.light.button,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 15,
+    borderRadius: 200,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   voiceCard: {
     backgroundColor: 'white',

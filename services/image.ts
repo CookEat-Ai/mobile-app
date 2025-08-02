@@ -1,4 +1,4 @@
-export async function searchImage(keywords: string) {
+export async function searchImage(keywords: string, existingImages: string[]) {
   const url = 'https://duckduckgo.com/';
   const params = {
     q: keywords
@@ -40,11 +40,11 @@ export async function searchImage(keywords: string) {
     const results = data.results;
 
     let notFound = true;
-    let width = 4000;
+    let width = 0; // 4000
 
     while (notFound) {
       for (const result of results) {
-        if (result.width > width && result.image.includes("https"))
+        if (result.width > width && result.image.includes("https") && !result.image.includes("fbsbx"))// && !existingImages.includes(result.image))
           return result.image;
       }
       width -= 300;

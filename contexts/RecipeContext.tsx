@@ -4,7 +4,7 @@ interface Recipe {
   id: string;
   title: string;
   difficulty: string;
-  cookingTime: string;
+  cooking_time: string;
   icon: string;
   image: string;
   calories: number;
@@ -57,6 +57,7 @@ export const RecipeProvider: React.FC<RecipeProviderProps> = ({ children }) => {
         updated[existingIndex] = { ...updated[existingIndex], ...recipe };
         return updated;
       }
+
       // Ajouter une nouvelle recette
       return [...prev, recipe];
     });

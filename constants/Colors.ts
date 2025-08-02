@@ -9,7 +9,7 @@ export const Colors = {
   light: {
     text: '#081A10', // Dark yellow text
     textSecondary: '#687076', // Secondary text color
-    background: '#F1F2F5',
+    background: '#FEFBF3',
     tint: tintColorLight,
     icon: '#687076',
     tabIconDefault: '#687076',

@@ -1,112 +1,68 @@
 import { useState, useEffect } from 'react';
-import apiService from '../services/api';
-
-interface Subscription {
-  id: string;
-  status: string;
-  currentPeriodStart: number;
-  currentPeriodEnd: number;
-  cancelAtPeriodEnd: boolean;
-  items: Array<{
-    priceId: string;
-    quantity: number;
-  }>;
-}
-
-interface SubscriptionState {
-  subscription: Subscription | null;
-  hasSubscription: boolean;
-  isLoading: boolean;
-}
+import { router } from 'expo-router';
+import revenueCatService, { SubscriptionStatus } from '../config/revenuecat';
 
 export const useSubscription = () => {
-  const [subscriptionState, setSubscriptionState] = useState<SubscriptionState>({
-    subscription: null,
-    hasSubscription: false,
-    isLoading: true,
+  const [subscriptionStatus, setSubscriptionStatus] = useState<SubscriptionStatus>({
+    isSubscribed: false,
+    currentPlan: null,
+    expirationDate: null,
+    dailyQuotaRemaining: 0
   });
+  const [isLoading, setIsLoading] = useState(true);
 
-  // useEffect(() => {
-  //   loadSubscription();
-  // }, []);
+  useEffect(() => {
+    loadSubscriptionStatus();
+  }, []);
 
-  const loadSubscription = async () => {
+  const loadSubscriptionStatus = async () => {
     try {
-      setSubscriptionState(prev => ({ ...prev, isLoading: true }));
-      const response = await apiService.getCurrentSubscription();
-
-      if (response.data) {
-        setSubscriptionState({
-          subscription: response.data.subscription,
-          hasSubscription: response.data.hasSubscription,
-          isLoading: false,
-        });
-      } else {
-        setSubscriptionState({
-          subscription: null,
-          hasSubscription: false,
-          isLoading: false,
-        });
-      }
+      setIsLoading(true);
+      const status = await revenueCatService.getSubscriptionStatus();
+      setSubscriptionStatus(status);
     } catch (error) {
-      setSubscriptionState({
-        subscription: null,
-        hasSubscription: false,
-        isLoading: false,
-      });
+      console.error('❌ Erreur lors du chargement du statut:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const cancelSubscription = async () => {
-    try {
-      const response = await apiService.cancelSubscription();
-      if (response.data) {
-        await loadSubscription();
-        return { success: true, message: response.data.message };
-      } else {
-        return { success: false, error: response.error };
-      }
-    } catch (error) {
-      return { success: false, error: 'Erreur lors de l\'annulation' };
+  const checkPremiumAccess = (feature: string): boolean => {
+    if (subscriptionStatus.isSubscribed) {
+      return true;
     }
+
+    // Rediriger directement vers le paywall selon la fonctionnalité
+    showPaywallForFeature(feature);
+    return false;
   };
 
-  const reactivateSubscription = async () => {
-    try {
-      const response = await apiService.reactivateSubscription();
-      if (response.data) {
-        await loadSubscription();
-        return { success: true, message: response.data.message };
-      } else {
-        return { success: false, error: response.error };
-      }
-    } catch (error) {
-      return { success: false, error: 'Erreur lors de la réactivation' };
-    }
+  const showPaywallForFeature = (feature: string) => {
+    // Rediriger directement vers le paywall sans alerte
+    router.push('/paywall');
   };
 
-  const createCheckoutSession = async (priceId: string, successUrl: string, cancelUrl: string, email: string, firstName: string) => {
-    try {
-      const response = await apiService.createCheckoutSession(priceId, successUrl, cancelUrl, email, firstName);
-      if (response.data) {
-        return { success: true, url: response.data.url };
-      } else {
-        return { success: false, error: response.error };
-      }
-    } catch (error) {
-      return { success: false, error: 'Erreur lors de la création de la session de paiement' };
+  const useDailyQuota = async (): Promise<boolean> => {
+    if (subscriptionStatus.isSubscribed) {
+      return true; // Pas de limite pour les abonnés
     }
-  };
 
-  const refreshSubscription = async () => {
-    await loadSubscription();
+    const canUse = await revenueCatService.useDailyQuota();
+    if (!canUse) {
+      showPaywallForFeature('daily_quota');
+      return false;
+    }
+
+    // Recharger le statut pour mettre à jour le quota
+    await loadSubscriptionStatus();
+    return true;
   };
 
   return {
-    ...subscriptionState,
-    cancelSubscription,
-    reactivateSubscription,
-    createCheckoutSession,
-    refreshSubscription,
+    subscriptionStatus,
+    isLoading,
+    checkPremiumAccess,
+    useDailyQuota,
+    loadSubscriptionStatus
   };
 }; 
