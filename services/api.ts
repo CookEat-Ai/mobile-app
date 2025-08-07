@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_BASE_URL } from '../config/api';
-import i18n from '../i18n';
+import I18n from '../i18n';
 
 interface ApiResponse<T> {
   data?: T;
@@ -195,7 +195,7 @@ class ApiService {
       body: JSON.stringify({
         ingredients,
         existingRecipes,
-        language: i18n.language || 'fr'
+        language: I18n.locale || 'fr'
       }),
     });
   }
@@ -223,7 +223,7 @@ class ApiService {
         calories,
         allowOtherIngredients,
         existingRecipes,
-        language: i18n.language || 'fr'
+        language: I18n.locale || 'fr'
       }),
     });
   }
@@ -233,7 +233,7 @@ class ApiService {
       method: 'POST',
       body: JSON.stringify({
         recipe,
-        language: i18n.language || 'fr'
+        language: I18n.locale || 'fr'
       }),
     });
   }
@@ -243,7 +243,7 @@ class ApiService {
       method: 'POST',
       body: JSON.stringify({
         recipe,
-        language: i18n.language || 'fr'
+        language: I18n.locale || 'fr'
       }),
     });
   }
@@ -253,7 +253,7 @@ class ApiService {
       method: 'POST',
       body: JSON.stringify({
         voiceText,
-        language: i18n.language || 'fr'
+        language: I18n.locale || 'fr'
       }),
     });
   }

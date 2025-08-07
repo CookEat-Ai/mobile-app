@@ -53,6 +53,7 @@ class RecipeStorageService {
 
       return storedRecipes
         .filter(storedRecipe => {
+          console.log(typeof storedRecipe.ingredients);
           const storedIngredients = storedRecipe.ingredients.map(ing => ing.toLowerCase().trim()).sort();
           return JSON.stringify(storedIngredients) === JSON.stringify(normalizedIngredients);
         })

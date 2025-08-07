@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import I18n from '../i18n';
 import { View, StyleSheet, Alert } from 'react-native';
 import { router } from 'expo-router';
 import Paywall from '../components/Paywall';
 
 export default function PaywallScreen() {
-  const { t } = useTranslation();
+
   const [showPaywall, setShowPaywall] = useState(true);
 
   const handleSubscribe = (planId: string) => {
@@ -19,16 +19,16 @@ export default function PaywallScreen() {
 
   const handleRestore = () => {
     Alert.alert(
-      'Restaurer les achats',
-      'Fonctionnalité de restauration en cours de développement.',
+      I18n.t('paywall.restoreTitle'),
+      I18n.t('paywall.restoreDescription'),
       [{ text: 'OK' }]
     );
   };
 
   const handlePromoCode = () => {
     Alert.alert(
-      'Code promo',
-      'Fonctionnalité de code promo en cours de développement.',
+      I18n.t('paywall.promoCodeTitle'),
+      I18n.t('paywall.promoCodeDescription'),
       [{ text: 'OK' }]
     );
   };

@@ -1,8 +1,8 @@
-import { t } from "i18next";
 import React from 'react';
 import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from './ui/IconSymbol';
+import I18n from '../i18n';
 
 interface UserHeaderProps {
   userName: string;
@@ -31,7 +31,7 @@ export default function UserHeader({
         </View> */}
         <Text style={{ fontSize: 24, fontWeight: 'bold', marginRight: 12, fontFamily: 'Degular' }}>👋🏼</Text>
         <Text style={[styles.userName, { color: colors.text }]}>
-          {t('home.hi')}
+          {I18n.t('home.hi')}
         </Text>
       </View>
 

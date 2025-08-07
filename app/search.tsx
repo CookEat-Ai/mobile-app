@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import I18n from '../i18n';
 import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CategoryButton from '../components/CategoryButton';
@@ -228,7 +228,7 @@ const categories = [
 ];
 
 export default function SearchScreen({ navigation }: { navigation: any }) {
-  const { t } = useTranslation();
+
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState('');
@@ -312,7 +312,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
         {/* Titre principal */}
         <View style={styles.titleContainer}>
           <Text style={[styles.mainTitle, { color: colors.text }]}>
-            {t('search.title')}
+            {I18n.t('search.title')}
           </Text>
         </View>
 
@@ -329,7 +329,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
             {categories.map((category) => (
               <CategoryButton
                 key={category.id}
-                title={t(`search.categories.${category.title}`)}
+                title={I18n.t(`search.categories.${category.title}`)}
                 icon={category.icon}
                 colorIcon={category.colorIcon}
                 isMore={category.isMore}
@@ -348,7 +348,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
         {getFilteredRecipes().map(([categoryKey, recipes]) => (
           <View key={categoryKey} style={styles.categorySection}>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>
-              {t(`search.categories.${categoryKey}`)}
+              {I18n.t(`search.categories.${categoryKey}`)}
             </Text>
             <FlatList
               data={recipes}

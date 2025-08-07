@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import I18n from '../../i18n';
 import { View, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import Paywall from '../../components/Paywall';
 
 export default function Offer7DaysScreen() {
-  const { t } = useTranslation();
+
   const [showPaywall, setShowPaywall] = useState(true);
 
   const handleSubscribe = (planId: string) => {

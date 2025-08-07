@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import I18n from '../i18n';
 import {
   Animated,
   Dimensions,
@@ -32,7 +32,7 @@ export default function Micro({
   onClick
 }: MicroProps) {
   const colors = Colors.light;
-  const { i18n } = useTranslation();
+
 
   const [isRecordingAnimationDelayFinished, setIsRecordingAnimationDelayFinished] = useState(false);
 
@@ -318,7 +318,7 @@ export default function Micro({
             }
           ]}
         >
-          {isRecording ? 'Donner nous la liste de vos ingrédients, on vous écoute... 👂🏼' : 'Appuyez pour commencer'}
+          {isRecording ? I18n.t('home.voice.start') : I18n.t('home.voice.start')}
         </Animated.Text>
       </Animated.View>
 

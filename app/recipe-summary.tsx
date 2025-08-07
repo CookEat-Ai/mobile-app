@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useTranslation } from 'react-i18next';
+import I18n from '../i18n';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from '../components/ui/IconSymbol';
 import { Wave } from "react-native-animated-spinkit";
@@ -44,53 +44,49 @@ interface RecipePreferences {
   allowOtherIngredients: boolean;
 }
 
-const DISH_TYPES = [
-  { id: 'tout', label: 'Tout' },
-  { id: 'soupe', label: 'Soupe' },
-  { id: 'gratin', label: 'Gratin' },
-  { id: 'repas', label: 'Repas' },
-  { id: 'dessert', label: 'Dessert' },
-  { id: 'entree', label: 'Entrée' },
-  { id: 'autre', label: 'Autre' },
-];
-
-const DURATIONS = [
-  { id: 'rapide', label: 'Rapide' },
-  { id: 'moyen', label: 'Moyen' },
-  { id: 'long', label: 'Long' },
-];
-
-const CUISINE_STYLES = [
-  { id: 'toutes', label: 'Toutes' },
-  { id: 'epicee', label: 'Épicée' },
-  { id: 'italien', label: 'Italien' },
-  { id: 'mexicain', label: 'Mexicain' },
-  { id: 'francais', label: 'Français' },
-  { id: 'asiatique', label: 'Asiatique' },
-  { id: 'mediterraneen', label: 'Méditerranéen' },
-];
-
-const DIETS = [
-  { id: 'aucun', label: 'Aucun' },
-  { id: 'halal', label: 'Halal' },
-  { id: 'vegetarien', label: 'Végétarien' },
-  { id: 'vegetalien', label: 'Végétalien' },
-  { id: 'sans_gluten', label: 'Sans gluten' },
-  // { id: 'autre', label: 'Autre' },
-];
-
-const CALORIES = [
-  { id: '600', label: '< 600 cal' },
-  { id: '800', label: '< 800 cal' },
-  { id: '1000', label: '< 1000 cal' },
-  { id: '1200', label: '< 1200 cal' },
-];
-
-const STORAGE_KEY = 'ingredients';
+const STORAGE_KEY = 'pantry_ingredients';
 
 export default function RecipeSummaryScreen() {
+  const DISH_TYPES = useMemo(() => [
+    { id: 'tout', label: I18n.t('recipeSummary.all') },
+    { id: 'soupe', label: I18n.t('recipeSummary.soup') },
+    { id: 'gratin', label: I18n.t('recipeSummary.gratin') },
+    { id: 'repas', label: I18n.t('recipeSummary.meal') },
+    { id: 'dessert', label: I18n.t('recipeSummary.dessert') }
+  ], []);
+
+  const DURATIONS = useMemo(() => [
+    { id: 'rapide', label: I18n.t('recipeSummary.quick') },
+    { id: 'moyen', label: I18n.t('recipeSummary.medium') },
+    { id: 'long', label: I18n.t('recipeSummary.long') },
+  ], []);
+
+  const CUISINE_STYLES = useMemo(() => [
+    { id: 'toutes', label: I18n.t('recipeSummary.all') },
+    { id: 'epicee', label: I18n.t('recipeSummary.spicy') },
+    { id: 'italien', label: I18n.t('recipeSummary.italian') },
+    { id: 'mexicain', label: I18n.t('recipeSummary.mexican') },
+    { id: 'francais', label: I18n.t('recipeSummary.french') },
+    { id: 'asiatique', label: I18n.t('recipeSummary.asian') },
+    { id: 'mediterraneen', label: I18n.t('recipeSummary.mediterranean') },
+  ], []);
+
+  const DIETS = useMemo(() => [
+    { id: 'aucun', label: I18n.t('recipeSummary.none') },
+    { id: 'halal', label: I18n.t('recipeSummary.halal') },
+    { id: 'vegetarien', label: I18n.t('recipeSummary.vegetarian') },
+    { id: 'vegetalien', label: I18n.t('recipeSummary.vegan') }
+  ], []);
+
+  const CALORIES = useMemo(() => [
+    { id: '600', label: I18n.t('recipeSummary.lessThan600Cal') },
+    { id: '800', label: I18n.t('recipeSummary.lessThan800Cal') },
+    { id: '1000', label: I18n.t('recipeSummary.lessThan1000Cal') },
+    { id: '1200', label: I18n.t('recipeSummary.lessThan1200Cal') },
+  ], []);
+
   const colors = Colors.light;
-  const { t } = useTranslation();
+
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<RecipeSummaryParams>();
   const { checkPremiumAccess } = useSubscription();
@@ -114,8 +110,37 @@ export default function RecipeSummaryScreen() {
         name: ingredient.trim(),
       }));
       setIngredients(ingredientsList);
+      saveIngredientsToPantry(ingredientsList);
     }
+    loadDietaryPreference();
   }, [params.ingredients]);
+
+  const saveIngredientsToPantry = async (items: Ingredient[]) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde des ingrédients:', error);
+    }
+  };
+
+  const loadDietaryPreference = async () => {
+    try {
+      const savedPreference = await AsyncStorage.getItem('dietary_preference');
+      if (savedPreference) {
+        // Convertir le format du profil vers le format des filtres
+        const preferenceMap: { [key: string]: string } = {
+          'none': 'aucun',
+          'halal': 'halal',
+          'vegetarian': 'vegetarien',
+          'vegan': 'vegetalien'
+        };
+        const mappedDiet = preferenceMap[savedPreference] || 'aucun';
+        setPreferences(prev => ({ ...prev, diet: mappedDiet }));
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement du régime:', error);
+    }
+  };
 
   const removeIngredient = (id: string) => {
     const ingredient = ingredients.find(ing => ing.id === id);
@@ -169,12 +194,12 @@ export default function RecipeSummaryScreen() {
 
   const showAddIngredientAlert = () => {
     Alert.prompt(
-      'Ajouter un ingrédient',
-      'Nom de l\'ingrédient',
+      I18n.t('recipeSummary.addIngredient'),
+      I18n.t('recipeSummary.ingredientName'),
       [
-        { text: 'Annuler', style: 'cancel' },
+        { text: I18n.t('recipeSummary.cancel'), style: 'cancel' },
         {
-          text: 'Ajouter',
+          text: I18n.t('recipeSummary.add'),
           onPress: (ingredientName) => {
             if (ingredientName) {
               addIngredient(ingredientName);
@@ -225,18 +250,6 @@ export default function RecipeSummaryScreen() {
     updatePreference('calories', CALORIES[nextIndex].id);
   };
 
-  const renderIngredient = ({ item }: { item: Ingredient }) => (
-    <View style={styles.ingredientItem}>
-      <Text style={styles.ingredientName}>{item.name}</Text>
-      <TouchableOpacity
-        style={styles.removeButton}
-        onPress={() => removeIngredient(item.id)}
-      >
-        <IconSymbol name="trash" size={24} color={'gray'} weight="bold" />
-      </TouchableOpacity>
-    </View>
-  );
-
   const renderFilterCard = (
     icon: string,
     label: string,
@@ -267,12 +280,12 @@ export default function RecipeSummaryScreen() {
 
   const handleGenerateRecipe = async () => {
     if (ingredients.length === 0) {
-      Alert.alert('Erreur', 'Veuillez ajouter au moins un ingrédient.');
+      Alert.alert(I18n.t('recipeSummary.error'), I18n.t('recipeSummary.pleaseAddAtLeastOneIngredient'));
       return;
     }
 
     if (!preferences.dishType) {
-      Alert.alert('Erreur', 'Veuillez sélectionner un type de plat.');
+      Alert.alert(I18n.t('recipeSummary.error'), I18n.t('recipeSummary.pleaseSelectADishType'));
       return;
     }
 
@@ -281,12 +294,12 @@ export default function RecipeSummaryScreen() {
       const canGenerate = await revenueCatService.useDailyQuota();
       if (!canGenerate) {
         Alert.alert(
-          'Quota quotidien atteint',
-          'Vous avez atteint votre limite de génération de recettes pour aujourd\'hui. Passez au premium pour des recettes illimitées !',
+          I18n.t('recipeSummary.dailyQuotaReached'),
+          I18n.t('recipeSummary.dailyQuotaReachedDescription'),
           [
-            { text: 'Plus tard', style: 'cancel' },
+            { text: I18n.t('recipeSummary.later'), style: 'cancel' },
             {
-              text: 'Voir les offres',
+              text: I18n.t('recipeSummary.seeOffers'),
               onPress: () => router.push('/paywall')
             }
           ]
@@ -317,7 +330,7 @@ export default function RecipeSummaryScreen() {
       );
 
       if (response.data?.recipe) {
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(ingredientsArray));
+        // await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(ingredientsList));
         const recipe = response.data.recipe;
 
         // Sauvegarder la nouvelle recette générée
@@ -334,11 +347,11 @@ export default function RecipeSummaryScreen() {
           }
         });
       } else {
-        Alert.alert('Erreur', response.error || 'Impossible de générer une recette. Veuillez réessayer.');
+        Alert.alert(I18n.t('recipeSummary.error'), response.error || I18n.t('recipeSummary.unableToGenerateRecipe'));
       }
     } catch (error) {
       console.error('Erreur lors de la génération de la recette:', error);
-      Alert.alert('Erreur', 'Impossible de générer la recette. Veuillez réessayer.');
+      Alert.alert(I18n.t('recipeSummary.error'), I18n.t('recipeSummary.unableToGenerateRecipe'));
     } finally {
       setIsLoading(false);
     }
@@ -378,7 +391,7 @@ export default function RecipeSummaryScreen() {
       {/* Modale de chargement */}
       {isLoading && <View style={styles.modalOverlay}>
         <Wave color={Colors.light.button} size={100} />
-        <Text style={styles.loadingText}>Génération de la recette...</Text>
+        <Text style={styles.loadingText}>{I18n.t('recipeSummary.generatingRecipe')}</Text>
       </View>}
 
       {/* Header */}
@@ -389,32 +402,36 @@ export default function RecipeSummaryScreen() {
         >
           <IconSymbol name="chevron.left" size={24} color={colors.text} weight="bold" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Récapitulatif</Text>
+        <Text style={styles.headerTitle}>{I18n.t('recipeSummary.summary')}</Text>
         <View style={styles.headerSpacer} />
       </View>
 
-      <ScrollView style={styles.content} contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={{ paddingBottom: 100 }}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Cartes de filtres */}
         <View style={styles.filtersContainer}>
           <View style={styles.filtersRow}>
             {renderFilterCard(
               'fork.knife',
-              'Type de plat',
-              preferences.dishType ? DISH_TYPES.find(d => d.id === preferences.dishType)?.label || '' : 'Tout',
+              I18n.t('recipeSummary.dishType'),
+              preferences.dishType ? DISH_TYPES.find(d => d.id === preferences.dishType)?.label || '' : I18n.t('recipeSummary.all'),
               handleFilterPress.bind(null, 'dishType')
             )}
 
             {renderFilterCard(
               'clock',
-              'Durée',
-              DURATIONS.find(d => d.id === preferences.duration)?.label || 'Rapide',
+              I18n.t('recipeSummary.duration'),
+              DURATIONS.find(d => d.id === preferences.duration)?.label || I18n.t('recipeSummary.quick'),
               handleFilterPress.bind(null, 'duration')
             )}
 
             {renderFilterCard(
               'flame',
-              'Calories',
-              CALORIES.find(c => c.id === preferences.calories)?.label || '< 500 cal',
+              I18n.t('recipeSummary.calories'),
+              CALORIES.find(c => c.id === preferences.calories)?.label || I18n.t('recipeSummary.lessThan500Cal'),
               handleFilterPress.bind(null, 'calories')
             )}
           </View>
@@ -422,22 +439,22 @@ export default function RecipeSummaryScreen() {
           <View style={styles.filtersRow}>
             {renderFilterCard(
               'person.2',
-              'Personnes',
+              I18n.t('recipeSummary.servings'),
               preferences.servings.toString(),
               handleFilterPress.bind(null, 'servings')
             )}
 
             {renderFilterCard(
               'globe',
-              'Cuisine',
-              CUISINE_STYLES.find(c => c.id === preferences.cuisineStyle)?.label || 'Toutes',
+              I18n.t('recipeSummary.cuisine'),
+              CUISINE_STYLES.find(c => c.id === preferences.cuisineStyle)?.label || I18n.t('recipeSummary.all'),
               handleFilterPress.bind(null, 'cuisineStyle')
             )}
 
             {renderFilterCard(
               'leaf',
-              'Régime',
-              DIETS.find(d => d.id === preferences.diet)?.label || 'Aucun',
+              I18n.t('recipeSummary.diet'),
+              DIETS.find(d => d.id === preferences.diet)?.label || I18n.t('recipeSummary.none'),
               handleFilterPress.bind(null, 'diet')
             )}
           </View>
@@ -446,35 +463,39 @@ export default function RecipeSummaryScreen() {
         {/* Section ingrédients */}
         <View style={styles.section}>
           <View style={styles.ingredientsHeader}>
-            <Text style={styles.sectionTitle}>Ingrédients</Text>
+            <Text style={styles.sectionTitle}>{I18n.t('recipeSummary.ingredients')}</Text>
             <TouchableOpacity style={styles.addButton} onPress={showAddIngredientAlert}>
               <IconSymbol name="plus" size={16} color={Colors.light.button} weight="bold" />
-              <Text style={styles.addButtonText}>Ajouter</Text>
+              <Text style={styles.addButtonText}>{I18n.t('recipeSummary.add')}</Text>
             </TouchableOpacity>
           </View>
 
           {ingredients.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyStateText}>Aucun ingrédient ajouté</Text>
+              <Text style={styles.emptyStateText}>{I18n.t('recipeSummary.noIngredients')}</Text>
             </View>
           ) : (
-            <FlatList
-              data={ingredients}
-              renderItem={renderIngredient}
-              keyExtractor={(item) => item.id}
-              scrollEnabled={false}
-              showsVerticalScrollIndicator={false}
-            />
-          )}
+            ingredients.map(ingredient =>
+              <View style={styles.ingredientItem} key={ingredient.id}>
+                <Text style={styles.ingredientName}>{ingredient.name}</Text>
+                <TouchableOpacity
+                  style={styles.removeButton}
+                  onPress={() => removeIngredient(ingredient.id)}
+                >
+                  <IconSymbol name="trash" size={24} color={'gray'} weight="bold" />
+                </TouchableOpacity>
+              </View>
+            ))
+          }
         </View>
 
         {/* Section switch pour autres ingrédients */}
         <View style={styles.section}>
           <View style={styles.switchContainer}>
             <View style={styles.switchTextContainer}>
-              <Text style={styles.switchLabel}>Permettre d&apos;autres ingrédients</Text>
+              <Text style={styles.switchLabel}>{I18n.t('recipeSummary.allowOtherIngredients')}</Text>
               <Text style={styles.switchDescription}>
-                Permettre à l&apos;IA de suggérer des ingrédients supplémentaires pour enrichir la recette
+                {I18n.t('recipeSummary.allowOtherIngredientsDescription')}
               </Text>
             </View>
             <Switch
@@ -504,7 +525,7 @@ export default function RecipeSummaryScreen() {
           weight="bold"
         />
         <Text style={styles.generateButtonText}>
-          {isLoading ? 'Génération...' : 'Générer ma recette'}
+          {isLoading ? I18n.t('recipeSummary.generating') : I18n.t('recipeSummary.generate')}
         </Text>
       </TouchableOpacity>
     </View >
@@ -541,7 +562,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
-    marginTop: 20,
+    paddingTop: 20,
   },
   filtersContainer: {
     marginBottom: 30,

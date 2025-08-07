@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect, useMemo } from 'react';
+import I18n from '../i18n';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Dimensions,
-  Platform,
   Alert,
   ActivityIndicator
 } from 'react-native';
@@ -15,8 +13,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from './ui/IconSymbol';
 import { Colors } from '../constants/Colors';
 import revenueCatService from '../config/revenuecat';
-
-const { width, height } = Dimensions.get('window');
 
 interface PaywallProps {
   visible: boolean;
@@ -26,78 +22,6 @@ interface PaywallProps {
   onPromoCode?: () => void;
 }
 
-interface SubscriptionPlan {
-  id: string;
-  title: string;
-  price: string;
-  period: string;
-  discount?: string;
-  isPopular?: boolean;
-  isBest?: boolean;
-}
-
-const subscriptionPlans: SubscriptionPlan[] = [
-  {
-    id: 'weekly',
-    title: 'Hebdo',
-    price: '3,99 €',
-    period: '/ semaine'
-  },
-  {
-    id: 'annual',
-    title: 'Annuel',
-    price: '39,99 €',
-    period: '/ an',
-    discount: '-80%',
-    isPopular: true,
-    isBest: true
-  },
-  {
-    id: 'monthly',
-    title: 'Mensuel',
-    price: '6,99 €',
-    period: '/ mois'
-  }
-];
-
-const features = [
-  {
-    icon: 'infinity',
-    title: 'Recettes illimitées',
-    color: '#FEB50A'
-  },
-  {
-    icon: 'heart',
-    title: 'Sauvegarde tes recettes',
-    color: '#FF8A65'
-  },
-  {
-    icon: 'slider.horizontal.3',
-    title: 'Filtre personnalisé',
-    color: '#FFB74D'
-  },
-  {
-    icon: 'person.2',
-    title: 'Choix des portions',
-    color: '#FFCC02'
-  },
-  {
-    icon: 'globe',
-    title: 'Cuisine du monde',
-    color: '#FFA726'
-  },
-  {
-    icon: 'sparkles',
-    title: 'Recette personnalisé',
-    color: '#FF9800'
-  },
-  {
-    icon: 'refrigerator',
-    title: 'Garde manger',
-    color: '#FF8F00'
-  }
-];
-
 export default function Paywall({
   visible,
   onClose,
@@ -105,12 +29,50 @@ export default function Paywall({
   onRestore,
   onPromoCode
 }: PaywallProps) {
-  const { t } = useTranslation();
+
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [offerings, setOfferings] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<any>(null);
+
+  const features = useMemo(() => [
+    {
+      icon: 'infinity',
+      title: I18n.t('paywall.unlimitedRecipes'),
+      color: '#FEB50A'
+    },
+    {
+      icon: 'heart',
+      title: I18n.t('paywall.saveRecipes'),
+      color: '#FF8A65'
+    },
+    {
+      icon: 'slider.horizontal.3',
+      title: I18n.t('paywall.customFilter'),
+      color: '#FFB74D'
+    },
+    {
+      icon: 'person.2',
+      title: I18n.t('paywall.portionsChoice'),
+      color: '#FFCC02'
+    },
+    {
+      icon: 'globe',
+      title: I18n.t('paywall.worldCuisine'),
+      color: '#FFA726'
+    },
+    {
+      icon: 'sparkles',
+      title: I18n.t('paywall.customRecipe'),
+      color: '#FF9800'
+    },
+    {
+      icon: 'refrigerator',
+      title: I18n.t('paywall.pantry'),
+      color: '#FF8F00'
+    }
+  ], []);
 
   useEffect(() => {
     loadOfferings();
@@ -140,11 +102,11 @@ export default function Paywall({
         onSubscribe('Pro');
         onClose();
       } else {
-        Alert.alert('Échec de l\'achat', 'L\'achat n\'a pas pu être effectué. Veuillez réessayer.');
+        Alert.alert(I18n.t('paywall.purchaseErrorTitle'), I18n.t('paywall.purchaseErrorDescription'));
       }
     } catch (error) {
       console.error('❌ Erreur lors de l\'achat:', error);
-      Alert.alert('Erreur', 'Une erreur est survenue lors de l\'achat.');
+      Alert.alert(I18n.t('paywall.purchaseErrorTitle'), I18n.t('paywall.purchaseErrorDescription'));
     } finally {
       setIsLoading(false);
     }
@@ -164,11 +126,11 @@ export default function Paywall({
         onSubscribe('premium');
         onClose();
       } else {
-        Alert.alert('Aucun achat trouvé', 'Aucun achat à restaurer n\'a été trouvé.');
+        Alert.alert(I18n.t('paywall.restoreErrorTitle'), I18n.t('paywall.restoreErrorDescription'));
       }
     } catch (error) {
       console.error('❌ Erreur lors de la restauration:', error);
-      Alert.alert('Erreur', 'Une erreur est survenue lors de la restauration.');
+      Alert.alert(I18n.t('paywall.restoreErrorTitle'), I18n.t('paywall.restoreErrorDescription'));
     } finally {
       setIsLoading(false);
     }
@@ -195,8 +157,8 @@ export default function Paywall({
         {/* Titre principal */}
         <View style={styles.titleContainer}>
           <Text style={styles.mainTitle}>
-            Moins de stress,{'\n'}
-            <Text style={styles.titleHighlight}>Plus de saveurs !</Text>
+            {I18n.t('paywall.lessStress')},{'\n'}
+            <Text style={styles.titleHighlight}>{I18n.t('paywall.moreFlavors')}</Text>
           </Text>
         </View>
 
@@ -227,7 +189,7 @@ export default function Paywall({
 
         {/* Section des abonnements */}
         <View style={styles.subscriptionContainer}>
-          <Text style={styles.subscriptionTitle}>Choisissez votre plan</Text>
+          <Text style={styles.subscriptionTitle}>{I18n.t('paywall.choosePlan')}</Text>
 
           {offerings ? (
             <View style={styles.plansContainer}>
@@ -274,7 +236,7 @@ export default function Paywall({
           ) : (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color={colors.button} />
-              <Text style={styles.loadingText}>Chargement des offres...</Text>
+              <Text style={styles.loadingText}>{I18n.t('paywall.loadingOfferings')}</Text>
             </View>
           )}
         </View>
@@ -286,14 +248,14 @@ export default function Paywall({
             if (selectedPackage) {
               handleSubscribe(selectedPackage);
             } else {
-              Alert.alert('Sélectionnez un plan', 'Veuillez sélectionner un plan avant de continuer.');
+              Alert.alert(I18n.t('paywall.selectPlanTitle'), I18n.t('paywall.selectPlanDescription'));
             }
           }}
           activeOpacity={0.8}
           disabled={isLoading || !offerings || !selectedPackage}
         >
           <Text style={styles.ctaButtonText}>
-            {isLoading ? 'Chargement...' : 'Essaie gratuitement'}
+            {isLoading ? I18n.t('paywall.loading') : I18n.t('paywall.tryFree')}
           </Text>
         </TouchableOpacity>
 
@@ -301,13 +263,13 @@ export default function Paywall({
         <View style={styles.bottomLinks}>
           <TouchableOpacity onPress={handleRestore} disabled={isLoading}>
             <Text style={[styles.bottomLinkText, isLoading && styles.disabledText]}>
-              Restaurer
+              {I18n.t('paywall.restore')}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onPromoCode} disabled={isLoading}>
             <Text style={[styles.bottomLinkText, isLoading && styles.disabledText]}>
-              Code Promo
+              {I18n.t('paywall.promoCode')}
             </Text>
           </TouchableOpacity>
         </View>

@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import I18n from '../../i18n';
 import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FavoriteRecipeCard from '../../components/FavoriteRecipeCard';
@@ -8,6 +8,7 @@ import SearchBar from '../../components/SearchBar';
 import { Colors } from '../../constants/Colors';
 import { Wave } from "react-native-animated-spinkit";
 import favoritesStorageService from '../../services/favoritesStorage';
+import uuid from "react-native-uuid";
 
 // Interface pour les recettes
 interface Recipe {
@@ -33,7 +34,7 @@ const categories = [
 ];
 
 export default function FavoritesScreen() {
-  const { t } = useTranslation();
+
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState('');
@@ -155,19 +156,21 @@ export default function FavoritesScreen() {
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.titleContainer}>
           <Text style={[styles.mainTitle, { color: colors.text }]}>
-            {t('favorites.title')}
+            {I18n.t('favorites.title')}
           </Text>
         </View>
 
         {/* Barre de recherche */}
-        <SearchBar
-          value={searchText}
-          onChangeText={setSearchText}
-          onSearch={handleSearch}
-        />
+        <View style={{ marginBottom: 20 }}>
+          <SearchBar
+            value={searchText}
+            onChangeText={setSearchText}
+            onSearch={handleSearch}
+          />
+        </View>
 
         {/* Catégories */}
-        <View style={styles.categoriesContainer}>
+        {/* <View style={styles.categoriesContainer}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -175,8 +178,8 @@ export default function FavoritesScreen() {
           >
             {categories.map((category) => (
               <TouchableOpacity
+                key={uuid.v4()}
                 activeOpacity={0.8}
-                key={category.id}
                 style={[
                   styles.categoryButton,
                   {
@@ -192,7 +195,7 @@ export default function FavoritesScreen() {
               </TouchableOpacity>
             ))}
           </ScrollView>
-        </View>
+        </View> */}
 
         {/* Liste des recettes */}
         {loading ? (
@@ -205,28 +208,21 @@ export default function FavoritesScreen() {
         ) : getFilteredRecipes().length === 0 ? (
           <View style={styles.noResultsContainer}>
             <Text style={[styles.noResultsText, { color: colors.textSecondary }]}>
-              {recipes.length === 0 ? 'Aucune recette favorite trouvée' : t('favorites.noResults')}
+              {recipes.length === 0 ? 'Aucune recette favorite trouvée' : I18n.t('favorites.noResults')}
             </Text>
           </View>
-        ) : (
-          <FlatList
-            data={getFilteredRecipes()}
-            keyExtractor={(item) => item._id}
-            contentContainerStyle={styles.recipesList}
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            renderItem={({ item }) => (
-              <FavoriteRecipeCard
-                title={item.title}
-                image={item.image || item.icon}
-                cookingTime={parseCookingTime(item.cooking_time)}
-                rating={item.likedBy || 0}
-                onPress={() => handleRecipePress(item)}
-                onRemove={() => handleRemoveFromFavorites(item)}
-              />
-            )}
-          />
-        )}
+        ) : (getFilteredRecipes().map((item) =>
+          <View key={uuid.v4()} style={{ marginHorizontal: 20 }}>
+            <FavoriteRecipeCard
+              title={item.title}
+              image={item.image || item.icon}
+              cookingTime={parseCookingTime(item.cooking_time)}
+              rating={item.likedBy || 0}
+              onPress={() => handleRecipePress(item)}
+              onRemove={() => handleRemoveFromFavorites(item)}
+            />
+          </View>
+        ))}
 
         {/* Espace en bas pour la barre de navigation */}
         <View style={styles.bottomSpacer} />
@@ -268,6 +264,7 @@ const styles = StyleSheet.create({
   },
   categoriesScroll: {
     paddingHorizontal: 20,
+    marginBottom: 10,
   },
   recipesList: {
     marginTop: 10,

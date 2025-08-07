@@ -58,11 +58,26 @@ export const useSubscription = () => {
     return true;
   };
 
+  const cancelSubscription = async (): Promise<boolean> => {
+    try {
+      const success = await revenueCatService.cancelSubscription();
+      if (success) {
+        // Recharger le statut après la cancellation
+        await loadSubscriptionStatus();
+      }
+      return success;
+    } catch (error) {
+      console.error('❌ Erreur lors de la cancellation:', error);
+      return false;
+    }
+  };
+
   return {
     subscriptionStatus,
     isLoading,
     checkPremiumAccess,
     useDailyQuota,
-    loadSubscriptionStatus
+    loadSubscriptionStatus,
+    cancelSubscription
   };
 }; 

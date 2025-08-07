@@ -5,7 +5,7 @@ import { Text } from 'react-native';
 import 'react-native-reanimated';
 import { resetVoiceCompletely } from '../hooks/useVoice';
 import revenueCatService from '../config/revenuecat';
-import * as StoreReview from 'expo-store-review';
+import i18n from "../i18n";
 
 const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 
@@ -15,6 +15,7 @@ export default function RootLayout() {
   const [shouldShowPaywall, setShouldShowPaywall] = useState(false);
 
   useEffect(() => {
+    // loadLanguageFromStorage();
     checkAppState();
     resetVoiceCompletely();
 
@@ -22,6 +23,27 @@ export default function RootLayout() {
       showPaywallIfNeeded();
     }, 1000);
   }, []);
+
+  // const loadLanguageFromStorage = async () => {
+  //   try {
+  //     const savedLanguage = await AsyncStorage.getItem('app_language');
+  //     if (savedLanguage) {
+  //       // Langue sauvegardée trouvée
+  //       i18n.changeLanguage(savedLanguage);
+  //     } else {
+  //       // Première fois : utiliser la langue système
+  //       const systemLanguage = i18n.language || 'fr';
+  //       const defaultLanguage = systemLanguage.startsWith('fr') ? 'fr' : 'en';
+  //       i18n.changeLanguage(defaultLanguage);
+  //       // Sauvegarder la langue par défaut
+  //       await AsyncStorage.setItem('app_language', defaultLanguage);
+  //     }
+  //   } catch (error) {
+  //     console.error('Erreur lors du chargement de la langue:', error);
+  //     // Fallback vers français
+  //     i18n.changeLanguage('fr');
+  //   }
+  // };
 
   const checkAppState = async () => {
     try {

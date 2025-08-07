@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
+  ActivityIndicator,
+  Alert,
   Image,
   Linking,
   Platform,
@@ -11,11 +13,14 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { router } from 'expo-router';
+import { useIsFocused } from "@react-navigation/native";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
-import { useAuth } from '../../hooks/useAuth';
 import { useSubscription } from '../../hooks/useSubscription';
+import * as WebBrowser from "expo-web-browser";
+import I18n from '../../i18n';
 
 // Données utilisateur (à remplacer par un vrai système d'auth)
 const userData = {
@@ -32,31 +37,205 @@ const userData = {
 };
 
 export default function ProfileScreen() {
-  const { t } = useTranslation();
+
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
-  const { user, isAuthenticated, isLoading, login, logout } = useAuth();
-  const { subscription, hasSubscription, isLoading: subscriptionLoading } = useSubscription();
-  const [halal, setHalal] = useState(userData.preferences.halal);
-  const [vegetarian, setVegetarian] = useState(userData.preferences.vegetarian);
-  const [vegan, setVegan] = useState(userData.preferences.vegan);
-  const handleLogin = () => {
-    // Ici vous ajouteriez la logique de connexion réelle
-    // Pour l'instant, on utilise les données mock
-    console.log('Login clicked');
-  };
+  const isFocused = useIsFocused();
+  const { subscriptionStatus, isLoading: subscriptionLoading, loadSubscriptionStatus, cancelSubscription } = useSubscription();
+  const [dietaryPreference, setDietaryPreference] = useState<'none' | 'halal' | 'vegetarian' | 'vegan'>('none');
+  const [currentLanguage, setCurrentLanguage] = useState<'fr' | 'en'>('fr');
 
-  const handleLogout = async () => {
+  useEffect(() => {
+    if (isFocused) {
+      loadSubscriptionStatus();
+      loadDietaryPreference();
+    }
+  }, [isFocused]);
+
+  const loadDietaryPreference = async () => {
     try {
-      await logout();
+      const savedPreference = await AsyncStorage.getItem('dietary_preference');
+      if (savedPreference) {
+        setDietaryPreference(savedPreference as 'none' | 'halal' | 'vegetarian' | 'vegan');
+      }
     } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
+      console.error('Erreur lors du chargement du régime:', error);
     }
   };
 
-  const handlePlanChange = (newPlan: string) => {
-    // Ici vous ajouteriez la logique de changement de plan
-    console.log('Plan changed to:', newPlan);
+  const handleUpgradeToPremium = () => {
+    // Naviguer vers le paywall
+    router.push('/paywall');
+  };
+
+  const handleCancelSubscription = () => {
+    Alert.alert(
+      I18n.t('profile.cancelSubscriptionTitle'),
+      I18n.t('profile.cancelSubscriptionMessage'),
+      [
+        {
+          text: I18n.t('profile.cancel'),
+          style: 'cancel',
+        },
+        {
+          text: I18n.t('profile.confirm'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const success = await cancelSubscription();
+              if (success) {
+                // const successMessage = Platform.OS === 'ios'
+                //   ? t('profile.cancellationSuccessMessageIOS')
+                //   : t('profile.cancellationSuccessMessageAndroid');
+
+                // Alert.alert(
+                //   t('profile.cancellationSuccessTitle'),
+                //   successMessage,
+                //   [{ text: 'OK' }]
+                // );
+              } else {
+                Alert.alert(
+                  I18n.t('profile.cancellationErrorTitle'),
+                  I18n.t('profile.cancellationErrorMessage'),
+                  [{ text: 'OK' }]
+                );
+              }
+            } catch (error) {
+              console.error('Erreur lors de la cancellation:', error);
+              Alert.alert(
+                I18n.t('profile.cancellationErrorTitle'),
+                I18n.t('profile.cancellationErrorMessage'),
+                [{ text: 'OK' }]
+              );
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handlePrivacyPolicyPress = async () => {
+    try {
+      // URL de la politique de confidentialité (à adapter selon votre politique)
+      WebBrowser.openBrowserAsync(
+        'https://drive.google.com/file/d/1Uwa45KaIrYlDzpS00YFunhBVB-a4zkSi/view?usp=sharing'
+      );
+    } catch (error) {
+      console.error('Erreur lors de l\'ouverture de la politique de confidentialité:', error);
+      Alert.alert(
+        'Erreur',
+        'Impossible d\'ouvrir la politique de confidentialité.',
+        [{ text: 'OK' }]
+      );
+    }
+  };
+
+  const handleTermsOfServicePress = async () => {
+    try {
+      WebBrowser.openBrowserAsync(
+        'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/'
+      )
+    } catch (error) {
+      console.error('Erreur lors de l\'ouverture des conditions d\'utilisation:', error);
+      Alert.alert(
+        'Erreur',
+        'Impossible d\'ouvrir les conditions d\'utilisation.',
+        [{ text: 'OK' }]
+      );
+    }
+  };
+
+  const handleFeedbackPress = async () => {
+    try {
+      const subject = encodeURIComponent('Feedback CookEat App');
+      const body = encodeURIComponent(
+        `Bonjour,\n\nJe souhaite vous faire part de mon feedback concernant l'application CookEat :\n\n` +
+        `[Votre message ici]\n\n` +
+        `Cordialement,\n[Votre nom]`
+      );
+
+      const mailtoUrl = `mailto:no-reply@cookeat.info?subject=${subject}&body=${body}`;
+
+      const canOpen = await Linking.canOpenURL(mailtoUrl);
+      if (canOpen) {
+        await Linking.openURL(mailtoUrl);
+      } else {
+        // Fallback : copier l'email dans le presse-papiers
+        Alert.alert(
+          'Email non disponible',
+          'L\'adresse no-reply@cookeat.info a été copiée dans votre presse-papiers.',
+          [{ text: 'OK' }]
+        );
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'ouverture de l\'email:', error);
+      Alert.alert(
+        'Erreur',
+        'Impossible d\'ouvrir l\'application email.',
+        [{ text: 'OK' }]
+      );
+    }
+  };
+
+  const handleDietaryPreferencePress = async () => {
+    // Vérifier si l'utilisateur a un abonnement
+    if (!subscriptionStatus.isSubscribed) {
+      // Rediriger vers le paywall si pas d'abonnement
+      router.push('/paywall');
+      return;
+    }
+
+    const preferences: Array<'none' | 'halal' | 'vegetarian' | 'vegan'> = ['none', 'halal', 'vegetarian', 'vegan'];
+    const currentIndex = preferences.indexOf(dietaryPreference);
+    const nextIndex = (currentIndex + 1) % preferences.length;
+    const newPreference = preferences[nextIndex];
+    setDietaryPreference(newPreference);
+
+    // Sauvegarder le régime dans AsyncStorage
+    try {
+      await AsyncStorage.setItem('dietary_preference', newPreference);
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde du régime:', error);
+    }
+  };
+
+  const getDietaryPreferenceText = () => {
+    switch (dietaryPreference) {
+      case 'none':
+        return I18n.t('profile.dietaryPreference.none');
+      case 'halal':
+        return I18n.t('profile.dietaryPreference.halal');
+      case 'vegetarian':
+        return I18n.t('profile.dietaryPreference.vegetarian');
+      case 'vegan':
+        return I18n.t('profile.dietaryPreference.vegan');
+      default:
+        return I18n.t('profile.dietaryPreference.none');
+    }
+  };
+
+  const handleLanguagePress = async () => {
+    const newLanguage = currentLanguage === 'fr' ? 'en' : 'fr';
+    setCurrentLanguage(newLanguage);
+    I18n.locale = newLanguage;
+
+    // Sauvegarder le choix dans AsyncStorage
+    try {
+      await AsyncStorage.setItem('app_language', newLanguage);
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde de la langue:', error);
+    }
+  };
+
+  const getLanguageText = () => {
+    switch (currentLanguage) {
+      case 'fr':
+        return I18n.t('profile.languages.french');
+      case 'en':
+        return I18n.t('profile.languages.english');
+      default:
+        return I18n.t('profile.languages.french');
+    }
   };
 
   const handleNotificationsPress = async () => {
@@ -79,22 +258,6 @@ export default function ProfileScreen() {
     }
   };
 
-  const getCurrentPlan = () => {
-    if (!hasSubscription) return 'basic';
-    // Logique pour déterminer le plan basé sur l'abonnement
-    // À adapter selon votre logique métier
-    return 'pro'; // Par défaut
-  };
-
-  const getPlanPrice = (plan: string) => {
-    switch (plan) {
-      case 'basic': return t('profile.plans.freePrice');
-      case 'proQuarter': return t('profile.plans.quarterPrice');
-      case 'proYear': return t('profile.plans.yearPrice');
-      default: return t('profile.plans.freePrice');
-    }
-  };
-
   return (
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
@@ -108,167 +271,170 @@ export default function ProfileScreen() {
             style={styles.avatar}
           />
         </View>
-
-        {/* {isAuthenticated ? (
-          <>
-            <Text style={[styles.userName, { color: colors.text }]}>
-              {userData.name}
-            </Text>
-            <Text style={[styles.userEmail, { color: colors.textSecondary }]}>
-              {userData.email}
-            </Text>
-            <TouchableOpacity
-              style={[styles.logoutButton, { borderColor: colors.border }]}
-              onPress={handleLogout}
-            >
-              <IconSymbol name="logout" size={16} color={colors.text} />
-              <Text style={[styles.logoutText, { color: colors.text }]}>
-                {t('profile.logout')}
-              </Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <>
-            <Text style={[styles.userName, { color: colors.text }]}>
-              {t('profile.guest')}
-            </Text>
-            <TouchableOpacity
-              style={[styles.loginButton, { backgroundColor: colors.button }]}
-              onPress={handleLogin}
-            >
-              <Text style={[styles.loginText, { color: colors.background }]}>
-                {t('profile.login')}
-              </Text>
-            </TouchableOpacity>
-          </>
-        )} */}
       </View>
 
       {/* Section Préférences */}
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          {t('profile.preferences')}
+          {I18n.t('profile.preferences')}
         </Text>
 
-        <View style={styles.preferenceItem}>
+        <TouchableOpacity style={styles.preferenceItem} onPress={handleDietaryPreferencePress}>
           <View style={styles.preferenceInfo}>
             <Text style={[styles.preferenceLabel, { color: colors.text }]}>
-              {t('profile.halal')}
+              {I18n.t('profile.dietaryPreference.title')}
             </Text>
             <Text style={[styles.preferenceDescription, { color: colors.textSecondary }]}>
-              {t('profile.halalDescription')}
+              {getDietaryPreferenceText()}
             </Text>
           </View>
-          <Switch
-            value={halal}
-            onValueChange={setHalal}
-            trackColor={{ false: colors.border, true: colors.button }}
-            thumbColor={colors.background}
-          />
-        </View>
-
-        <View style={styles.preferenceItem}>
-          <View style={styles.preferenceInfo}>
-            <Text style={[styles.preferenceLabel, { color: colors.text }]}>
-              {t('profile.vegetarian')}
-            </Text>
-            <Text style={[styles.preferenceDescription, { color: colors.textSecondary }]}>
-              {t('profile.vegetarianDescription')}
-            </Text>
+          <View style={styles.preferenceActions}>
+            {!subscriptionStatus.isSubscribed && (
+              <IconSymbol name="crown" size={20} color={colors.button} style={{ marginRight: 8 }} />
+            )}
+            <IconSymbol name="chevron.right" size={20} color={colors.button} />
           </View>
-          <Switch
-            value={vegetarian}
-            onValueChange={setVegetarian}
-            trackColor={{ false: colors.border, true: colors.button }}
-            thumbColor={colors.background}
-          />
-        </View>
-        {/* Vegan */}
-        <View style={styles.preferenceItem}>
-          <View style={styles.preferenceInfo}>
-            <Text style={[styles.preferenceLabel, { color: colors.text }]}>
-              {t('profile.vegan')}
-            </Text>
-            <Text style={[styles.preferenceDescription, { color: colors.textSecondary }]}>
-              {t('profile.veganDescription')}
-            </Text>
-          </View>
-          <Switch
-            value={vegan}
-            onValueChange={setVegan}
-            trackColor={{ false: colors.border, true: colors.button }}
-            thumbColor={colors.background}
-          />
-        </View>
+        </TouchableOpacity>
       </View>
 
       {/* Section Plan */}
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          {t('profile.plan')}
+          {I18n.t('profile.plan')}
         </Text>
 
         <View style={styles.planContainer}>
-          <View style={styles.currentPlan}>
-            <Text style={[styles.planName, { color: colors.text }]}>
-              {t(`profile.plans.${getCurrentPlan()}`)}
-            </Text>
-            <Text style={[styles.planPrice, { color: colors.textSecondary }]}>
-              {getPlanPrice(getCurrentPlan())}
-            </Text>
-          </View>
-
-          {/* <TouchableOpacity
-            style={[styles.changePlanButton, { borderColor: colors.button }]}
-            onPress={() => handlePlanChange('proQuarter')}
-          >
-            <Text style={[styles.changePlanText, { color: colors.button }]}>
-              {t('profile.changePlan')}
-            </Text>
-          </TouchableOpacity> */}
-        </View>
-
-        {/* Options de plans */}
-        <View style={styles.planOptions}>
-          {['basic', 'proQuarter', 'proYear'].map((plan) => (
-            <TouchableOpacity
-              key={plan}
-              style={[
-                styles.planOption,
-                {
-                  backgroundColor: getCurrentPlan() === plan ? colors.button : colors.surface,
-                  borderColor: getCurrentPlan() === plan ? colors.button : colors.border,
-                }
-              ]}
-              onPress={() => handlePlanChange(plan)}
-            >
-              <Text style={[
-                styles.planOptionText,
-                { color: getCurrentPlan() === plan ? colors.background : colors.text }
-              ]}>
-                {t(`profile.plans.${plan}`)}
+          {subscriptionLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="small" color={colors.button} />
+              <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+                {I18n.t('profile.loadingSubscription')}
               </Text>
-              <Text style={[
-                styles.planOptionPrice,
-                { color: getCurrentPlan() === plan ? colors.background : colors.textSecondary }
-              ]}>
-                {getPlanPrice(plan)}
-              </Text>
-            </TouchableOpacity>
-          ))}
+            </View>
+          ) : subscriptionStatus.isSubscribed ? (
+            // Utilisateur avec abonnement
+            <View style={styles.subscriptionInfo}>
+              <View style={styles.currentPlanInfo}>
+                <View style={styles.planBadge}>
+                  <IconSymbol name="crown" size={16} color={colors.button} />
+                  <Text style={[styles.planBadgeText, { color: colors.button }]}>
+                    {I18n.t('profile.premium')}
+                  </Text>
+                </View>
+                <Text style={[styles.planName, { color: colors.text }]}>
+                  {I18n.t('profile.premiumPlan')}
+                </Text>
+                {subscriptionStatus.expirationDate && (
+                  <Text style={[styles.planExpiration, { color: colors.textSecondary }]}>
+                    {I18n.t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString('fr-FR')}
+                  </Text>
+                )}
+              </View>
+              <TouchableOpacity
+                style={[styles.cancelButton, { borderColor: colors.border }]}
+                onPress={handleCancelSubscription}
+              >
+                <IconSymbol name="xmark.circle" size={16} color="#FF3B30" />
+                <Text style={[styles.cancelButtonText, { color: '#FF3B30' }]}>
+                  {I18n.t('profile.cancelSubscription')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            // Utilisateur sans abonnement
+            <View style={styles.freePlanContainer}>
+              <View style={styles.freePlanInfo}>
+                <View style={styles.planBadge}>
+                  <IconSymbol name="person" size={20} color={colors.textSecondary} />
+                  <Text style={[styles.planBadgeText, { color: colors.textSecondary }]}>
+                    {I18n.t('profile.free')}
+                  </Text>
+                </View>
+                <Text style={[styles.planName, { color: colors.text }]}>
+                  {I18n.t('profile.freePlan')}
+                </Text>
+                <Text style={[styles.planDescription, { color: colors.textSecondary }]}>
+                  {I18n.t('profile.freePlanDescription')}
+                </Text>
+                {/* {subscriptionStatus.dailyQuotaRemaining > 0 && (
+                  <Text style={[styles.quotaInfo, { color: colors.textSecondary }]}>
+                    {t('profile.quotaRemaining', { count: subscriptionStatus.dailyQuotaRemaining })}
+                  </Text>
+                )} */}
+              </View>
+              <TouchableOpacity
+                style={[styles.upgradeButton, { backgroundColor: colors.button }]}
+                onPress={handleUpgradeToPremium}
+              >
+                <IconSymbol name="crown" size={16} color={colors.background} />
+                <Text style={[styles.upgradeButtonText, { color: colors.background }]}>
+                  {I18n.t('profile.upgradeToPremium')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
 
       {/* Section Paramètres */}
       <View style={styles.section}>
         <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          {t('profile.settings')}
+          {I18n.t('profile.settings')}
         </Text>
 
         <TouchableOpacity style={styles.settingItem} onPress={handleNotificationsPress}>
           <IconSymbol name={Platform.OS === 'ios' ? "bell" : "notifications"} size={20} color={colors.button} />
           <Text style={[styles.settingText, { color: colors.text }]}>
-            {t('profile.notifications')}
+            {I18n.t('profile.notifications')}
+          </Text>
+          <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.settingItem} onPress={handleFeedbackPress}>
+          <IconSymbol name="envelope" size={20} color={colors.button} />
+          <View style={styles.settingInfo}>
+            <Text style={[styles.settingText, { marginLeft: 0, marginBottom: 5, color: colors.text }]}>
+              {I18n.t('profile.feedback')}
+            </Text>
+            <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
+              {I18n.t('profile.feedbackDescription')}
+            </Text>
+          </View>
+          <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.settingItem} onPress={handleLanguagePress}>
+          <IconSymbol name="globe" size={20} color={colors.button} />
+          <View style={styles.settingInfo}>
+            <Text style={[styles.settingText, { marginLeft: 0, marginBottom: 5, color: colors.text }]}>
+              {I18n.t('profile.language')}
+            </Text>
+            <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
+              {getLanguageText()}
+            </Text>
+          </View>
+          <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
+        </TouchableOpacity>
+      </View>
+
+      {/* Section Mentions légales */}
+      <View style={styles.section}>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          {I18n.t('profile.legal')}
+        </Text>
+
+        <TouchableOpacity style={styles.settingItem} onPress={handlePrivacyPolicyPress}>
+          <IconSymbol name="doc.text" size={20} color={colors.button} />
+          <Text style={[styles.settingText, { color: colors.text }]}>
+            {I18n.t('profile.privacyPolicy')}
+          </Text>
+          <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.settingItem} onPress={handleTermsOfServicePress}>
+          <IconSymbol name="doc.text" size={20} color={colors.button} />
+          <Text style={[styles.settingText, { color: colors.text }]}>
+            {I18n.t('profile.termsOfService')}
           </Text>
           <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
         </TouchableOpacity>
@@ -341,13 +507,11 @@ const styles = StyleSheet.create({
   },
   section: {
     paddingHorizontal: 20,
-    paddingVertical: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    paddingVertical: 20,
   },
   sectionTitle: {
     fontFamily: 'Degular',
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 16,
   },
@@ -363,13 +527,13 @@ const styles = StyleSheet.create({
   },
   preferenceLabel: {
     fontFamily: 'Cronos Pro',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     marginBottom: 4,
   },
   preferenceDescription: {
     fontFamily: 'Cronos Pro',
-    fontSize: 14,
+    fontSize: 18,
   },
   planContainer: {
     flexDirection: 'row',
@@ -431,11 +595,104 @@ const styles = StyleSheet.create({
   },
   settingText: {
     fontFamily: 'Cronos Pro',
-    fontSize: 16,
+    fontSize: 18,
     flex: 1,
     marginLeft: 12,
   },
+  settingInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  settingDescription: {
+    fontFamily: 'Cronos Pro',
+    fontSize: 16,
+    marginTop: 2,
+  },
+  preferenceActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   bottomSpacer: {
     height: 120,
+  },
+  // Styles pour la gestion d'abonnement
+  loadingContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  loadingText: {
+    fontFamily: 'Cronos Pro',
+    fontSize: 14,
+    marginTop: 8,
+  },
+  subscriptionInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  currentPlanInfo: {
+    flex: 1,
+  },
+  planBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  planBadgeText: {
+    fontFamily: 'Cronos Pro',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 4,
+  },
+  planExpiration: {
+    fontFamily: 'Cronos Pro',
+    fontSize: 14,
+  },
+  cancelButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  cancelButtonText: {
+    fontFamily: 'Cronos Pro',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
+  },
+  freePlanContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16,
+  },
+  freePlanInfo: {
+    flex: 1,
+    marginRight: 16,
+  },
+  planDescription: {
+    fontFamily: 'Cronos Pro',
+    fontSize: 16,
+    marginBottom: 4,
+  },
+  quotaInfo: {
+    fontFamily: 'Cronos Pro',
+    fontSize: 12,
+  },
+  upgradeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+  upgradeButtonText: {
+    fontFamily: 'Cronos Pro',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
   },
 }); 

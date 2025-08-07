@@ -1,7 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   Alert,
   Dimensions,
@@ -22,9 +21,9 @@ import apiService from '../services/api';
 import revenueCatService from '../config/revenuecat';
 import recipeStorageService from "../services/recipeStorage";
 import favoritesStorageService from "../services/favoritesStorage";
-import { BlurView } from "expo-blur";
 import { useIsFocused } from "@react-navigation/native";
 import * as StoreReview from 'expo-store-review';
+import I18n from '../i18n';
 
 const { width, height } = Dimensions.get('window');
 
@@ -53,7 +52,6 @@ interface Recipe {
 }
 
 export default function RecipeDetailScreen() {
-  const { t } = useTranslation();
   const colors = Colors.light;
   const params = useLocalSearchParams();
   const router = useRouter();
@@ -75,9 +73,8 @@ export default function RecipeDetailScreen() {
 
   useEffect(() => {
     setTimeout(async () => {
-      if (await StoreReview.hasAction())
-        StoreReview.requestReview();
-    }, 5000);
+      if (await StoreReview.hasAction()) { }//StoreReview.requestReview();
+    }, 10000);
   }, []);
 
   // Vérifier le statut d'abonnement au chargement
@@ -257,11 +254,11 @@ export default function RecipeDetailScreen() {
         setIsLiked(false);
         setIsFavorite(false);
       } else {
-        Alert.alert('Erreur', response.error || 'Impossible de générer une nouvelle recette. Veuillez réessayer.');
+        Alert.alert(I18n.t('recipeDetail.error'), response.error || I18n.t('recipeDetail.unableToGenerateRecipe'));
       }
     } catch (error) {
       console.error('Erreur lors de la génération de la nouvelle recette:', error);
-      Alert.alert('Erreur', 'Impossible de générer une nouvelle recette. Veuillez réessayer.');
+      Alert.alert(I18n.t('recipeDetail.error'), I18n.t('recipeDetail.unableToGenerateRecipe'));
     } finally {
       setIsGeneratingNewRecipe(false);
     }
@@ -303,7 +300,7 @@ export default function RecipeDetailScreen() {
     const normalizedDifficulty = difficulty.toUpperCase().trim();
 
     // Essayer de traduire avec la clé exacte
-    const translation = t(`recipe.difficultyLevels.${normalizedDifficulty}`);
+    const translation = I18n.t(`recipe.difficultyLevels.${normalizedDifficulty}`);
 
     // Si la traduction retourne la même clé, c'est qu'elle n'existe pas
     if (translation === `recipe.difficultyLevels.${normalizedDifficulty}`) {
@@ -319,7 +316,7 @@ export default function RecipeDetailScreen() {
       {/* Modale de chargement */}
       {isGeneratingNewRecipe && <View style={styles.modalOverlay}>
         <Wave color={Colors.light.button} size={100} />
-        <Text style={styles.loadingText}>Génération d&apos;une nouvelle recette...</Text>
+        <Text style={styles.loadingText}>{I18n.t('recipeDetail.generatingRecipe')}</Text>
       </View>}
 
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -338,7 +335,7 @@ export default function RecipeDetailScreen() {
 
           <View style={{ position: 'absolute', right: 10, bottom: 10, zIndex: 1000, backgroundColor: 'rgba(0, 0, 0, 0.5)', padding: 10, borderRadius: 10 }}>
             <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'white' }}>
-              Image d&apos;illustration
+              {I18n.t('recipeDetail.illustration')}
             </Text>
           </View>
 
@@ -380,7 +377,7 @@ export default function RecipeDetailScreen() {
             <View style={styles.metricCard}>
               <View style={{ alignItems: 'center' }}>
                 <Ionicons name="time-outline" size={24} color="#666" />
-                <Text style={styles.metricLabel}>{t('recipe.cookingTime')}</Text>
+                <Text style={styles.metricLabel}>{I18n.t('recipeDetail.cookingTime')}</Text>
               </View>
 
               <Text style={styles.metricValue}>{recipe.cooking_time || '-'}</Text>
@@ -389,7 +386,7 @@ export default function RecipeDetailScreen() {
             <View style={styles.metricCard}>
               <View style={{ alignItems: 'center' }}>
                 <Ionicons name="star-outline" size={24} color="#666" />
-                <Text style={styles.metricLabel}>{t('recipe.difficulty')}</Text>
+                <Text style={styles.metricLabel}>{I18n.t('recipeDetail.difficulty')}</Text>
               </View>
               <Text style={styles.metricValue}>{translateDifficulty(recipe.difficulty)}</Text>
             </View>
@@ -397,7 +394,7 @@ export default function RecipeDetailScreen() {
             <View style={styles.metricCard}>
               <View style={{ alignItems: 'center' }}>
                 <Ionicons name="people-outline" size={24} color="#666" />
-                <Text style={styles.metricLabel}>{t('recipe.servings')}</Text>
+                <Text style={styles.metricLabel}>{I18n.t('recipeDetail.servings')}</Text>
               </View>
 
               <Text style={styles.metricValue}>{recipe.servings || '-'}</Text>
@@ -408,11 +405,12 @@ export default function RecipeDetailScreen() {
           <View style={styles.metricsContainer}>
             <TouchableOpacity
               style={styles.metricCard}
+              activeOpacity={isSubscribed ? 1 : 0.8}
               onPress={handleCaloriesPress}
             >
               <View style={{ alignItems: 'center' }}>
                 <Ionicons name="flame-outline" size={24} color="#666" />
-                <Text style={styles.metricLabel}>{t('recipe.calories')}</Text>
+                <Text style={styles.metricLabel}>{I18n.t('recipeDetail.calories')}</Text>
               </View>
 
               {isSubscribed
@@ -425,11 +423,12 @@ export default function RecipeDetailScreen() {
 
             <TouchableOpacity
               style={styles.metricCard}
+              activeOpacity={isSubscribed ? 1 : 0.8}
               onPress={handleProteinsPress}
             >
               <View style={{ alignItems: 'center' }}>
                 <Ionicons name="fitness-outline" size={24} color="#666" />
-                <Text style={styles.metricLabel}>{t('recipe.proteins')}</Text>
+                <Text style={styles.metricLabel}>{I18n.t('recipeDetail.proteins')}</Text>
               </View>
 
               {isSubscribed
@@ -442,11 +441,12 @@ export default function RecipeDetailScreen() {
 
             <TouchableOpacity
               style={styles.metricCard}
+              activeOpacity={isSubscribed ? 1 : 0.8}
               onPress={handleLipidsPress}
             >
               <View style={{ alignItems: 'center' }}>
                 <Ionicons name="water-outline" size={24} color="#666" />
-                <Text style={styles.metricLabel}>{t('recipe.lipids')}</Text>
+                <Text style={styles.metricLabel}>{I18n.t('recipeDetail.lipids')}</Text>
               </View>
 
               {isSubscribed
@@ -460,7 +460,7 @@ export default function RecipeDetailScreen() {
 
           {/* Section Ingrédients */}
           <View style={styles.ingredientsSection}>
-            <Text style={styles.ingredientsTitle}>{t('recipe.ingredients')} {`(${recipe.ingredients?.length})`}</Text>
+            <Text style={styles.ingredientsTitle}>{I18n.t('recipeDetail.ingredients')} {`(${recipe.ingredients?.length})`}</Text>
 
             {recipe.ingredients?.map((ingredient: any) => (
               <View key={uuid.v4()} style={styles.ingredientItem}>
@@ -483,7 +483,7 @@ export default function RecipeDetailScreen() {
 
           {/* Section Étapes de préparation */}
           <View>
-            <Text style={styles.stepsTitle}>Etapes {!loadingSteps && `(${recipe.steps?.length})`}</Text>
+            <Text style={styles.stepsTitle}>{I18n.t('recipeDetail.steps')} {!loadingSteps && `(${recipe.steps?.length})`}</Text>
 
             {loadingSteps
               ? <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -501,7 +501,7 @@ export default function RecipeDetailScreen() {
           <View style={styles.bonAppetitSection}>
             <View style={styles.bonAppetitRow}>
               <View style={styles.divider} />
-              <Text style={styles.bonAppetitText}>Bon appétit !</Text>
+              <Text style={styles.bonAppetitText}>{I18n.t('recipeDetail.enjoy')}</Text>
               <View style={styles.divider} />
             </View>
 
@@ -517,7 +517,7 @@ export default function RecipeDetailScreen() {
                   color={isFavorite ? "#FF0000" : "#666"}
                 />
                 <Text style={[styles.likeRecipeText, { color: isFavorite ? "#FF0000" : "#666" }]}>
-                  Ajouter à mes recettes
+                  {I18n.t('recipeDetail.addToFavorites')}
                 </Text>
               </TouchableOpacity>
 
@@ -532,7 +532,7 @@ export default function RecipeDetailScreen() {
                   color={isLiked ? Colors.light.button : "#666"}
                 />
                 <Text style={[styles.likeRecipeText, { color: isLiked ? Colors.light.button : "#666" }]}>
-                  J&apos;ai aimé cette recette
+                  {I18n.t('recipeDetail.iLikedThisRecipe')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -551,7 +551,7 @@ export default function RecipeDetailScreen() {
         >
           <Ionicons name={isGeneratingNewRecipe ? "time" : "sparkles"} size={20} color="white" />
           <Text style={styles.rateButtonText}>
-            {isGeneratingNewRecipe ? 'Génération...' : 'Générer une autre recette'}
+            {isGeneratingNewRecipe ? I18n.t('recipeDetail.generatingRecipe') : I18n.t('recipeDetail.generateAnotherRecipe')}
           </Text>
         </TouchableOpacity>
       </View>}

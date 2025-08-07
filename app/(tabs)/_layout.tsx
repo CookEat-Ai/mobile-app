@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import I18n from '../../i18n';
 import { Animated, StyleSheet, View, Dimensions } from 'react-native';
 import { HapticTab } from '../../components/HapticTab';
 import { IconSymbol } from "../../components/ui/IconSymbol";
@@ -26,7 +26,7 @@ const TabIcon = ({ name, focused, color }: { name: any; focused: boolean; color:
 
 export default function TabLayout() {
   const colors = Colors.light;
-  const { t } = useTranslation();
+
   const [showTabBar, setShowTabBar] = useState(true);
   const tabBarOpacity = useRef(new Animated.Value(1)).current;
   const tabBarTranslateY = useRef(new Animated.Value(0)).current;
@@ -95,35 +95,35 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: t('tabs.home'),
+          title: I18n.t('tabs.home'),
           tabBarIcon: ({ color, focused }) => <TabIcon name="house" focused={focused} color={color} />,
         }}
       />
       {/* <Tabs.Screen
         name="search"
         options={{
-          title: t('tabs.search'),
+          title: I18n.t('tabs.search'),
           tabBarIcon: ({ color, focused }) => <TabIcon name="magnifyingglass" focused={focused} color={color} />,
         }}
       /> */}
       <Tabs.Screen
         name="favorites"
         options={{
-          title: t('tabs.favorites'),
+          title: I18n.t('tabs.favorites'),
           tabBarIcon: ({ color, focused }) => <TabIcon name="heart" focused={focused} color={color} />,
         }}
       />
       {/* <Tabs.Screen
         name="offers"
         options={{
-          title: t('tabs.offers'),
+          title: I18n.t('tabs.offers'),
           tabBarIcon: ({ color, focused }) => <TabIcon name="square.grid.2x2" focused={focused} color={color} />,
         }}
       /> */}
       <Tabs.Screen
         name="profile"
         options={{
-          title: t('tabs.profile'),
+          title: I18n.t('tabs.profile'),
           tabBarIcon: ({ color, focused }) => <TabIcon name="person" focused={focused} color={color} />,
         }}
       />

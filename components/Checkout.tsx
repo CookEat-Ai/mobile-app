@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import I18n from '../i18n';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -21,7 +21,7 @@ interface GuestCheckoutProps {
 }
 
 export default function Checkout({ visible, onCancel, onContinue }: GuestCheckoutProps) {
-  const { t } = useTranslation();
+
   const colors = Colors.light;
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -72,17 +72,17 @@ export default function Checkout({ visible, onCancel, onContinue }: GuestCheckou
           keyboardShouldPersistTaps="handled"
         >
           <Text style={[styles.title, { color: colors.text }]}>
-            {t('payment.guestCheckout')}
+            {I18n.t('payment.guestCheckout')}
           </Text>
 
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            {t('payment.guestCheckoutDescription')}
+            {I18n.t('payment.guestCheckoutDescription')}
           </Text>
 
           <View style={styles.form}>
             <View style={styles.inputGroup}>
               <Text style={[styles.label, { color: colors.text }]}>
-                {t('payment.firstName')}
+                {I18n.t('payment.firstName')}
               </Text>
               <TextInput
                 style={[styles.input, {
@@ -92,14 +92,14 @@ export default function Checkout({ visible, onCancel, onContinue }: GuestCheckou
                 }]}
                 value={firstName}
                 onChangeText={setFirstName}
-                placeholder={t('payment.firstNamePlaceholder')}
+                placeholder={I18n.t('payment.firstNamePlaceholder')}
                 placeholderTextColor={colors.textSecondary}
               />
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={[styles.label, { color: colors.text }]}>
-                {t('payment.email')} *
+                {I18n.t('payment.email')} *
               </Text>
               <TextInput
                 style={[styles.input, {
@@ -112,7 +112,7 @@ export default function Checkout({ visible, onCancel, onContinue }: GuestCheckou
                   setEmail(text);
                   if (emailError) setEmailError('');
                 }}
-                placeholder={t('payment.emailPlaceholder')}
+                placeholder={I18n.t('payment.emailPlaceholder')}
                 placeholderTextColor={colors.textSecondary}
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -129,7 +129,7 @@ export default function Checkout({ visible, onCancel, onContinue }: GuestCheckou
               onPress={handleCancel}
             >
               <Text style={[styles.buttonText, { color: colors.text }]}>
-                {t('payment.cancel')}
+                {I18n.t('payment.cancel')}
               </Text>
             </TouchableOpacity>
 
@@ -138,7 +138,7 @@ export default function Checkout({ visible, onCancel, onContinue }: GuestCheckou
               onPress={handleContinue}
             >
               <Text style={[styles.buttonText, { color: colors.background }]}>
-                {t('payment.continue')}
+                {I18n.t('payment.continue')}
               </Text>
             </TouchableOpacity>
           </View>

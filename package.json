@@ -43,6 +43,7 @@
     "react-native-animated-spinkit": "^1.5.2",
     "react-native-device-info": "^14.0.4",
     "react-native-gesture-handler": "~2.24.0",
+    "react-native-i18n": "^2.0.15",
     "react-native-purchases": "^9.0.0",
     "react-native-purchases-ui": "^9.0.0",
     "react-native-reanimated": "~3.17.4",
@@ -56,6 +57,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
+    "@types/react-native-i18n": "^2.0.3",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
     "typescript": "~5.8.3"

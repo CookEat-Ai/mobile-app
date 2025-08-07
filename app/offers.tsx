@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import I18n from '../i18n';
 import {
   Platform,
   ScrollView,
@@ -16,7 +16,7 @@ import { Colors } from '../constants/Colors';
 const subscriptions: any = [];
 
 export default function OffersScreen() {
-  const { t } = useTranslation();
+
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [selectedSubscription, setSelectedSubscription] = useState<string | null>(null);
@@ -40,10 +40,10 @@ export default function OffersScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={[styles.title, { color: colors.text }]}>
-            {t('offers.title')}
+            {I18n.t('offers.title')}
           </Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-            {t('offers.subtitle')}
+            {I18n.t('offers.subtitle')}
           </Text>
         </View>
 
@@ -67,7 +67,7 @@ export default function OffersScreen() {
               {subscription.id === "XKSRATBQW" && (
                 <View style={[styles.popularBadge, { backgroundColor: colors.button }]}>
                   <Text style={[styles.popularText, { color: colors.background }]}>
-                    {t('offers.popular')}
+                    {I18n.t('offers.popular')}
                   </Text>
                 </View>
               )}
@@ -101,7 +101,7 @@ export default function OffersScreen() {
                       color={colors.button}
                     />
                     <Text style={[styles.featureText, { color: colors.text }]}>
-                      {t(`offers.features.${subscription.id}.${index + 1}`) || ''}
+                      {I18n.t(`offers.features.${subscription.id}.${index + 1}`) || ''}
                     </Text>
                   </View>
                 ))}
@@ -124,7 +124,7 @@ export default function OffersScreen() {
                     color: selectedSubscription === subscription.id ? colors.background : colors.button
                   }
                 ]}>
-                  {selectedSubscription === subscription.id ? t('offers.selected') : t('offers.select')}
+                  {selectedSubscription === subscription.id ? I18n.t('offers.selected') : I18n.t('offers.select')}
                 </Text>
               </TouchableOpacity>
             </TouchableOpacity>

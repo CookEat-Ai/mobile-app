@@ -1,6 +1,6 @@
 import { router } from "expo-router";
-import React, { useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useMemo, useRef, useState } from 'react';
+import I18n from '../../i18n';
 import { Animated, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, FlatList, Alert, Platform, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Wave } from 'react-native-animated-spinkit';
@@ -12,112 +12,110 @@ import { Colors } from '../../constants/Colors';
 import { useRecipeContext } from '../../contexts/RecipeContext';
 import '../../i18n';
 import { IconSymbol } from "../../components/ui/IconSymbol";
-import { useSubscription } from '../../hooks/useSubscription';
 import revenueCatService from '../../config/revenuecat';
 import { processVoiceIngredients } from '../../services/chatgpt';
 
 const { width } = Dimensions.get('window');
 
-// Données des catégories d'ingrédients
-const ingredientCategories = [
-  {
-    id: 'legumes',
-    title: 'Légumes',
-    icon: '🥬',
-    ingredients: [
-      { id: 'carotte', name: 'Carotte', icon: '🥕' },
-      { id: 'tomate', name: 'Tomate', icon: '🍅' },
-      { id: 'oignon', name: 'Oignon', icon: '🧅' },
-      { id: 'poivron', name: 'Poivron', icon: '🫑' },
-      { id: 'courgette', name: 'Courgette', icon: '🥒' },
-      { id: 'brocoli', name: 'Brocoli', icon: '🥦' },
-      { id: 'epinard', name: 'Épinard', icon: '🥬' },
-      { id: 'poireau', name: 'Poireau', icon: '🧄' },
-      { id: 'ail', name: 'Ail', icon: '🧄' },
-      { id: 'champignon', name: 'Champignon', icon: '🍄' },
-      { id: 'concombre', name: 'Concombre', icon: '🥒' },
-      { id: 'chou-fleur', name: 'Chou-fleur', icon: '🥬' },
-    ]
-  },
-  {
-    id: 'viandes',
-    title: 'Viandes',
-    icon: '🍖',
-    ingredients: [
-      { id: 'poulet', name: 'Poulet', icon: '🍗' },
-      { id: 'boeuf', name: 'Bœuf', icon: '🥩' },
-      { id: 'porc', name: 'Porc', icon: '🥓' },
-      { id: 'agneau', name: 'Agneau', icon: '🐑' },
-      { id: 'dinde', name: 'Dinde', icon: '🦃' },
-      { id: 'veau', name: 'Veau', icon: '🐄' },
-    ]
-  },
-  {
-    id: 'poissons',
-    title: 'Poissons',
-    icon: '🐟',
-    ingredients: [
-      { id: 'saumon', name: 'Saumon', icon: '🐟' },
-      { id: 'thon', name: 'Thon', icon: '🐠' },
-      { id: 'cabillaud', name: 'Cabillaud', icon: '🐡' },
-      { id: 'sardine', name: 'Sardine', icon: '🐟' },
-      { id: 'maquereau', name: 'Maquereau', icon: '🐠' },
-      { id: 'bar', name: 'Bar', icon: '🐡' },
-    ]
-  },
-  {
-    id: 'necessites',
-    title: 'Les essentiels',
-    icon: '🍚',
-    ingredients: [
-      { id: 'pates', name: 'Pâtes', icon: '🍝' },
-      { id: 'riz', name: 'Riz', icon: '🍚' },
-      { id: 'semoule', name: 'Semoule', icon: '🍚' },
-      { id: 'creme', name: 'Crème fraîche', icon: '🥛' },
-      { id: 'lait', name: 'Lait', icon: '🥛' },
-      { id: 'huile', name: 'Huile d\'olive', icon: '🫒' },
-      { id: 'beurre', name: 'Beurre', icon: '🧈' },
-      { id: 'oeufs', name: 'Œufs', icon: '🥚' },
-      { id: 'farine', name: 'Farine', icon: '🌾' },
-    ]
-  },
-  {
-    id: 'fromages',
-    title: 'Fromages',
-    icon: '🧀',
-    ingredients: [
-      { id: 'emmental', name: 'Emmental', icon: '🧀' },
-      { id: 'cheddar', name: 'Cheddar', icon: '🧀' },
-      { id: 'mozzarella', name: 'Mozzarella', icon: '🧀' },
-      { id: 'parmesan', name: 'Parmesan', icon: '🧀' },
-      { id: 'brie', name: 'Brie', icon: '🧀' },
-      { id: 'camembert', name: 'Camembert', icon: '🧀' },
-      { id: 'roquefort', name: 'Roquefort', icon: '🧀' },
-      { id: 'feta', name: 'Feta', icon: '🧀' },
-    ]
-  },
-  {
-    id: 'fruits',
-    title: 'Fruits',
-    icon: '🍎',
-    ingredients: [
-      { id: 'pomme', name: 'Pomme', icon: '🍎' },
-      { id: 'banane', name: 'Banane', icon: '🍌' },
-      { id: 'orange', name: 'Orange', icon: '🍊' },
-      { id: 'fraise', name: 'Fraise', icon: '🍓' },
-      { id: 'raisin', name: 'Raisin', icon: '🍇' },
-      { id: 'kiwi', name: 'Kiwi', icon: '🥝' },
-      { id: 'ananas', name: 'Ananas', icon: '🍍' },
-      { id: 'mangue', name: 'Mangue', icon: '🥭' },
-    ]
-  }
-];
-
 export default function HomeScreen() {
+  const ingredientCategories = useMemo(() => [
+    {
+      id: 'legumes',
+      title: I18n.t('home.categories.vegetables.title'),
+      icon: '🥬',
+      ingredients: [
+        { id: 'carotte', name: I18n.t('home.categories.vegetables.carrot'), icon: '🥕' },
+        { id: 'tomate', name: I18n.t('home.categories.vegetables.tomato'), icon: '🍅' },
+        { id: 'oignon', name: I18n.t('home.categories.vegetables.onion'), icon: '🧅' },
+        { id: 'poivron', name: I18n.t('home.categories.vegetables.pepper'), icon: '🫑' },
+        { id: 'courgette', name: I18n.t('home.categories.vegetables.courgette'), icon: '🥒' },
+        { id: 'brocoli', name: I18n.t('home.categories.vegetables.broccoli'), icon: '🥦' },
+        { id: 'epinard', name: I18n.t('home.categories.vegetables.spinach'), icon: '🥬' },
+        { id: 'poireau', name: I18n.t('home.categories.vegetables.leek'), icon: '🧄' },
+        { id: 'ail', name: I18n.t('home.categories.vegetables.garlic'), icon: '🧄' },
+        { id: 'champignon', name: I18n.t('home.categories.vegetables.mushroom'), icon: '🍄' },
+        { id: 'concombre', name: I18n.t('home.categories.vegetables.cucumber'), icon: '🥒' },
+        { id: 'chou-fleur', name: I18n.t('home.categories.vegetables.cauliflower'), icon: '🥬' },
+      ]
+    },
+    {
+      id: 'viandes',
+      title: I18n.t('home.categories.meats.title'),
+      icon: '🍖',
+      ingredients: [
+        { id: 'poulet', name: I18n.t('home.categories.meats.chicken'), icon: '🍗' },
+        { id: 'boeuf', name: I18n.t('home.categories.meats.beef'), icon: '🥩' },
+        { id: 'porc', name: I18n.t('home.categories.meats.pork'), icon: '🥓' },
+        { id: 'agneau', name: I18n.t('home.categories.meats.lamb'), icon: '🐑' },
+        { id: 'dinde', name: I18n.t('home.categories.meats.turkey'), icon: '🦃' },
+        { id: 'veau', name: I18n.t('home.categories.meats.veal'), icon: '🐄' },
+      ]
+    },
+    {
+      id: 'poissons',
+      title: I18n.t('home.categories.fish.title'),
+      icon: '🐟',
+      ingredients: [
+        { id: 'saumon', name: I18n.t('home.categories.fish.salmon'), icon: '🐟' },
+        { id: 'thon', name: I18n.t('home.categories.fish.tuna'), icon: '🐠' },
+        { id: 'cabillaud', name: I18n.t('home.categories.fish.cod'), icon: '🐡' },
+        { id: 'sardine', name: I18n.t('home.categories.fish.sardine'), icon: '🐟' },
+        { id: 'maquereau', name: I18n.t('home.categories.fish.maquereau'), icon: '🐠' },
+        { id: 'bar', name: I18n.t('home.categories.fish.bar'), icon: '🐡' },
+      ]
+    },
+    {
+      id: 'necessites',
+      title: I18n.t('home.categories.essentials.title'),
+      icon: '🍚',
+      ingredients: [
+        { id: 'pates', name: I18n.t('home.categories.essentials.pasta'), icon: '🍝' },
+        { id: 'riz', name: I18n.t('home.categories.essentials.rice'), icon: '🍚' },
+        { id: 'semoule', name: I18n.t('home.categories.essentials.semolina'), icon: '🍚' },
+        { id: 'creme', name: I18n.t('home.categories.essentials.cream'), icon: '🥛' },
+        { id: 'lait', name: I18n.t('home.categories.essentials.milk'), icon: '🥛' },
+        { id: 'huile', name: I18n.t('home.categories.essentials.oil'), icon: '🫒' },
+        { id: 'beurre', name: I18n.t('home.categories.essentials.butter'), icon: '🧈' },
+        { id: 'oeufs', name: I18n.t('home.categories.essentials.eggs'), icon: '🥚' },
+        { id: 'farine', name: I18n.t('home.categories.essentials.flour'), icon: '🌾' },
+      ]
+    },
+    {
+      id: 'fromages',
+      title: I18n.t('home.categories.cheeses.title'),
+      icon: '🧀',
+      ingredients: [
+        { id: 'emmental', name: I18n.t('home.categories.cheeses.emmental'), icon: '🧀' },
+        { id: 'cheddar', name: I18n.t('home.categories.cheeses.cheddar'), icon: '🧀' },
+        { id: 'mozzarella', name: I18n.t('home.categories.cheeses.mozzarella'), icon: '🧀' },
+        { id: 'parmesan', name: I18n.t('home.categories.cheeses.parmesan'), icon: '🧀' },
+        { id: 'brie', name: I18n.t('home.categories.cheeses.brie'), icon: '🧀' },
+        { id: 'camembert', name: I18n.t('home.categories.cheeses.camembert'), icon: '🧀' },
+        { id: 'roquefort', name: I18n.t('home.categories.cheeses.roquefort'), icon: '🧀' },
+        { id: 'feta', name: I18n.t('home.categories.cheeses.feta'), icon: '🧀' },
+      ]
+    },
+    {
+      id: 'fruits',
+      title: I18n.t('home.categories.fruits.title'),
+      icon: '🍎',
+      ingredients: [
+        { id: 'pomme', name: I18n.t('home.categories.fruits.apple'), icon: '🍎' },
+        { id: 'banane', name: I18n.t('home.categories.fruits.banana'), icon: '🍌' },
+        { id: 'orange', name: I18n.t('home.categories.fruits.orange'), icon: '🍊' },
+        { id: 'fraise', name: I18n.t('home.categories.fruits.strawberry'), icon: '🍓' },
+        { id: 'raisin', name: I18n.t('home.categories.fruits.raisin'), icon: '🍇' },
+        { id: 'kiwi', name: I18n.t('home.categories.fruits.kiwi'), icon: '🥝' },
+        { id: 'ananas', name: I18n.t('home.categories.fruits.pineapple'), icon: '🍍' },
+        { id: 'mangue', name: I18n.t('home.categories.fruits.mango'), icon: '🥭' },
+      ]
+    }
+  ], []);
+
   const colors = Colors.light;
-  const { t } = useTranslation();
+
   const insets = useSafeAreaInsets();
-  const { addRecipe, clearRecipes } = useRecipeContext();
+  const { clearRecipes } = useRecipeContext();
   const [liveText, setLiveText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
@@ -415,7 +413,7 @@ export default function HomeScreen() {
           ]}
         >
           <Text style={[styles.mainTitle, { color: colors.text }]}>
-            {t('home.title')}
+            {I18n.t('home.title')}
           </Text>
         </Animated.View> */}
 
@@ -435,7 +433,7 @@ export default function HomeScreen() {
           ]}
         >
           <Text style={[styles.introText, { color: colors.textSecondary }]}>
-            {t('home.intro')}
+            {I18n.t('home.intro')}
           </Text>
         </Animated.View>
 
@@ -459,8 +457,8 @@ export default function HomeScreen() {
             onPress={handlePantryPress}
           >
             <View>
-              <Text style={styles.cardTitle}>Gérer votre garde-manger</Text>
-              <Text style={styles.cardDescription}>Ajoutez, retirez, modifiez vos ingrédients</Text>
+              <Text style={styles.cardTitle}>{I18n.t('home.pantry.title')}</Text>
+              <Text style={styles.cardDescription}>{I18n.t('home.pantry.description')}</Text>
             </View>
             <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} weight="bold" />
           </TouchableOpacity>
@@ -494,8 +492,8 @@ export default function HomeScreen() {
               }]
             }}
           >
-            <Text style={styles.cardTitle}>{t('home.micro')}</Text>
-            <Text style={styles.cardDescription}>{t('home.microDescription')}</Text>
+            <Text style={styles.cardTitle}>{I18n.t('home.micro')}</Text>
+            <Text style={styles.cardDescription}>{I18n.t('home.microDescription')}</Text>
           </Animated.View>
           <Micro
             onRecordingStateChange={handleRecordingStateChange}
@@ -518,8 +516,8 @@ export default function HomeScreen() {
             }
           ]}
         >
-          <Text style={styles.cardTitle}>{t('home.manual')}</Text>
-          <Text style={styles.cardDescription}>{t('home.manualDescription')}</Text>
+          <Text style={styles.cardTitle}>{I18n.t('home.manual')}</Text>
+          <Text style={styles.cardDescription}>{I18n.t('home.manualDescription')}</Text>
 
           <View style={styles.manualSelectionContainer}>
             {/* Indicateurs de catégories */}
@@ -592,7 +590,7 @@ export default function HomeScreen() {
               }}
             >
               <Text style={styles.validateButtonText}>
-                Continuer ({selectedIngredients.length} ingrédients)
+                {I18n.t('home.continue')} ({selectedIngredients.length} {I18n.t('home.ingredients')})
               </Text>
             </TouchableOpacity>
           </View>
@@ -628,7 +626,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Cronos Pro',
   },
   bottomSpacer: {
-    height: 100, // Espace pour la barre de navigation
+    height: 150, // Espace pour la barre de navigation
   },
   cardContainer: {
     padding: 20,
