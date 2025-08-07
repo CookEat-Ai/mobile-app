@@ -15,17 +15,21 @@ import {
 } from 'react-native';
 import { Colors } from '../constants/Colors';
 import uuid from 'react-native-uuid';
-import { getRecipeIngredients, getRecipeSteps } from "../services/chatgpt";
+import { getRecipeSteps } from "../services/chatgpt";
 import { Wave } from "react-native-animated-spinkit";
 import { searchImage } from "../services/image";
-import { useRecipeContext } from '../contexts/RecipeContext';
 import apiService from '../services/api';
 import revenueCatService from '../config/revenuecat';
 import recipeStorageService from "../services/recipeStorage";
+import favoritesStorageService from "../services/favoritesStorage";
+import { BlurView } from "expo-blur";
+import { useIsFocused } from "@react-navigation/native";
+import * as StoreReview from 'expo-store-review';
 
 const { width, height } = Dimensions.get('window');
 
 interface Recipe {
+  _id?: string;
   id: string;
   title: string;
   difficulty: string;
@@ -53,9 +57,13 @@ export default function RecipeDetailScreen() {
   const colors = Colors.light;
   const params = useLocalSearchParams();
   const router = useRouter();
-  const [isLiked, setIsLiked] = useState(false);
+  const isFocused = useIsFocused();
 
-  const existingRecipesWithSameIngredients = useRef(JSON.parse(params.existingRecipesWithSameIngredients as string));
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  const existingRecipesWithSameIngredients = useRef(params.existingRecipesWithSameIngredients ? JSON.parse(params.existingRecipesWithSameIngredients as string) : []);
   const [recipe, setRecipe] = useState<Recipe>(JSON.parse(params.recipe as string));
 
   const [loadingSteps, setLoadingSteps] = useState(!recipe.steps?.length);
@@ -64,6 +72,24 @@ export default function RecipeDetailScreen() {
   const firstTime = useRef(true);
   const firstTimeImage = useRef(true);
   const firstTimeSteps = useRef(true);
+
+  useEffect(() => {
+    setTimeout(async () => {
+      if (await StoreReview.hasAction())
+        StoreReview.requestReview();
+    }, 5000);
+  }, []);
+
+  // Vérifier le statut d'abonnement au chargement
+  useEffect(() => {
+    if (isFocused) {
+      const checkSubscriptionStatus = async () => {
+        const status = await revenueCatService.getSubscriptionStatus();
+        setIsSubscribed(status.isSubscribed);
+      };
+      checkSubscriptionStatus();
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     // Charger les étapes si nécessaire
@@ -92,6 +118,7 @@ export default function RecipeDetailScreen() {
       apiService.saveRecipe(recipe)
         .then((response) => {
           if (response.data?.success) {
+            recipe._id = response.data.recipe._id;
             console.log('Recette sauvegardée avec succès:', response.data.message);
           }
         })
@@ -101,28 +128,51 @@ export default function RecipeDetailScreen() {
     }
   }, [recipe]);
 
+  // Vérifier si la recette est dans les favoris au chargement
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      const isFavorite = await favoritesStorageService.isFavorite(recipe.id);
+      setIsFavorite(isFavorite);
+    };
+    checkFavoriteStatus();
+  }, [recipe.id]);
+
   const handleBackPress = () => {
     router.back();
   };
 
-  const handleLikePress = () => {
-    setIsLiked(!isLiked);
-  };
-
   const handleLikeRecipe = () => {
-    apiService.likeRecipe(recipe.id)
-      .then((response) => {
-        console.log('Recette likée avec succès:', response.data);
-      })
-      .catch((error) => {
-        console.error('Erreur lors du like de la recette:', error);
-      });
-  };
+    if (!recipe._id) {
+      Alert.alert('Erreur', 'Impossible de liker la recette');
+      return;
+    }
+    else {
+      apiService.likeRecipe(recipe._id)
+        .then((response) => {
+          setIsLiked(true);
+        })
+        .catch((error) => {
+          console.error('Erreur lors du like de la recette:', error);
+        });
+    };
+  }
 
-  const handleAddToFavorites = () => {
-    // Ajouter la recette aux favoris
-    setIsLiked(true);
-    Alert.alert('Succès', 'Recette ajoutée à vos favoris !');
+  const handleAddToFavorites = async () => {
+    try {
+      if (await favoritesStorageService.isFavorite(recipe.id)) {
+        await favoritesStorageService.removeFromFavorites(recipe.id);
+        setIsFavorite(false);
+        return;
+      }
+      else {
+        await favoritesStorageService.addToFavorites(recipe);
+        setIsFavorite(true);
+        Alert.alert('Succès', 'Recette ajoutée à vos favoris !');
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'ajout aux favoris:', error);
+      Alert.alert('Erreur', 'Impossible d\'ajouter la recette aux favoris');
+    }
   };
 
   const capitalizeFirstLetter = (str: string) => {
@@ -131,10 +181,23 @@ export default function RecipeDetailScreen() {
   };
 
   const handleGenerateRecipe = async () => {
-    // Vérifier le quota quotidien
+    // Vérifier le quota quotidien pour les utilisateurs non abonnés
     if (!(await revenueCatService.getSubscriptionStatus()).isSubscribed) {
-      router.push('/paywall');
-      return;
+      const canGenerate = await revenueCatService.useDailyQuota();
+      if (!canGenerate) {
+        Alert.alert(
+          'Quota quotidien atteint',
+          'Vous avez atteint votre limite de génération de recettes pour aujourd\'hui. Passez au premium pour des recettes illimitées !',
+          [
+            { text: 'Plus tard', style: 'cancel' },
+            {
+              text: 'Voir les offres',
+              onPress: () => router.push('/paywall')
+            }
+          ]
+        );
+        return;
+      }
     }
 
     try {
@@ -191,6 +254,8 @@ export default function RecipeDetailScreen() {
         setRecipe(newRecipe);
         setLoadingSteps(!newRecipe.steps);
         setLoadingImage(!newRecipe.image);
+        setIsLiked(false);
+        setIsFavorite(false);
       } else {
         Alert.alert('Erreur', response.error || 'Impossible de générer une nouvelle recette. Veuillez réessayer.');
       }
@@ -210,6 +275,24 @@ export default function RecipeDetailScreen() {
 
     // Afficher les informations nutritionnelles détaillées
     Alert.alert('Informations Nutritionnelles', 'Cette fonctionnalité est réservée aux abonnés premium.');
+  };
+
+  const handleCaloriesPress = async () => {
+    if (!(await revenueCatService.getSubscriptionStatus()).isSubscribed) {
+      router.push('/paywall');
+    }
+  };
+
+  const handleProteinsPress = async () => {
+    if (!(await revenueCatService.getSubscriptionStatus()).isSubscribed) {
+      router.push('/paywall');
+    }
+  };
+
+  const handleLipidsPress = async () => {
+    if (!(await revenueCatService.getSubscriptionStatus()).isSubscribed) {
+      router.push('/paywall');
+    }
   };
 
   // Fonction pour traduire la difficulté
@@ -270,16 +353,16 @@ export default function RecipeDetailScreen() {
             <Ionicons name="arrow-back" size={24} color="#000" />
           </TouchableOpacity>
 
-          {/* Bouton like */}
+          {/* Bouton favorite */}
           <TouchableOpacity
             activeOpacity={0.8}
             style={styles.likeButton}
-            onPress={handleLikePress}
+            onPress={handleAddToFavorites}
           >
             <Ionicons
-              name={isLiked ? "heart" : "heart-outline"}
+              name={isFavorite ? "heart" : "heart-outline"}
               size={24}
-              color={isLiked ? "#FF0000" : "#000"}
+              color={isFavorite ? "#FF0000" : "#000"}
             />
           </TouchableOpacity>
         </View>
@@ -323,31 +406,56 @@ export default function RecipeDetailScreen() {
 
           {/* Métriques - Deuxième ligne */}
           <View style={styles.metricsContainer}>
-            <View style={styles.metricCard}>
+            <TouchableOpacity
+              style={styles.metricCard}
+              onPress={handleCaloriesPress}
+            >
               <View style={{ alignItems: 'center' }}>
                 <Ionicons name="flame-outline" size={24} color="#666" />
-                <Text style={styles.metricLabel}>Calories</Text>
+                <Text style={styles.metricLabel}>{t('recipe.calories')}</Text>
               </View>
 
-              <Text style={styles.metricValue}>{recipe.calories || '-'}</Text>
-            </View>
+              {isSubscribed
+                ? <Text style={styles.metricValue}>
+                  {`${recipe.calories || '-'}/p`}
+                </Text>
+                : <Ionicons name="lock-closed-outline" size={24} color="black" />
+              }
+            </TouchableOpacity>
 
-            <View style={styles.metricCard}>
+            <TouchableOpacity
+              style={styles.metricCard}
+              onPress={handleProteinsPress}
+            >
               <View style={{ alignItems: 'center' }}>
                 <Ionicons name="fitness-outline" size={24} color="#666" />
-                <Text style={styles.metricLabel}>Protéines</Text>
+                <Text style={styles.metricLabel}>{t('recipe.proteins')}</Text>
               </View>
-              <Text style={styles.metricValue}>{recipe.proteins || '-'}</Text>
-            </View>
 
-            <View style={styles.metricCard}>
+              {isSubscribed
+                ? <Text style={styles.metricValue}>
+                  {`${recipe.proteins || '-'}`}
+                </Text>
+                : <Ionicons name="lock-closed-outline" size={24} color="black" />
+              }
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.metricCard}
+              onPress={handleLipidsPress}
+            >
               <View style={{ alignItems: 'center' }}>
                 <Ionicons name="water-outline" size={24} color="#666" />
-                <Text style={styles.metricLabel}>Lipides</Text>
+                <Text style={styles.metricLabel}>{t('recipe.lipids')}</Text>
               </View>
 
-              <Text style={styles.metricValue}>{recipe.lipids || '-'}</Text>
-            </View>
+              {isSubscribed
+                ? <Text style={styles.metricValue}>
+                  {`${recipe.lipids || '-'}`}
+                </Text>
+                : <Ionicons name="lock-closed-outline" size={24} color="black" />
+              }
+            </TouchableOpacity>
           </View>
 
           {/* Section Ingrédients */}
@@ -363,8 +471,8 @@ export default function RecipeDetailScreen() {
                   <Text style={styles.ingredientQuantity}>{ingredient.quantity}</Text>
                 </View>
                 <View style={styles.ingredientTags}>
-                  {ingredient.tags?.map((tag: string, index: number) => (
-                    <View key={index} style={[styles.tag, { backgroundColor: getTagColor(tag) }]}>
+                  {ingredient.tags?.map((tag: string) => (
+                    <View key={uuid.v4()} style={[styles.tag, { backgroundColor: getTagColor(tag) }]}>
                       <Text style={styles.tagText}>{tag}</Text>
                     </View>
                   ))}
@@ -404,11 +512,11 @@ export default function RecipeDetailScreen() {
                 activeOpacity={0.8}
               >
                 <Ionicons
-                  name={isLiked ? "heart" : "heart-outline"}
+                  name={isFavorite ? "heart" : "heart-outline"}
                   size={24}
-                  color={isLiked ? Colors.light.button : "#666"}
+                  color={isFavorite ? "#FF0000" : "#666"}
                 />
-                <Text style={[styles.likeRecipeText, { color: isLiked ? Colors.light.button : "#666" }]}>
+                <Text style={[styles.likeRecipeText, { color: isFavorite ? "#FF0000" : "#666" }]}>
                   Ajouter à mes recettes
                 </Text>
               </TouchableOpacity>
@@ -434,7 +542,7 @@ export default function RecipeDetailScreen() {
       </ScrollView>
 
       {/* Bouton Generate Recipe */}
-      <View style={styles.bottomButtonContainer}>
+      {params.showGenerateButton !== 'false' && <View style={styles.bottomButtonContainer}>
         <TouchableOpacity
           activeOpacity={0.8}
           style={[styles.favoriteButton, isGeneratingNewRecipe && styles.favoriteButtonDisabled]}
@@ -446,7 +554,7 @@ export default function RecipeDetailScreen() {
             {isGeneratingNewRecipe ? 'Génération...' : 'Générer une autre recette'}
           </Text>
         </TouchableOpacity>
-      </View>
+      </View>}
     </View>
   );
 }
@@ -754,5 +862,9 @@ const styles = StyleSheet.create({
   },
   disabledText: {
     opacity: 0.5,
+  },
+  blurredValue: {
+    opacity: 0.3,
+    filter: 'blur(20px)',
   },
 }); 

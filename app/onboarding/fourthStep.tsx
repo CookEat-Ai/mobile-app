@@ -20,10 +20,7 @@ const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 export default function FourthStepScreen() {
   const handleContinue = async () => {
     try {
-      // Marquer l'onboarding comme terminé
-      // await AsyncStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
-
-      // Rediriger vers l'app principale
+      // Rediriger vers le formulaire de questions
       router.replace('/onboarding/formQuestion');
     } catch (error) {
       console.error('❌ Erreur lors de la sauvegarde du statut onboarding:', error);

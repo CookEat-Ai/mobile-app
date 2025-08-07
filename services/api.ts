@@ -192,8 +192,8 @@ class ApiService {
   async generateRecipes(ingredients: string, existingRecipes?: any[]) {
     return this.request<{ recipes: any[] }>('/recipe/generate', {
       method: 'POST',
-      body: JSON.stringify({ 
-        ingredients, 
+      body: JSON.stringify({
+        ingredients,
         existingRecipes,
         language: i18n.language || 'fr'
       }),
@@ -231,7 +231,7 @@ class ApiService {
   async getRecipeIngredients(recipe: any) {
     return this.request<any>('/recipe/ingredients', {
       method: 'POST',
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         recipe,
         language: i18n.language || 'fr'
       }),
@@ -241,7 +241,7 @@ class ApiService {
   async getRecipeSteps(recipe: any) {
     return this.request<any>('/recipe/steps', {
       method: 'POST',
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         recipe,
         language: i18n.language || 'fr'
       }),
@@ -251,7 +251,7 @@ class ApiService {
   async processVoiceIngredients(voiceText: string) {
     return this.request<{ ingredients: string[] }>('/recipe/process-voice-ingredients', {
       method: 'POST',
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         voiceText,
         language: i18n.language || 'fr'
       }),
@@ -291,6 +291,13 @@ class ApiService {
   async likeRecipe(recipeId: string) {
     return this.request<{ success: boolean; message: string; recipe: any }>(`/recipe/like/${recipeId}`, {
       method: 'POST',
+    });
+  }
+
+  async saveOnboardingAnswers(answers: Record<string, string>, mobileId: string) {
+    return this.request<{ success: boolean; message: string; userId?: string }>('/user/onboarding', {
+      method: 'POST',
+      body: JSON.stringify({ answers, mobileId }),
     });
   }
 }

@@ -75,6 +75,7 @@ export default function TabLayout() {
         tabBarButton: HapticTab,
         tabBarLabel: '',
         tabBarPosition: 'bottom',
+        // tabBarBackground: () => <View style={{ backgroundColor: Colors.light.button, position: 'absolute', left: -width / 3.84, height: 150, width: width }} />,
         tabBarStyle: {
           position: 'absolute',
           flexDirection: "row",

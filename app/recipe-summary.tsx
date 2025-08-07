@@ -22,6 +22,7 @@ import uuid from 'react-native-uuid';
 import { useSubscription } from '../hooks/useSubscription';
 import revenueCatService from '../config/revenuecat';
 import recipeStorageService from '../services/recipeStorage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type RecipeSummaryParams = {
   ingredients: string;
@@ -85,6 +86,8 @@ const CALORIES = [
   { id: '1200', label: '< 1200 cal' },
 ];
 
+const STORAGE_KEY = 'ingredients';
+
 export default function RecipeSummaryScreen() {
   const colors = Colors.light;
   const { t } = useTranslation();
@@ -141,6 +144,20 @@ export default function RecipeSummaryScreen() {
 
     // Capitaliser la première lettre
     const capitalizedName = ingredientName.trim().charAt(0).toUpperCase() + ingredientName.trim().slice(1).toLowerCase();
+
+    // Vérifier si l'ingrédient existe déjà (insensible à la casse)
+    const existingIngredient = ingredients.find(
+      ingredient => ingredient.name.toLowerCase() === capitalizedName.toLowerCase()
+    );
+
+    if (existingIngredient) {
+      Alert.alert(
+        'Ingrédient déjà présent',
+        `L'ingrédient "${capitalizedName}" est déjà dans votre liste.`,
+        [{ text: 'OK' }]
+      );
+      return;
+    }
 
     const newIngredient: Ingredient = {
       id: Date.now().toString(),
@@ -259,6 +276,25 @@ export default function RecipeSummaryScreen() {
       return;
     }
 
+    // Vérifier le quota quotidien pour les utilisateurs non abonnés
+    if (!(await revenueCatService.getSubscriptionStatus()).isSubscribed) {
+      const canGenerate = await revenueCatService.useDailyQuota();
+      if (!canGenerate) {
+        Alert.alert(
+          'Quota quotidien atteint',
+          'Vous avez atteint votre limite de génération de recettes pour aujourd\'hui. Passez au premium pour des recettes illimitées !',
+          [
+            { text: 'Plus tard', style: 'cancel' },
+            {
+              text: 'Voir les offres',
+              onPress: () => router.push('/paywall')
+            }
+          ]
+        );
+        return;
+      }
+    }
+
     setIsLoading(true);
 
     try {
@@ -281,6 +317,7 @@ export default function RecipeSummaryScreen() {
       );
 
       if (response.data?.recipe) {
+        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(ingredientsArray));
         const recipe = response.data.recipe;
 
         // Sauvegarder la nouvelle recette générée

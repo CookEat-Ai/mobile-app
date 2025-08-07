@@ -39,6 +39,9 @@
     "servings": "Servings",
     "ingredients": "Ingredients",
     "addToFavorites": "Add to favorites",
+    "calories": "Calories",
+    "proteins": "Proteins",
+    "lipids": "Lipids",
     "difficultyLevels": {
       "easy": "Easy",
       "medium": "Medium",
@@ -188,5 +191,15 @@
       "cancel": "Cancel",
       "close": "Close"
     }
+  },
+  "onboarding": {
+    "sex": "What is your sex?",
+    "age": "How old are you?",
+    "cookingLevel": "What is your cooking level?",
+    "cookingFrequency": "How often do you cook?",
+    "cookingForWho": "For whom do you cook?",
+    "cookingTime": "How much time do you have to cook?",
+    "diet": "Do you have a specific diet?",
+    "howDidHeKnowCookEatAI": "How did you know CookEat AI?"
   }
 }

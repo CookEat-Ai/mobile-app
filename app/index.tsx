@@ -1,13 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Text, AppState } from 'react-native';
+import { Text } from 'react-native';
 import 'react-native-reanimated';
 import { resetVoiceCompletely } from '../hooks/useVoice';
+import revenueCatService from '../config/revenuecat';
+import * as StoreReview from 'expo-store-review';
 
 const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
-const PAYWALL_SHOWN_KEY = 'paywall_shown';
-const LAST_APP_OPEN_KEY = 'last_app_open';
 
 export default function RootLayout() {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,6 +17,10 @@ export default function RootLayout() {
   useEffect(() => {
     checkAppState();
     resetVoiceCompletely();
+
+    setTimeout(() => {
+      showPaywallIfNeeded();
+    }, 1000);
   }, []);
 
   const checkAppState = async () => {
@@ -29,10 +33,6 @@ export default function RootLayout() {
       }
 
       setOnboardingCompleted(completed === 'true');
-
-      // Vérifier si on doit afficher le paywall
-      await checkPaywallDisplay();
-
       setIsLoading(false);
     } catch (error) {
       console.error('❌ Erreur lors de la vérification du statut:', error);
@@ -40,56 +40,31 @@ export default function RootLayout() {
     }
   };
 
-  const checkPaywallDisplay = async () => {
+  const showPaywallIfNeeded = async () => {
     try {
-      const lastOpen = await AsyncStorage.getItem(LAST_APP_OPEN_KEY);
-      const paywallShown = await AsyncStorage.getItem(PAYWALL_SHOWN_KEY);
+      // Vérifier si l'utilisateur a un abonnement
+      const subscriptionStatus = await revenueCatService.getSubscriptionStatus();
 
-      const now = Date.now();
-      const oneDay = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
-
-      // Si c'est la première fois ou si ça fait plus d'un jour
-      if (!lastOpen || (now - parseInt(lastOpen)) > oneDay) {
-        // Vérifier si le paywall a déjà été montré aujourd'hui
-        const today = new Date().toDateString();
-        const lastPaywallDate = await AsyncStorage.getItem('paywall_last_shown_date');
-
-        if (lastPaywallDate !== today) {
-          setShouldShowPaywall(true);
-          await AsyncStorage.setItem('paywall_last_shown_date', today);
-        }
+      // Afficher le paywall seulement si l'utilisateur n'a pas d'abonnement
+      if (!subscriptionStatus.isSubscribed) {
+        setShouldShowPaywall(true);
+        // router.push('/paywall');
       }
-
-      // Sauvegarder la date d'ouverture actuelle
-      await AsyncStorage.setItem(LAST_APP_OPEN_KEY, now.toString());
     } catch (error) {
-      console.error('Erreur lors de la vérification du paywall:', error);
+      console.error('Erreur lors de la vérification de l\'abonnement:', error);
     }
   };
-
-  // Écouter les changements d'état de l'app
-  useEffect(() => {
-    const handleAppStateChange = (nextAppState: string) => {
-      if (nextAppState === 'active') {
-        // L'app devient active (retour en premier plan)
-        checkPaywallDisplay();
-      }
-    };
-
-    const subscription = AppState.addEventListener('change', handleAppStateChange);
-    return () => subscription?.remove();
-  }, []);
 
   if (isLoading)
     return <Text>Loading...</Text>
 
+  if (onboardingCompleted)
+    return <Redirect href="/onboarding" />
+
   if (shouldShowPaywall)
     return <Redirect href="/paywall" />
 
-  if (onboardingCompleted)
-    return <Redirect href="/(tabs)" />
-
   return (
-    <Redirect href="/onboarding/offer7days" />
+    <Redirect href="/(tabs)" />
   );
 }

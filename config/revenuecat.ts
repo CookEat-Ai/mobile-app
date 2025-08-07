@@ -115,7 +115,9 @@ class RevenueCatService {
 
   private async getDailyQuotaRemaining(): Promise<number> {
     try {
-      const today = new Date().toDateString();
+      // Utiliser la date locale pour s'assurer que le quota se remet à zéro à minuit
+      const now = new Date();
+      const today = now.toLocaleDateString('fr-FR'); // Format: DD/MM/YYYY
       const quotaKey = `daily_quota_${today}`;
       const usedQuota = await AsyncStorage.getItem(quotaKey);
 

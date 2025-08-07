@@ -3528,6 +3528,11 @@ expo-status-bar@~2.2.3:
     react-native-edge-to-edge "1.6.0"
     react-native-is-edge-to-edge "^1.1.6"
 
+expo-store-review@~8.1.5:
+  version "8.1.5"
+  resolved "https://registry.yarnpkg.com/expo-store-review/-/expo-store-review-8.1.5.tgz#d025baddfd306f8e52854e4eb168bfed0afa017b"
+  integrity sha512-PMNMIt6UrdMYyRzCCbmCmbIkwSgIXhGNQHsgmOgq9FgtYLW5Oo2FD3zwB0KU2u/MpTTt/XyuuADuFvxE+Vh9uw==
+
 expo-symbols@~0.4.5:
   version "0.4.5"
   resolved "https://registry.yarnpkg.com/expo-symbols/-/expo-symbols-0.4.5.tgz#592f60e21a92d1d7f11571a035470a546f205696"
@@ -5671,6 +5676,11 @@ react-native-animated-spinkit@^1.5.2:
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/react-native-animated-spinkit/-/react-native-animated-spinkit-1.5.2.tgz#b1c00ecbadf48634273e6a843f8dfbcb7c006186"
   integrity sha512-YCQGR3HzEQvyaAnepiyf/hv88Sta3UIZ2CFZPtFqwu+VbFJfMgjJZniOx4157TuR5AAYajEJP9Fgy+JLIU3jzQ==
+
+react-native-device-info@^14.0.4:
+  version "14.0.4"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-14.0.4.tgz#56b24ace9ff29a66bdfc667209086421ed6cfdce"
+  integrity sha512-NX0wMAknSDBeFnEnSFQ8kkAcQrFHrG4Cl0mVjoD+0++iaKrOupiGpBXqs8xR0SeJyPC5zpdPl4h/SaBGly6UxA==
 
 react-native-edge-to-edge@1.6.0:
   version "1.6.0"

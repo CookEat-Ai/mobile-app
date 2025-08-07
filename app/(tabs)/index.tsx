@@ -1,9 +1,10 @@
 import { router } from "expo-router";
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Animated, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, FlatList, Alert, Platform } from 'react-native';
+import { Animated, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, FlatList, Alert, Platform, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Wave } from 'react-native-animated-spinkit';
+import * as Notifications from 'expo-notifications';
 import Micro from '../../components/Micro';
 import RecordDisplay from '../../components/RecordDisplay';
 import UserHeader from '../../components/UserHeader';
@@ -13,6 +14,7 @@ import '../../i18n';
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import { useSubscription } from '../../hooks/useSubscription';
 import revenueCatService from '../../config/revenuecat';
+import { processVoiceIngredients } from '../../services/chatgpt';
 
 const { width } = Dimensions.get('window');
 
@@ -122,6 +124,9 @@ export default function HomeScreen() {
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
 
+  const firstTime = useRef(true);
+  const [isLoadingIngredients, setIsLoadingIngredients] = useState(false);
+
   // Référence pour le FlatList du carrousel
   const carouselRef = useRef<FlatList>(null);
 
@@ -136,22 +141,42 @@ export default function HomeScreen() {
     setLiveText(text);
   };
 
-  const handleRecordingStateChange = (recording: boolean) => {
+  const handleRecordingStateChange = async (recording: boolean) => {
     setIsRecording(recording);
+    console.log('recording', recording);
 
     if (recording) {
+      firstTime.current = true;
       // Effacer le texte précédent et les anciens résultats quand l'enregistrement commence
       setLiveText('');
       clearRecipes(); // Supprimer les anciens résultats
       hideContent();
-    } else {
+    } else if (firstTime.current) {
+      firstTime.current = false;
       showContent();
       // Naviguer vers la page récapitulative quand le texte est reçu
       if (liveText.length > 20) {
-        router.push({
-          pathname: '/recipe-summary',
-          params: { ingredients: liveText }
-        });
+        try {
+          setIsLoadingIngredients(true);
+          // Appeler processVoiceIngredients pour extraire les ingrédients du texte vocal
+          const ingredients = await processVoiceIngredients(liveText);
+          const processedIngredients = ingredients.join(', ');
+          setIsLoadingIngredients(false);
+
+          router.push({
+            pathname: '/recipe-summary',
+            params: { ingredients: processedIngredients }
+          });
+        } catch (error) {
+          console.error('Erreur lors du traitement des ingrédients vocaux:', error);
+          Alert.alert(
+            'Erreur',
+            'Une erreur est survenue lors du traitement de votre demande vocale.',
+            [{ text: 'OK' }]
+          );
+        } finally {
+          setIsLoadingRecipes(false);
+        }
       }
     }
   };
@@ -216,8 +241,59 @@ export default function HomeScreen() {
     ]).start();
   };
 
-  const handleNotificationPress = () => {
-    console.log('Notifications pressed');
+  const handleNotificationPress = async () => {
+    try {
+      // Vérifier le statut actuel des permissions
+      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+
+      let finalStatus = existingStatus;
+
+      // Si les permissions ne sont pas accordées, les demander
+      if (existingStatus !== 'granted') {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+
+      // Si les permissions sont toujours refusées, rediriger vers les paramètres système
+      if (finalStatus !== 'granted') {
+        Alert.alert(
+          'Permissions de notification',
+          'Pour recevoir des notifications, veuillez activer les permissions dans les paramètres de votre appareil.',
+          [
+            {
+              text: 'Annuler',
+              style: 'cancel',
+            },
+            {
+              text: 'Paramètres',
+              onPress: () => {
+                if (Platform.OS === 'ios') {
+                  Linking.openURL('app-settings:');
+                } else {
+                  Linking.openSettings();
+                }
+              },
+            },
+          ]
+        );
+        return;
+      }
+
+      // Si les permissions sont accordées, afficher un message de confirmation
+      Alert.alert(
+        'Notifications activées',
+        'Vous recevrez maintenant des notifications de CookEat !',
+        [{ text: 'OK' }]
+      );
+
+    } catch (error) {
+      console.error('Erreur lors de la gestion des permissions de notification:', error);
+      Alert.alert(
+        'Erreur',
+        'Une erreur est survenue lors de la gestion des permissions de notification.',
+        [{ text: 'OK' }]
+      );
+    }
   };
 
   const handleProfilePress = () => {
@@ -295,10 +371,10 @@ export default function HomeScreen() {
       </View>}
 
       {/* Loading overlay avec flou */}
-      {isLoadingRecipes && (
+      {(isLoadingRecipes || isLoadingIngredients) && (
         <View style={styles.modalOverlay}>
           <Wave color={Colors.light.button} size={100} />
-          <Text style={styles.loadingText}>Génération des recettes en cours...</Text>
+          <Text style={styles.loadingText}>{isLoadingIngredients ? 'Extraction des ingrédients en cours...' : 'Génération des recettes en cours...'}</Text>
         </View>
       )}
 
@@ -324,7 +400,7 @@ export default function HomeScreen() {
         </Animated.View>
 
         {/* Titre principal */}
-        <Animated.View
+        {/* <Animated.View
           style={[
             styles.titleContainer,
             {
@@ -341,7 +417,7 @@ export default function HomeScreen() {
           <Text style={[styles.mainTitle, { color: colors.text }]}>
             {t('home.title')}
           </Text>
-        </Animated.View>
+        </Animated.View> */}
 
         {/* Texte d'introduction */}
         <Animated.View
@@ -366,7 +442,7 @@ export default function HomeScreen() {
         {/* Garde-manger */}
         <Animated.View
           style={[
-            { ...styles.cardContainer, marginTop: 20, padding: 0 },
+            { marginTop: 20 },
             {
               opacity: manualCardOpacity,
               transform: [{
@@ -396,7 +472,7 @@ export default function HomeScreen() {
             { ...styles.cardContainer, marginTop: 20 },
             {
               backgroundColor: isRecording ? Colors.light.background : 'white',
-              borderWidth: isRecording ? 1 : 0,
+              borderWidth: isRecording ? 0 : 1,
               borderColor: isRecording ? Colors.light.background : '#E9E9E9',
               shadowColor: isRecording ? 'transparent' : 'grey',
               shadowOffset: isRecording ? { width: 0, height: 0 } : { width: 2, height: 10 },
@@ -470,6 +546,9 @@ export default function HomeScreen() {
               keyExtractor={(category) => category.id}
               horizontal
               showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              scrollEventThrottle={16}
+              directionalLockEnabled={true}
               decelerationRate="fast"
               snapToInterval={width - 40}
               snapToAlignment="center"
@@ -531,7 +610,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     backgroundColor: Colors.light.background,
-    marginBottom: 50,
   },
   titleContainer: {
     paddingBottom: 20,

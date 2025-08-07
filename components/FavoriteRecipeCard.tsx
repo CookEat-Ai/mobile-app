@@ -10,6 +10,7 @@ interface FavoriteRecipeCardProps {
   cookingTime: number; // en minutes
   rating: number; // note sur 5
   onPress?: () => void;
+  onRemove?: () => void;
 }
 
 export default function FavoriteRecipeCard({
@@ -18,7 +19,8 @@ export default function FavoriteRecipeCard({
   icon,
   cookingTime,
   rating,
-  onPress
+  onPress,
+  onRemove
 }: FavoriteRecipeCardProps) {
   const colors = Colors.light;
 
@@ -57,15 +59,24 @@ export default function FavoriteRecipeCard({
             </Text>
           </View>
           <View style={styles.ratingContainer}>
-            <IconSymbol name={Platform.OS === 'ios' ? "star.fill" : "star"} size={18} color={"#FFD700"} />
+            {/* <IconSymbol name={Platform.OS === 'ios' ? "star.fill" : "star"} size={18} color={"#FFD700"} />
             <Text style={[styles.ratingText, { color: colors.text }]}>
               {rating.toFixed(1)}
-            </Text>
+            </Text> */}
           </View>
         </View>
       </View>
       <View style={styles.arrowContainer}>
-        <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={"grey"} />
+        {onRemove && (
+          <TouchableOpacity
+            style={styles.removeButton}
+            onPress={onRemove}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          >
+            <IconSymbol name="trash" size={24} color="grey" />
+          </TouchableOpacity>
+        )}
+        {/* <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={"grey"} /> */}
       </View>
     </TouchableOpacity>
   );
@@ -136,5 +147,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 24,
+  },
+  removeButton: {
+    padding: 8,
+    marginRight: 8,
   },
 }); 

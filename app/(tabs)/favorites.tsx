@@ -6,8 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FavoriteRecipeCard from '../../components/FavoriteRecipeCard';
 import SearchBar from '../../components/SearchBar';
 import { Colors } from '../../constants/Colors';
-import apiService from '../../services/api';
 import { Wave } from "react-native-animated-spinkit";
+import favoritesStorageService from '../../services/favoritesStorage';
 
 // Interface pour les recettes
 interface Recipe {
@@ -19,8 +19,9 @@ interface Recipe {
   cooking_time: string;
   difficulty: string;
   servings?: number;
-  likedBy: number;
-  createdAt: string;
+  likedBy?: number;
+  createdAt?: string;
+  addedToFavoritesAt?: string;
 }
 
 // Données pour les catégories (difficultés)
@@ -41,17 +42,12 @@ export default function FavoritesScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Charger les recettes depuis l'API
+  // Charger les recettes depuis AsyncStorage
   const loadRecipes = async () => {
     try {
       setLoading(true);
-      const response = await apiService.getRecipes();
-
-      if (response.data?.recipes) {
-        setRecipes(response.data.recipes);
-      } else {
-        setRecipes([]);
-      }
+      const favorites = await favoritesStorageService.getFavorites();
+      setRecipes(favorites);
     } catch (error) {
       console.error('Erreur lors du chargement des recettes:', error);
       Alert.alert('Erreur', 'Impossible de charger les recettes favorites');
@@ -91,9 +87,33 @@ export default function FavoritesScreen() {
       pathname: '/recipe-detail',
       params: {
         id: recipe._id,
-        recipe: JSON.stringify(recipe)
+        recipe: JSON.stringify(recipe),
+        showGenerateButton: 'false'
       }
     });
+  };
+
+  const handleRemoveFromFavorites = async (recipe: Recipe) => {
+    Alert.alert(
+      'Retirer des favoris',
+      `Voulez-vous retirer "${recipe.title}" de vos favoris ?`,
+      [
+        { text: 'Annuler', style: 'cancel' },
+        {
+          text: 'Retirer',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              if (await favoritesStorageService.removeFromFavorites(recipe._id || recipe.id))
+                await loadRecipes();
+            } catch (error) {
+              console.error('❌ Erreur lors de la suppression des favoris:', error);
+              Alert.alert('Erreur', 'Impossible de retirer la recette des favoris');
+            }
+          }
+        }
+      ]
+    );
   };
 
   const handleSearch = () => {
@@ -202,6 +222,7 @@ export default function FavoritesScreen() {
                 cookingTime={parseCookingTime(item.cooking_time)}
                 rating={item.likedBy || 0}
                 onPress={() => handleRecipePress(item)}
+                onRemove={() => handleRemoveFromFavorites(item)}
               />
             )}
           />

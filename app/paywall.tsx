@@ -9,21 +9,6 @@ export default function PaywallScreen() {
   const [showPaywall, setShowPaywall] = useState(true);
 
   const handleSubscribe = (planId: string) => {
-    // console.log('Souscription au plan:', planId);
-    // // Ici vous ajouteriez la logique de souscription
-    // Alert.alert(
-    //   'Souscription',
-    //   `Plan ${planId} sélectionné. Redirection vers l'application...`,
-    //   [
-    //     {
-    //       text: 'OK',
-    //       onPress: () => {
-    //         setShowPaywall(false);
-    //         router.replace('/(tabs)');
-    //       }
-    //     }
-    //   ]
-    // );
     setShowPaywall(false);
   };
 

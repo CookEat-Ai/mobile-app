@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from 'react';
 import {
+  Alert,
   Dimensions,
   Platform,
   SafeAreaView,
@@ -12,8 +13,15 @@ import {
 } from 'react-native';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { t } from "i18next";
+import { useTranslation } from "react-i18next";
+import apiService from '../../services/api';
+import DeviceInfo from 'react-native-device-info';
 
 const { width, height } = Dimensions.get('window');
+
+const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 
 type Question = {
   question: string; // Question
@@ -27,68 +35,68 @@ type Option = {
 
 const questions: Question[] = [
   {
-    question: 'Quel est votre sexe ?',
+    question: t('onboarding.sex'),
     options: [
-      { label: 'Homme', value: 'homme' },
-      { label: 'Femme', value: 'femme' }
+      { label: 'Homme', value: 'man' },
+      { label: 'Femme', value: 'woman' }
     ]
   },
   {
-    question: 'Quel âge avez-vous ?',
+    question: t('onboarding.age'),
     options: [
-      { label: 'Moins de 25 ans', value: 'moins_de_25_ans' },
-      { label: 'Entre 25 et 40 ans', value: 'entre_25_et_40_ans' },
-      { label: 'Plus de 40 ans', value: 'plus_de_40_ans' }
+      { label: 'Moins de 25 ans', value: 'less_than_25_years' },
+      { label: 'Entre 25 et 40 ans', value: 'between_25_and_40_years' },
+      { label: 'Plus de 40 ans', value: 'more_than_40_years' }
     ]
   },
   {
-    question: 'Quel est votre niveau de cuisine ?',
+    question: t('onboarding.cookingLevel'),
     options: [
-      { label: 'Débutant', value: 'débutant' },
-      { label: 'Moyen', value: 'moyen' },
-      { label: 'Avancé', value: 'avancé' }
+      { label: 'Débutant', value: 'beginner' },
+      { label: 'Moyen', value: 'medium' },
+      { label: 'Avancé', value: 'advanced' }
     ]
   },
   {
-    question: 'À quelle fréquence cuisinez-vous ?',
+    question: t('onboarding.cookingFrequency'),
     options: [
-      { label: 'Rarement', value: 'rarement' },
-      { label: 'Occasionnellement', value: 'occasionnellement' },
-      { label: 'Fréquemment', value: 'fréquemment' }
+      { label: 'Rarement', value: 'rarely' },
+      { label: 'Occasionnellement', value: 'occasionally' },
+      { label: 'Fréquemment', value: 'frequently' }
     ]
   },
   {
-    question: 'Pour qui faites-vous cuisiner ?',
+    question: t('onboarding.cookingForWho'),
     options: [
-      { label: 'Moi-même', value: 'moi_meme' },
-      { label: 'Moi et une autre personne', value: 'moi_et_une_autre_personne' },
-      { label: 'Ma famille', value: 'ma_famille' }
+      { label: 'Moi-même', value: 'myself' },
+      { label: 'Moi et une autre personne', value: 'myself_and_another_person' },
+      { label: 'Ma famille', value: 'my_family' }
     ]
   },
   {
-    question: 'Combien de temps avez-vous pour cuisiner ?',
+    question: t('onboarding.cookingTime'),
     options: [
-      { label: 'Moins de 30 minutes', value: 'moins_de_30_minutes' },
-      { label: 'Entre 30 minutes et 1 heure', value: 'entre_30_minutes_et_1_heure' },
-      { label: 'Plus de 1 heure', value: 'plus_de_1_heure' }
+      { label: 'Moins de 30 minutes', value: 'less_than_30_minutes' },
+      { label: 'Entre 30 minutes et 1 heure', value: 'between_30_minutes_and_1_hour' },
+      { label: 'Plus de 1 heure', value: 'more_than_1_hour' }
     ]
   },
   {
-    question: 'Avez-vous un régime alimentaire spécifique ?',
+    question: t('onboarding.diet'),
     options: [
-      { label: 'Aucun', value: 'aucun' },
+      { label: 'Aucun', value: 'none' },
       { label: 'Halal', value: 'halal' },
-      { label: 'Végétarien', value: 'végétarien' },
-      { label: 'Végétalien', value: 'végétalien' }
+      { label: 'Végétarien', value: 'vegetarian' },
+      { label: 'Végétalien', value: 'vegan' }
     ]
   },
   {
-    question: 'Comment vous nous avez connu ?',
+    question: t('onboarding.howDidHeKnowCookEatAI'),
     options: [
-      { label: 'Ami', value: 'ami' },
       { label: 'Réseaux social', value: 'social_media' },
+      { label: 'Ami', value: 'friend' },
       { label: Platform.OS === 'ios' ? 'App Store' : 'Google Play', value: 'store' },
-      { label: 'Autre', value: 'autre' },
+      { label: 'Autre', value: 'other' },
     ]
   }
 ]
@@ -97,6 +105,46 @@ export default function FormQuestionScreen() {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
+
+  // Charger les réponses précédentes au montage du composant
+  React.useEffect(() => {
+    loadPreviousAnswers();
+  }, []);
+
+  // Charger les réponses précédentes quand l'index change
+  React.useEffect(() => {
+    loadAnswerForCurrentQuestion();
+  }, [index]);
+
+  const loadPreviousAnswers = async () => {
+    try {
+      const savedAnswers: string[] = [];
+      for (let i = 0; i < questions.length; i++) {
+        const questionKey = `question_${i}`;
+        const savedAnswer = await AsyncStorage.getItem(questionKey);
+        if (savedAnswer) {
+          savedAnswers[i] = savedAnswer;
+        }
+      }
+      setAnswers(savedAnswers);
+    } catch (error) {
+      console.error('❌ Erreur lors du chargement des réponses:', error);
+    }
+  };
+
+  const loadAnswerForCurrentQuestion = async () => {
+    try {
+      const questionKey = `question_${index}`;
+      const savedAnswer = await AsyncStorage.getItem(questionKey);
+      if (savedAnswer) {
+        setSelectedOption(savedAnswer);
+      } else {
+        setSelectedOption(null);
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors du chargement de la réponse:', error);
+    }
+  };
 
   const handleOptionSelect = (value: string) => {
     setSelectedOption(value);
@@ -107,23 +155,62 @@ export default function FormQuestionScreen() {
     if (!selectedOption) return;
 
     try {
-      // Sauvegarder le niveau de cuisine
-      // await AsyncStorage.setItem(selectedOption, selectedOption);
+      // Sauvegarder la réponse de la question actuelle
+      const questionKey = `question_${index}`;
+      await AsyncStorage.setItem(questionKey, selectedOption);
+
+      // Mettre à jour le tableau des réponses
+      const newAnswers = [...answers];
+      newAnswers[index] = selectedOption;
+      setAnswers(newAnswers);
 
       if (index === questions.length - 1) {
-        router.push('/onboarding/try');
-        // await AsyncStorage.setItem('onboarding_completed', 'true');
-      }
-      else
+        // Sauvegarder toutes les réponses et marquer l'onboarding comme terminé
+        await AsyncStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
+
+        // Sauvegarder les réponses dans la base de données pour un utilisateur anonyme
+        try {
+          const allAnswers: Record<string, string> = {};
+          for (let i = 0; i < questions.length; i++) {
+            const questionKey = `question_${i}`;
+            const answer = await AsyncStorage.getItem(questionKey);
+            if (answer) {
+              allAnswers[questionKey] = answer;
+            }
+          }
+
+          // Ajouter la réponse actuelle
+          allAnswers[`question_${index}`] = selectedOption;
+
+          // Récupérer le mobileId unique de l'appareil
+          const mobileId = await DeviceInfo.getUniqueId();
+          
+          // Envoyer les réponses à l'API
+          const response = await apiService.saveOnboardingAnswers(allAnswers, mobileId);
+          if (response.error) {
+            console.error('❌ Erreur lors de la sauvegarde des réponses:', response.error);
+          } else {
+            console.log('✅ Réponses d\'onboarding sauvegardées avec succès');
+          }
+        } catch (error) {
+          console.error('❌ Erreur lors de la sauvegarde des réponses:', error);
+        }
+
+        router.replace('/(tabs)');
+      } else {
+        // Passer à la question suivante
         setIndex(index + 1);
+      }
     } catch (error) {
-      console.error('❌ Erreur lors de la sauvegarde du niveau de cuisine:', error);
+      console.error('❌ Erreur lors de la sauvegarde de la réponse:', error);
     }
   };
 
   const handleBackPress = () => {
-    if (index > 0)
+    if (index > 0) {
       setIndex(index - 1);
+      // La réponse précédente sera automatiquement chargée par useEffect
+    }
   };
 
   return (

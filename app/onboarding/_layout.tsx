@@ -13,7 +13,6 @@ export default function OnboardingLayout() {
         <Stack.Screen name="socialProof" options={{ headerShown: false }} />
         <Stack.Screen name="try" options={{ headerShown: false }} />
         <Stack.Screen name="offer7days" options={{ headerShown: false }} />
-        <Stack.Screen name="paywall" options={{ headerShown: false }} />
         <Stack.Screen name="reminder" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider >
