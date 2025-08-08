@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Dimensions,
@@ -21,7 +21,6 @@ import apiService from '../services/api';
 import revenueCatService from '../config/revenuecat';
 import recipeStorageService from "../services/recipeStorage";
 import favoritesStorageService from "../services/favoritesStorage";
-import { useIsFocused } from "@react-navigation/native";
 import * as StoreReview from 'expo-store-review';
 import I18n from '../i18n';
 
@@ -49,13 +48,13 @@ interface Recipe {
     title: string;
     description: string;
   }[];
+  language?: string;
 }
 
 export default function RecipeDetailScreen() {
   const colors = Colors.light;
   const params = useLocalSearchParams();
   const router = useRouter();
-  const isFocused = useIsFocused();
 
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
@@ -71,22 +70,21 @@ export default function RecipeDetailScreen() {
   const firstTimeImage = useRef(true);
   const firstTimeSteps = useRef(true);
 
+  useFocusEffect(useCallback(() => {
+    const checkSubscriptionStatus = async () => {
+      const status = await revenueCatService.getSubscriptionStatus();
+      setIsSubscribed(status.isSubscribed);
+    };
+    setTimeout(async () => {
+      checkSubscriptionStatus();
+    }, 1000);
+  }, []));
+
   useEffect(() => {
     setTimeout(async () => {
       if (await StoreReview.hasAction()) { }//StoreReview.requestReview();
     }, 10000);
   }, []);
-
-  // Vérifier le statut d'abonnement au chargement
-  useEffect(() => {
-    if (isFocused) {
-      const checkSubscriptionStatus = async () => {
-        const status = await revenueCatService.getSubscriptionStatus();
-        setIsSubscribed(status.isSubscribed);
-      };
-      checkSubscriptionStatus();
-    }
-  }, [isFocused]);
 
   useEffect(() => {
     // Charger les étapes si nécessaire
@@ -164,11 +162,11 @@ export default function RecipeDetailScreen() {
       else {
         await favoritesStorageService.addToFavorites(recipe);
         setIsFavorite(true);
-        Alert.alert('Succès', 'Recette ajoutée à vos favoris !');
+        Alert.alert(I18n.t('recipeDetail.success'), I18n.t('recipeDetail.recipeAddedToFavorites'));
       }
     } catch (error) {
       console.error('❌ Erreur lors de l\'ajout aux favoris:', error);
-      Alert.alert('Erreur', 'Impossible d\'ajouter la recette aux favoris');
+      Alert.alert(I18n.t('recipeDetail.error'), I18n.t('recipeDetail.unableToAddToFavorites'));
     }
   };
 
@@ -210,12 +208,12 @@ export default function RecipeDetailScreen() {
       // Récupérer les préférences depuis les paramètres ou utiliser des valeurs par défaut
       const preferencesParam = params.preferences as string;
       let preferences = {
-        dishType: 'tout',
-        duration: 'rapide',
+        dishType: 'All',
+        duration: 'Fast',
         servings: 2,
-        cuisineStyle: 'toutes',
-        diet: 'aucun',
-        difficulty: 'facile',
+        cuisineStyle: 'All',
+        diet: 'None',
+        difficulty: 'Easy',
         allowOtherIngredients: false
       };
 
@@ -405,7 +403,7 @@ export default function RecipeDetailScreen() {
           <View style={styles.metricsContainer}>
             <TouchableOpacity
               style={styles.metricCard}
-              activeOpacity={isSubscribed ? 1 : 0.8}
+              activeOpacity={isSubscribed ? 1 : 0.3}
               onPress={handleCaloriesPress}
             >
               <View style={{ alignItems: 'center' }}>
@@ -423,7 +421,7 @@ export default function RecipeDetailScreen() {
 
             <TouchableOpacity
               style={styles.metricCard}
-              activeOpacity={isSubscribed ? 1 : 0.8}
+              activeOpacity={isSubscribed ? 1 : 0.3}
               onPress={handleProteinsPress}
             >
               <View style={{ alignItems: 'center' }}>
@@ -441,7 +439,7 @@ export default function RecipeDetailScreen() {
 
             <TouchableOpacity
               style={styles.metricCard}
-              activeOpacity={isSubscribed ? 1 : 0.8}
+              activeOpacity={isSubscribed ? 1 : 0.3}
               onPress={handleLipidsPress}
             >
               <View style={{ alignItems: 'center' }}>
@@ -542,7 +540,7 @@ export default function RecipeDetailScreen() {
       </ScrollView>
 
       {/* Bouton Generate Recipe */}
-      {params.showGenerateButton !== 'false' && <View style={styles.bottomButtonContainer}>
+      {(!params.showGenerateButton || params.showGenerateButton !== 'false') && <View style={styles.bottomButtonContainer}>
         <TouchableOpacity
           activeOpacity={0.8}
           style={[styles.favoriteButton, isGeneratingNewRecipe && styles.favoriteButtonDisabled]}

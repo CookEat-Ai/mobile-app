@@ -9,6 +9,14 @@
     "manualDescription": "Select your ingredients",
     "continue": "Continue",
     "ingredients": "ingredients",
+    "extractingIngredients": "Extracting ingredients...",
+    "generatingRecipes": "Generating recipes...",
+    "notifications": {
+      "enabled": "Notifications enabled",
+      "description": "You will now receive notifications from CookEat!",
+      "error": "Error",
+      "errorDescription": "An error occurred while managing notification permissions."
+    },
     "voice": {
       "start": "Press to start",
       "recording": "Give us the list of your ingredients, we're listening... 👂🏼",
@@ -131,7 +139,8 @@
   },
   "favorites": {
     "title": "All your favorite recipes",
-    "noResults": "No recipes found",
+    "loadingRecipes": "Loading recipes...",
+    "noFavorites": "No favorite recipes found",
     "categories": {
       "All": "All",
       "Breakfast": "Breakfast",
@@ -388,7 +397,7 @@
     "seeOffers": "See offers",
     "error": "Error",
     "pleaseAddAtLeastOneIngredient": "Please add at least one ingredient.",
-    "pleaseSelectADishType": "Please select a dish type.",
+    "pleaseSelectADishType": "Please select a dish type",
     "unableToGenerateRecipe": "Unable to generate recipe. Please try again.",
     "generatingRecipe": "Generating recipe..."
   },
@@ -409,6 +418,9 @@
     "generateAnotherRecipe": "Generate another recipe",
     "error": "Error",
     "unableToGenerateRecipe": "Unable to generate recipe. Please try again.",
-    "generatingNewRecipe": "Generating a new recipe..."
+    "generatingNewRecipe": "Generating a new recipe...",
+    "success": "Success",
+    "recipeAddedToFavorites": "Recipe added to favorites!",
+    "unableToAddToFavorites": "Unable to add recipe to favorites"
   }
 }

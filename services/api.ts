@@ -261,7 +261,7 @@ class ApiService {
   async saveRecipe(recipe: any, userId?: string) {
     return this.request<{ success: boolean; message: string; recipe: any }>('/recipe/save', {
       method: 'POST',
-      body: JSON.stringify({ recipe, userId }),
+      body: JSON.stringify({ recipe, userId, language: I18n.locale || 'fr' }),
     });
   }
 

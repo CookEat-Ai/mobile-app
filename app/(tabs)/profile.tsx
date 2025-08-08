@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   ActivityIndicator,
@@ -13,8 +13,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
-import { router } from 'expo-router';
-import { useIsFocused } from "@react-navigation/native";
+import { router, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
@@ -40,17 +39,17 @@ export default function ProfileScreen() {
 
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
-  const isFocused = useIsFocused();
   const { subscriptionStatus, isLoading: subscriptionLoading, loadSubscriptionStatus, cancelSubscription } = useSubscription();
   const [dietaryPreference, setDietaryPreference] = useState<'none' | 'halal' | 'vegetarian' | 'vegan'>('none');
   const [currentLanguage, setCurrentLanguage] = useState<'fr' | 'en'>('fr');
 
-  useEffect(() => {
-    if (isFocused) {
+  useFocusEffect(useCallback(() => {
+    const checkSubscriptionStatus = async () => {
       loadSubscriptionStatus();
       loadDietaryPreference();
-    }
-  }, [isFocused]);
+    };
+    checkSubscriptionStatus();
+  }, []));
 
   const loadDietaryPreference = async () => {
     try {
@@ -118,7 +117,9 @@ export default function ProfileScreen() {
     try {
       // URL de la politique de confidentialité (à adapter selon votre politique)
       WebBrowser.openBrowserAsync(
-        'https://drive.google.com/file/d/1Uwa45KaIrYlDzpS00YFunhBVB-a4zkSi/view?usp=sharing'
+        I18n.locale === 'fr'
+          ? 'https://drive.google.com/file/d/1Uwa45KaIrYlDzpS00YFunhBVB-a4zkSi/view?usp=sharing'
+          : 'https://drive.google.com/file/d/15eNZBgSnTP4cUFJ7tLi9F0kZCsyQZPUW/view?usp=sharing'
       );
     } catch (error) {
       console.error('Erreur lors de l\'ouverture de la politique de confidentialité:', error);

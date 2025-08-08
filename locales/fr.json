@@ -9,6 +9,14 @@
     "manualDescription": "Selectionnez vos ingrédients",
     "continue": "Continuer",
     "ingredients": "ingrédients",
+    "extractingIngredients": "Extraction des ingrédients en cours...",
+    "generatingRecipes": "Génération des recettes en cours...",
+    "notifications": {
+      "enabled": "Notifications activées",
+      "description": "Vous recevrez maintenant des notifications de CookEat !",
+      "error": "Erreur",
+      "errorDescription": "Une erreur est survenue lors de la gestion des permissions de notification."
+    },
     "voice": {
       "start": "Appuyez pour commencer",
       "recording": "Donner nous la liste de vos ingrédients, on vous écoute... 👂🏼",
@@ -131,7 +139,8 @@
   },
   "favorites": {
     "title": "Vos recettes préférées",
-    "noResults": "Aucune recette trouvée",
+    "loadingRecipes": "Chargement des recettes...",
+    "noFavorites": "Aucune recette favorite trouvée",
     "categories": {
       "All": "Toutes",
       "facile": "Facile",
@@ -411,6 +420,9 @@
     "generateAnotherRecipe": "Générer une autre recette",
     "error": "Erreur",
     "unableToGenerateRecipe": "Impossible de générer la recette. Veuillez réessayer.",
-    "generatingNewRecipe": "Génération d'une nouvelle recette..."
+    "generatingNewRecipe": "Génération d'une nouvelle recette...",
+    "success": "Succès",
+    "recipeAddedToFavorites": "Recette ajoutée à vos favoris !",
+    "unableToAddToFavorites": "Impossible d'ajouter la recette aux favoris"
   }
 }

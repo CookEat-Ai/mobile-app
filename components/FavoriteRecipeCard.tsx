@@ -26,7 +26,7 @@ export default function FavoriteRecipeCard({
 
   const formatCookingTime = (minutes: number) => {
     if (minutes < 60) {
-      return `${minutes} mins`;
+      return `${minutes} min`;
     }
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;

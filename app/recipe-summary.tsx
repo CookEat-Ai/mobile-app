@@ -48,34 +48,34 @@ const STORAGE_KEY = 'pantry_ingredients';
 
 export default function RecipeSummaryScreen() {
   const DISH_TYPES = useMemo(() => [
-    { id: 'tout', label: I18n.t('recipeSummary.all') },
-    { id: 'soupe', label: I18n.t('recipeSummary.soup') },
+    { id: 'all', label: I18n.t('recipeSummary.all') },
+    { id: 'soup', label: I18n.t('recipeSummary.soup') },
     { id: 'gratin', label: I18n.t('recipeSummary.gratin') },
-    { id: 'repas', label: I18n.t('recipeSummary.meal') },
+    { id: 'meal', label: I18n.t('recipeSummary.meal') },
     { id: 'dessert', label: I18n.t('recipeSummary.dessert') }
   ], []);
 
   const DURATIONS = useMemo(() => [
-    { id: 'rapide', label: I18n.t('recipeSummary.quick') },
-    { id: 'moyen', label: I18n.t('recipeSummary.medium') },
+    { id: 'fast', label: I18n.t('recipeSummary.quick') },
+    { id: 'medium', label: I18n.t('recipeSummary.medium') },
     { id: 'long', label: I18n.t('recipeSummary.long') },
   ], []);
 
   const CUISINE_STYLES = useMemo(() => [
-    { id: 'toutes', label: I18n.t('recipeSummary.all') },
-    { id: 'epicee', label: I18n.t('recipeSummary.spicy') },
-    { id: 'italien', label: I18n.t('recipeSummary.italian') },
-    { id: 'mexicain', label: I18n.t('recipeSummary.mexican') },
-    { id: 'francais', label: I18n.t('recipeSummary.french') },
-    { id: 'asiatique', label: I18n.t('recipeSummary.asian') },
-    { id: 'mediterraneen', label: I18n.t('recipeSummary.mediterranean') },
+    { id: 'all', label: I18n.t('recipeSummary.all') },
+    { id: 'spicy', label: I18n.t('recipeSummary.spicy') },
+    { id: 'italian', label: I18n.t('recipeSummary.italian') },
+    { id: 'mexican', label: I18n.t('recipeSummary.mexican') },
+    { id: 'french', label: I18n.t('recipeSummary.french') },
+    { id: 'asian', label: I18n.t('recipeSummary.asian') },
+    { id: 'mediterranean', label: I18n.t('recipeSummary.mediterranean') },
   ], []);
 
   const DIETS = useMemo(() => [
-    { id: 'aucun', label: I18n.t('recipeSummary.none') },
+    { id: 'none', label: I18n.t('recipeSummary.none') },
     { id: 'halal', label: I18n.t('recipeSummary.halal') },
-    { id: 'vegetarien', label: I18n.t('recipeSummary.vegetarian') },
-    { id: 'vegetalien', label: I18n.t('recipeSummary.vegan') }
+    { id: 'vegetarian', label: I18n.t('recipeSummary.vegetarian') },
+    { id: 'vegan', label: I18n.t('recipeSummary.vegan') }
   ], []);
 
   const CALORIES = useMemo(() => [
@@ -94,11 +94,11 @@ export default function RecipeSummaryScreen() {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [preferences, setPreferences] = useState<RecipePreferences>({
-    dishType: 'tout',
-    duration: 'rapide',
+    dishType: 'all',
+    duration: 'fast',
     servings: 2,
-    cuisineStyle: 'toutes',
-    diet: 'aucun',
+    cuisineStyle: 'all',
+    diet: 'none',
     calories: '500',
     allowOtherIngredients: false,
   });
@@ -129,12 +129,12 @@ export default function RecipeSummaryScreen() {
       if (savedPreference) {
         // Convertir le format du profil vers le format des filtres
         const preferenceMap: { [key: string]: string } = {
-          'none': 'aucun',
+          'none': 'none',
           'halal': 'halal',
-          'vegetarian': 'vegetarien',
-          'vegan': 'vegetalien'
+          'vegetarian': 'vegetarian',
+          'vegan': 'vegan'
         };
-        const mappedDiet = preferenceMap[savedPreference] || 'aucun';
+        const mappedDiet = preferenceMap[savedPreference] || 'none';
         setPreferences(prev => ({ ...prev, diet: mappedDiet }));
       }
     } catch (error) {

@@ -141,7 +141,6 @@ export default function HomeScreen() {
 
   const handleRecordingStateChange = async (recording: boolean) => {
     setIsRecording(recording);
-    console.log('recording', recording);
 
     if (recording) {
       firstTime.current = true;
@@ -168,8 +167,8 @@ export default function HomeScreen() {
         } catch (error) {
           console.error('Erreur lors du traitement des ingrédients vocaux:', error);
           Alert.alert(
-            'Erreur',
-            'Une erreur est survenue lors du traitement de votre demande vocale.',
+            I18n.t('home.notifications.error'),
+            I18n.t('home.notifications.errorDescription'),
             [{ text: 'OK' }]
           );
         } finally {
@@ -255,8 +254,8 @@ export default function HomeScreen() {
       // Si les permissions sont toujours refusées, rediriger vers les paramètres système
       if (finalStatus !== 'granted') {
         Alert.alert(
-          'Permissions de notification',
-          'Pour recevoir des notifications, veuillez activer les permissions dans les paramètres de votre appareil.',
+          I18n.t('home.notifications.error'),
+          I18n.t('home.notifications.errorDescription'),
           [
             {
               text: 'Annuler',
@@ -279,23 +278,19 @@ export default function HomeScreen() {
 
       // Si les permissions sont accordées, afficher un message de confirmation
       Alert.alert(
-        'Notifications activées',
-        'Vous recevrez maintenant des notifications de CookEat !',
+        I18n.t('home.notifications.enabled'),
+        I18n.t('home.notifications.description'),
         [{ text: 'OK' }]
       );
 
     } catch (error) {
       console.error('Erreur lors de la gestion des permissions de notification:', error);
       Alert.alert(
-        'Erreur',
-        'Une erreur est survenue lors de la gestion des permissions de notification.',
+        I18n.t('home.notifications.error'),
+        I18n.t('home.notifications.errorDescription'),
         [{ text: 'OK' }]
       );
     }
-  };
-
-  const handleProfilePress = () => {
-    console.log('Profile pressed');
   };
 
   const scrollToCategory = (index: number) => {
@@ -372,7 +367,7 @@ export default function HomeScreen() {
       {(isLoadingRecipes || isLoadingIngredients) && (
         <View style={styles.modalOverlay}>
           <Wave color={Colors.light.button} size={100} />
-          <Text style={styles.loadingText}>{isLoadingIngredients ? 'Extraction des ingrédients en cours...' : 'Génération des recettes en cours...'}</Text>
+          <Text style={styles.loadingText}>{isLoadingIngredients ? I18n.t('home.extractingIngredients') : I18n.t('home.generatingRecipes')}</Text>
         </View>
       )}
 
@@ -393,7 +388,6 @@ export default function HomeScreen() {
           <UserHeader
             userName="Samantha"
             onNotificationPress={handleNotificationPress}
-            onProfilePress={handleProfilePress}
           />
         </Animated.View>
 

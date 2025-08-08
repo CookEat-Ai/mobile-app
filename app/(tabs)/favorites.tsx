@@ -202,13 +202,13 @@ export default function FavoritesScreen() {
           <View style={styles.loadingContainer}>
             <Wave size={50} color={colors.button} />
             <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-              Chargement des recettes...
+              {I18n.t('favorites.loadingRecipes')}
             </Text>
           </View>
         ) : getFilteredRecipes().length === 0 ? (
           <View style={styles.noResultsContainer}>
             <Text style={[styles.noResultsText, { color: colors.textSecondary }]}>
-              {recipes.length === 0 ? 'Aucune recette favorite trouvée' : I18n.t('favorites.noResults')}
+              {recipes.length === 0 && I18n.t('favorites.noFavorites')}
             </Text>
           </View>
         ) : (getFilteredRecipes().map((item) =>
