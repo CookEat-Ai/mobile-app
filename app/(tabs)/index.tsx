@@ -372,6 +372,8 @@ export default function HomeScreen() {
       )}
 
       <ScrollView showsVerticalScrollIndicator={false} style={{ overflow: 'visible' }}>
+        <Text style={{ fontFamily: 'Degular', fontSize: 24, fontWeight: 'bold', textAlign: 'right', marginBottom: 20 }}>CookEat AI</Text>
+
         {/* Header avec profil utilisateur */}
         <Animated.View
           style={{

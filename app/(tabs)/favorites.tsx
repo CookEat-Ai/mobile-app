@@ -150,6 +150,8 @@ export default function FavoritesScreen() {
       paddingTop: insets.top
     }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
+        <Text style={{ fontFamily: 'Degular', fontSize: 24, fontWeight: 'bold', textAlign: 'right', marginBottom: 20, marginRight: 20 }}>CookEat AI</Text>
+
         <View style={styles.titleContainer}>
           <Text style={[styles.mainTitle, { color: colors.text }]}>
             {I18n.t('favorites.title')}

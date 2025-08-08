@@ -265,15 +265,17 @@ export default function ProfileScreen() {
       contentContainerStyle={{ paddingTop: insets.top }}
       showsVerticalScrollIndicator={false}
     >
+      <Text style={{ fontFamily: 'Degular', fontSize: 24, fontWeight: 'bold', textAlign: 'right', marginBottom: 20, marginRight: 20 }}>CookEat AI</Text>
+
       {/* Section Avatar et Nom */}
-      <View style={styles.avatarSection}>
+      {/* <View style={styles.avatarSection}>
         <View style={styles.avatarContainer}>
           <Image
             source={{ uri: userData.avatar }}
             style={styles.avatar}
           />
         </View>
-      </View>
+      </View> */}
 
       {/* Section Préférences */}
       <View style={styles.section}>
