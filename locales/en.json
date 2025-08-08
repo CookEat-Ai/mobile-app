@@ -302,9 +302,9 @@
       "pantry": "Pantry"
     },
     "plans": {
-      "weekly": "Weekly",
-      "monthly": "Monthly",
-      "annual": "Annual",
+      "week": "week",
+      "month": "month",
+      "year": "year",
       "best": "Best",
       "perWeek": "/ week",
       "perMonth": "/ month",

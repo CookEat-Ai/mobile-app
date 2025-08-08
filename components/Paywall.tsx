@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import I18n from '../i18n';
 import {
   View,
@@ -7,7 +7,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
+  Animated
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from './ui/IconSymbol';
@@ -35,6 +36,7 @@ export default function Paywall({
   const [offerings, setOfferings] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<any>(null);
+  const closeButtonOpacity = useRef(new Animated.Value(0)).current;
 
   const features = useMemo(() => [
     {
@@ -75,13 +77,21 @@ export default function Paywall({
   ], []);
 
   useEffect(() => {
+    setTimeout(() => {
+      Animated.timing(closeButtonOpacity, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }).start();
+    }, 1500);
+
     loadOfferings();
   }, []);
 
   const loadOfferings = async () => {
     try {
       const offerings = await revenueCatService.getOfferings();
-      setOfferings(offerings);
+      setOfferings(offerings?.availablePackages.sort((a: any, b: any) => a.price - b.price ? 1 : -1));
 
       // Sélectionner l'offre du milieu par défaut
       if (offerings?.availablePackages?.[1]) {
@@ -141,13 +151,14 @@ export default function Paywall({
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Bouton de fermeture */}
-      <TouchableOpacity
-        style={styles.closeButton}
-        onPress={onClose}
-        activeOpacity={0.8}
-      >
-        <IconSymbol name="xmark" size={24} color={colors.text} weight="bold" />
-      </TouchableOpacity>
+      <Animated.View style={[styles.closeButton, { opacity: closeButtonOpacity }]}>
+        <TouchableOpacity
+          onPress={onClose}
+          activeOpacity={0}
+        >
+          <IconSymbol name="xmark" size={24} color={colors.text} weight="bold" />
+        </TouchableOpacity>
+      </Animated.View>
 
       <ScrollView
         style={styles.content}
@@ -193,7 +204,7 @@ export default function Paywall({
 
           {offerings ? (
             <View style={styles.plansContainer}>
-              {offerings.availablePackages.map((pkg: any, index: number) => (
+              {offerings.map((pkg: any, index: number) => (
                 <TouchableOpacity
                   key={pkg.identifier}
                   style={[
@@ -213,7 +224,7 @@ export default function Paywall({
                         adjustsFontSizeToFit={true}
                         minimumFontScale={0.8}
                       >
-                        Meilleur
+                        {I18n.t('paywall.plans.best')}
                       </Text>
                     </View>
                   )}
@@ -223,6 +234,15 @@ export default function Paywall({
                     <View style={styles.priceContainer}>
                       <Text style={styles.planPrice}>{pkg.product.priceString}</Text>
                     </View>
+                    <Text style={{ ...styles.planPrice, fontSize: 16 }}>
+                      {
+                        index === 0
+                          ? '/ ' + I18n.t('paywall.plans.week')
+                          : index === 1
+                            ? '/ ' + I18n.t('paywall.plans.year')
+                            : '/ ' + I18n.t('paywall.plans.month')
+                      }
+                    </Text>
                   </View>
 
                   {index === 1 && selectedPackage?.identifier === pkg.identifier && (

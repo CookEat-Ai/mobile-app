@@ -34,9 +34,9 @@ interface Recipe {
   cooking_time: string;
   icon: string;
   image: string;
-  calories: number;
-  lipids: number;
-  proteins: number;
+  calories: string;
+  lipids: string;
+  proteins: string;
   servings?: number;
   ingredients?: {
     name: string;
@@ -413,7 +413,11 @@ export default function RecipeDetailScreen() {
 
               {isSubscribed
                 ? <Text style={styles.metricValue}>
-                  {`${recipe.calories || '-'}/p`}
+                  {recipe.calories
+                    ? recipe.calories.toString().includes('per')
+                      ? recipe.calories.toString()
+                      : recipe.calories.toString() + '/p'
+                    : '-/p'}
                 </Text>
                 : <Ionicons name="lock-closed-outline" size={24} color="black" />
               }

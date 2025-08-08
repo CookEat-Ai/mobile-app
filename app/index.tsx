@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Redirect } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import 'react-native-reanimated';
@@ -23,27 +23,6 @@ export default function RootLayout() {
       showPaywallIfNeeded();
     }, 1000);
   }, []);
-
-  // const loadLanguageFromStorage = async () => {
-  //   try {
-  //     const savedLanguage = await AsyncStorage.getItem('app_language');
-  //     if (savedLanguage) {
-  //       // Langue sauvegardée trouvée
-  //       i18n.changeLanguage(savedLanguage);
-  //     } else {
-  //       // Première fois : utiliser la langue système
-  //       const systemLanguage = i18n.language || 'fr';
-  //       const defaultLanguage = systemLanguage.startsWith('fr') ? 'fr' : 'en';
-  //       i18n.changeLanguage(defaultLanguage);
-  //       // Sauvegarder la langue par défaut
-  //       await AsyncStorage.setItem('app_language', defaultLanguage);
-  //     }
-  //   } catch (error) {
-  //     console.error('Erreur lors du chargement de la langue:', error);
-  //     // Fallback vers français
-  //     i18n.changeLanguage('fr');
-  //   }
-  // };
 
   const checkAppState = async () => {
     try {
@@ -70,7 +49,7 @@ export default function RootLayout() {
       // Afficher le paywall seulement si l'utilisateur n'a pas d'abonnement
       if (!subscriptionStatus.isSubscribed) {
         setShouldShowPaywall(true);
-        // router.push('/paywall');
+        router.push('/paywall');
       }
     } catch (error) {
       console.error('Erreur lors de la vérification de l\'abonnement:', error);

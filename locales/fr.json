@@ -304,9 +304,9 @@
       "pantry": "Garde manger"
     },
     "plans": {
-      "weekly": "Hebdo",
-      "monthly": "Mensuel",
-      "annual": "Annuel",
+      "week": "semaine",
+      "month": "mois",
+      "year": "an",
       "best": "Meilleur",
       "perWeek": "/ semaine",
       "perMonth": "/ mois",
