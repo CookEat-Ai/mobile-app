@@ -7,6 +7,7 @@ import {
   View,
 } from 'react-native';
 import { Colors } from '../constants/Colors';
+import I18n from '../i18n';
 
 const { width } = Dimensions.get('window');
 
@@ -69,7 +70,7 @@ export default function RecordDisplay({ liveText, isRecording }: RecordDisplayPr
 
   return (
     <View style={styles.liveTextContainer}>
-      {renderLiveText(liveText || "Écoutez...")}
+      {renderLiveText(liveText)}
     </View>
   );
 }

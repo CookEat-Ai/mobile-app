@@ -84,7 +84,7 @@ export default function TabLayout() {
           backgroundColor: Colors.light.button,
           borderTopWidth: 0,
           borderRadius: 1000,
-          height: 70,
+          height: 68,
           paddingHorizontal: 5,
           marginHorizontal: "26%",
           marginBottom: "5%",

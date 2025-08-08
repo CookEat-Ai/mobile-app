@@ -20,7 +20,8 @@
     "voice": {
       "start": "Press to start",
       "recording": "Give us the list of your ingredients, we're listening... 👂🏼",
-      "speaking": "Speak now..."
+      "speaking": "Speak now...",
+      "listening": "Listening..."
     },
     "pantry": {
       "title": "Manage your pantry",

@@ -27,8 +27,6 @@
       "edgeToEdgeEnabled": true,
       "permissions": [
         "android.permission.RECORD_AUDIO",
-        "com.android.vending.BILLING",
-        "android.permission.RECORD_AUDIO",
         "com.android.vending.BILLING"
       ],
       "package": "com.gokugen.cookeat"

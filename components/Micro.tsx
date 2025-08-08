@@ -318,7 +318,7 @@ export default function Micro({
             }
           ]}
         >
-          {isRecording ? I18n.t('home.voice.start') : I18n.t('home.voice.start')}
+          {isRecording ? I18n.t('home.voice.recording') : I18n.t('home.voice.start')}
         </Animated.Text>
       </Animated.View>
 

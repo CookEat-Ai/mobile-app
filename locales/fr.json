@@ -20,7 +20,8 @@
     "voice": {
       "start": "Appuyez pour commencer",
       "recording": "Donner nous la liste de vos ingrédients, on vous écoute... 👂🏼",
-      "speaking": "Parlez maintenant..."
+      "speaking": "Parlez maintenant...",
+      "listening": "Écoutez..."
     },
     "pantry": {
       "title": "Gérer votre garde-manger",

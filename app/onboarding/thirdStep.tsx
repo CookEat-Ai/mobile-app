@@ -79,7 +79,7 @@ export default function ThirdStepScreen() {
 
             <View>
               <TouchableOpacity style={{ ...styles.continueButton, marginTop: 50 }} onPress={handleMicro}>
-                <Text style={styles.buttonText}>{I18n.t('onboarding.thirdStep.allowMicro')}</Text>
+                <Text style={styles.buttonText} numberOfLines={1} adjustsFontSizeToFit>{I18n.t('onboarding.thirdStep.allowMicro')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity

@@ -47,7 +47,7 @@ export default function RootLayout() {
       const subscriptionStatus = await revenueCatService.getSubscriptionStatus();
 
       // Afficher le paywall seulement si l'utilisateur n'a pas d'abonnement
-      if (!subscriptionStatus.isSubscribed) {
+      if (!subscriptionStatus.isSubscribed && onboardingCompleted) {
         setShouldShowPaywall(true);
         router.push('/paywall');
       }
