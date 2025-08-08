@@ -181,12 +181,12 @@ export default function RecipeDetailScreen() {
       const canGenerate = await revenueCatService.useDailyQuota();
       if (!canGenerate) {
         Alert.alert(
-          'Quota quotidien atteint',
-          'Vous avez atteint votre limite de génération de recettes pour aujourd\'hui. Passez au premium pour des recettes illimitées !',
+          I18n.t('recipeDetail.dailyQuotaReached'),
+          I18n.t('recipeDetail.dailyQuotaReachedDescription'),
           [
-            { text: 'Plus tard', style: 'cancel' },
+            { text: I18n.t('recipeDetail.later'), style: 'cancel' },
             {
-              text: 'Voir les offres',
+              text: I18n.t('recipeDetail.seeOffers'),
               onPress: () => router.push('/paywall')
             }
           ]
@@ -201,7 +201,7 @@ export default function RecipeDetailScreen() {
       // Récupérer les ingrédients depuis les paramètres de navigation
       const ingredientsParam = params.ingredients as string;
       if (!ingredientsParam) {
-        Alert.alert('Erreur', 'Impossible de récupérer la liste des ingrédients');
+        Alert.alert(I18n.t('recipeDetail.error'), I18n.t('recipeDetail.unableToGetIngredients'));
         return;
       }
 

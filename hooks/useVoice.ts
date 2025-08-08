@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import Voice from '@react-native-voice/voice';
-import { useTranslation } from 'react-i18next';
+import I18n from '../i18n';
 
 interface UseVoiceOptions {
   onTextReceived?: (text: string) => void;
@@ -84,7 +84,6 @@ export const resetVoiceCompletely = async () => {
 };
 
 export const useVoice = (options: UseVoiceOptions = {}) => {
-  const { i18n } = useTranslation();
   const [isRecording, setIsRecording] = useState(false);
   const [liveText, setLiveText] = useState('');
   const isInitialized = useRef(false);
@@ -198,7 +197,7 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
         return;
       }
 
-      await Voice.start(i18n.language === 'fr' ? 'fr-FR' : 'en-US');
+      await Voice.start(I18n.locale === 'fr' ? 'fr-FR' : 'en-US');
     } catch (error) {
       console.error('Erreur lors du démarrage de l\'enregistrement:', error);
       globalIsRecording = false;

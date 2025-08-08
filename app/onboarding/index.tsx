@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
+import I18n from '../../i18n';
 
 const { width, height } = Dimensions.get('window');
 
@@ -45,16 +46,14 @@ export default function WelcomeScreen() {
 
             <View style={{}}>
               <View style={{ marginBottom: 16 }}>
-                <Text style={styles.title}>Des idées de recettes en quelques secondes !</Text>
+                <Text style={styles.title}>{I18n.t('onboarding.title')}</Text>
               </View>
               <View>
-                <Text style={styles.description}>
-                  On vous propose plein de recettes avec ce que vous avez sous la main. Ne perdez plus de temps à vous creuser la tête !
-                </Text>
+                <Text style={styles.description}>{I18n.t('onboarding.description')}</Text>
               </View>
 
               <TouchableOpacity style={styles.continueButton} onPress={() => router.replace('/onboarding/secondStep')}>
-                <Text style={styles.buttonText}>Commencer</Text>
+                <Text style={styles.buttonText}>{I18n.t('onboarding.continue')}</Text>
                 <IconSymbol
                   style={{ position: 'absolute', right: 20 }}
                   name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}

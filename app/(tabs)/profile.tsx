@@ -263,6 +263,7 @@ export default function ProfileScreen() {
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={{ paddingTop: insets.top }}
+      showsVerticalScrollIndicator={false}
     >
       {/* Section Avatar et Nom */}
       <View style={styles.avatarSection}>

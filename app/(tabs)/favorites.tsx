@@ -69,10 +69,6 @@ export default function FavoritesScreen() {
     loadRecipes();
   }, []);
 
-  const handleBackPress = () => {
-    router.back();
-  };
-
   const handleCategoryPress = (category: any) => {
     console.log('Category pressed:', category.title);
     if (selectedCategory === category.title.toLowerCase()) {

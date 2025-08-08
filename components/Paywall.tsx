@@ -230,7 +230,15 @@ export default function Paywall({
                   )}
 
                   <View style={styles.planContent}>
-                    <Text style={styles.planTitle}>{pkg.product.title}</Text>
+                    <Text style={styles.planTitle}>
+                      {
+                        index === 0
+                          ? I18n.t('paywall.plans.weekly')
+                          : index === 1
+                            ? I18n.t('paywall.plans.yearly')
+                            : I18n.t('paywall.plans.monthly')
+                      }
+                    </Text>
                     <View style={styles.priceContainer}>
                       <Text style={styles.planPrice}>{pkg.product.priceString}</Text>
                     </View>

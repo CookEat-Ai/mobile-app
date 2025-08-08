@@ -12,10 +12,9 @@ import {
 } from 'react-native';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
+import I18n from '../../i18n';
 
 const { width, height } = Dimensions.get('window');
-
-const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 
 export default function SecondStepScreen() {
   return (
@@ -47,16 +46,14 @@ export default function SecondStepScreen() {
 
             <View style={{}}>
               <View style={{ marginBottom: 16 }}>
-                <Text style={styles.title}>Dictez-nous vos ingrédients et on s&apos;occupe du reste !</Text>
+                <Text style={styles.title}>{I18n.t('onboarding.secondStep.title')}</Text>
               </View>
               <View>
-                <Text style={styles.description}>
-                  CookEat AI se base sur vos ingrédients, vos préférences et votre niveau de cuisine.
-                </Text>
+                <Text style={styles.description}>{I18n.t('onboarding.secondStep.description')}</Text>
               </View>
 
               <TouchableOpacity style={styles.continueButton} onPress={() => router.replace('/onboarding/thirdStep')}>
-                <Text style={styles.buttonText}>Commencer</Text>
+                <Text style={styles.buttonText}>{I18n.t('onboarding.secondStep.continue')}</Text>
                 <IconSymbol
                   style={{ position: 'absolute', right: 20 }}
                   name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}

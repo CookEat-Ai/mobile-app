@@ -223,6 +223,7 @@ class ApiService {
         calories,
         allowOtherIngredients,
         existingRecipes,
+        userId: await AsyncStorage.getItem('userId'),
         language: I18n.locale || 'fr'
       }),
     });

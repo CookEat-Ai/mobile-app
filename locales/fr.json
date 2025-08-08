@@ -304,6 +304,9 @@
       "pantry": "Garde manger"
     },
     "plans": {
+      "weekly": "Hebdo",
+      "monthly": "Mensuel",
+      "yearly": "Annuel",
       "week": "semaine",
       "month": "mois",
       "year": "an",
@@ -348,7 +351,54 @@
     "cookingForWho": "Pour qui faites-vous cuisiner ?",
     "cookingTime": "Combien de temps avez-vous pour cuisiner ?",
     "diet": "Avez-vous un régime alimentaire spécifique ?",
-    "howDidHeKnowCookEatAI": "Comment avez-vous connu CookEat AI ?"
+    "howDidHeKnowCookEatAI": "Comment avez-vous connu CookEat AI ?",
+    "title": "Des idées de recettes en quelques secondes !",
+    "description": "On vous propose plein de recettes avec ce que vous avez sous la main. Ne perdez plus de temps à vous creuser la tête !",
+    "continue": "Commencer",
+    "secondStep": {
+      "title": "Dictez-nous vos ingrédients et on s'occupe du reste !",
+      "description": "CookEat AI se base sur vos ingrédients, vos préférences et votre niveau de cuisine.",
+      "continue": "Commencer"
+    },
+    "thirdStep": {
+      "title": "Autorisez l'accès au micro 🎙️",
+      "allowMicro": "Autoriser l'accès au micro",
+      "description": "Nous utiliserons votre micro pour vous écouter nous dicter vos ingrédients.",
+      "continue": "Commencer"
+    },
+    "fourthStep": {
+      "title": "Personnalisons maintenant votre expérience !",
+      "description": "Repondez à quelques questions.",
+      "continue": "Commencer"
+    },
+    "formQuestions": {
+      "man": "Homme",
+      "woman": "Femme",
+      "less_than_25_years": "Moins de 25 ans",
+      "between_25_and_40_years": "Entre 25 et 40 ans",
+      "more_than_40_years": "Plus de 40 ans",
+      "beginner": "Débutant",
+      "medium": "Moyen",
+      "advanced": "Avancé",
+      "rarely": "Rarement",
+      "occasionally": "Occasionnellement",
+      "frequently": "Fréquemment",
+      "myself": "Moi-même",
+      "myself_and_another_person": "Moi et une autre personne",
+      "my_family": "Ma famille",
+      "less_than_30_minutes": "Moins de 30 minutes",
+      "between_30_minutes_and_1_hour": "Entre 30 minutes et 1 heure",
+      "more_than_1_hour": "Plus de 1 heure",
+      "none": "Aucun",
+      "halal": "Halal",
+      "vegetarian": "Végétarien",
+      "vegan": "Végétalien",
+      "social_media": "Réseaux sociaux",
+      "friend": "Ami",
+      "app_store": "App Store",
+      "google_play": "Google Play",
+      "other": "Autre"
+    }
   },
   "recipeSummary": {
     "ingredients": "Ingrédients",
@@ -423,6 +473,11 @@
     "generatingNewRecipe": "Génération d'une nouvelle recette...",
     "success": "Succès",
     "recipeAddedToFavorites": "Recette ajoutée à vos favoris !",
-    "unableToAddToFavorites": "Impossible d'ajouter la recette aux favoris"
+    "unableToAddToFavorites": "Impossible d'ajouter la recette aux favoris",
+    "unableToGetIngredients": "Impossible de récupérer la liste des ingrédients",
+    "dailyQuotaReached": "Quota quotidien atteint",
+    "dailyQuotaReachedDescription": "Vous avez atteint votre limite de génération de recettes pour aujourd'hui. Passez au premium pour des recettes illimitées !",
+    "later": "Plus tard",
+    "seeOffers": "Voir les offres"
   }
 }

@@ -1,8 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
-  Alert,
   Dimensions,
   Platform,
   SafeAreaView,
@@ -14,10 +13,9 @@ import {
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { t } from "i18next";
-import { useTranslation } from "react-i18next";
 import apiService from '../../services/api';
 import DeviceInfo from 'react-native-device-info';
+import I18n from "../../i18n";
 
 const { width, height } = Dimensions.get('window');
 
@@ -33,75 +31,75 @@ type Option = {
   value: string;
 }
 
-const questions: Question[] = [
-  {
-    question: t('onboarding.sex'),
-    options: [
-      { label: 'Homme', value: 'man' },
-      { label: 'Femme', value: 'woman' }
-    ]
-  },
-  {
-    question: t('onboarding.age'),
-    options: [
-      { label: 'Moins de 25 ans', value: 'less_than_25_years' },
-      { label: 'Entre 25 et 40 ans', value: 'between_25_and_40_years' },
-      { label: 'Plus de 40 ans', value: 'more_than_40_years' }
-    ]
-  },
-  {
-    question: t('onboarding.cookingLevel'),
-    options: [
-      { label: 'Débutant', value: 'beginner' },
-      { label: 'Moyen', value: 'medium' },
-      { label: 'Avancé', value: 'advanced' }
-    ]
-  },
-  {
-    question: t('onboarding.cookingFrequency'),
-    options: [
-      { label: 'Rarement', value: 'rarely' },
-      { label: 'Occasionnellement', value: 'occasionally' },
-      { label: 'Fréquemment', value: 'frequently' }
-    ]
-  },
-  {
-    question: t('onboarding.cookingForWho'),
-    options: [
-      { label: 'Moi-même', value: 'myself' },
-      { label: 'Moi et une autre personne', value: 'myself_and_another_person' },
-      { label: 'Ma famille', value: 'my_family' }
-    ]
-  },
-  {
-    question: t('onboarding.cookingTime'),
-    options: [
-      { label: 'Moins de 30 minutes', value: 'less_than_30_minutes' },
-      { label: 'Entre 30 minutes et 1 heure', value: 'between_30_minutes_and_1_hour' },
-      { label: 'Plus de 1 heure', value: 'more_than_1_hour' }
-    ]
-  },
-  {
-    question: t('onboarding.diet'),
-    options: [
-      { label: 'Aucun', value: 'none' },
-      { label: 'Halal', value: 'halal' },
-      { label: 'Végétarien', value: 'vegetarian' },
-      { label: 'Végétalien', value: 'vegan' }
-    ]
-  },
-  {
-    question: t('onboarding.howDidHeKnowCookEatAI'),
-    options: [
-      { label: 'Réseaux social', value: 'social_media' },
-      { label: 'Ami', value: 'friend' },
-      { label: Platform.OS === 'ios' ? 'App Store' : 'Google Play', value: 'store' },
-      { label: 'Autre', value: 'other' },
-    ]
-  }
-]
-
 export default function FormQuestionScreen() {
+  const questions: Question[] = useMemo(() => [
+    {
+      question: I18n.t('onboarding.sex'),
+      options: [
+        { label: I18n.t('onboarding.formQuestions.man'), value: 'man' },
+        { label: I18n.t('onboarding.formQuestions.woman'), value: 'woman' }
+      ]
+    },
+    {
+      question: I18n.t('onboarding.age'),
+      options: [
+        { label: I18n.t('onboarding.formQuestions.less_than_25_years'), value: 'less_than_25_years' },
+        { label: I18n.t('onboarding.formQuestions.between_25_and_40_years'), value: 'between_25_and_40_years' },
+        { label: I18n.t('onboarding.formQuestions.more_than_40_years'), value: 'more_than_40_years' }
+      ]
+    },
+    {
+      question: I18n.t('onboarding.cookingLevel'),
+      options: [
+        { label: I18n.t('onboarding.formQuestions.beginner'), value: 'beginner' },
+        { label: I18n.t('onboarding.formQuestions.medium'), value: 'medium' },
+        { label: I18n.t('onboarding.formQuestions.advanced'), value: 'advanced' }
+      ]
+    },
+    {
+      question: I18n.t('onboarding.cookingFrequency'),
+      options: [
+        { label: I18n.t('onboarding.formQuestions.rarely'), value: 'rarely' },
+        { label: I18n.t('onboarding.formQuestions.occasionally'), value: 'occasionally' },
+        { label: I18n.t('onboarding.formQuestions.frequently'), value: 'frequently' }
+      ]
+    },
+    {
+      question: I18n.t('onboarding.cookingForWho'),
+      options: [
+        { label: I18n.t('onboarding.formQuestions.myself'), value: 'myself' },
+        { label: I18n.t('onboarding.formQuestions.myself_and_another_person'), value: 'myself_and_another_person' },
+        { label: I18n.t('onboarding.formQuestions.my_family'), value: 'my_family' }
+      ]
+    },
+    {
+      question: I18n.t('onboarding.cookingTime'),
+      options: [
+        { label: I18n.t('onboarding.formQuestions.less_than_30_minutes'), value: 'less_than_30_minutes' },
+        { label: I18n.t('onboarding.formQuestions.between_30_minutes_and_1_hour'), value: 'between_30_minutes_and_1_hour' },
+        { label: I18n.t('onboarding.formQuestions.more_than_1_hour'), value: 'more_than_1_hour' }
+      ]
+    },
+    {
+      question: I18n.t('onboarding.diet'),
+      options: [
+        { label: I18n.t('onboarding.formQuestions.none'), value: 'none' },
+        { label: I18n.t('onboarding.formQuestions.halal'), value: 'halal' },
+        { label: I18n.t('onboarding.formQuestions.vegetarian'), value: 'vegetarian' },
+        { label: I18n.t('onboarding.formQuestions.vegan'), value: 'vegan' }
+      ]
+    },
+    {
+      question: I18n.t('onboarding.howDidHeKnowCookEatAI'),
+      options: [
+        { label: I18n.t('onboarding.formQuestions.social_media'), value: 'social_media' },
+        { label: I18n.t('onboarding.formQuestions.friend'), value: 'friend' },
+        { label: Platform.OS === 'ios' ? I18n.t('onboarding.formQuestions.app_store') : I18n.t('onboarding.formQuestions.google_play'), value: 'store' },
+        { label: I18n.t('onboarding.formQuestions.other'), value: 'other' },
+      ]
+    }
+  ], []);
+
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
@@ -184,12 +182,13 @@ export default function FormQuestionScreen() {
 
           // Récupérer le mobileId unique de l'appareil
           const mobileId = await DeviceInfo.getUniqueId();
-          
+
           // Envoyer les réponses à l'API
           const response = await apiService.saveOnboardingAnswers(allAnswers, mobileId);
           if (response.error) {
             console.error('❌ Erreur lors de la sauvegarde des réponses:', response.error);
           } else {
+            await AsyncStorage.setItem('userId', response.data?.userId as string);
             console.log('✅ Réponses d\'onboarding sauvegardées avec succès');
           }
         } catch (error) {
@@ -277,12 +276,6 @@ export default function FormQuestionScreen() {
                       ]}>
                         {item.label}
                       </Text>
-                      <Text style={[
-                        styles.cardDescription,
-                        selectedOption === item.value && styles.cardDescriptionSelected
-                      ]}>
-                        {item.label}
-                      </Text>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -299,7 +292,7 @@ export default function FormQuestionScreen() {
               onPress={handleContinue}
               disabled={!selectedOption}
             >
-              <Text style={styles.buttonText}>Continuer</Text>
+              <Text style={styles.buttonText}>{I18n.t('onboarding.continue')}</Text>
               <IconSymbol
                 style={{ position: 'absolute', right: 20 }}
                 name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}

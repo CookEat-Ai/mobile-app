@@ -1,4 +1,4 @@
-import Constants from 'expo-constants';
+// import Constants from 'expo-constants';
 
 // Configuration de l'API selon l'environnement
 const getApiBaseUrl = () => {
@@ -8,17 +8,17 @@ const getApiBaseUrl = () => {
   }
 
   // En production (remplacez par votre vraie URL)
-  return 'https://cookeat.info/api';
+  return 'https://cookeat.info:8083/api';
 };
 
 // Configuration avec expo-constants
 const getApiUrlFromConstants = () => {
-  const manifest = Constants.expoConfig;
+  // const manifest = Constants.expoConfig;
 
   // Si vous avez configuré apiBaseUrl dans app.json
-  if (manifest?.extra?.apiBaseUrl) {
-    return manifest.extra.apiBaseUrl;
-  }
+  // if (manifest?.extra?.apiBaseUrl) {
+  //   return manifest.extra.apiBaseUrl;
+  // }
 
   // Fallback vers la configuration par défaut
   return getApiBaseUrl();

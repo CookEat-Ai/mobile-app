@@ -12,10 +12,9 @@ import {
 } from 'react-native';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
+import I18n from '../../i18n';
 
 const { width, height } = Dimensions.get('window');
-
-const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 
 export default function FourthStepScreen() {
   const handleContinue = async () => {
@@ -56,16 +55,14 @@ export default function FourthStepScreen() {
 
             <View style={{}}>
               <View style={{ marginBottom: 16 }}>
-                <Text style={styles.title}>Personnalisons maintenant votre expérience !</Text>
+                <Text style={styles.title}>{I18n.t('onboarding.fourthStep.title')}</Text>
               </View>
               <View>
-                <Text style={styles.description}>
-                  Repondez à quelques questions.
-                </Text>
+                <Text style={styles.description}>{I18n.t('onboarding.fourthStep.description')}</Text>
               </View>
 
               <TouchableOpacity style={styles.continueButton} onPress={handleContinue}>
-                <Text style={styles.buttonText}>Commencer</Text>
+                <Text style={styles.buttonText}>{I18n.t('onboarding.continue')}</Text>
                 <IconSymbol
                   style={{ position: 'absolute', right: 20 }}
                   name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}

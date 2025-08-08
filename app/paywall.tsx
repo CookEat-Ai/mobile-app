@@ -13,6 +13,7 @@ export default function PaywallScreen() {
   };
 
   const handleClose = () => {
+    console.log('close')
     setShowPaywall(false);
     router.back();
   };

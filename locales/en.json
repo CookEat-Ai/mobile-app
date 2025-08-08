@@ -302,6 +302,9 @@
       "pantry": "Pantry"
     },
     "plans": {
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
       "week": "week",
       "month": "month",
       "year": "year",
@@ -346,7 +349,54 @@
     "cookingForWho": "For whom do you cook?",
     "cookingTime": "How much time do you have to cook?",
     "diet": "Do you have a specific diet?",
-    "howDidHeKnowCookEatAI": "How did you know CookEat AI?"
+    "howDidHeKnowCookEatAI": "How did you know CookEat AI?",
+    "title": "Recipe ideas in seconds!",
+    "description": "We offer you many recipes with what you have in your pantry. Don't waste time thinking anymore!",
+    "continue": "Start",
+    "secondStep": {
+      "title": "Dictate your ingredients and we'll take care of the rest!",
+      "description": "CookEat AI is based on your ingredients, your preferences and your cooking level.",
+      "continue": "Start"
+    },
+    "thirdStep": {
+      "title": "Allow access to the microphone 🎙️",
+      "allowMicro": "Allow access to the microphone",
+      "description": "We will use your microphone to listen to you when you dictate your ingredients.",
+      "continue": "Start"
+    },
+    "fourthStep": {
+      "title": "Personalize your experience now!",
+      "description": "Answer a few questions.",
+      "continue": "Start"
+    },
+    "formQuestions": {
+      "man": "Man",
+      "woman": "Woman",
+      "less_than_25_years": "Less than 25 years",
+      "between_25_and_40_years": "Between 25 and 40 years",
+      "more_than_40_years": "More than 40 years",
+      "beginner": "Beginner",
+      "medium": "Medium",
+      "advanced": "Advanced",
+      "rarely": "Rarely",
+      "occasionally": "Occasionally",
+      "frequently": "Frequently",
+      "myself": "Myself",
+      "myself_and_another_person": "Myself and another person",
+      "my_family": "My family",
+      "less_than_30_minutes": "Less than 30 minutes",
+      "between_30_minutes_and_1_hour": "Between 30 minutes and 1 hour",
+      "more_than_1_hour": "More than 1 hour",
+      "none": "None",
+      "halal": "Halal",
+      "vegetarian": "Vegetarian",
+      "vegan": "Vegan",
+      "social_media": "Social media",
+      "friend": "Friend",
+      "app_store": "App Store",
+      "google_play": "Google Play",
+      "other": "Other"
+    }
   },
   "recipeSummary": {
     "ingredients": "Ingredients",
@@ -421,6 +471,11 @@
     "generatingNewRecipe": "Generating a new recipe...",
     "success": "Success",
     "recipeAddedToFavorites": "Recipe added to favorites!",
-    "unableToAddToFavorites": "Unable to add recipe to favorites"
+    "unableToAddToFavorites": "Unable to add recipe to favorites",
+    "unableToGetIngredients": "Unable to get ingredients list",
+    "dailyQuotaReached": "Daily quota reached",
+    "dailyQuotaReachedDescription": "You have reached your daily limit for recipe generation. Upgrade to premium for unlimited recipes!",
+    "later": "Later",
+    "seeOffers": "See offers"
   }
 }

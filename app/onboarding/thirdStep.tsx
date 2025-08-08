@@ -1,8 +1,9 @@
 import Voice from '@react-native-voice/voice';
-import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Dimensions,
+  Linking,
   Platform,
   SafeAreaView,
   StyleSheet,
@@ -12,29 +13,36 @@ import {
 } from 'react-native';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
+import I18n from '../../i18n';
 
 const { width, height } = Dimensions.get('window');
-
-const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 
 export default function ThirdStepScreen() {
   const [haveAccessToMicro, setHaveAccessToMicro] = useState(false);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     const interval = setInterval(async () => {
-      console.log(await Voice.isAvailable())
-
       if (await Voice.isAvailable()) {
         setHaveAccessToMicro(true);
         clearInterval(interval);
       }
     }, 1000);
-  }, []);
+  }, []));
 
   const handleMicro = async () => {
     try {
-      await Voice.start('fr-FR');
-      await Voice.stop();
+      if (!(await Voice.isAvailable())) {
+        // Ouvrir les paramètres de l'application pour permettre l'accès au microphone
+        if (Platform.OS === 'ios') {
+          await Linking.openURL('app-settings:');
+        } else {
+          await Linking.openSettings();
+        }
+      }
+      else {
+        await Voice.start('fr-FR');
+        await Voice.stop();
+      }
     } catch (error) {
       console.log('Erreur lors de la demande de permission:', error);
     }
@@ -62,24 +70,16 @@ export default function ThirdStepScreen() {
 
             <View style={{ flex: 1, justifyContent: 'center' }}>
               <View style={{ marginBottom: 16 }}>
-                <Text style={styles.title}>Autorisez l&apos;accès au micro 🎙️</Text>
+                <Text style={styles.title}>{I18n.t('onboarding.thirdStep.title')}</Text>
               </View>
               <View>
-                <Text style={styles.description}>
-                  Nous utiliserons votre micro pour vous écouter nous dicter vos ingrédients.
-                </Text>
+                <Text style={styles.description}>{I18n.t('onboarding.thirdStep.description')}</Text>
               </View>
             </View>
 
             <View>
               <TouchableOpacity style={{ ...styles.continueButton, marginTop: 50 }} onPress={handleMicro}>
-                <Text style={styles.buttonText}>Autoriser l&apos;accès au micro</Text>
-                <IconSymbol
-                  style={{ position: 'absolute', right: 20 }}
-                  name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}
-                  size={24}
-                  color="white"
-                />
+                <Text style={styles.buttonText}>{I18n.t('onboarding.thirdStep.allowMicro')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -87,7 +87,7 @@ export default function ThirdStepScreen() {
                 style={{ ...styles.continueButton, backgroundColor: haveAccessToMicro ? Colors.light.button : Colors.light.textSecondary }}
                 onPress={() => router.replace('/onboarding/fourthStep')}
               >
-                <Text style={styles.buttonText}>Commencer</Text>
+                <Text style={styles.buttonText}>{I18n.t('onboarding.thirdStep.continue')}</Text>
                 <IconSymbol
                   style={{ position: 'absolute', right: 20 }}
                   name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}

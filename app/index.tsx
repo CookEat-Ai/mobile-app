@@ -59,7 +59,7 @@ export default function RootLayout() {
   if (isLoading)
     return <Text>Loading...</Text>
 
-  if (onboardingCompleted)
+  if (!onboardingCompleted)
     return <Redirect href="/onboarding" />
 
   if (shouldShowPaywall)
