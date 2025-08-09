@@ -119,42 +119,6 @@ class ApiService {
     await this.removeToken();
   }
 
-  // Paiements
-  async createCheckoutSession(priceId: string, successUrl: string, cancelUrl: string, email: string, firstName: string) {
-    return this.request<{ url: string }>('/payment/checkout', {
-      method: 'POST',
-      body: JSON.stringify({
-        priceId,
-        successUrl,
-        cancelUrl,
-        email,
-        firstName,
-      }),
-    });
-  }
-
-  // Abonnements
-  async getCurrentSubscription() {
-    return this.request<{
-      hasSubscription: boolean;
-      subscription: any;
-    }>('/subscription/current');
-  }
-
-
-
-  async cancelSubscription() {
-    return this.request<{ message: string; subscription: any }>('/subscription/cancel', {
-      method: 'POST',
-    });
-  }
-
-  async reactivateSubscription() {
-    return this.request<{ message: string; subscription: any }>('/subscription/reactivate', {
-      method: 'POST',
-    });
-  }
-
   // Utilisateur
   async getCurrentUser() {
     return this.request<any>('/users/who-am-i');
@@ -165,27 +129,6 @@ class ApiService {
       method: 'PATCH',
       body: JSON.stringify(data),
     });
-  }
-
-  // Créer un utilisateur guest avant le paiement
-  async createGuestUser(email: string, firstName: string) {
-    return this.request<{ token: string; tempPassword: string; user: any }>('/payment/create-guest', {
-      method: 'POST',
-      body: JSON.stringify({ email, firstName }),
-    });
-  }
-
-  // Confirmer un paiement après paiement natif réussi
-  async confirmPayment(planId: string, amount: number) {
-    return this.request<{ message: string; user: any }>('/payment/confirm', {
-      method: 'POST',
-      body: JSON.stringify({ planId, amount }),
-    });
-  }
-
-  // Vérifier si l'utilisateur est connecté
-  isAuthenticated(): boolean {
-    return !!this.token;
   }
 
   // Recettes

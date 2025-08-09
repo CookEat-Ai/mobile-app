@@ -258,16 +258,16 @@ export default function Micro({
     if (Platform.OS === 'ios') {
       switch (permissionType) {
         case 'microphone':
-          title = 'Permission microphone requise';
-          message = 'CookEat a besoin d\'accéder au microphone pour enregistrer votre voix. Veuillez autoriser l\'accès au microphone dans les paramètres.';
+          title = I18n.t('home.voice.errorTitle');
+          message = I18n.t('home.voice.errorDescriptionMicrophone');
           break;
         case 'speech':
-          title = 'Permission reconnaissance vocale requise';
-          message = 'CookEat a besoin d\'accéder à la reconnaissance vocale pour comprendre vos ingrédients. Veuillez autoriser cette permission dans les paramètres.';
+          title = I18n.t('home.voice.errorTitle');
+          message = I18n.t('home.voice.errorDescriptionSpeech');
           break;
         case 'both':
         default:
-          message = 'CookEat a besoin d\'accéder au microphone et à la reconnaissance vocale pour comprendre vos ingrédients. Veuillez autoriser ces permissions dans les paramètres.';
+          message = I18n.t('home.voice.errorDescriptionBoth');
           break;
       }
     } else {
@@ -279,12 +279,13 @@ export default function Micro({
       message,
       [
         {
-          text: 'Annuler',
+          text: I18n.t('home.voice.errorButtonCancel'),
           style: 'cancel'
         },
         {
-          text: 'Paramètres',
-          onPress: () => Linking.openSettings()
+          text: I18n.t('home.voice.errorButtonSettings'),
+          onPress: () => Linking.openSettings(),
+          style: 'default'
         }
       ]
     );

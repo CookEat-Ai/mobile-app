@@ -5,7 +5,6 @@ import {
   Alert,
   Dimensions,
   Image,
-  Modal,
   ScrollView,
   StyleSheet,
   Text,
@@ -82,7 +81,8 @@ export default function RecipeDetailScreen() {
 
   useEffect(() => {
     setTimeout(async () => {
-      if (await StoreReview.hasAction()) { }//StoreReview.requestReview();
+      if (await StoreReview.hasAction())
+        StoreReview.requestReview();
     }, 10000);
   }, []);
 

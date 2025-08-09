@@ -24,8 +24,12 @@
       "speaking": "Speak now...",
       "listening": "Listening...",
       "errorTitle": "Voice recognition error",
-      "errorDescription": "We don't have access to the microphone. Please check the permissions in the device settings.",
-      "errorButton": "Give access to the microphone"
+      "errorDescriptionMicrophone": "We don't have access to the microphone. Please check the permissions in the device settings.",
+      "errorDescriptionSpeech": "We don't have access to the speech recognition. Please check the permissions in the device settings.",
+      "errorDescriptionBoth": "We don't have access to the microphone and speech recognition. Please check the permissions in the device settings.",
+      "errorButton": "Give access to the microphone",
+      "errorButtonCancel": "Cancel",
+      "errorButtonSettings": "Settings"
     },
     "pantry": {
       "title": "Manage your pantry",

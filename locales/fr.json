@@ -24,8 +24,12 @@
       "speaking": "Parlez maintenant...",
       "listening": "Écoutez...",
       "errorTitle": "Erreur de reconnaissance vocale",
-      "errorDescription": "Nous n'avons pas accès au microphone. Veuillez vérifier les permissions dans les paramètres de l'appareil.",
-      "errorButton": "Donner accès au microphone"
+      "errorDescriptionMicrophone": "Nous n'avons pas accès au microphone. Veuillez vérifier les permissions dans les paramètres de l'appareil.",
+      "errorDescriptionSpeech": "Nous n'avons pas accès à la reconnaissance vocale. Veuillez vérifier les permissions dans les paramètres de l'appareil.",
+      "errorDescriptionBoth": "Nous n'avons pas accès au microphone et à la reconnaissance vocale. Veuillez vérifier les permissions dans les paramètres de l'appareil.",
+      "errorButton": "Donner accès au microphone",
+      "errorButtonCancel": "Annuler",
+      "errorButtonSettings": "Paramètres"
     },
     "pantry": {
       "title": "Gérer votre garde-manger",

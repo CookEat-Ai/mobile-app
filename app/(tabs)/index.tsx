@@ -264,16 +264,6 @@ export default function HomeScreen() {
           I18n.t('home.notifications.enabled'),
           I18n.t('home.notifications.description'),
           [
-            {
-              text: 'Paramètres',
-              onPress: () => {
-                if (Platform.OS === 'ios') {
-                  Linking.openURL('app-settings:');
-                } else {
-                  Linking.openSettings();
-                }
-              },
-            },
             { text: 'OK', style: 'cancel' }
           ]
         );

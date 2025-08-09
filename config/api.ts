@@ -8,7 +8,7 @@ const getApiBaseUrl = () => {
   }
 
   // En production (remplacez par votre vraie URL)
-  return 'https://cookeat.info:8083/api';
+  return 'https://cookeat.info/api';
 };
 
 // Configuration avec expo-constants
