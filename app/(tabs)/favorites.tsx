@@ -282,8 +282,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   noResultsText: {
-    fontSize: 16,
+    fontSize: 18,
     textAlign: 'center',
+    fontFamily: 'Cronos Pro',
   },
   loadingContainer: {
     flex: 1,

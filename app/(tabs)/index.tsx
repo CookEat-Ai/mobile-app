@@ -372,7 +372,19 @@ export default function HomeScreen() {
       )}
 
       <ScrollView showsVerticalScrollIndicator={false} style={{ overflow: 'visible' }}>
-        <Text style={{ fontFamily: 'Degular', fontSize: 24, fontWeight: 'bold', textAlign: 'right', marginBottom: 20 }}>CookEat AI</Text>
+        <Animated.View style={{
+          opacity: headerOpacity,
+          transform: [{
+            translateY: headerOpacity.interpolate({
+              inputRange: [0, 1],
+              outputRange: [-50, 0], // Déplace le header vers le haut
+            })
+          }]
+        }}>
+          <Text style={{ fontFamily: 'Degular', fontSize: 24, fontWeight: 'bold', textAlign: 'right', marginBottom: 20 }}>
+            CookEat AI
+          </Text>
+        </Animated.View>
 
         {/* Header avec profil utilisateur */}
         <Animated.View
