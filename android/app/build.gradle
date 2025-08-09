@@ -82,18 +82,6 @@ def enableProguardInReleaseBuilds = (findProperty('android.enableProguardInRelea
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
 android {
-// @generated begin react-native-pdf-packaging-options - expo prebuild (DO NOT MODIFY) sync-e288c3c5efbb1ef5e1a1959a848260c36558a381
-
-    packagingOptions {
-        pickFirst 'lib/x86/libc++_shared.so'
-        pickFirst 'lib/x86_64/libjsc.so'
-        pickFirst 'lib/arm64-v8a/libjsc.so'
-        pickFirst 'lib/arm64-v8a/libc++_shared.so'
-        pickFirst 'lib/x86_64/libc++_shared.so'
-        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
-    }
-
-// @generated end react-native-pdf-packaging-options
     ndkVersion rootProject.ext.ndkVersion
 
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -160,8 +148,6 @@ android {
 }
 
 dependencies {
-    implementation "com.google.android.gms:play-services-base:18.1.0"
-    implementation "com.android.billingclient:billing-ktx:7.0.0"
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 

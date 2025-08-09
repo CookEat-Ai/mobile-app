@@ -34,7 +34,7 @@ export default function SecondStepScreen() {
       <View style={styles.content}>
         {/* Section principale */}
         <View style={styles.mainSection}>
-          <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center' }}>
+          <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
             <Image
               source={require('../../assets/images/step3.png')}
               style={styles.illustration}

@@ -301,6 +301,21 @@ class ApiService {
       body: JSON.stringify({ answers, mobileId }),
     });
   }
+
+  // Notifications
+  async updateNotificationToken(mobileId: string, notificationToken: string) {
+    return this.request<{ success: boolean; message: string }>('/user/notification-token', {
+      method: 'POST',
+      body: JSON.stringify({ mobileId, notificationToken }),
+    });
+  }
+
+  async updateUserActivity(mobileId: string) {
+    return this.request<{ success: boolean; message: string }>('/user/activity', {
+      method: 'POST',
+      body: JSON.stringify({ mobileId }),
+    });
+  }
 }
 
 export const apiService = new ApiService();

@@ -101,7 +101,18 @@ export default function ReminderScreen() {
 
           <View style={{ flex: 1, marginBottom: 30 }}>
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-              <Text style={styles.title}>On vous préviendra  <Text style={{ fontFamily: 'Degular', color: Colors.light.button }}>2 jours</Text> avant la fin de votre période d&apos;essai !</Text>
+              <Text style={styles.title}>Recevez des rappels pour <Text style={{ fontFamily: 'Degular', color: Colors.light.button }}>cuisiner</Text> et profiter de vos <Text style={{ fontFamily: 'Degular', color: Colors.light.button }}>recettes favorites</Text> !</Text>
+              <Text style={{
+                fontSize: 16,
+                fontFamily: 'Cronos Pro',
+                color: Colors.light.textSecondary,
+                marginTop: 16,
+                textAlign: 'center',
+                paddingHorizontal: 20,
+                lineHeight: 22
+              }}>
+                Nous vous enverrons des rappels discrets pour vous encourager à découvrir de nouvelles recettes et rester actif en cuisine.
+              </Text>
             </View>
 
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -112,7 +123,7 @@ export default function ReminderScreen() {
             </View>
 
             <TouchableOpacity style={styles.continueButton} onPress={handleActivateNotifications}>
-              <Text style={styles.buttonText}>Activer les notifications</Text>
+              <Text style={styles.buttonText}>Autoriser les notifications</Text>
               <IconSymbol
                 style={{ position: 'absolute', right: 20 }}
                 name={Platform.OS === 'ios' ? "bell.fill" : "notifications"}

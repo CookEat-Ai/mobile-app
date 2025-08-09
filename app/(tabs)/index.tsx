@@ -1,10 +1,9 @@
 import { router } from "expo-router";
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import I18n from '../../i18n';
 import { Animated, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, FlatList, Alert, Platform, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Wave } from 'react-native-animated-spinkit';
-import * as Notifications from 'expo-notifications';
 import Micro from '../../components/Micro';
 import RecordDisplay from '../../components/RecordDisplay';
 import UserHeader from '../../components/UserHeader';
@@ -14,6 +13,8 @@ import '../../i18n';
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import revenueCatService from '../../config/revenuecat';
 import { processVoiceIngredients } from '../../services/chatgpt';
+import { useNotifications } from '../../hooks/useNotifications';
+import { notificationService } from '../../services/notificationService';
 
 const { width } = Dimensions.get('window');
 
@@ -121,9 +122,21 @@ export default function HomeScreen() {
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
+  const [scrollEnabled, setScrollEnabled] = useState(true);
 
   const firstTime = useRef(true);
   const [isLoadingIngredients, setIsLoadingIngredients] = useState(false);
+
+  // Initialiser les notifications après l'onboarding
+  const { updateActivity, clearAllNotifications } = useNotifications();
+
+  // Initialisation des notifications et mise à jour de l'activité au premier accès
+  useEffect(() => {
+    // L'utilisateur a terminé l'onboarding et arrive sur l'écran principal
+    // C'est le bon moment pour initialiser les notifications et marquer l'activité
+    updateActivity();
+    console.log('✅ Utilisateur arrivé sur l\'écran principal - notifications initialisées');
+  }, []);
 
   // Référence pour le FlatList du carrousel
   const carouselRef = useRef<FlatList>(null);
@@ -148,8 +161,10 @@ export default function HomeScreen() {
       setLiveText('');
       clearRecipes(); // Supprimer les anciens résultats
       hideContent();
+      setScrollEnabled(false);
     } else if (firstTime.current) {
       firstTime.current = false;
+      setScrollEnabled(true);
       showContent();
       // Naviguer vers la page récapitulative quand le texte est reçu
       if (liveText.length > 20) {
@@ -240,27 +255,15 @@ export default function HomeScreen() {
 
   const handleNotificationPress = async () => {
     try {
-      // Vérifier le statut actuel des permissions
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
+      // Vérifier si les notifications sont déjà activées
+      const isEnabled = await notificationService.areNotificationsEnabled();
 
-      let finalStatus = existingStatus;
-
-      // Si les permissions ne sont pas accordées, les demander
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-
-      // Si les permissions sont toujours refusées, rediriger vers les paramètres système
-      if (finalStatus !== 'granted') {
+      if (isEnabled) {
+        // Si déjà activées, proposer des options de gestion
         Alert.alert(
-          I18n.t('home.notifications.error'),
-          I18n.t('home.notifications.errorDescription'),
+          I18n.t('home.notifications.enabled'),
+          I18n.t('home.notifications.description'),
           [
-            {
-              text: 'Annuler',
-              style: 'cancel',
-            },
             {
               text: 'Paramètres',
               onPress: () => {
@@ -271,17 +274,26 @@ export default function HomeScreen() {
                 }
               },
             },
+            { text: 'OK', style: 'cancel' }
           ]
         );
         return;
       }
 
-      // Si les permissions sont accordées, afficher un message de confirmation
-      Alert.alert(
-        I18n.t('home.notifications.enabled'),
-        I18n.t('home.notifications.description'),
-        [{ text: 'OK' }]
-      );
+      // Si pas encore activées, demander l'activation avec notre service
+      const success = await notificationService.requestNotificationsWithContext();
+
+      if (success) {
+        // Succès - afficher confirmation
+        Alert.alert(
+          I18n.t('home.notifications.enabled'),
+          I18n.t('home.notifications.description2'),
+          [{ text: 'OK' }]
+        );
+      } else {
+        // Échec ou refus - proposer d'activer plus tard
+        notificationService.showManualNotificationInstructions();
+      }
 
     } catch (error) {
       console.error('Erreur lors de la gestion des permissions de notification:', error);
@@ -371,7 +383,11 @@ export default function HomeScreen() {
         </View>
       )}
 
-      <ScrollView showsVerticalScrollIndicator={false} style={{ overflow: 'visible' }}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ overflow: 'visible' }}
+        scrollEnabled={scrollEnabled}
+      >
         <Animated.View style={{
           opacity: headerOpacity,
           transform: [{

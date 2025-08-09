@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import Voice from '@react-native-voice/voice';
 import I18n from '../i18n';
+import { Alert, Linking, Platform } from "react-native";
 
 interface UseVoiceOptions {
   onTextReceived?: (text: string) => void;
@@ -159,6 +160,7 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
       await Voice.stop();
       globalIsRecording = false;
       setIsRecording(false);
+      setLiveText('');
       options.onRecordingStateChange?.(false);
     } catch (error) {
       console.error('Erreur lors de l\'arrêt forcé de l\'enregistrement:', error);

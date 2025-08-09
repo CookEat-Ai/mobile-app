@@ -7,13 +7,20 @@ import {
   StyleSheet,
   ViewStyle,
   TouchableOpacity,
-  View
+  View,
+  Alert,
+  Linking,
+  Platform,
+  PermissionsAndroid
 } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from "./ui/IconSymbol";
 import { useVoice, resetVoiceCompletely } from '../hooks/useVoice';
+import Voice from '@react-native-voice/voice';
+import { Audio } from 'expo-av';
 
-const { width, height } = Dimensions.get('window');
+
+const { height } = Dimensions.get('window');
 
 interface MicroProps {
   style?: StyleProp<ViewStyle>;
@@ -173,9 +180,126 @@ export default function Micro({
     middleCircleAnim.setValue(1);
   };
 
+  // Vérifier les permissions microphone et reconnaissance vocale
+  const checkVoicePermissions = async (): Promise<boolean> => {
+    try {
+      if (Platform.OS === 'android') {
+        // Pour Android, vérifier la permission RECORD_AUDIO
+        const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO);
+
+        if (granted) {
+          console.log('Permission microphone déjà accordée');
+          return true;
+        }
+
+        const result = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+          {
+            title: 'Permission Microphone',
+            message: 'CookEat a besoin d\'accéder au microphone pour la reconnaissance vocale',
+            buttonNeutral: 'Plus tard',
+            buttonNegative: 'Annuler',
+            buttonPositive: 'Autoriser',
+          }
+        );
+
+        if (result !== PermissionsAndroid.RESULTS.GRANTED) {
+          showPermissionAlert('microphone');
+          return false;
+        }
+
+        return true;
+      } else {
+        // Pour iOS, vérifier explicitement les permissions
+        try {
+          // 1. Vérifier la permission microphone avec expo-av
+          const { status: microphoneStatus } = await Audio.getPermissionsAsync();
+          console.log('Statut permission microphone:', microphoneStatus);
+
+          if (microphoneStatus !== 'granted') {
+            const { status: newMicrophoneStatus } = await Audio.requestPermissionsAsync();
+            console.log('Nouveau statut permission microphone:', newMicrophoneStatus);
+
+            if (newMicrophoneStatus !== 'granted') {
+              showPermissionAlert('microphone');
+              return false;
+            }
+          }
+
+          // 2. Vérifier la reconnaissance vocale avec Voice
+          const isVoiceAvailable = await Voice.isAvailable();
+          console.log('Voice disponible (reconnaissance vocale):', isVoiceAvailable);
+
+          if (!isVoiceAvailable) {
+            showPermissionAlert('speech');
+            return false;
+          }
+
+          console.log('✅ Permissions microphone et reconnaissance vocale OK');
+          return true;
+        } catch (error: any) {
+          console.log('❌ Erreur lors de la vérification des permissions iOS:', error);
+          showPermissionAlert('both');
+          return false;
+        }
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification des permissions:', error);
+      showPermissionAlert('both');
+      return false;
+    }
+  };
+
+  // Afficher une alerte pour guider l'utilisateur vers les paramètres
+  const showPermissionAlert = (permissionType: 'microphone' | 'speech' | 'both') => {
+    let title = 'Permissions requises';
+    let message = '';
+
+    if (Platform.OS === 'ios') {
+      switch (permissionType) {
+        case 'microphone':
+          title = 'Permission microphone requise';
+          message = 'CookEat a besoin d\'accéder au microphone pour enregistrer votre voix. Veuillez autoriser l\'accès au microphone dans les paramètres.';
+          break;
+        case 'speech':
+          title = 'Permission reconnaissance vocale requise';
+          message = 'CookEat a besoin d\'accéder à la reconnaissance vocale pour comprendre vos ingrédients. Veuillez autoriser cette permission dans les paramètres.';
+          break;
+        case 'both':
+        default:
+          message = 'CookEat a besoin d\'accéder au microphone et à la reconnaissance vocale pour comprendre vos ingrédients. Veuillez autoriser ces permissions dans les paramètres.';
+          break;
+      }
+    } else {
+      message = 'CookEat a besoin d\'accéder au microphone pour enregistrer votre voix et comprendre vos ingrédients. Veuillez autoriser l\'accès au microphone dans les paramètres.';
+    }
+
+    Alert.alert(
+      title,
+      message,
+      [
+        {
+          text: 'Annuler',
+          style: 'cancel'
+        },
+        {
+          text: 'Paramètres',
+          onPress: () => Linking.openSettings()
+        }
+      ]
+    );
+  };
+
   // Fonctions wrapper pour gérer les animations et la tabbar
   const handleStartRecording = async () => {
     try {
+      // Vérifier les permissions avant de commencer
+      const hasPermissions = await checkVoicePermissions();
+      if (!hasPermissions) {
+        console.log('Permissions insuffisantes pour démarrer l\'enregistrement');
+        return;
+      }
+
       // Réinitialiser Voice avant de commencer
       await resetVoiceCompletely();
       await startRecording();

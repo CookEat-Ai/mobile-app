@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>CookEat</string>
+    <string>CookEat AI</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -50,10 +50,16 @@
     <key>NSMicrophoneUsageDescription</key>
     <string>Cette application utilise le microphone pour la reconnaissance vocale afin de comprendre vos ingrédients disponibles.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to securely recognize user speech</string>
+    <string>CookEat utilise la reconnaissance vocale pour comprendre vos ingrédients et vous proposer des recettes adaptées à ce que vous avez chez vous.</string>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
+    </array>
+    <key>NSUserNotificationsUsageDescription</key>
+    <string>CookEat AI souhaite vous envoyer des notifications pour vous rappeler de cuisiner, vous proposer de nouvelles recettes adaptées à vos goûts et vous tenir informé de vos recettes favorites. Ces rappels vous aident à rester motivé et à découvrir de nouvelles saveurs culinaires.</string>
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>remote-notification</string>
     </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>

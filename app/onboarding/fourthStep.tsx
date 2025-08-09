@@ -43,7 +43,7 @@ export default function FourthStepScreen() {
       <View style={styles.content}>
         {/* Section principale */}
         <View style={styles.mainSection}>
-          <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
+          <View style={{ flex: 1.2, justifyContent: 'flex-end', alignItems: 'center' }}>
             <Image
               source={require('../../assets/images/step4.png')}
               style={styles.illustration}
@@ -144,8 +144,8 @@ const styles = StyleSheet.create({
     fontSize: 48,
   },
   illustration: {
-    width: width * 0.7,
-    height: width * 0.6,
+    width: width * 0.8,
+    height: width * 0.7,
     // resizeMode: 'contain',
     marginBottom: 32,
   },

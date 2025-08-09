@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   },
   illustration: {
     width: width * 0.9,
-    height: width * 0.65,
+    height: width * 0.8,
     // resizeMode: 'contain',
     marginBottom: 32,
   },

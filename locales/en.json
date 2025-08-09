@@ -14,6 +14,7 @@
     "notifications": {
       "enabled": "Notifications enabled",
       "description": "You will now receive notifications from CookEat!",
+      "description2": "You will now receive notifications from CookEat!",
       "error": "Error",
       "errorDescription": "An error occurred while managing notification permissions."
     },
@@ -21,7 +22,10 @@
       "start": "Press to start",
       "recording": "Give us the list of your ingredients, we're listening... 👂🏼",
       "speaking": "Speak now...",
-      "listening": "Listening..."
+      "listening": "Listening...",
+      "errorTitle": "Voice recognition error",
+      "errorDescription": "We don't have access to the microphone. Please check the permissions in the device settings.",
+      "errorButton": "Give access to the microphone"
     },
     "pantry": {
       "title": "Manage your pantry",

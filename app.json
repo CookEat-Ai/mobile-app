@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "CookEat",
+    "name": "CookEat AI",
     "slug": "cookeat",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -16,7 +16,9 @@
       },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSMicrophoneUsageDescription": "Cette application utilise le microphone pour la reconnaissance vocale afin de comprendre vos ingrédients disponibles."
+        "NSMicrophoneUsageDescription": "Cette application utilise le microphone pour la reconnaissance vocale afin de comprendre vos ingrédients disponibles.",
+        "NSSpeechRecognitionUsageDescription": "CookEat utilise la reconnaissance vocale pour comprendre vos ingrédients et vous proposer des recettes adaptées à ce que vous avez chez vous.",
+        "NSUserNotificationsUsageDescription": "CookEat AI souhaite vous envoyer des notifications pour vous rappeler de cuisiner, vous proposer de nouvelles recettes adaptées à vos goûts et vous tenir informé de vos recettes favorites. Ces rappels vous aident à rester motivé et à découvrir de nouvelles saveurs culinaires."
       }
     },
     "android": {
@@ -27,7 +29,9 @@
       "edgeToEdgeEnabled": true,
       "permissions": [
         "android.permission.RECORD_AUDIO",
-        "com.android.vending.BILLING"
+        "com.android.vending.BILLING",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK"
       ],
       "package": "com.gokugen.cookeat"
     },
@@ -39,6 +43,13 @@
     "plugins": [
       "expo-router",
       "@react-native-voice/voice",
+      [
+        "expo-notifications",
+        {
+          "color": "#FEB50A",
+          "enableBackgroundRemoteNotifications": true
+        }
+      ],
       [
         "expo-splash-screen",
         {
