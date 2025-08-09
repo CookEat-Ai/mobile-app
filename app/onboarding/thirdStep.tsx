@@ -32,47 +32,6 @@ export default function ThirdStepScreen() {
     }, 1000);
   }, []));
 
-  // Afficher une alerte pour guider l'utilisateur vers les paramètres
-  const showPermissionAlert = (permissionType: 'microphone' | 'speech' | 'both') => {
-    let title = 'Permissions requises';
-    let message = '';
-
-    if (Platform.OS === 'ios') {
-      switch (permissionType) {
-        case 'microphone':
-          title = I18n.t('home.voice.errorTitle');
-          message = I18n.t('home.voice.errorDescriptionMicrophone');
-          break;
-        case 'speech':
-          title = I18n.t('home.voice.errorTitle');
-          message = I18n.t('home.voice.errorDescriptionSpeech');
-          break;
-        case 'both':
-        default:
-          message = I18n.t('home.voice.errorDescriptionBoth');
-          break;
-      }
-    } else {
-      message = 'CookEat a besoin d\'accéder au microphone pour enregistrer votre voix et comprendre vos ingrédients. Veuillez autoriser l\'accès au microphone dans les paramètres.';
-    }
-
-    Alert.alert(
-      title,
-      message,
-      [
-        {
-          text: I18n.t('home.voice.errorButtonCancel'),
-          style: 'cancel'
-        },
-        {
-          text: I18n.t('home.voice.errorButtonSettings'),
-          onPress: () => Linking.openSettings(),
-          style: 'default'
-        }
-      ]
-    );
-  };
-
   const checkVoicePermissions = async (): Promise<boolean> => {
     try {
       if (Platform.OS === 'android') {
@@ -95,10 +54,8 @@ export default function ThirdStepScreen() {
           }
         );
 
-        if (result !== PermissionsAndroid.RESULTS.GRANTED) {
-          showPermissionAlert('microphone');
+        if (result !== PermissionsAndroid.RESULTS.GRANTED)
           return false;
-        }
 
         return true;
       } else {
@@ -112,32 +69,26 @@ export default function ThirdStepScreen() {
             const { status: newMicrophoneStatus } = await Audio.requestPermissionsAsync();
             console.log('Nouveau statut permission microphone:', newMicrophoneStatus);
 
-            if (newMicrophoneStatus !== 'granted') {
-              showPermissionAlert('microphone');
+            if (newMicrophoneStatus !== 'granted')
               return false;
-            }
           }
 
           // 2. Vérifier la reconnaissance vocale avec Voice
           const isVoiceAvailable = await Voice.isAvailable();
           console.log('Voice disponible (reconnaissance vocale):', isVoiceAvailable);
 
-          if (!isVoiceAvailable) {
-            showPermissionAlert('speech');
+          if (!isVoiceAvailable)
             return false;
-          }
 
           console.log('✅ Permissions microphone et reconnaissance vocale OK');
           return true;
         } catch (error: any) {
           console.log('❌ Erreur lors de la vérification des permissions iOS:', error);
-          showPermissionAlert('both');
           return false;
         }
       }
     } catch (error) {
       console.error('Erreur lors de la vérification des permissions:', error);
-      showPermissionAlert('both');
       return false;
     }
   };

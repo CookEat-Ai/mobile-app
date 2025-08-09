@@ -282,7 +282,11 @@ export default function HomeScreen() {
         );
       } else {
         // Échec ou refus - proposer d'activer plus tard
-        notificationService.showManualNotificationInstructions();
+        if (Platform.OS === 'ios') {
+          await Linking.openURL('app-settings:');
+        } else {
+          await Linking.openSettings();
+        }
       }
 
     } catch (error) {
