@@ -304,6 +304,8 @@
   "paywall": {
     "title": "Moins de gaspi, Plus de goût !",
     "subtitle": "Choisissez votre plan",
+    "purchaseErrorTitle": "Erreur lors de l'achat",
+    "purchaseErrorDescription": "Une erreur est survenue lors de l'achat. Veuillez réessayer.",
     "features": {
       "unlimited": "Recettes illimitées",
       "favorites": "Sauve tes favoris",

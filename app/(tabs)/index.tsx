@@ -9,7 +9,6 @@ import RecordDisplay from '../../components/RecordDisplay';
 import UserHeader from '../../components/UserHeader';
 import { Colors } from '../../constants/Colors';
 import { useRecipeContext } from '../../contexts/RecipeContext';
-import '../../i18n';
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import revenueCatService from '../../config/revenuecat';
 import { processVoiceIngredients } from '../../services/chatgpt';

@@ -302,6 +302,8 @@
   "paywall": {
     "title": "Less waste, More taste!",
     "subtitle": "Choose your plan",
+    "purchaseErrorTitle": "Purchase error",
+    "purchaseErrorDescription": "An error occurred while purchasing. Please try again.",
     "features": {
       "unlimited": "Unlimited recipes",
       "favorites": "Save your favorites",
