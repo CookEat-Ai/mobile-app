@@ -41,9 +41,7 @@ export default function WelcomeScreen() {
             />
           </View>
 
-          <View style={{ flex: 1, width: '100%', justifyContent: 'flex-end', gap: 16, marginBottom: 30 }}>
-            {/* <Text style={{}}>Propulsé par CookEat AI</Text> */}
-
+          <View style={{ width: '100%', justifyContent: 'flex-end', gap: 16, marginVertical: 30 }}>
             <View style={{}}>
               <View style={{ marginBottom: 16 }}>
                 <Text style={styles.title}>{I18n.t('onboarding.title')}</Text>
@@ -57,7 +55,7 @@ export default function WelcomeScreen() {
                 <IconSymbol
                   style={{ position: 'absolute', right: 20 }}
                   name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}
-                  size={24}
+                  size={width * 0.06}
                   color="white"
                 />
               </TouchableOpacity>
@@ -72,7 +70,7 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',//Colors.light.background,
+    backgroundColor: 'white',
   },
   content: {
     flex: 1,
@@ -98,7 +96,7 @@ const styles = StyleSheet.create({
     fontSize: width * 0.09,
     fontFamily: 'Degular',
     color: Colors.light.text,
-    lineHeight: 36,
+    lineHeight: width * 0.1,
   },
   descriptionSection: {
     marginBottom: 48,
@@ -106,10 +104,9 @@ const styles = StyleSheet.create({
   },
   description: {
     textAlign: 'left',
-    fontSize: 18,
+    fontSize: width * 0.046,
     fontFamily: 'Cronos Pro Bold',
-    color: Colors.light.textSecondary,
-    lineHeight: 26,
+    color: Colors.light.textSecondary
   },
   highlight: {
     color: Colors.light.text,
@@ -137,7 +134,7 @@ const styles = StyleSheet.create({
   illustration: {
     width: width * 0.9,
     height: width * 0.8,
-    // resizeMode: 'contain',
+    resizeMode: 'contain',
     marginBottom: 32,
   },
   buttonSection: {
@@ -163,7 +160,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: width * 0.05,
     fontFamily: 'Degular',
   },
 }); 

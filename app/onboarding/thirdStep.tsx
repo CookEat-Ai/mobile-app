@@ -1,22 +1,21 @@
 import Voice from '@react-native-voice/voice';
+import { Audio } from 'expo-av';
 import { router, useFocusEffect } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   Dimensions,
   Linking,
+  PermissionsAndroid,
   Platform,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Alert
+  View
 } from 'react-native';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
 import I18n from '../../i18n';
-import { Audio } from 'expo-av';
-import { PermissionsAndroid } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -151,7 +150,7 @@ export default function ThirdStepScreen() {
                 <IconSymbol
                   style={{ position: 'absolute', right: 20 }}
                   name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}
-                  size={24}
+                  size={width * 0.06}
                   color="white"
                 />
               </TouchableOpacity>
@@ -192,7 +191,7 @@ const styles = StyleSheet.create({
     fontSize: width * 0.09,
     fontFamily: 'Degular',
     color: Colors.light.text,
-    lineHeight: 36,
+    lineHeight: width * 0.1,
   },
   descriptionSection: {
     marginBottom: 48,
@@ -200,10 +199,10 @@ const styles = StyleSheet.create({
   },
   description: {
     textAlign: 'left',
-    fontSize: 18,
+    fontSize: width * 0.046,
     fontFamily: 'Cronos Pro Bold',
     color: Colors.light.textSecondary,
-    lineHeight: 26,
+    lineHeight: width * 0.06,
   },
   highlight: {
     color: Colors.light.text,
@@ -257,7 +256,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: width * 0.05,
     fontFamily: 'Degular',
   },
 }); 

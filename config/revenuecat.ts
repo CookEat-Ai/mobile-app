@@ -1,6 +1,6 @@
-import Purchases, { PurchasesOffering } from 'react-native-purchases';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
+import Purchases, { PurchasesOffering } from 'react-native-purchases';
 
 // Configuration RevenueCat
 export const REVENUECAT_API_KEY = {

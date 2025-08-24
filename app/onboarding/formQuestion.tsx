@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from "expo-router";
 import React, { useMemo, useState } from 'react';
 import {
@@ -10,12 +11,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import apiService from '../../services/api';
-import DeviceInfo from 'react-native-device-info';
 import I18n from "../../i18n";
+import apiService from '../../services/api';
 
 const { width, height } = Dimensions.get('window');
 
@@ -296,7 +296,7 @@ export default function FormQuestionScreen() {
               <IconSymbol
                 style={{ position: 'absolute', right: 20 }}
                 name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}
-                size={24}
+                size={width * 0.06}
                 color="white"
               />
             </TouchableOpacity>
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     fontSize: width * 0.08,
     fontFamily: 'Degular',
     color: Colors.light.text,
-    lineHeight: 36,
+    lineHeight: width * 0.1,
   },
   cardsContainer: {
     width: '100%',
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: width * 0.046,
     fontFamily: 'Degular',
     color: Colors.light.text,
     marginBottom: 4,
@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: width * 0.05,
     fontFamily: 'Degular',
   },
 }); 

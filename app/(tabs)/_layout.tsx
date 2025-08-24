@@ -1,13 +1,12 @@
 import { Tabs } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import I18n from '../../i18n';
-import { Animated, StyleSheet, View, Dimensions } from 'react-native';
+import { Animated, Dimensions, StyleSheet, View } from 'react-native';
 import { HapticTab } from '../../components/HapticTab';
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import { Colors } from '../../constants/Colors';
-import '../../i18n';
+import I18n from '../../i18n';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // Composant personnalisé pour l'icône avec rond autour de l'icône active
 const TabIcon = ({ name, focused, color }: { name: any; focused: boolean; color: string }) => {
@@ -84,7 +83,7 @@ export default function TabLayout() {
           backgroundColor: Colors.light.button,
           borderTopWidth: 0,
           borderRadius: 1000,
-          height: 68,
+          maxHeight: height * 0.08,
           paddingHorizontal: 5,
           marginHorizontal: "26%",
           marginBottom: "5%",
@@ -135,8 +134,8 @@ const styles = StyleSheet.create({
   iconContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
-    marginTop: 5.5,
+    // position: 'relative',
+    marginTop: height > 1000 ? height * 0.015 : height * 0.006,
   },
   activeCircle: {
     position: 'absolute',

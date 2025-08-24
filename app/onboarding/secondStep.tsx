@@ -57,7 +57,7 @@ export default function SecondStepScreen() {
                 <IconSymbol
                   style={{ position: 'absolute', right: 20 }}
                   name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}
-                  size={24}
+                  size={width * 0.06}
                   color="white"
                 />
               </TouchableOpacity>
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     fontSize: width * 0.09,
     fontFamily: 'Degular',
     color: Colors.light.text,
-    lineHeight: 36,
+    lineHeight: width * 0.1,
   },
   descriptionSection: {
     marginBottom: 48,
@@ -106,10 +106,10 @@ const styles = StyleSheet.create({
   },
   description: {
     textAlign: 'left',
-    fontSize: 18,
+    fontSize: width * 0.046,
     fontFamily: 'Cronos Pro Bold',
     color: Colors.light.textSecondary,
-    lineHeight: 26,
+    lineHeight: width * 0.06,
   },
   highlight: {
     color: Colors.light.text,
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: width * 0.05,
     fontFamily: 'Degular',
   },
 }); 

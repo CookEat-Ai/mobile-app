@@ -57,6 +57,8 @@
     </array>
     <key>NSUserNotificationsUsageDescription</key>
     <string>CookEat AI souhaite vous envoyer des notifications pour vous rappeler de cuisiner, vous proposer de nouvelles recettes adaptées à vos goûts et vous tenir informé de vos recettes favorites. Ces rappels vous aident à rester motivé et à découvrir de nouvelles saveurs culinaires.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>CookEat AI souhaite accéder à votre bibliothèque photo pour reconnaitre les ingrédients que vous nous affichez.</string>
     <key>UIBackgroundModes</key>
     <array>
       <string>remote-notification</string>
