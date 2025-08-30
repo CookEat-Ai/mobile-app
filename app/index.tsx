@@ -3,9 +3,8 @@ import { Redirect, router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import 'react-native-reanimated';
-import { resetVoiceCompletely } from '../hooks/useVoice';
 import revenueCatService from '../config/revenuecat';
-import i18n from "../i18n";
+import { resetVoiceCompletely } from '../hooks/useVoice';
 
 const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 

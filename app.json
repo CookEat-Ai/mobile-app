@@ -9,6 +9,7 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
+      "appStoreUrl": "https://apps.apple.com/fr/app/cookeat-ai/id6748924011",
       "supportsTablet": true,
       "bundleIdentifier": "com.gokugen.cookeat",
       "config": {
@@ -22,6 +23,7 @@
       }
     },
     "android": {
+      "playStoreUrl": "",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"

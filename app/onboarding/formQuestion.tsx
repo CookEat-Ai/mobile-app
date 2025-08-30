@@ -195,7 +195,7 @@ export default function FormQuestionScreen() {
           console.error('❌ Erreur lors de la sauvegarde des réponses:', error);
         }
 
-        router.replace('/(tabs)');
+        router.replace('/paywall');
       } else {
         // Passer à la question suivante
         setIndex(index + 1);

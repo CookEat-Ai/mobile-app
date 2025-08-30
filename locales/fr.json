@@ -20,7 +20,7 @@
     },
     "voice": {
       "start": "Appuyez pour commencer",
-      "recording": "Donner nous la liste de vos ingrédients, on vous écoute... 👂🏼",
+      "recording": "Donnez-nous la liste de vos ingrédients, on vous écoute... 👂🏼",
       "speaking": "Parlez maintenant...",
       "listening": "Écoutez...",
       "errorTitle": "Erreur de reconnaissance vocale",

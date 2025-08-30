@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import I18n from '../i18n';
-import { View, StyleSheet, Alert } from 'react-native';
 import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { Alert, StyleSheet, View } from 'react-native';
 import Paywall from '../components/Paywall';
+import I18n from '../i18n';
 
 export default function PaywallScreen() {
 
@@ -13,9 +13,13 @@ export default function PaywallScreen() {
   };
 
   const handleClose = () => {
-    console.log('close')
     setShowPaywall(false);
-    router.back();
+
+    if (router.canGoBack())
+      router.back();
+    else
+      router.replace('/(tabs)');
+
   };
 
   const handleRestore = () => {
