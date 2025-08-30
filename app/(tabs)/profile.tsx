@@ -186,7 +186,7 @@ export default function ProfileScreen() {
       return;
     }
 
-    const preferences: Array<'none' | 'halal' | 'vegetarian' | 'vegan'> = ['none', 'halal', 'vegetarian', 'vegan'];
+    const preferences: ('none' | 'halal' | 'vegetarian' | 'vegan')[] = ['none', 'halal', 'vegetarian', 'vegan'];
     const currentIndex = preferences.indexOf(dietaryPreference);
     const nextIndex = (currentIndex + 1) % preferences.length;
     const newPreference = preferences[nextIndex];

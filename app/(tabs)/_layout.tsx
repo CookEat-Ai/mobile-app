@@ -6,6 +6,7 @@ import { IconSymbol } from "../../components/ui/IconSymbol";
 import { Colors } from '../../constants/Colors';
 import I18n from '../../i18n';
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -16,12 +17,13 @@ const TabIcon = ({ name, focused, color }: { name: any; focused: boolean; color:
       {focused && <View style={styles.activeCircle} />}
       {name === "heart" && focused
         ? <FontAwesome name="heart" size={24} color={focused ? Colors.light.button : 'white'} />
-        : <IconSymbol
-          size={28}
-          name={focused ? name.includes('magnifyingglass') ? name : `${name}.fill` : name}
-          // color={focused ? Colors.light.button : color}
-          color={focused ? Colors.light.button : 'white'}
-        />}
+        : name === "house"
+          ? <Ionicons name={focused ? "home" : "home-outline"} size={26} color={focused ? Colors.light.button : 'white'} />
+          : <IconSymbol
+            size={28}
+            name={focused ? `${name}.fill` : name}
+            color={focused ? Colors.light.button : 'white'}
+          />}
     </View>
   );
 };
@@ -89,7 +91,7 @@ export default function TabLayout() {
           maxHeight: Platform.OS === 'ios' ? height * 0.08 : height * 0.092,
           paddingHorizontal: 5,
           marginHorizontal: "26%",
-          marginBottom: Platform.OS === 'ios' ? "5%" : "10%",
+          marginBottom: Platform.OS === 'ios' ? "5%" : "8%",
           opacity: tabBarOpacity,
           transform: [{ translateY: tabBarTranslateY }],
         },

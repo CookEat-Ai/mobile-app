@@ -506,12 +506,15 @@ export default function HomeScreen() {
         >
           <Animated.View
             style={{
-              marginBottom: 20,
+              marginBottom: microCardOpacity.interpolate({
+                inputRange: [0, 1],
+                outputRange: [-(width * 0.1), 0],
+              }),
               opacity: microCardOpacity,
               transform: [{
                 translateY: microCardOpacity.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [-20, 0],
+                  outputRange: [0, 0],
                 })
               }]
             }}
