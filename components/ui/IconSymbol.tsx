@@ -28,6 +28,8 @@ const MAPPING = {
   'restaurant': 'restaurant',
   'fast-food': 'fastfood',
   'wine': 'local-bar',
+  'mic': 'microphone',
+  'record-voice': 'record-voice',
   'pizza': 'local-pizza',
   'cafe': 'local-cafe',
   'ice-cream': 'icecream',

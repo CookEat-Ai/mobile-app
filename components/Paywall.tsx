@@ -15,6 +15,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from './ui/IconSymbol';
 import { Colors } from '../constants/Colors';
 import revenueCatService from '../config/revenuecat';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
 
 interface PaywallProps {
   visible: boolean;
@@ -46,17 +50,17 @@ export default function Paywall({
       color: '#FEB50A'
     },
     {
-      icon: 'heart',
+      icon: 'cards-heart',
       title: I18n.t('paywall.saveRecipes'),
       color: '#FF8A65'
     },
     {
-      icon: 'slider.horizontal.3',
+      icon: 'sliders-h',
       title: I18n.t('paywall.customFilter'),
       color: '#FFB74D'
     },
     {
-      icon: 'person.2',
+      icon: 'users',
       title: I18n.t('paywall.portionsChoice'),
       color: '#FFCC02'
     },
@@ -71,7 +75,7 @@ export default function Paywall({
       color: '#FF9800'
     },
     {
-      icon: 'refrigerator',
+      icon: 'fridge',
       title: I18n.t('paywall.pantry'),
       color: '#FF8F00'
     }
@@ -186,12 +190,12 @@ export default function Paywall({
                 ]}
               >
                 <View style={[styles.featureIcon, { backgroundColor: feature.color }]}>
-                  <IconSymbol
-                    name={feature.icon as any}
-                    size={24}
-                    color="white"
-                    weight="bold"
-                  />
+                  {feature.icon === 'sparkles'
+                    ? <Ionicons name={feature.icon as any} size={24} color="white" />
+                    : feature.icon === 'fridge' || feature.icon === 'cards-heart'
+                      ? <MaterialCommunityIcons name={feature.icon as any} size={28} color="white" />
+                      : <FontAwesome5 name={feature.icon as any} size={24} color="white" />
+                  }
                 </View>
                 <Text style={styles.featureText}>{feature.title}</Text>
               </View>

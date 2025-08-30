@@ -18,6 +18,7 @@ import { IconSymbol } from "./ui/IconSymbol";
 import { useVoice, resetVoiceCompletely } from '../hooks/useVoice';
 import Voice from '@react-native-voice/voice';
 import { Audio } from 'expo-av';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 
 const { height } = Dimensions.get('window');
@@ -419,11 +420,7 @@ export default function Micro({
                   handleStartRecording();
               }}
             >
-              <IconSymbol
-                name={"mic"}
-                size={isRecording ? 40 : 30}
-                color={colors.background}
-              />
+              <FontAwesome name="microphone" size={24} color={colors.background} />
             </TouchableOpacity>
           </Animated.View>
         </View>

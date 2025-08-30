@@ -5,6 +5,7 @@ import { HapticTab } from '../../components/HapticTab';
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import { Colors } from '../../constants/Colors';
 import I18n from '../../i18n';
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const { width, height } = Dimensions.get('window');
 
@@ -13,12 +14,14 @@ const TabIcon = ({ name, focused, color }: { name: any; focused: boolean; color:
   return (
     <View style={styles.iconContainer}>
       {focused && <View style={styles.activeCircle} />}
-      <IconSymbol
-        size={28}
-        name={focused ? name.includes('magnifyingglass') ? name : `${name}.fill` : name}
-        // color={focused ? Colors.light.button : color}
-        color={focused ? Colors.light.button : 'white'}
-      />
+      {name === "heart" && focused
+        ? <FontAwesome name="heart" size={24} color={focused ? Colors.light.button : 'white'} />
+        : <IconSymbol
+          size={28}
+          name={focused ? name.includes('magnifyingglass') ? name : `${name}.fill` : name}
+          // color={focused ? Colors.light.button : color}
+          color={focused ? Colors.light.button : 'white'}
+        />}
     </View>
   );
 };
