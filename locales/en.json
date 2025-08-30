@@ -300,6 +300,7 @@
     "continue": "Continue"
   },
   "paywall": {
+    "loadingOfferings": "Loading offerings...",
     "title": "Less waste, More taste!",
     "subtitle": "Choose your plan",
     "purchaseErrorTitle": "Purchase error",

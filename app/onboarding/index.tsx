@@ -13,12 +13,15 @@ import {
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
 import I18n from '../../i18n';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
 export default function WelcomeScreen() {
+  const insets = useSafeAreaInsets();
+
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
       <Text style={{
         fontSize: 30,
         fontFamily: 'Degular',

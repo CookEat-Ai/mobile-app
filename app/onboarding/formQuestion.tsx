@@ -16,6 +16,7 @@ import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
 import I18n from "../../i18n";
 import apiService from '../../services/api';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,6 +33,8 @@ type Option = {
 }
 
 export default function FormQuestionScreen() {
+  const insets = useSafeAreaInsets();
+
   const questions: Question[] = useMemo(() => [
     {
       question: I18n.t('onboarding.sex'),
@@ -213,7 +216,7 @@ export default function FormQuestionScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingRight: 20, paddingLeft: 20 }}>
         {index > 0 && <TouchableOpacity
           style={{

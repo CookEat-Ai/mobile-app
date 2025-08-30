@@ -8,7 +8,8 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
-  Animated
+  Animated,
+  Platform
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from './ui/IconSymbol';
@@ -149,14 +150,14 @@ export default function Paywall({
   if (!visible) return null;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
       {/* Bouton de fermeture */}
       <Animated.View style={[styles.closeButton, { opacity: closeButtonOpacity }]}>
         <TouchableOpacity
           onPress={onClose}
           activeOpacity={0}
         >
-          <IconSymbol name="xmark" size={24} color={colors.text} weight="bold" />
+          <IconSymbol name={Platform.OS === 'ios' ? "xmark" : "close"} size={24} color={colors.text} weight={"bold"} />
         </TouchableOpacity>
       </Animated.View>
 

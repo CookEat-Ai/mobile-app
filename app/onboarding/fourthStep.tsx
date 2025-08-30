@@ -13,10 +13,13 @@ import {
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
 import I18n from '../../i18n';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
 export default function FourthStepScreen() {
+  const insets = useSafeAreaInsets();
+
   const handleContinue = async () => {
     try {
       // Rediriger vers le formulaire de questions
@@ -27,7 +30,7 @@ export default function FourthStepScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
       <Text style={{
         fontSize: 30,
         fontFamily: 'Degular',

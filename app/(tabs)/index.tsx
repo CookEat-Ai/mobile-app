@@ -473,11 +473,18 @@ export default function HomeScreen() {
             style={{ ...styles.cardContainer, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
             onPress={handlePantryPress}
           >
-            <View>
+            <View style={{ width: '85%' }}>
               <Text style={styles.cardTitle}>{I18n.t('home.pantry.title')}</Text>
               <Text style={styles.cardDescription}>{I18n.t('home.pantry.description')}</Text>
             </View>
-            <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} weight="bold" />
+            <View style={{ alignItems: 'flex-end', marginLeft: Platform.OS === 'ios' ? 0 : "7%" }}>
+              <IconSymbol
+                name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"}
+                size={width * (Platform.OS === 'ios' ? 0.05 : 0.1)}
+                color={colors.button}
+                weight="bold"
+              />
+            </View>
           </TouchableOpacity>
         </Animated.View>
 

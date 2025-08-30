@@ -302,6 +302,7 @@
     "continue": "Continuer"
   },
   "paywall": {
+    "loadingOfferings": "Chargement des offres...",
     "title": "Moins de gaspi, Plus de goût !",
     "subtitle": "Choisissez votre plan",
     "purchaseErrorTitle": "Erreur lors de l'achat",
