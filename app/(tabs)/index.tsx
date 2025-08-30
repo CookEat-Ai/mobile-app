@@ -484,7 +484,7 @@ export default function HomeScreen() {
         {/* Mode vocal */}
         <View
           style={[
-            { ...styles.cardContainer, marginTop: 20 },
+            { ...styles.cardContainer, marginTop: 20, paddingBottom: Platform.OS === 'ios' ? 20 : 40 },
             {
               backgroundColor: isRecording ? Colors.light.background : 'white',
               borderWidth: isRecording ? 0 : 1,
@@ -631,7 +631,6 @@ const styles = StyleSheet.create({
   },
   mainTitle: {
     fontSize: 28,
-    lineHeight: 34,
     fontFamily: 'Degular',
   },
   introContainer: {
@@ -662,7 +661,6 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontSize: 22,
     fontWeight: 'bold',
-    lineHeight: 20,
     color: Colors.light.text,
     marginBottom: 10,
   },
@@ -670,7 +668,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Cronos Pro',
     textAlign: 'left',
     fontSize: 18,
-    lineHeight: 18,
     color: Colors.light.textSecondary,
   },
   manualSelectionContainer: {
@@ -745,8 +742,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Cronos Pro',
     color: Colors.light.text,
-    textAlign: 'center',
-    lineHeight: 14,
+    textAlign: 'center'
   },
   ingredientNameSelected: {
     color: 'white',

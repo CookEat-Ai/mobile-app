@@ -17,6 +17,7 @@
       },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "CookEat AI souhaite accéder à votre bibliothèque photo pour reconnaitre les ingrédients que vous nous affichez.",
         "NSMicrophoneUsageDescription": "Cette application utilise le microphone pour la reconnaissance vocale afin de comprendre vos ingrédients disponibles.",
         "NSSpeechRecognitionUsageDescription": "CookEat utilise la reconnaissance vocale pour comprendre vos ingrédients et vous proposer des recettes adaptées à ce que vous avez chez vous.",
         "NSUserNotificationsUsageDescription": "CookEat AI souhaite vous envoyer des notifications pour vous rappeler de cuisiner, vous proposer de nouvelles recettes adaptées à vos goûts et vous tenir informé de vos recettes favorites. Ces rappels vous aident à rester motivé et à découvrir de nouvelles saveurs culinaires."
@@ -43,6 +44,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "./plugins/withGradleProperties",
       "expo-router",
       "@react-native-voice/voice",
       [

@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, StyleSheet, View } from 'react-native';
+import { Animated, Dimensions, Platform, StyleSheet, View } from 'react-native';
 import { HapticTab } from '../../components/HapticTab';
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import { Colors } from '../../constants/Colors';
@@ -83,10 +83,10 @@ export default function TabLayout() {
           backgroundColor: Colors.light.button,
           borderTopWidth: 0,
           borderRadius: 1000,
-          maxHeight: height * 0.08,
+          maxHeight: Platform.OS === 'ios' ? height * 0.08 : height * 0.092,
           paddingHorizontal: 5,
           marginHorizontal: "26%",
-          marginBottom: "5%",
+          marginBottom: Platform.OS === 'ios' ? "5%" : "10%",
           opacity: tabBarOpacity,
           transform: [{ translateY: tabBarTranslateY }],
         },
@@ -132,10 +132,10 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   iconContainer: {
+    position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
-    // position: 'relative',
-    marginTop: height > 1000 ? height * 0.015 : height * 0.006,
+    marginTop: height > 1000 ? height * 0.015 : Platform.OS === 'ios' ? height * 0.006 : height * 0.025,
   },
   activeCircle: {
     position: 'absolute',

@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0C3A3383F2FF3FE64793DBE6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 471E921B7F8C7A321DA370FC /* PrivacyInfo.xcprivacy */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		6FF978891E70647682C9CE5C /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAEC3AE5417C2F36F953A74A /* ExpoModulesProvider.swift */; };
-		9DF945AED908560EEC9F608A /* libPods-CookEat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 889FF4C9FA686DEF2B25BE0B /* libPods-CookEat.a */; };
+		4D1F8315EBA2DC806DBA9E61 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F011CA7EE72BB2AD7027A3A8 /* PrivacyInfo.xcprivacy */; };
+		539729FB647241A25E7F8C44 /* libPods-CookEat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 517825A0796FB615FB8227EC /* libPods-CookEat.a */; };
+		5404C8B9933EF8A53AB95CD4 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F70BB0E98650C562534E398B /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
@@ -20,16 +20,16 @@
 		13B07F961A680F5B00A75B9A /* CookEat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CookEat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = CookEat/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = CookEat/Info.plist; sourceTree = "<group>"; };
-		471E921B7F8C7A321DA370FC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = CookEat/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		827B5D893675CBC8F6DC0905 /* Pods-CookEat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CookEat.debug.xcconfig"; path = "Target Support Files/Pods-CookEat/Pods-CookEat.debug.xcconfig"; sourceTree = "<group>"; };
-		889FF4C9FA686DEF2B25BE0B /* libPods-CookEat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CookEat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		517825A0796FB615FB8227EC /* libPods-CookEat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CookEat.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = CookEat/SplashScreen.storyboard; sourceTree = "<group>"; };
+		B1B6A169E3A45DB230E2342B /* Pods-CookEat.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CookEat.debug.xcconfig"; path = "Target Support Files/Pods-CookEat/Pods-CookEat.debug.xcconfig"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		E5D830C3D359B14777B9069D /* Pods-CookEat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CookEat.release.xcconfig"; path = "Target Support Files/Pods-CookEat/Pods-CookEat.release.xcconfig"; sourceTree = "<group>"; };
-		EAEC3AE5417C2F36F953A74A /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-CookEat/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		D489229CF5C7008147D034A1 /* Pods-CookEat.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CookEat.release.xcconfig"; path = "Target Support Files/Pods-CookEat/Pods-CookEat.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F011CA7EE72BB2AD7027A3A8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = CookEat/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = CookEat/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* CookEat-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CookEat-Bridging-Header.h"; path = "CookEat/CookEat-Bridging-Header.h"; sourceTree = "<group>"; };
+		F70BB0E98650C562534E398B /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-CookEat/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9DF945AED908560EEC9F608A /* libPods-CookEat.a in Frameworks */,
+				539729FB647241A25E7F8C44 /* libPods-CookEat.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,15 +53,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				471E921B7F8C7A321DA370FC /* PrivacyInfo.xcprivacy */,
-			);
-			name = CookEat;
-			sourceTree = "<group>";
-		};
-		212331FD3F94EBD228623FE0 /* CookEat */ = {
-			isa = PBXGroup;
-			children = (
-				EAEC3AE5417C2F36F953A74A /* ExpoModulesProvider.swift */,
+				F011CA7EE72BB2AD7027A3A8 /* PrivacyInfo.xcprivacy */,
 			);
 			name = CookEat;
 			sourceTree = "<group>";
@@ -70,9 +62,27 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				889FF4C9FA686DEF2B25BE0B /* libPods-CookEat.a */,
+				517825A0796FB615FB8227EC /* libPods-CookEat.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6CA50A6B3206EDD61520099C /* CookEat */ = {
+			isa = PBXGroup;
+			children = (
+				F70BB0E98650C562534E398B /* ExpoModulesProvider.swift */,
+			);
+			name = CookEat;
+			sourceTree = "<group>";
+		};
+		7D8287D22B54BA03713872CA /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				B1B6A169E3A45DB230E2342B /* Pods-CookEat.debug.xcconfig */,
+				D489229CF5C7008147D034A1 /* Pods-CookEat.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -89,8 +99,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				91C62E194866B8E0BC13D6E0 /* Pods */,
-				B435A8755FC6A517FE5C1463 /* ExpoModulesProviders */,
+				7D8287D22B54BA03713872CA /* Pods */,
+				FCE3CBE1A68AD7904B22358E /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -105,23 +115,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		91C62E194866B8E0BC13D6E0 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				827B5D893675CBC8F6DC0905 /* Pods-CookEat.debug.xcconfig */,
-				E5D830C3D359B14777B9069D /* Pods-CookEat.release.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		B435A8755FC6A517FE5C1463 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				212331FD3F94EBD228623FE0 /* CookEat */,
-			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -129,6 +122,14 @@
 			);
 			name = Supporting;
 			path = CookEat/Supporting;
+			sourceTree = "<group>";
+		};
+		FCE3CBE1A68AD7904B22358E /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				6CA50A6B3206EDD61520099C /* CookEat */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,13 +140,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "CookEat" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				1BFF4738B495F76F6DB4FA5C /* [Expo] Configure project */,
+				571943D787233A6415597374 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				7269A6D2EDDA66E35973F9A1 /* [CP] Embed Pods Frameworks */,
+				D500ED335C5DDBCB6E5C0751 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -165,9 +166,7 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = P48MLLHB99;
 						LastSwiftMigration = 1250;
-						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -197,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				0C3A3383F2FF3FE64793DBE6 /* PrivacyInfo.xcprivacy in Resources */,
+				4D1F8315EBA2DC806DBA9E61 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,7 +240,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		1BFF4738B495F76F6DB4FA5C /* [Expo] Configure project */ = {
+		571943D787233A6415597374 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -259,24 +258,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-CookEat/expo-configure-project.sh\"\n";
-		};
-		7269A6D2EDDA66E35973F9A1 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-CookEat/Pods-CookEat-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CookEat/Pods-CookEat-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -336,6 +317,24 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CookEat/Pods-CookEat-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		D500ED335C5DDBCB6E5C0751 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-CookEat/Pods-CookEat-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CookEat/Pods-CookEat-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -344,7 +343,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				6FF978891E70647682C9CE5C /* ExpoModulesProvider.swift in Sources */,
+				5404C8B9933EF8A53AB95CD4 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,23 +352,18 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 827B5D893675CBC8F6DC0905 /* Pods-CookEat.debug.xcconfig */;
+			baseConfigurationReference = B1B6A169E3A45DB230E2342B /* Pods-CookEat.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CookEat/CookEat.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = P48MLLHB99;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = CookEat/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = CookEat;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -383,7 +377,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.gokugen.cookeat;
-				PRODUCT_NAME = "CookEat";
+				PRODUCT_NAME = CookEat;
 				SWIFT_OBJC_BRIDGING_HEADER = "CookEat/CookEat-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -394,18 +388,13 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E5D830C3D359B14777B9069D /* Pods-CookEat.release.xcconfig */;
+			baseConfigurationReference = D489229CF5C7008147D034A1 /* Pods-CookEat.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CookEat/CookEat.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = P48MLLHB99;
 				INFOPLIST_FILE = CookEat/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = CookEat;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -419,7 +408,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.gokugen.cookeat;
-				PRODUCT_NAME = "CookEat";
+				PRODUCT_NAME = CookEat;
 				SWIFT_OBJC_BRIDGING_HEADER = "CookEat/CookEat-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -482,7 +471,10 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -537,7 +529,10 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "$(inherited)  ";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					" ",
+				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
