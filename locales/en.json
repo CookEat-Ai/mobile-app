@@ -351,7 +351,8 @@
     "portionsChoice": "Portions choice",
     "worldCuisine": "World cuisine",
     "customRecipe": "Custom recipe",
-    "pantry": "Pantry"
+    "pantry": "Pantry",
+    "trialConditions": "Start your 3-day free trial. Then {{price}} / {{period}}. Cancel anytime in Settings."
   },
   "onboarding": {
     "sex": "What is your sex?",

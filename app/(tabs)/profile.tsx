@@ -21,20 +21,6 @@ import { useSubscription } from '../../hooks/useSubscription';
 import * as WebBrowser from "expo-web-browser";
 import I18n from '../../i18n';
 
-// Données utilisateur (à remplacer par un vrai système d'auth)
-const userData = {
-  isLoggedIn: false, // Changer à true pour tester l'état connecté
-  name: 'John Doe',
-  email: 'john.doe@example.com',
-  avatar: 'https://img.cuisineaz.com/660x660/2015/02/28/i113047-photo-de-poulet-a-la-creme-fraiche.jpeg',
-  preferences: {
-    halal: false,
-    vegetarian: false,
-    vegan: false,
-  },
-  plan: 'basic', // 'free', 'premium', 'pro'
-};
-
 export default function ProfileScreen() {
 
   const colors = Colors.light;

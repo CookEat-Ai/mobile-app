@@ -83,7 +83,7 @@ export default function RecipeDetailScreen() {
     setTimeout(async () => {
       if (await StoreReview.hasAction())
         StoreReview.requestReview();
-    }, 10000);
+    }, 5000);
   }, []);
 
   useEffect(() => {

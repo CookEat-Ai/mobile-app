@@ -9,7 +9,9 @@ import {
   Alert,
   ActivityIndicator,
   Animated,
-  Platform
+  Platform,
+  Modal,
+  TextInput
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from './ui/IconSymbol';
@@ -42,6 +44,10 @@ export default function Paywall({
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<any>(null);
   const closeButtonOpacity = useRef(new Animated.Value(0)).current;
+
+  // États pour le code promo
+  const [promoCodeModalVisible, setPromoCodeModalVisible] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
 
   const features = useMemo(() => [
     {
@@ -91,7 +97,7 @@ export default function Paywall({
     }, 1500);
 
     loadOfferings();
-  }, []);
+  }, [closeButtonOpacity]);
 
   const loadOfferings = async () => {
     try {
@@ -131,6 +137,38 @@ export default function Paywall({
     setSelectedPackage(pkg);
   };
 
+  const handlePromoCodeSubmit = async () => {
+    if (!promoCode.trim()) {
+      Alert.alert('Erreur', 'Veuillez entrer un code promo');
+      return;
+    }
+
+    try {
+      const isValid = await revenueCatService.activatePromoCode(promoCode.trim());
+
+      if (isValid) {
+        // Code promo valide - débloquer toutes les fonctionnalités
+        setPromoCodeModalVisible(false);
+        onSubscribe('Pro');
+        onClose();
+        Alert.alert(
+          'Félicitations ! 🎉',
+          'Votre code promo a été accepté ! Toutes les fonctionnalités sont maintenant débloquées.'
+        );
+      } else {
+        Alert.alert('Code promo invalide', 'Le code promo saisi n\'est pas valide');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la validation du code promo:', error);
+      Alert.alert('Erreur', 'Impossible de valider le code promo');
+    }
+  };
+
+  const resetPromoCode = () => {
+    setPromoCode('');
+    setPromoCodeModalVisible(false);
+  };
+
   const handleRestore = async () => {
     try {
       setIsLoading(true);
@@ -150,6 +188,7 @@ export default function Paywall({
       setIsLoading(false);
     }
   };
+
 
   if (!visible) return null;
 
@@ -292,6 +331,22 @@ export default function Paywall({
           </Text>
         </TouchableOpacity>
 
+        {/* Conditions de l'essai gratuit */}
+        {selectedPackage && (
+          <View style={styles.trialConditionsContainer}>
+            <Text style={styles.trialConditionsText}>
+              {I18n.t('paywall.trialConditions', {
+                price: selectedPackage.product.priceString,
+                period: selectedPackage.packageType === 'WEEKLY'
+                  ? I18n.t('paywall.plans.week')
+                  : selectedPackage.packageType === 'MONTHLY'
+                    ? I18n.t('paywall.plans.month')
+                    : I18n.t('paywall.plans.year')
+              })}
+            </Text>
+          </View>
+        )}
+
         {/* Liens du bas */}
         <View style={styles.bottomLinks}>
           <TouchableOpacity onPress={handleRestore} disabled={isLoading}>
@@ -300,13 +355,55 @@ export default function Paywall({
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={onPromoCode} disabled={isLoading}>
+          <TouchableOpacity onPress={() => setPromoCodeModalVisible(true)} disabled={isLoading}>
             <Text style={[styles.bottomLinkText, isLoading && styles.disabledText]}>
               {I18n.t('paywall.promoCode')}
             </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Modal Code Promo */}
+      <Modal
+        visible={promoCodeModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={resetPromoCode}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Code Promo</Text>
+              <TouchableOpacity onPress={resetPromoCode} style={styles.closeModalButton}>
+                <IconSymbol name={Platform.OS === 'ios' ? "xmark" : "close"} size={20} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalBody}>
+              <Text style={styles.modalDescription}>
+                Entrez votre code promo pour débloquer toutes les fonctionnalités
+              </Text>
+
+              <TextInput
+                style={styles.promoCodeInput}
+                placeholder="Votre code promo"
+                value={promoCode}
+                onChangeText={setPromoCode}
+                autoCapitalize="characters"
+                autoCorrect={false}
+                placeholderTextColor="#9CA3AF"
+              />
+
+              <TouchableOpacity
+                style={styles.submitButton}
+                onPress={handlePromoCodeSubmit}
+              >
+                <Text style={styles.submitButtonText}>Valider le code</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -509,6 +606,18 @@ const styles = StyleSheet.create({
   ctaButtonDisabled: {
     backgroundColor: '#ccc',
   },
+  trialConditionsContainer: {
+    alignItems: 'center',
+    marginBottom: 8,
+    paddingHorizontal: 20,
+  },
+  trialConditionsText: {
+    fontSize: 14,
+    fontFamily: 'Cronos Pro',
+    color: '#6B7280',
+    textAlign: 'center',
+    lineHeight: 20,
+  },
   disabledText: {
     opacity: 0.5,
   },
@@ -547,5 +656,78 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  // Styles pour le modal de code promo
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 24,
+    width: '100%',
+    maxWidth: 400,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 10,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontFamily: 'Degular',
+    fontWeight: 'bold',
+    color: '#1F2937',
+  },
+  closeModalButton: {
+    padding: 8,
+  },
+  modalBody: {
+    gap: 20,
+  },
+  modalDescription: {
+    fontSize: 16,
+    fontFamily: 'Cronos Pro',
+    color: '#6B7280',
+    textAlign: 'center',
+    lineHeight: 22,
+  },
+  promoCodeInput: {
+    borderWidth: 2,
+    borderColor: '#E5E7EB',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 16,
+    fontFamily: 'Cronos Pro',
+    backgroundColor: '#F9FAFB',
+    textAlign: 'center',
+  },
+  submitButton: {
+    backgroundColor: '#FEB50A',
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: 'center',
+    shadowColor: '#FEB50A',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  submitButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontFamily: 'Degular',
+    fontWeight: 'bold',
   },
 }); 

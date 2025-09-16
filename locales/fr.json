@@ -353,7 +353,8 @@
     "portionsChoice": "Choix des portions",
     "worldCuisine": "Cuisine du monde",
     "customRecipe": "Recette personnalisé",
-    "pantry": "Garde manger"
+    "pantry": "Garde manger",
+    "trialConditions": "Commencez votre essai gratuit de 3 jours. Puis {{price}} / {{period}}. Annulez à tout moment dans les Paramètres."
   },
   "onboarding": {
     "sex": "Quel est votre sexe ?",

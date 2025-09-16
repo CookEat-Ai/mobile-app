@@ -1,7 +1,7 @@
 import Voice from '@react-native-voice/voice';
 import { Audio } from 'expo-av';
-import { router, useFocusEffect } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import { router } from 'expo-router';
+import React from 'react';
 import {
   Dimensions,
   Linking,
@@ -21,17 +21,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 const { width, height } = Dimensions.get('window');
 
 export default function ThirdStepScreen() {
-  const [haveAccessToMicro, setHaveAccessToMicro] = useState(false);
   const insets = useSafeAreaInsets();
-
-  useFocusEffect(useCallback(() => {
-    const interval = setInterval(async () => {
-      if (await checkVoicePermissions()) {
-        setHaveAccessToMicro(true);
-        clearInterval(interval);
-      }
-    }, 1000);
-  }, []));
 
   const checkVoicePermissions = async (): Promise<boolean> => {
     try {
@@ -94,10 +84,15 @@ export default function ThirdStepScreen() {
     }
   };
 
-  const handleMicro = async () => {
+  const handleContinue = async () => {
     try {
-      if (!(await checkVoicePermissions())) {
-        // Ouvrir les paramètres de l'application pour permettre l'accès au microphone s'il a déjà refusé l'accès
+      const hasPermissions = await checkVoicePermissions();
+
+      if (hasPermissions) {
+        // Si les permissions sont accordées, passer à la page suivante
+        router.replace('/onboarding/fourthStep');
+      } else {
+        // Si les permissions ne sont pas accordées, ouvrir les paramètres
         if (Platform.OS === 'ios') {
           await Linking.openURL('app-settings:');
         } else {
@@ -139,14 +134,9 @@ export default function ThirdStepScreen() {
             </View>
 
             <View>
-              <TouchableOpacity style={{ ...styles.continueButton, marginTop: 50 }} onPress={handleMicro}>
-                <Text style={styles.buttonText} numberOfLines={1} adjustsFontSizeToFit>{I18n.t('onboarding.thirdStep.allowMicro')}</Text>
-              </TouchableOpacity>
-
               <TouchableOpacity
-                disabled={!haveAccessToMicro}
-                style={{ ...styles.continueButton, backgroundColor: haveAccessToMicro ? Colors.light.button : Colors.light.textSecondary }}
-                onPress={() => router.replace('/onboarding/fourthStep')}
+                style={{ ...styles.continueButton, marginTop: 50 }}
+                onPress={handleContinue}
               >
                 <Text style={styles.buttonText}>{I18n.t('onboarding.thirdStep.continue')}</Text>
                 <IconSymbol

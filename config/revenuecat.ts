@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Platform } from 'react-native';
+import { Platform, Linking } from 'react-native';
 import Purchases, { PurchasesOffering } from 'react-native-purchases';
+import promoCodeService from '../services/promoCode';
 
 // Configuration RevenueCat
 export const REVENUECAT_API_KEY = {
@@ -9,6 +10,7 @@ export const REVENUECAT_API_KEY = {
 };
 
 export const ENTITLEMENT_ID = 'Pro';
+export const PROMO_CODE_STORAGE_KEY = 'promo_code_activated';
 
 export interface SubscriptionStatus {
   isSubscribed: boolean;
@@ -46,6 +48,19 @@ class RevenueCatService {
 
   async getSubscriptionStatus(): Promise<SubscriptionStatus> {
     try {
+      // Vérifier d'abord si un code promo a été activé
+      const isPromoCodeActivated = await this.isPromoCodeActivated();
+
+      if (isPromoCodeActivated) {
+        console.log('✅ Code promo actif - accès premium accordé');
+        return {
+          isSubscribed: true,
+          currentPlan: 'promo_code',
+          expirationDate: null, // Pas d'expiration pour les codes promo
+          dailyQuotaRemaining: 999 // Quota illimité
+        };
+      }
+
       const customerInfo = await Purchases.getCustomerInfo();
       const obj = customerInfo.entitlements.active[ENTITLEMENT_ID];
       const isSubscribed = typeof obj !== 'undefined';
@@ -155,7 +170,6 @@ class RevenueCatService {
 
   private async openGooglePlaySubscriptions(): Promise<void> {
     try {
-      const { Linking } = require('react-native');
       const packageName = this.getPackageName();
 
       // Essayer d'abord d'ouvrir directement la page des abonnements de l'app
@@ -221,6 +235,12 @@ class RevenueCatService {
 
   async useDailyQuota(): Promise<boolean> {
     try {
+      // Si un code promo est activé, pas de limite
+      const isPromoCodeActivated = await this.isPromoCodeActivated();
+      if (isPromoCodeActivated) {
+        return true;
+      }
+
       const today = new Date().toDateString();
       const quotaKey = `daily_quota_${today}`;
       const usedQuota = await AsyncStorage.getItem(quotaKey);
@@ -237,6 +257,46 @@ class RevenueCatService {
       return false;
     }
   }
+
+  // Méthodes pour gérer les codes promo
+  async activatePromoCode(code: string): Promise<boolean> {
+    try {
+      // Valider le code promo via l'API
+      const validation = await promoCodeService.validatePromoCode(code.trim());
+
+      if (validation.success && validation.data?.isValid) {
+        await AsyncStorage.setItem(PROMO_CODE_STORAGE_KEY, 'true');
+        console.log('✅ Code promo activé avec succès');
+        return true;
+      } else {
+        console.log('❌ Code promo invalide:', validation.message);
+        return false;
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'activation du code promo:', error);
+      return false;
+    }
+  }
+
+  async isPromoCodeActivated(): Promise<boolean> {
+    try {
+      const isActivated = await AsyncStorage.getItem(PROMO_CODE_STORAGE_KEY);
+      return isActivated === 'true';
+    } catch (error) {
+      console.error('❌ Erreur lors de la vérification du code promo:', error);
+      return false;
+    }
+  }
+
+  async deactivatePromoCode(): Promise<void> {
+    try {
+      await AsyncStorage.removeItem(PROMO_CODE_STORAGE_KEY);
+      console.log('✅ Code promo désactivé');
+    } catch (error) {
+      console.error('❌ Erreur lors de la désactivation du code promo:', error);
+    }
+  }
+
 }
 
 export default RevenueCatService.getInstance(); 
