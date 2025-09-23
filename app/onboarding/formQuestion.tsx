@@ -36,21 +36,22 @@ export default function FormQuestionScreen() {
   const insets = useSafeAreaInsets();
 
   const questions: Question[] = useMemo(() => [
-    {
-      question: I18n.t('onboarding.sex'),
-      options: [
-        { label: I18n.t('onboarding.formQuestions.man'), value: 'man' },
-        { label: I18n.t('onboarding.formQuestions.woman'), value: 'woman' }
-      ]
-    },
-    {
-      question: I18n.t('onboarding.age'),
-      options: [
-        { label: I18n.t('onboarding.formQuestions.less_than_25_years'), value: 'less_than_25_years' },
-        { label: I18n.t('onboarding.formQuestions.between_25_and_40_years'), value: 'between_25_and_40_years' },
-        { label: I18n.t('onboarding.formQuestions.more_than_40_years'), value: 'more_than_40_years' }
-      ]
-    },
+    // Questions sur le genre et l'âge commentées pour respecter les guidelines Apple
+    // {
+    //   question: I18n.t('onboarding.sex'),
+    //   options: [
+    //     { label: I18n.t('onboarding.formQuestions.man'), value: 'man' },
+    //     { label: I18n.t('onboarding.formQuestions.woman'), value: 'woman' }
+    //   ]
+    // },
+    // {
+    //   question: I18n.t('onboarding.age'),
+    //   options: [
+    //     { label: I18n.t('onboarding.formQuestions.less_than_25_years'), value: 'less_than_25_years' },
+    //     { label: I18n.t('onboarding.formQuestions.between_25_and_40_years'), value: 'between_25_and_40_years' },
+    //     { label: I18n.t('onboarding.formQuestions.more_than_40_years'), value: 'more_than_40_years' }
+    //   ]
+    // },
     {
       question: I18n.t('onboarding.cookingLevel'),
       options: [

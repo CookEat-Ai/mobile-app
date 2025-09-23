@@ -355,8 +355,6 @@
     "trialConditions": "Start your 3-day free trial. Then {{price}} / {{period}}. Cancel anytime in Settings."
   },
   "onboarding": {
-    "sex": "What is your sex?",
-    "age": "How old are you?",
     "cookingLevel": "What is your cooking level?",
     "cookingFrequency": "How often do you cook?",
     "cookingForWho": "For whom do you cook?",
@@ -383,11 +381,6 @@
       "continue": "Start"
     },
     "formQuestions": {
-      "man": "Man",
-      "woman": "Woman",
-      "less_than_25_years": "Less than 25 years",
-      "between_25_and_40_years": "Between 25 and 40 years",
-      "more_than_40_years": "More than 40 years",
       "beginner": "Beginner",
       "medium": "Medium",
       "advanced": "Advanced",

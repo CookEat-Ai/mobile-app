@@ -327,7 +327,7 @@
       "perMonth": "/ mois",
       "perYear": "/ an"
     },
-    "cta": "Essaie gratuitement",
+    "cta": "Essayez gratuitement",
     "restore": "Restaurer",
     "promoCode": "Code Promo",
     "closeConfirm": {
@@ -357,8 +357,6 @@
     "trialConditions": "Commencez votre essai gratuit de 3 jours. Puis {{price}} / {{period}}. Annulez à tout moment dans les Paramètres."
   },
   "onboarding": {
-    "sex": "Quel est votre sexe ?",
-    "age": "Quel âge avez-vous ?",
     "cookingLevel": "Quel est votre niveau de cuisine ?",
     "cookingFrequency": "À quelle fréquence cuisinez-vous ?",
     "cookingForWho": "Pour qui faites-vous cuisiner ?",
@@ -385,11 +383,6 @@
       "continue": "Commencer"
     },
     "formQuestions": {
-      "man": "Homme",
-      "woman": "Femme",
-      "less_than_25_years": "Moins de 25 ans",
-      "between_25_and_40_years": "Entre 25 et 40 ans",
-      "more_than_40_years": "Plus de 40 ans",
       "beginner": "Débutant",
       "medium": "Moyen",
       "advanced": "Avancé",
