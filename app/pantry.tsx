@@ -10,14 +10,15 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router'
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from '../components/ui/IconSymbol';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { processVoiceIngredients } from '../services/chatgpt';
 import { Wave } from 'react-native-animated-spinkit';
 import { useVoice, resetVoiceCompletely } from '../hooks/useVoice';
+import apiService from '../services/api';
 import I18n from '../i18n';
 
 interface PantryItem {
@@ -62,25 +63,27 @@ export default function PantryScreen() {
 
     setIsLoading(true);
     try {
-      // Traiter le texte vocal avec ChatGPT
-      const ingredients = await processVoiceIngredients(liveText);
+      // Traiter le texte vocal
+      const response = await apiService.processVoiceIngredients(liveText);
+      const ingredients = response.data?.ingredients || [];
 
       // Créer les nouveaux items
-      const newItems: PantryItem[] = ingredients.map((ingredient, index) => ({
+      const newItems: PantryItem[] = ingredients.map((ing, index) => ({
         id: (Date.now() + index).toString(),
-        name: ingredient,
-        category: 'personnalisé',
+        name: ing.name,
+        category: ing.category || 'other',
         addedAt: new Date().toISOString(),
       }));
 
       // Remplacer la liste existante
       setPantryItems(newItems);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       await savePantryItems(newItems);
     } catch (error) {
       console.error('Erreur lors du traitement vocal:', error);
       Alert.alert(
-        'Erreur',
-        'Impossible de traiter votre liste d\'ingrédients. Veuillez réessayer.'
+        I18n.t('common.error'),
+        I18n.t('pantry.voiceError')
       );
     }
     clearLiveText();
@@ -133,6 +136,7 @@ export default function PantryScreen() {
 
     const updatedItems = [...pantryItems, newItem];
     setPantryItems(updatedItems);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     await savePantryItems(updatedItems);
   };
 
@@ -165,6 +169,7 @@ export default function PantryScreen() {
           text: I18n.t('pantry.delete'),
           style: 'destructive',
           onPress: async () => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             const updatedItems = pantryItems.filter(item => item.id !== itemId);
             setPantryItems(updatedItems);
             await savePantryItems(updatedItems);
@@ -176,9 +181,12 @@ export default function PantryScreen() {
 
   const handleContinue = () => {
     router.push({
-      pathname: '/recipe-summary',
+      pathname: '/ingredient-list',
       params: {
-        ingredients: pantryItems.map(item => item.name).join(','),
+        ingredients: JSON.stringify(pantryItems.map(item => ({
+          name: item.name,
+          ...(item.category && item.category !== 'other' ? { category: item.category } : {}),
+        }))),
       },
     });
   };
@@ -201,14 +209,6 @@ export default function PantryScreen() {
       </View>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Loading overlay pour le traitement vocal */}
-        {isLoading && (
-          <View style={styles.modalOverlay}>
-            <Wave color={Colors.light.button} size={100} />
-            <Text style={styles.loadingText}>Traitement de votre liste...</Text>
-          </View>
-        )}
-
         {/* Statistiques */}
         {/* <View style={styles.statsContainer}>
           <View style={styles.statCard}>
@@ -275,7 +275,8 @@ export default function PantryScreen() {
             onPress={handleMicroButtonPress}
           >
             <IconSymbol
-              name={isRecording ? "microphone.slash" : "microphone"}
+              // @ts-ignore
+              name={isRecording ? "microphone" : "microphone.slash"}
               size={20}
               color={!isRecording ? Colors.light.button : "white"}
               weight="bold"

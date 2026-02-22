@@ -2,55 +2,41 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { SymbolView, SymbolWeight } from 'expo-symbols';
 import { Platform } from 'react-native';
 
-// Mapping pour MaterialIcons (Android/Web)
+// Mapping pour MaterialIcons (Android/Web) et SF Symbols (iOS)
 const MAPPING = {
-  'house': 'home',
-  'house.fill': 'home',
-  'paperplane.fill': 'send',
-  'search': 'search',
-  'search.fill': 'search',
-  'chevron.left.forwardslash.chevron.right': 'code',
-  'chevron.right': 'chevron-right',
-  'heart': 'favorite-border',
-  'heart.fill': 'favorite',
-  'plus.square': 'add-box-outline',
-  'plus.square.fill': 'add-box',
-  'square.grid.2x2': 'grid-view',
-  'square.grid.2x2.fill': 'grid-view',
-  'person': 'person-outline',
-  'person.fill': 'person',
-  'arrow.back': 'arrow-back',
-  'time': 'access-time',
-  'star': 'star',
-  'star.fill': 'star',
-  'star.outline': 'star-outline',
-  'star-half': 'star-half',
-  'restaurant': 'restaurant',
-  'fast-food': 'fastfood',
-  'wine': 'local-bar',
-  'mic': 'microphone',
-  'record-voice': 'record-voice',
-  'pizza': 'local-pizza',
-  'cafe': 'local-cafe',
-  'ice-cream': 'icecream',
-  'ellipsis-horizontal': 'more-horiz',
-  'settings': 'settings',
-  'notifications': 'notifications',
-  'logout': 'logout',
-  'edit': 'edit',
-  'camera': 'camera-alt',
-  'checkmark': 'check',
-  'close': 'close',
-  'chevron-forward': 'chevron-right',
+  'house': { ios: 'house', android: 'home' },
+  'house.fill': { ios: 'house.fill', android: 'home' },
+  'paperplane.fill': { ios: 'paperplane.fill', android: 'send' },
+  'search': { ios: 'magnifyingglass', android: 'search' },
+  'search.fill': { ios: 'magnifyingglass', android: 'search' },
+  'heart': { ios: 'heart', android: 'favorite-border' },
+  'heart.fill': { ios: 'heart.fill', android: 'favorite' },
+  'settings': { ios: 'gearshape', android: 'settings' },
+  'settings.fill': { ios: 'gearshape.fill', android: 'settings' },
+  'person': { ios: 'person', android: 'person-outline' },
+  'person.fill': { ios: 'person.fill', android: 'person' },
+  'plus': { ios: 'plus', android: 'add' },
+  'plus.fill': { ios: 'plus.fill', android: 'add' },
+  'camera': { ios: 'camera', android: 'camera-alt' },
+  'camera.fill': { ios: 'camera.fill', android: 'camera-alt' },
+  'archivebox': { ios: 'archivebox.fill', android: 'inventory' },
+  'crown.fill': { ios: 'crown.fill', android: 'premium-badge' },
+  'sparkles': { ios: 'sparkles', android: 'auto-fix-high' },
+  'clock': { ios: 'clock', android: 'access-time' },
+  'list.bullet': { ios: 'list.bullet', android: 'list' },
+  'checklist': { ios: 'checklist', android: 'checklist' },
+  'chevron.left': { ios: 'chevron.left', android: 'chevron-left' },
+  'checkmark': { ios: 'checkmark', android: 'check' },
+  'close': { ios: 'xmark', android: 'close' },
+  'flip.camera': { ios: 'camera.rotate', android: 'flip-camera-ios' },
+  'chevron-forward': { ios: 'chevron.right', android: 'chevron-right' },
+  'slider.horizontal.3': { ios: 'slider.horizontal.3', android: 'tune' },
+  'trash': { ios: 'trash', android: 'delete' },
+  'arrow.right': { ios: 'arrow.right', android: 'arrow-forward' },
+  'arrow_forward': { ios: 'arrow.right', android: 'arrow-forward' },
+  'help': { ios: 'questionmark.circle', android: 'help-outline' },
 } as const;
 
-type IconSymbolName = keyof typeof MAPPING;
-
-/**
- * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.
- * This ensures a consistent look across platforms, and optimal resource usage.
- * Icon `name`s are based on SF Symbols and require manual mapping to Material Icons.
- */
 export function IconSymbol({
   name,
   size = 24,
@@ -58,28 +44,26 @@ export function IconSymbol({
   style,
   weight,
 }: {
-  name: any;//IconSymbolName | SymbolViewProps['name'];
+  name: keyof typeof MAPPING;
   size?: number;
-  color: any;//string | OpaqueColorValue;
-  style?: any;//StyleProp<TextStyle> | StyleProp<ViewStyle>;
+  color: any;
+  style?: any;
   weight?: SymbolWeight;
 }) {
+  const icon = MAPPING[name];
+  if (!icon) return null;
+
   if (Platform.OS === 'ios') {
-    // Utiliser SF Symbols sur iOS
-    return <SymbolView
-      resizeMode="scaleAspectFit"
-      name={name}
-      size={size}
-      tintColor={color}
-      style={[
-        {
-          width: size,
-          height: size,
-        },
-        style,
-      ]} weight={weight} />;
+    return (
+      <SymbolView
+        name={icon.ios}
+        size={size}
+        tintColor={color}
+        style={[{ width: size, height: size }, style]}
+        weight={weight}
+      />
+    );
   } else {
-    // Utiliser Material Icons sur Android et Web
-    return <MaterialIcons color={color} size={size} name={MAPPING[name] as any} style={style} />;
+    return <MaterialIcons color={color} size={size} name={icon.android as any} style={style} />;
   }
 }

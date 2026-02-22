@@ -19,6 +19,7 @@ import { useVoice, resetVoiceCompletely } from '../hooks/useVoice';
 import Voice from '@react-native-voice/voice';
 import { Audio } from 'expo-av';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import * as Haptics from 'expo-haptics';
 
 
 const { height } = Dimensions.get('window');
@@ -29,6 +30,7 @@ interface MicroProps {
   onRecordingStateChange?: (isRecording: boolean) => void;
   onLiveTextChange?: (text: string) => void;
   onClick?: () => void;
+  hideStatusText?: boolean;
 }
 
 let timeout: any = null;
@@ -37,7 +39,8 @@ export default function Micro({
   onTextReceived,
   onRecordingStateChange,
   onLiveTextChange,
-  onClick
+  onClick,
+  hideStatusText = false
 }: MicroProps) {
   const colors = Colors.light;
 
@@ -53,7 +56,7 @@ export default function Micro({
 
   // Calculer la hauteur de base approximative basée sur les styles
   // marginTop: 60 + marginBottom: 20 + micro: 90 + texte: ~60 = ~230
-  const baseHeight = height * 0.145;
+  const baseHeight = hideStatusText ? 90 : height * 0.145;
 
   // Animations
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -196,11 +199,11 @@ export default function Micro({
         const result = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
           {
-            title: 'Permission Microphone',
-            message: 'CookEat a besoin d\'accéder au microphone pour la reconnaissance vocale',
-            buttonNeutral: 'Plus tard',
-            buttonNegative: 'Annuler',
-            buttonPositive: 'Autoriser',
+            title: I18n.t('micro.permissionTitle'),
+            message: I18n.t('micro.permissionMessage'),
+            buttonNeutral: I18n.t('micro.later'),
+            buttonNegative: I18n.t('micro.cancel'),
+            buttonPositive: I18n.t('micro.allow'),
           }
         );
 
@@ -272,7 +275,8 @@ export default function Micro({
           break;
       }
     } else {
-      message = 'CookEat a besoin d\'accéder au microphone pour enregistrer votre voix et comprendre vos ingrédients. Veuillez autoriser l\'accès au microphone dans les paramètres.';
+      title = I18n.t('micro.requiredTitle');
+      message = I18n.t('micro.requiredMessage');
     }
 
     Alert.alert(
@@ -295,6 +299,7 @@ export default function Micro({
   // Fonctions wrapper pour gérer les animations et la tabbar
   const handleStartRecording = async () => {
     try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       // Vérifier les permissions avant de commencer
       const hasPermissions = await checkVoicePermissions();
       if (!hasPermissions) {
@@ -312,6 +317,7 @@ export default function Micro({
 
   const handleStopRecording = async () => {
     try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       await stopRecording();
       if (timeout) {
         clearTimeout(timeout);
@@ -426,22 +432,24 @@ export default function Micro({
         </View>
 
         {/* Texte qui change selon l'état */}
-        <Animated.Text
-          style={[
-            styles.voiceText,
-            {
-              transform: [{
-                translateY: microphonePosition.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [10, 60],
-                })
-              }],
-              color: colors.textSecondary,
-            }
-          ]}
-        >
-          {isRecording ? I18n.t('home.voice.recording') : I18n.t('home.voice.start')}
-        </Animated.Text>
+        {!hideStatusText && (
+          <Animated.Text
+            style={[
+              styles.voiceText,
+              {
+                transform: [{
+                  translateY: microphonePosition.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [10, 60],
+                  })
+                }],
+                color: colors.textSecondary,
+              }
+            ]}
+          >
+            {isRecording ? I18n.t('home.voice.recording') : I18n.t('home.voice.start')}
+          </Animated.Text>
+        )}
       </Animated.View>
 
       {/* Bouton d'arrêt qui apparaît en bas */}
@@ -473,6 +481,8 @@ export default function Micro({
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
+    alignItems: 'center',
+    width: '100%',
   },
   voiceInterfaceContainer: {
     alignItems: 'center',

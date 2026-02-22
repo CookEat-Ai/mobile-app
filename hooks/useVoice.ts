@@ -88,6 +88,7 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [liveText, setLiveText] = useState('');
   const isInitialized = useRef(false);
+  const recordingTimeoutRef = useRef<any>(null);
 
   // Initialiser Voice une seule fois globalement
   useEffect(() => {
@@ -110,6 +111,9 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
 
     return () => {
       // Ne pas détruire Voice ici, car il peut être utilisé par d'autres composants
+      if (recordingTimeoutRef.current) {
+        clearTimeout(recordingTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -121,6 +125,9 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
         if (isRecording) {
           forceStopRecording();
         }
+        if (recordingTimeoutRef.current) {
+          clearTimeout(recordingTimeoutRef.current);
+        }
       } catch (error) {
         console.error('Erreur lors du nettoyage de Voice:', error);
       }
@@ -131,12 +138,25 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
     globalIsRecording = true;
     setIsRecording(true);
     options.onRecordingStateChange?.(true);
+
+    // Auto-stop après 40 secondes
+    if (recordingTimeoutRef.current) {
+      clearTimeout(recordingTimeoutRef.current);
+    }
+    recordingTimeoutRef.current = setTimeout(() => {
+      console.log('Voice stop auto après 40s');
+      stopRecording();
+    }, 40000);
   };
 
   const onSpeechEnd = () => {
     globalIsRecording = false;
     setIsRecording(false);
     options.onRecordingStateChange?.(false);
+    if (recordingTimeoutRef.current) {
+      clearTimeout(recordingTimeoutRef.current);
+      recordingTimeoutRef.current = null;
+    }
   };
 
   const onSpeechResults = (event: any) => {
@@ -153,10 +173,18 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
     globalIsRecording = false;
     setIsRecording(false);
     options.onRecordingStateChange?.(false);
+    if (recordingTimeoutRef.current) {
+      clearTimeout(recordingTimeoutRef.current);
+      recordingTimeoutRef.current = null;
+    }
   };
 
   const forceStopRecording = async () => {
     try {
+      if (recordingTimeoutRef.current) {
+        clearTimeout(recordingTimeoutRef.current);
+        recordingTimeoutRef.current = null;
+      }
       await Voice.stop();
       globalIsRecording = false;
       setIsRecording(false);
@@ -205,11 +233,19 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
       globalIsRecording = false;
       setIsRecording(false);
       options.onRecordingStateChange?.(false);
+      if (recordingTimeoutRef.current) {
+        clearTimeout(recordingTimeoutRef.current);
+        recordingTimeoutRef.current = null;
+      }
     }
   };
 
   const stopRecording = async () => {
     try {
+      if (recordingTimeoutRef.current) {
+        clearTimeout(recordingTimeoutRef.current);
+        recordingTimeoutRef.current = null;
+      }
       await Voice.stop();
       globalIsRecording = false;
       setIsRecording(false);

@@ -1,632 +1,478 @@
-import { router } from "expo-router";
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import { router, useFocusEffect } from "expo-router";
+import React, { useEffect, useState, useCallback } from 'react';
 import I18n from '../../i18n';
-import { Animated, ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, FlatList, Alert, Platform, Linking } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, Platform, Image, Button, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Wave } from 'react-native-animated-spinkit';
-import Micro from '../../components/Micro';
-import RecordDisplay from '../../components/RecordDisplay';
-import UserHeader from '../../components/UserHeader';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../constants/Colors';
-import { useRecipeContext } from '../../contexts/RecipeContext';
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import revenueCatService from '../../config/revenuecat';
-import { processVoiceIngredients } from '../../services/chatgpt';
 import { useNotifications } from '../../hooks/useNotifications';
-import { notificationService } from '../../services/notificationService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { apiService } from '../../services/api';
+import { getUniqueDeviceId } from '../../services/deviceStorage';
+import { RecipeCard } from "../../components/RecipeCard";
+import recipeStorage from "../../services/recipeStorage";
+import * as Sentry from '@sentry/react-native';
+import { hasShownWheelInSession, markWheelShownInSession } from '../../services/sessionFlags';
 
 const { width } = Dimensions.get('window');
+const STORAGE_KEY = 'pantry_ingredients';
+const HISTORY_BATCH_SIZE = 30;
+
+interface HistoryItem {
+  id: string;
+  title: string;
+  image?: string;
+  cooking_time: string;
+  ingredientsCount: number;
+  stepsCount?: number;
+  createdAt: string;
+}
 
 export default function HomeScreen() {
-  const ingredientCategories = useMemo(() => [
-    {
-      id: 'legumes',
-      title: I18n.t('home.categories.vegetables.title'),
-      icon: '🥬',
-      ingredients: [
-        { id: 'carotte', name: I18n.t('home.categories.vegetables.carrot'), icon: '🥕' },
-        { id: 'tomate', name: I18n.t('home.categories.vegetables.tomato'), icon: '🍅' },
-        { id: 'oignon', name: I18n.t('home.categories.vegetables.onion'), icon: '🧅' },
-        { id: 'poivron', name: I18n.t('home.categories.vegetables.pepper'), icon: '🫑' },
-        { id: 'courgette', name: I18n.t('home.categories.vegetables.courgette'), icon: '🥒' },
-        { id: 'brocoli', name: I18n.t('home.categories.vegetables.broccoli'), icon: '🥦' },
-        { id: 'epinard', name: I18n.t('home.categories.vegetables.spinach'), icon: '🥬' },
-        { id: 'poireau', name: I18n.t('home.categories.vegetables.leek'), icon: '🧄' },
-        { id: 'ail', name: I18n.t('home.categories.vegetables.garlic'), icon: '🧄' },
-        { id: 'champignon', name: I18n.t('home.categories.vegetables.mushroom'), icon: '🍄' },
-        { id: 'concombre', name: I18n.t('home.categories.vegetables.cucumber'), icon: '🥒' },
-        { id: 'chou-fleur', name: I18n.t('home.categories.vegetables.cauliflower'), icon: '🥬' },
-      ]
-    },
-    {
-      id: 'viandes',
-      title: I18n.t('home.categories.meats.title'),
-      icon: '🍖',
-      ingredients: [
-        { id: 'poulet', name: I18n.t('home.categories.meats.chicken'), icon: '🍗' },
-        { id: 'boeuf', name: I18n.t('home.categories.meats.beef'), icon: '🥩' },
-        { id: 'porc', name: I18n.t('home.categories.meats.pork'), icon: '🥓' },
-        { id: 'agneau', name: I18n.t('home.categories.meats.lamb'), icon: '🐑' },
-        { id: 'dinde', name: I18n.t('home.categories.meats.turkey'), icon: '🦃' },
-        { id: 'veau', name: I18n.t('home.categories.meats.veal'), icon: '🐄' },
-      ]
-    },
-    {
-      id: 'poissons',
-      title: I18n.t('home.categories.fish.title'),
-      icon: '🐟',
-      ingredients: [
-        { id: 'saumon', name: I18n.t('home.categories.fish.salmon'), icon: '🐟' },
-        { id: 'thon', name: I18n.t('home.categories.fish.tuna'), icon: '🐠' },
-        { id: 'cabillaud', name: I18n.t('home.categories.fish.cod'), icon: '🐡' },
-        { id: 'sardine', name: I18n.t('home.categories.fish.sardine'), icon: '🐟' },
-        { id: 'maquereau', name: I18n.t('home.categories.fish.maquereau'), icon: '🐠' },
-        { id: 'bar', name: I18n.t('home.categories.fish.bar'), icon: '🐡' },
-      ]
-    },
-    {
-      id: 'necessites',
-      title: I18n.t('home.categories.essentials.title'),
-      icon: '🍚',
-      ingredients: [
-        { id: 'pates', name: I18n.t('home.categories.essentials.pasta'), icon: '🍝' },
-        { id: 'riz', name: I18n.t('home.categories.essentials.rice'), icon: '🍚' },
-        { id: 'semoule', name: I18n.t('home.categories.essentials.semolina'), icon: '🍚' },
-        { id: 'creme', name: I18n.t('home.categories.essentials.cream'), icon: '🥛' },
-        { id: 'lait', name: I18n.t('home.categories.essentials.milk'), icon: '🥛' },
-        { id: 'huile', name: I18n.t('home.categories.essentials.oil'), icon: '🫒' },
-        { id: 'beurre', name: I18n.t('home.categories.essentials.butter'), icon: '🧈' },
-        { id: 'oeufs', name: I18n.t('home.categories.essentials.eggs'), icon: '🥚' },
-        { id: 'farine', name: I18n.t('home.categories.essentials.flour'), icon: '🌾' },
-      ]
-    },
-    {
-      id: 'fromages',
-      title: I18n.t('home.categories.cheeses.title'),
-      icon: '🧀',
-      ingredients: [
-        { id: 'emmental', name: I18n.t('home.categories.cheeses.emmental'), icon: '🧀' },
-        { id: 'cheddar', name: I18n.t('home.categories.cheeses.cheddar'), icon: '🧀' },
-        { id: 'mozzarella', name: I18n.t('home.categories.cheeses.mozzarella'), icon: '🧀' },
-        { id: 'parmesan', name: I18n.t('home.categories.cheeses.parmesan'), icon: '🧀' },
-        { id: 'brie', name: I18n.t('home.categories.cheeses.brie'), icon: '🧀' },
-        { id: 'camembert', name: I18n.t('home.categories.cheeses.camembert'), icon: '🧀' },
-        { id: 'roquefort', name: I18n.t('home.categories.cheeses.roquefort'), icon: '🧀' },
-        { id: 'feta', name: I18n.t('home.categories.cheeses.feta'), icon: '🧀' },
-      ]
-    },
-    {
-      id: 'fruits',
-      title: I18n.t('home.categories.fruits.title'),
-      icon: '🍎',
-      ingredients: [
-        { id: 'pomme', name: I18n.t('home.categories.fruits.apple'), icon: '🍎' },
-        { id: 'banane', name: I18n.t('home.categories.fruits.banana'), icon: '🍌' },
-        { id: 'orange', name: I18n.t('home.categories.fruits.orange'), icon: '🍊' },
-        { id: 'fraise', name: I18n.t('home.categories.fruits.strawberry'), icon: '🍓' },
-        { id: 'raisin', name: I18n.t('home.categories.fruits.raisin'), icon: '🍇' },
-        { id: 'kiwi', name: I18n.t('home.categories.fruits.kiwi'), icon: '🥝' },
-        { id: 'ananas', name: I18n.t('home.categories.fruits.pineapple'), icon: '🍍' },
-        { id: 'mangue', name: I18n.t('home.categories.fruits.mango'), icon: '🥭' },
-      ]
-    }
-  ], []);
-
   const colors = Colors.light;
-
   const insets = useSafeAreaInsets();
-  const { clearRecipes } = useRecipeContext();
-  const [liveText, setLiveText] = useState('');
-  const [isRecording, setIsRecording] = useState(false);
-  const [selectedIngredients, setSelectedIngredients] = useState<string[]>([]);
-  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
-  const [isLoadingRecipes, setIsLoadingRecipes] = useState(false);
-  const [scrollEnabled, setScrollEnabled] = useState(true);
+  const [pantryCount, setPantryCount] = useState(0);
+  const [isSubscribed, setIsSubscribed] = useState(true); // Par défaut true pour éviter le flash de l'upsell
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [historyPage, setHistoryPage] = useState(1);
+  const [hasMoreHistory, setHasMoreHistory] = useState(true);
+  const [isLoadingMoreHistory, setIsLoadingMoreHistory] = useState(false);
+  const [streakCount, setStreakCount] = useState(0);
+  const [weekActivity, setWeekActivity] = useState<boolean[]>(Array(7).fill(false));
 
-  const firstTime = useRef(true);
-  const [isLoadingIngredients, setIsLoadingIngredients] = useState(false);
+  const { updateActivity } = useNotifications();
 
-  // Initialiser les notifications après l'onboarding
-  const { updateActivity, clearAllNotifications } = useNotifications();
+  const maybeShowLaunchWheel = useCallback(async () => {
+    if (hasShownWheelInSession()) return;
 
-  // Initialisation des notifications et mise à jour de l'activité au premier accès
-  useEffect(() => {
-    // L'utilisateur a terminé l'onboarding et arrive sur l'écran principal
-    // C'est le bon moment pour initialiser les notifications et marquer l'activité
-    updateActivity();
-    console.log('✅ Utilisateur arrivé sur l\'écran principal - notifications initialisées');
+    try {
+      const isOnboarding = await AsyncStorage.getItem('isOnboarding');
+      const onboardingCompleted = await AsyncStorage.getItem('onboarding_completed');
+
+      if (isOnboarding === 'true' || onboardingCompleted !== 'true') return;
+
+      const status = await revenueCatService.getSubscriptionStatus();
+      if (status.isSubscribed) return;
+
+      markWheelShownInSession();
+      setTimeout(() => {
+        router.push({
+          pathname: '/paywall',
+          params: {
+            source: 'app_open_last_chance',
+            initialState: 'WHEEL',
+          },
+        });
+      }, 600);
+    } catch (error) {
+      console.error('Erreur affichage spinning wheel au lancement:', error);
+    }
   }, []);
 
-  // Référence pour le FlatList du carrousel
-  const carouselRef = useRef<FlatList>(null);
+  useEffect(() => {
+    updateActivity();
+    checkSubscription();
+  }, []);
 
-  // Animations pour masquer/afficher le contenu
-  const headerOpacity = useRef(new Animated.Value(1)).current;
-  const titleOpacity = useRef(new Animated.Value(1)).current;
-  const introOpacity = useRef(new Animated.Value(1)).current;
-  const microCardOpacity = useRef(new Animated.Value(1)).current;
-  const manualCardOpacity = useRef(new Animated.Value(1)).current;
+  useFocusEffect(
+    useCallback(() => {
+      loadPantryCount();
+      checkSubscription();
+      loadHistory(1, true);
+      maybeShowLaunchWheel();
+    }, [])
+  );
 
-  const handleLiveTextChange = (text: string) => {
-    setLiveText(text);
-  };
+  useEffect(() => {
+    calculateStreak();
+  }, [history]);
 
-  const handleRecordingStateChange = async (recording: boolean) => {
-    setIsRecording(recording);
+  const resolveUserId = async (): Promise<string | null> => {
+    const storedUserId = await AsyncStorage.getItem('userId');
+    if (storedUserId) return storedUserId;
 
-    if (recording) {
-      firstTime.current = true;
-      // Effacer le texte précédent et les anciens résultats quand l'enregistrement commence
-      setLiveText('');
-      clearRecipes(); // Supprimer les anciens résultats
-      hideContent();
-      setScrollEnabled(false);
-    } else if (firstTime.current) {
-      firstTime.current = false;
-      setScrollEnabled(true);
-      showContent();
-      // Naviguer vers la page récapitulative quand le texte est reçu
-      if (liveText.length > 20) {
-        try {
-          setIsLoadingIngredients(true);
-          // Appeler processVoiceIngredients pour extraire les ingrédients du texte vocal
-          const ingredients = await processVoiceIngredients(liveText);
-          const processedIngredients = ingredients.join(', ');
-          setIsLoadingIngredients(false);
-
-          router.push({
-            pathname: '/recipe-summary',
-            params: { ingredients: processedIngredients }
-          });
-        } catch (error) {
-          console.error('Erreur lors du traitement des ingrédients vocaux:', error);
-          Alert.alert(
-            I18n.t('home.notifications.error'),
-            I18n.t('home.notifications.errorDescription'),
-            [{ text: 'OK' }]
-          );
-        } finally {
-          setIsLoadingRecipes(false);
-        }
-      }
-    }
-  };
-
-  const hideContent = () => {
-    Animated.parallel([
-      Animated.timing(headerOpacity, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(titleOpacity, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(introOpacity, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(microCardOpacity, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(manualCardOpacity, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
-  const showContent = () => {
-    Animated.parallel([
-      Animated.timing(headerOpacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(titleOpacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(introOpacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(microCardOpacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(manualCardOpacity, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  };
-
-  const handleNotificationPress = async () => {
     try {
-      // Vérifier si les notifications sont déjà activées
-      const isEnabled = await notificationService.areNotificationsEnabled();
-
-      if (isEnabled) {
-        // Si déjà activées, proposer des options de gestion
-        Alert.alert(
-          I18n.t('home.notifications.enabled'),
-          I18n.t('home.notifications.description'),
-          [
-            { text: 'OK', style: 'cancel' }
-          ]
-        );
-        return;
+      const mobileId = await getUniqueDeviceId();
+      const response = await apiService.getCurrentUser(mobileId);
+      const serverUserId = response.data?._id ? String(response.data._id) : null;
+      if (serverUserId) {
+        await AsyncStorage.setItem('userId', serverUserId);
+        return serverUserId;
       }
-
-      // Si pas encore activées, demander l'activation avec notre service
-      const success = await notificationService.requestNotificationsWithContext();
-
-      if (success) {
-        // Succès - afficher confirmation
-        Alert.alert(
-          I18n.t('home.notifications.enabled'),
-          I18n.t('home.notifications.description2'),
-          [{ text: 'OK' }]
-        );
-      } else {
-        // Échec ou refus - proposer d'activer plus tard
-        if (Platform.OS === 'ios') {
-          await Linking.openURL('app-settings:');
-        } else {
-          await Linking.openSettings();
-        }
-      }
-
     } catch (error) {
-      console.error('Erreur lors de la gestion des permissions de notification:', error);
-      Alert.alert(
-        I18n.t('home.notifications.error'),
-        I18n.t('home.notifications.errorDescription'),
-        [{ text: 'OK' }]
-      );
+      console.error('[History] impossible de résoudre le userId:', error);
     }
+
+    return null;
   };
 
-  const scrollToCategory = (index: number) => {
-    setCurrentCategoryIndex(index);
-    carouselRef.current?.scrollToIndex({
-      index,
-      animated: true,
-    });
-  };
-
-  const toggleIngredient = (ingredientId: string) => {
-    setSelectedIngredients(prev =>
-      prev.includes(ingredientId)
-        ? prev.filter(id => id !== ingredientId)
-        : [...prev, ingredientId]
-    );
-  };
-
-  const renderIngredientItem = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      style={[
-        styles.ingredientItem,
-        selectedIngredients.includes(item.id) && styles.ingredientItemSelected
-      ]}
-      onPress={() => toggleIngredient(item.id)}
-    >
-      <Text style={styles.ingredientIcon}>{item.icon}</Text>
-      <Text style={[
-        styles.ingredientName,
-        selectedIngredients.includes(item.id) && styles.ingredientNameSelected
-      ]}>
-        {item.name}
-      </Text>
-    </TouchableOpacity>
-  );
-
-  const renderCategoryPage = ({ item }: { item: any }) => (
-    <View style={styles.categoryPage}>
-      <View style={styles.categoryHeader}>
-        <Text style={styles.categoryIcon}>{item.icon}</Text>
-        <Text style={styles.categoryTitle}>{item.title}</Text>
-      </View>
-      <FlatList
-        data={item.ingredients}
-        renderItem={renderIngredientItem}
-        keyExtractor={(ingredient) => ingredient.id}
-        numColumns={3}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.ingredientsGrid}
-      />
-    </View>
-  );
-
-  const handlePantryPress = async () => {
-    if (!(await revenueCatService.getSubscriptionStatus()).isSubscribed) {
-      router.push('/paywall')
+  const calculateStreak = () => {
+    if (history.length === 0) {
+      setStreakCount(0);
+      setWeekActivity(Array(7).fill(false));
       return;
     }
 
-    router.push('/pantry');
+    // Calculer l'activité de la semaine (7 derniers jours)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const last7Days = Array(7).fill(0).map((_, i) => {
+      const d = new Date(today);
+      d.setDate(d.getDate() - (6 - i));
+      return d;
+    });
+
+    const activity = last7Days.map(date => {
+      return history.some(item => {
+        const itemDate = new Date(item.createdAt);
+        itemDate.setHours(0, 0, 0, 0);
+        return itemDate.getTime() === date.getTime();
+      });
+    });
+
+    setWeekActivity(activity);
+
+    // Calculer le streak actuel
+    let streak = 0;
+    let checkDate = new Date(today);
+    
+    while (true) {
+      const hasActivity = history.some(item => {
+        const itemDate = new Date(item.createdAt);
+        itemDate.setHours(0, 0, 0, 0);
+        return itemDate.getTime() === checkDate.getTime();
+      });
+
+      if (hasActivity) {
+        streak++;
+        checkDate.setDate(checkDate.getDate() - 1);
+      } else {
+        // Si pas d'activité aujourd'hui, on vérifie si on a eu une activité hier
+        if (streak === 0) {
+          const yesterday = new Date(today);
+          yesterday.setDate(yesterday.getDate() - 1);
+          const hasYesterdayActivity = history.some(item => {
+            const itemDate = new Date(item.createdAt);
+            itemDate.setHours(0, 0, 0, 0);
+            return itemDate.getTime() === yesterday.getTime();
+          });
+          
+          if (hasYesterdayActivity) {
+            checkDate = yesterday;
+            continue;
+          }
+        }
+        break;
+      }
+    }
+    setStreakCount(streak);
+  };
+
+  const loadHistory = async (page: number = 1, reset: boolean = false) => {
+    if (!reset && (!hasMoreHistory || isLoadingMoreHistory)) return;
+
+    try {
+      setIsLoadingMoreHistory(true);
+      const userId = await resolveUserId();
+      if (!userId) {
+        if (reset) {
+          setHistory([]);
+          setHistoryPage(1);
+          setHasMoreHistory(false);
+        }
+        return;
+      }
+
+      const response = await apiService.getRecipeHistory(userId, page, HISTORY_BATCH_SIZE);
+      if (response.data?.history) {
+        const imageById = new Map<string, string>();
+        try {
+          const storedRecipes = await recipeStorage.getStoredRecipes();
+          storedRecipes.forEach((stored: any) => {
+            if (stored?.id && stored?.recipe?.image && !imageById.has(stored.id)) {
+              imageById.set(stored.id, stored.recipe.image);
+            }
+          });
+        } catch {
+          // Ignorer le fallback local si le cache est indisponible
+        }
+
+        const newItems = (response.data.history as HistoryItem[]).map((item) => ({
+          ...item,
+          image: item.image || imageById.get(item.id),
+        }));
+        setHistory((prev) => {
+          const base = reset ? [] : prev;
+          const merged = [...base, ...newItems];
+          const deduped = new Map<string, HistoryItem>();
+          merged.forEach((item) => deduped.set(item.id, item));
+          return Array.from(deduped.values());
+        });
+        setHistoryPage(page);
+        if (typeof response.data.pagination?.hasMore === 'boolean') {
+          setHasMoreHistory(response.data.pagination.hasMore);
+        } else {
+          setHasMoreHistory(newItems.length >= HISTORY_BATCH_SIZE);
+        }
+      } else if (reset) {
+        setHistory([]);
+        setHistoryPage(1);
+        setHasMoreHistory(false);
+      }
+    } catch (e) {
+      console.error('Erreur lors du chargement de l\'historique:', e);
+    } finally {
+      setIsLoadingMoreHistory(false);
+    }
+  };
+
+  const handleHistoryScroll = (event: any) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const distanceFromBottom = contentSize.height - (layoutMeasurement.height + contentOffset.y);
+    if (distanceFromBottom < 200 && hasMoreHistory && !isLoadingMoreHistory) {
+      loadHistory(historyPage + 1, false);
+    }
+  };
+
+  const checkSubscription = async () => {
+    try {
+      const status = await revenueCatService.getSubscriptionStatus();
+      setIsSubscribed(status.isSubscribed);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const loadPantryCount = async () => {
+    try {
+      const stored = await AsyncStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const items = JSON.parse(stored);
+        setPantryCount(items.length);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handlePantryPress = async () => {
+    try {
+      const stored = await AsyncStorage.getItem(STORAGE_KEY);
+      let ingredients: string[] = [];
+
+      if (stored) {
+        const parsed = JSON.parse(stored);
+
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          if (typeof parsed[0] === 'object' && parsed[0].name) {
+            ingredients = [JSON.stringify(parsed.map((item: any) => ({
+              name: String(item.name || '').trim(),
+              ...(item.category ? { category: item.category } : {}),
+            })).filter((i: any) => i.name.length > 0))];
+          } else {
+            ingredients = parsed
+              .map((item: any) => typeof item === 'string' ? item.trim() : '')
+              .filter((name: string) => name.length > 0);
+          }
+        }
+      }
+
+      router.push({
+        pathname: '/ingredient-list',
+        params: ingredients.length > 0
+          ? { ingredients: ingredients.length === 1 && ingredients[0].startsWith('[') ? ingredients[0] : ingredients.join(',') }
+          : {},
+      });
+    } catch (e) {
+      console.error('Erreur lors de la lecture du garde-manger:', e);
+      router.push('/ingredient-list');
+    }
+  };
+
+  const handleHistoryPress = async (item: HistoryItem) => {
+    if (item.id.startsWith('mock-')) {
+      // Données de test : naviguer avec les données fictives
+      const mockRecipe = {
+        id: item.id,
+        title: item.title,
+        difficulty: 'MEDIUM',
+        cooking_time: item.cooking_time,
+        servings: 2,
+        calories: '450',
+        proteins: '25g',
+        lipids: '15g',
+        ingredients: [
+          { name: 'Ingrédient test 1', quantity: '100g', icon: '🥘' },
+          { name: 'Ingrédient test 2', quantity: '200g', icon: '🥗' },
+        ],
+        steps: Array(item.stepsCount || 5).fill(0).map((_, i) => ({
+          title: `Étape ${i + 1}`,
+          description: `Description détaillée de l'étape ${i + 1} pour la recette de test.`
+        })),
+        image: item.image,
+      };
+
+      router.push({
+        pathname: '/recipe-detail',
+        params: {
+          recipe: JSON.stringify(mockRecipe),
+          showGenerateButton: 'false',
+          isHistory: 'true'
+        }
+      });
+      return;
+    }
+
+    try {
+      const response = await apiService.getRecipeById(item.id);
+      if (response.data?.recipe) {
+        const hydratedRecipe = {
+          ...response.data.recipe,
+          image: response.data.recipe.image || item.image,
+        };
+        router.push({
+          pathname: '/recipe-detail',
+          params: {
+            recipe: JSON.stringify(hydratedRecipe),
+            showGenerateButton: 'false',
+            isHistory: 'true'
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Erreur lors du chargement de la recette:', e);
+    }
   };
 
   return (
-    <View style={[styles.container, {
-      paddingTop: insets.top
-    }]}>
-      {isRecording && <View style={{
-        position: 'absolute', top: insets.top, left: 0, right: 0, zIndex: 1000
-      }}>
-        <RecordDisplay liveText={liveText} isRecording={isRecording} />
-      </View>}
-
-      {/* Loading overlay avec flou */}
-      {(isLoadingRecipes || isLoadingIngredients) && (
-        <View style={styles.modalOverlay}>
-          <Wave color={Colors.light.button} size={100} />
-          <Text style={styles.loadingText}>{isLoadingIngredients ? I18n.t('home.extractingIngredients') : I18n.t('home.generatingRecipes')}</Text>
-        </View>
-      )}
-
+    <LinearGradient
+      colors={['#F6EEE9', '#FFFFFF']}
+      start={{ x: 1, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      locations={[0, 0.5]}
+      style={styles.container}
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ overflow: 'visible' }}
-        scrollEnabled={scrollEnabled}
+        contentContainerStyle={{ paddingTop: insets.top + 20, paddingBottom: 100 }}
+        onScroll={handleHistoryScroll}
+        scrollEventThrottle={16}
       >
-        <Animated.View style={{
-          opacity: headerOpacity,
-          transform: [{
-            translateY: headerOpacity.interpolate({
-              inputRange: [0, 1],
-              outputRange: [-50, 0], // Déplace le header vers le haut
-            })
-          }]
-        }}>
-          <Text style={{ fontFamily: 'Degular', fontSize: 24, fontWeight: 'bold', textAlign: 'right', marginBottom: 20 }}>
-            CookEat AI
-          </Text>
-        </Animated.View>
-
-        {/* Header avec profil utilisateur */}
-        <Animated.View
-          style={{
-            paddingBottom: 8,
-            opacity: headerOpacity,
-            transform: [{
-              translateY: headerOpacity.interpolate({
-                inputRange: [0, 1],
-                outputRange: [-50, 0], // Déplace le header vers le haut
-              })
-            }]
-          }}
-        >
-          <UserHeader
-            userName="Samantha"
-            onNotificationPress={handleNotificationPress}
-          />
-        </Animated.View>
-
-        {/* Titre principal */}
-        {/* <Animated.View
-          style={[
-            styles.titleContainer,
-            {
-              opacity: titleOpacity,
-              transform: [{
-                translateY: titleOpacity.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [-50, 0], // Déplace le titre vers le haut
-                })
-              }]
-            }
-          ]}
-        >
-          <Text style={[styles.mainTitle, { color: colors.text }]}>
-            {I18n.t('home.title')}
-          </Text>
-        </Animated.View> */}
-
-        {/* Texte d'introduction */}
-        <Animated.View
-          style={[
-            styles.introContainer,
-            {
-              opacity: introOpacity,
-              transform: [{
-                translateY: introOpacity.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [-50, 0], // Déplace l'intro vers le haut
-                })
-              }]
-            }
-          ]}
-        >
-          <Text style={[styles.introText, { color: colors.textSecondary }]}>
-            {I18n.t('home.intro')}
-          </Text>
-        </Animated.View>
-
-        {/* Garde-manger */}
-        <Animated.View
-          style={[
-            { marginTop: 20 },
-            {
-              opacity: manualCardOpacity,
-              transform: [{
-                translateY: manualCardOpacity.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [-50, 0],
-                })
-              }]
-            }
-          ]}
-        >
-          <TouchableOpacity
-            style={{ ...styles.cardContainer, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
-            onPress={handlePantryPress}
-          >
-            <View style={{ width: '85%' }}>
-              <Text style={styles.cardTitle}>{I18n.t('home.pantry.title')}</Text>
-              <Text style={styles.cardDescription}>{I18n.t('home.pantry.description')}</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.mainTitle}>CookEat Ai</Text>
+          <View style={styles.streakCard}>
+            <View style={styles.streakLeft}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={[styles.streakNumber, { color: colors.button }]}>{streakCount}</Text>
+                <Text style={{ fontSize: 32, marginLeft: 5 }}>🔥</Text>
+              </View>
+              <Text style={[styles.streakLabel, { color: colors.button }]}>
+                {streakCount > 1 ? I18n.t('home.streak.days') : I18n.t('home.streak.day')}
+              </Text>
             </View>
-            <View style={{ alignItems: 'flex-end', marginLeft: Platform.OS === 'ios' ? 0 : "7%" }}>
-              <IconSymbol
-                name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"}
-                size={width * (Platform.OS === 'ios' ? 0.05 : 0.1)}
-                color={colors.button}
-                weight="bold"
-              />
-            </View>
-          </TouchableOpacity>
-        </Animated.View>
+            <View style={styles.streakRight}>
+              <View style={styles.weekDaysRow}>
+                {Array(7).fill(0).map((_, i) => {
+                  const date = new Date();
+                  date.setDate(date.getDate() - (6 - i));
+                  const dayName = date.toLocaleDateString(I18n.locale.startsWith('fr') ? 'fr-FR' : 'en-US', { weekday: 'short' }).slice(0, 2);
+                  const isToday = i === 6;
+                  const isActive = weekActivity[i];
 
-        {/* Mode vocal */}
-        <View
-          style={[
-            { ...styles.cardContainer, marginTop: 20, paddingBottom: Platform.OS === 'ios' ? 20 : 40 },
-            {
-              backgroundColor: isRecording ? Colors.light.background : 'white',
-              borderWidth: isRecording ? 0 : 1,
-              borderColor: isRecording ? Colors.light.background : '#E9E9E9',
-              shadowColor: isRecording ? 'transparent' : 'grey',
-              shadowOffset: isRecording ? { width: 0, height: 0 } : { width: 2, height: 10 },
-              shadowOpacity: isRecording ? 0 : 0.1,
-              shadowRadius: isRecording ? 0 : 10,
-              elevation: isRecording ? 0 : 1
-            }
-          ]}
-        >
-          <Animated.View
-            style={{
-              marginBottom: microCardOpacity.interpolate({
-                inputRange: [0, 1],
-                outputRange: [-(width * 0.1), 0],
-              }),
-              opacity: microCardOpacity,
-              transform: [{
-                translateY: microCardOpacity.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, 0],
-                })
-              }]
-            }}
-          >
-            <Text style={styles.cardTitle}>{I18n.t('home.micro')}</Text>
-            <Text style={styles.cardDescription}>{I18n.t('home.microDescription')}</Text>
-          </Animated.View>
-          <Micro
-            onRecordingStateChange={handleRecordingStateChange}
-            onLiveTextChange={handleLiveTextChange}
-          />
+                  return (
+                    <View key={i} style={styles.dayContainer}>
+                      <Text style={[styles.dayName, isToday && styles.todayName]}>{dayName}</Text>
+                      <View style={[
+                        styles.dayCircle,
+                        isActive ? { backgroundColor: colors.button } : styles.dayCircleInactive
+                      ]}>
+                        {isActive && <IconSymbol name="checkmark" size={14} color="white" />}
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+          </View>
         </View>
 
-        {/* Mode manuel */}
-        <Animated.View
-          style={[
-            { ...styles.cardContainer, marginTop: 20, paddingRight: 0 },
-            {
-              opacity: manualCardOpacity,
-              transform: [{
-                translateY: manualCardOpacity.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [-50, 0],
-                })
-              }]
-            }
-          ]}
-        >
-          <Text style={styles.cardTitle}>{I18n.t('home.manual')}</Text>
-          <Text style={styles.cardDescription}>{I18n.t('home.manualDescription')}</Text>
-
-          <View style={styles.manualSelectionContainer}>
-            {/* Indicateurs de catégories */}
-            <View style={styles.categoryIndicators}>
-              {ingredientCategories.map((category, index) => (
-                <TouchableOpacity
-                  key={category.id}
-                  style={[
-                    styles.categoryIndicator,
-                    currentCategoryIndex === index && styles.categoryIndicatorActive
-                  ]}
-                  onPress={() => scrollToCategory(index)}
-                >
-                  <Text style={styles.categoryIndicatorIcon}>{category.icon}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            {/* Carrousel des catégories */}
-            <FlatList
-              ref={carouselRef}
-              data={ingredientCategories}
-              renderItem={renderCategoryPage}
-              keyExtractor={(category) => category.id}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}
-              scrollEventThrottle={16}
-              directionalLockEnabled={true}
-              decelerationRate="fast"
-              snapToInterval={width - 40}
-              snapToAlignment="center"
-              onMomentumScrollEnd={(event) => {
-                const index = Math.round(event.nativeEvent.contentOffset.x / (width - 40));
-                setCurrentCategoryIndex(index);
-              }}
-              getItemLayout={(data, index) => ({
-                length: width - 40,
-                offset: (width - 40) * index,
-                index,
-              })}
-            />
-
-            {/* Bouton de validation */}
-            <TouchableOpacity
-              disabled={selectedIngredients.length === 0}
-              style={{
-                ...styles.validateButton,
-                backgroundColor: selectedIngredients.length === 0 ? '#E9E9E9' : Colors.light.button
-              }}
-              onPress={() => {
-                console.log('Validation des ingrédients:', selectedIngredients);
-
-                // Convertir les IDs en noms d'ingrédients
-                const ingredientNames = selectedIngredients.map(id => {
-                  const category = ingredientCategories.find(cat =>
-                    cat.ingredients.some(ing => ing.id === id)
-                  );
-                  const ingredient = category?.ingredients.find(ing => ing.id === id);
-                  return ingredient?.name || id;
-                });
-
-                const ingredientsText = ingredientNames.join(', ');
-
-                // Naviguer vers la page récapitulative
-                router.push({
-                  pathname: '/recipe-summary',
-                  params: { ingredients: ingredientsText }
-                });
-              }}
+        {/* Upsell Premium - Affiché uniquement si non abonné */}
+        {!isSubscribed && (
+          <TouchableOpacity
+            style={[styles.premiumCard, { marginBottom: 20 }]}
+            onPress={() => router.push({ pathname: '/paywall', params: { source: 'home_banner' } })}
+            activeOpacity={0.9}
+          >
+            <LinearGradient
+              colors={['#FFD700', '#FDB931']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.premiumGradient}
             >
-              <Text style={styles.validateButtonText}>
-                {I18n.t('home.continue')} ({selectedIngredients.length} {I18n.t('home.ingredients')})
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </Animated.View>
+              <View style={styles.premiumContent}>
+                <View style={{ flex: 1 }}>
+                  <View style={styles.proBadge}>
+                    <Text style={styles.proBadgeText}>PREMIUM</Text>
+                  </View>
+                  <Text style={styles.premiumTitle}>{I18n.t('profile.premiumTitle')}</Text>
+                  <Text style={styles.premiumDescription}>
+                    {I18n.t('profile.premiumPrice')}
+                  </Text>
+                </View>
+                <View style={styles.premiumIconContainer}>
+                  <IconSymbol name="crown.fill" size={40} color="white" />
+                </View>
+              </View>
+            </LinearGradient>
+          </TouchableOpacity>
+        )}
 
-        {/* Espace en bas pour la barre de navigation */}
-        <View style={styles.bottomSpacer} />
+        {/* Garde-manger */}
+        <TouchableOpacity
+          style={styles.pantryCard}
+          onPress={handlePantryPress}
+          activeOpacity={0.9}
+        >
+          <View style={styles.pantryCardHeader}>
+            <View style={styles.pantryCardTitleContainer}>
+              <IconSymbol name="archivebox" size={24} color={colors.button} />
+              <Text style={styles.pantryCardTitle}>{I18n.t('pantry.title')}</Text>
+            </View>
+            <Text style={[styles.pantryCardLink, { color: colors.button }]}>{I18n.t('common.seeAll')}</Text>
+          </View>
+
+          <View style={styles.pantryCardContent}>
+            <View style={styles.pantryStatItem}>
+              <View style={[styles.dot, { backgroundColor: '#4CAF50' }]} />
+              <Text style={styles.pantryStatText}>
+                {pantryCount} {pantryCount <= 1 ? 'ingrédient' : 'ingrédients'}
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+
+        {/* Historique */}
+        {history.length > 0 && (
+          <View style={styles.historyContainer}>
+            <Text style={styles.sectionTitle}>Historique</Text>
+            {history.map((item) => (
+              <RecipeCard 
+                key={item.id} 
+                item={item as any} 
+                onPress={() => handleHistoryPress(item)} 
+              />
+            ))}
+            {isLoadingMoreHistory && (
+              <ActivityIndicator style={{ marginTop: 12 }} size="small" color={colors.button} />
+            )}
+          </View>
+        )}
       </ScrollView>
-    </View >
+    </LinearGradient>
   );
 }
 
@@ -634,37 +480,98 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    backgroundColor: Colors.light.background,
   },
   titleContainer: {
-    paddingBottom: 20,
+    paddingBottom: 30,
   },
   mainTitle: {
-    fontSize: 28,
+    fontSize: 32,
     fontFamily: 'Degular',
-  },
-  introContainer: {
-    paddingBottom: 20,
+    fontWeight: 'bold',
+    color: Colors.light.text,
+    marginBottom: 8,
   },
   introText: {
     fontSize: 18,
     lineHeight: 24,
     fontFamily: 'Cronos Pro',
+    color: Colors.light.textSecondary,
   },
-  bottomSpacer: {
-    height: 150, // Espace pour la barre de navigation
+  streakCard: {
+    backgroundColor: 'white',
+    borderRadius: 30,
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+    marginTop: 10,
+  },
+  streakLeft: {
+    alignItems: 'center',
+    paddingRight: 20,
+    borderRightWidth: 1,
+    borderRightColor: '#F0F0F0',
+  },
+  streakNumber: {
+    fontSize: 48,
+    fontFamily: 'Degular',
+    fontWeight: 'bold',
+    lineHeight: 52,
+  },
+  streakLabel: {
+    fontSize: 18,
+    fontFamily: 'Cronos Pro',
+    fontWeight: '600',
+  },
+  streakRight: {
+    flex: 1,
+    paddingLeft: 15,
+  },
+  weekDaysRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dayContainer: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  dayName: {
+    fontSize: 14,
+    fontFamily: 'Cronos Pro',
+    color: '#AEAEB2',
+    fontWeight: '500',
+  },
+  todayName: {
+    color: '#1C1C1E',
+    fontWeight: 'bold',
+  },
+  dayCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dayCircleActive: {
+    // backgroundColor: '#FF5C00', // Supprimé au profit du dynamisme
+  },
+  dayCircleInactive: {
+    backgroundColor: '#F2F2F7',
   },
   cardContainer: {
-    padding: 20,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#E9E9E9',
+    padding: 24,
+    borderRadius: 20,
     backgroundColor: 'white',
-    shadowColor: 'grey',
-    shadowOffset: { width: 2, height: 10 },
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 1,
+    shadowRadius: 12,
+    elevation: 2,
   },
   cardTitle: {
     fontFamily: 'Degular',
@@ -672,128 +579,134 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: Colors.light.text,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   cardDescription: {
     fontFamily: 'Cronos Pro',
     textAlign: 'left',
-    fontSize: 18,
+    fontSize: 16,
     color: Colors.light.textSecondary,
+    lineHeight: 20,
   },
-  manualSelectionContainer: {
-    marginTop: 20,
+  premiumCard: {
+    borderRadius: 24,
+    overflow: 'hidden',
+    elevation: 8,
+    shadowColor: '#FDB931',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
   },
-  categoryIndicators: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 20,
-    gap: 10,
+  premiumGradient: {
+    padding: 24,
   },
-  categoryIndicator: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F5F5F5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  categoryIndicatorActive: {
-    backgroundColor: Colors.light.button,
-    borderColor: Colors.light.button,
-  },
-  categoryIndicatorIcon: {
-    fontSize: 20,
-  },
-  categoryPage: {
-    width: width - 40, // Largeur de l'écran moins les paddings
-    paddingHorizontal: 10,
-  },
-  categoryHeader: {
+  premiumContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
-    paddingHorizontal: 10,
+    justifyContent: 'space-between',
   },
-  categoryIcon: {
-    fontSize: 24,
-    marginRight: 10,
-  },
-  categoryTitle: {
-    fontSize: 20,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
-    color: Colors.light.text,
-  },
-  ingredientsGrid: {
-    paddingBottom: 20,
-  },
-  ingredientItem: {
-    flex: 1,
-    margin: 4,
-    padding: 12,
+  proBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     borderRadius: 8,
-    backgroundColor: '#F8F8F8',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'transparent',
-    minHeight: 60, // Augmenté pour mieux accommoder le contenu
+    marginBottom: 8,
   },
-  ingredientItemSelected: {
-    backgroundColor: Colors.light.button,
-    borderColor: Colors.light.button,
-  },
-  ingredientIcon: {
-    fontSize: 20,
-    marginBottom: 3,
-  },
-  ingredientName: {
-    fontSize: 12,
-    fontFamily: 'Cronos Pro',
-    color: Colors.light.text,
-    textAlign: 'center'
-  },
-  ingredientNameSelected: {
+  proBadgeText: {
     color: 'white',
+    fontSize: 12,
     fontWeight: 'bold',
+    fontFamily: 'Degular',
+    letterSpacing: 1,
   },
-  validateButton: {
-    marginRight: 20,
-    backgroundColor: Colors.light.button,
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 25,
+  premiumTitle: {
+    fontFamily: 'Degular',
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 4,
+    width: '90%',
+  },
+  premiumDescription: {
+    fontFamily: 'Cronos Pro',
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.9)',
+  },
+  premiumIconContainer: {
+    width: 60,
+    height: 60,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 30,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+  },
+  pantryCard: {
+    backgroundColor: 'white',
+    borderRadius: 24,
+    padding: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.05,
+    shadowRadius: 15,
+    elevation: 2,
   },
-  validateButtonText: {
-    color: 'white',
-    fontSize: 16,
+  pantryCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  pantryCardTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  pantryCardTitle: {
+    fontSize: 20,
     fontFamily: 'Degular',
     fontWeight: 'bold',
-  },
-  modalOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 1000,
-    backgroundColor: 'rgba(238, 238, 238, 0.82)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 40,
-    fontSize: 20,
     color: Colors.light.text,
+  },
+  pantryCardLink: {
+    fontSize: 16,
+    fontFamily: 'Cronos Pro',
+    fontWeight: '600',
+  },
+  pantryCardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  pantryStatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  pantryStatText: {
+    fontSize: 18,
+    fontFamily: 'Cronos Pro',
+    color: '#8E8E93',
+  },
+  pantrySeparator: {
+    width: 1,
+    height: 20,
+    backgroundColor: '#E5E5EA',
+    marginHorizontal: 15,
+  },
+  historyContainer: {
+    marginTop: 30,
+  },
+  sectionTitle: {
+    fontSize: 24,
     fontFamily: 'Degular',
-    textAlign: 'center',
+    fontWeight: 'bold',
+    color: Colors.light.text,
+    marginBottom: 15,
   },
 });

@@ -2,9 +2,7 @@ const { withGradleProperties } = require("@expo/config-plugins")
 
 function withCustomGradleProperties(config) {
   return withGradleProperties(config, function (config) {
-    /* Added gradle properties like this
-      { type: 'property', key: 'key', value: 'value' } */
-    const additionalGraddleProperties = [
+    const additionalProperties = [
       // SDK 52: https://github.com/expo/expo/issues/30725
       { type: "property", key: "android.enableJetifier", value: "true" },
       {
@@ -14,7 +12,26 @@ function withCustomGradleProperties(config) {
       },
     ]
 
-    additionalGraddleProperties.map(function (gradleProperty) {
+    const overrideProperties = [
+      {
+        type: "property",
+        key: "org.gradle.jvmargs",
+        value: "-Xmx4096m -XX:MaxMetaspaceSize=512m",
+      },
+    ]
+
+    overrideProperties.forEach(function (prop) {
+      const idx = config.modResults.findIndex(
+        function (p) { return p.type === "property" && p.key === prop.key }
+      )
+      if (idx !== -1) {
+        config.modResults[idx].value = prop.value
+      } else {
+        config.modResults.push(prop)
+      }
+    })
+
+    additionalProperties.forEach(function (gradleProperty) {
       config.modResults.push(gradleProperty)
     })
 

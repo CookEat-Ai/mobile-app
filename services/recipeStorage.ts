@@ -72,8 +72,20 @@ class RecipeStorageService {
     try {
       const storedRecipes = await this.getStoredRecipes();
       const now = new Date().getTime();
-      const filteredRecipes = storedRecipes.filter(recipe => {
-        const recipeAge = now - new Date(recipe.createdAt).getTime();
+      const normalizedRecipes = storedRecipes.map((recipe: any) => {
+        const createdAtMs = Date.parse(recipe?.createdAt ?? '');
+        if (!Number.isFinite(createdAtMs)) {
+          return { ...recipe, createdAt: new Date().toISOString() };
+        }
+        return recipe;
+      });
+
+      const filteredRecipes = normalizedRecipes.filter((recipe: any) => {
+        const createdAtMs = Date.parse(recipe?.createdAt ?? '');
+        if (!Number.isFinite(createdAtMs)) {
+          return true;
+        }
+        const recipeAge = now - createdAtMs;
         return recipeAge < maxAge;
       });
 

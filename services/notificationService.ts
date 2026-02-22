@@ -1,7 +1,10 @@
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import * as Localization from 'expo-localization';
+import I18n from '../i18n';
 import { Platform, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getUniqueDeviceId } from './deviceStorage';
 import { apiService } from './api';
 
 // Configuration des notifications
@@ -37,8 +40,8 @@ class NotificationService {
       if (finalStatus !== 'granted') {
         console.log('❌ Permission pour les notifications refusée par l\'utilisateur');
         Alert.alert(
-          "Notifications désactivées",
-          "Vous pouvez activer les notifications plus tard dans Réglages > CookEat > Notifications pour ne pas rater nos rappels culinaires !",
+          I18n.t('notifications.disabledTitle'),
+          I18n.t('notifications.disabledMessage'),
           [{ text: "OK" }]
         );
         return null;
@@ -80,8 +83,9 @@ class NotificationService {
   private async sendTokenToServer(token: string): Promise<void> {
     try {
       const mobileId = await this.getMobileId();
+      const timezone = Localization.getCalendars()[0].timeZone || undefined;
       if (mobileId) {
-        await apiService.updateNotificationToken(mobileId, token);
+        await apiService.updateNotificationToken(mobileId, token, timezone);
         console.log('✅ Token envoyé au serveur avec succès');
       }
     } catch (error) {
@@ -94,8 +98,7 @@ class NotificationService {
    */
   private async getMobileId(): Promise<string | null> {
     try {
-      const DeviceInfo = await import('react-native-device-info');
-      return await DeviceInfo.default.getUniqueId();
+      return await getUniqueDeviceId();
     } catch (error) {
       console.error('❌ Erreur lors de la récupération du mobileId:', error);
       return null;
@@ -108,35 +111,13 @@ class NotificationService {
   async updateUserActivity(): Promise<void> {
     try {
       const mobileId = await this.getMobileId();
+      const timezone = Localization.getCalendars()[0].timeZone || undefined;
       if (mobileId) {
-        await apiService.updateUserActivity(mobileId);
+        await apiService.updateUserActivity(mobileId, timezone);
         console.log('✅ Activité utilisateur mise à jour');
       }
     } catch (error) {
       console.error('❌ Erreur lors de la mise à jour de l\'activité:', error);
-    }
-  }
-
-  /**
-   * Planifie une notification locale
-   */
-  async scheduleLocalNotification(title: string, body: string, delayInSeconds: number = 0): Promise<void> {
-    try {
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title,
-          body,
-          sound: 'default',
-          data: { type: 'activity_reminder' },
-        },
-        trigger: delayInSeconds > 0 ? {
-          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-          seconds: delayInSeconds
-        } : null,
-      });
-      console.log('✅ Notification locale planifiée');
-    } catch (error) {
-      console.error('❌ Erreur lors de la planification de la notification:', error);
     }
   }
 
@@ -152,20 +133,6 @@ class NotificationService {
    */
   addNotificationResponseReceivedListener(callback: (response: Notifications.NotificationResponse) => void) {
     return Notifications.addNotificationResponseReceivedListener(callback);
-  }
-
-  /**
-   * Récupère le token stocké
-   */
-  getStoredToken(): string | null {
-    return this.expoPushToken;
-  }
-
-  /**
-   * Efface toutes les notifications
-   */
-  async clearAllNotifications(): Promise<void> {
-    await Notifications.dismissAllNotificationsAsync();
   }
 
   /**
@@ -197,13 +164,13 @@ class NotificationService {
    */
   showManualNotificationInstructions(): void {
     const instructions = Platform.OS === 'ios'
-      ? "Allez dans Réglages > CookEat > Notifications et activez 'Autoriser les notifications'"
-      : "Allez dans Paramètres > Apps > CookEat > Notifications et activez les notifications";
+      ? I18n.t('notifications.manualInstructionIOS')
+      : I18n.t('notifications.manualInstructionAndroid');
 
     Alert.alert(
-      "Activer les notifications",
-      `Pour recevoir nos rappels culinaires :\n\n${instructions}`,
-      [{ text: "Compris" }]
+      I18n.t('notifications.activateTitle'),
+      `${I18n.t('notifications.activateMessage')}\n\n${instructions}`,
+      [{ text: I18n.t('notifications.understood') }]
     );
   }
 }

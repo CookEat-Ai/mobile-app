@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react';
 import apiService from '../services/api';
+import { getUniqueDeviceId } from '../services/deviceStorage';
 
 interface User {
   _id: string;
-  firstName: string;
-  email: string;
-  subscriptionId?: string;
-  subscriptionStatus?: string;
-  plan?: string;
+  mobileId: string;
 }
 
 interface AuthState {
@@ -29,21 +26,15 @@ export const useAuth = () => {
 
   const checkAuthStatus = async () => {
     try {
-      if (apiService.isAuthenticated()) {
-        const response = await apiService.getCurrentUser();
-        if (response.data) {
-          setAuthState({
-            user: response.data,
-            isLoading: false,
-            isAuthenticated: true,
-          });
-        } else {
-          setAuthState({
-            user: null,
-            isLoading: false,
-            isAuthenticated: false,
-          });
-        }
+      const mobileId = await getUniqueDeviceId();
+      const response = await apiService.getCurrentUser(mobileId);
+      
+      if (response.data) {
+        setAuthState({
+          user: response.data,
+          isLoading: false,
+          isAuthenticated: true,
+        });
       } else {
         setAuthState({
           user: null,
@@ -60,56 +51,12 @@ export const useAuth = () => {
     }
   };
 
-  const login = async (email: string, password: string) => {
-    try {
-      const response = await apiService.login(email, password);
-      if (response.data) {
-        await checkAuthStatus();
-        return { success: true };
-      } else {
-        return { success: false, error: response.error };
-      }
-    } catch (error) {
-      return { success: false, error: 'Erreur de connexion' };
-    }
-  };
-
-  const register = async (firstName: string, email: string, password: string) => {
-    try {
-      const response = await apiService.register(firstName, email, password);
-      if (response.data) {
-        await checkAuthStatus();
-        return { success: true };
-      } else {
-        return { success: false, error: response.error };
-      }
-    } catch (error) {
-      return { success: false, error: 'Erreur d\'inscription' };
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await apiService.logout();
-      setAuthState({
-        user: null,
-        isLoading: false,
-        isAuthenticated: false,
-      });
-    } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
-    }
-  };
-
   const refreshUser = async () => {
     await checkAuthStatus();
   };
 
   return {
     ...authState,
-    login,
-    register,
-    logout,
     refreshUser,
   };
-}; 
+};

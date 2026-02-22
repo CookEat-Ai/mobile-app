@@ -1,7 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform, Linking } from 'react-native';
 import Purchases, { PurchasesOffering } from 'react-native-purchases';
-import promoCodeService from '../services/promoCode';
+import { apiService } from '../services/api';
+
+import analytics from '../services/analytics';
 
 // Configuration RevenueCat
 export const REVENUECAT_API_KEY = {
@@ -11,6 +13,7 @@ export const REVENUECAT_API_KEY = {
 
 export const ENTITLEMENT_ID = 'Pro';
 export const PROMO_CODE_STORAGE_KEY = 'promo_code_activated';
+const LAST_SUBSCRIPTION_STATUS_KEY = 'rc_last_subscription_status';
 
 export interface SubscriptionStatus {
   isSubscribed: boolean;
@@ -22,6 +25,7 @@ export interface SubscriptionStatus {
 class RevenueCatService {
   private static instance: RevenueCatService;
   private isInitialized = false;
+  private dailySearchLimit: number = 1; // Valeur par défaut
 
   static getInstance(): RevenueCatService {
     if (!RevenueCatService.instance) {
@@ -30,19 +34,50 @@ class RevenueCatService {
     return RevenueCatService.instance;
   }
 
-  async initialize() {
+  async initialize(appUserID?: string) {
     if (this.isInitialized) return;
 
     try {
       await Purchases.configure({
         apiKey: Platform.OS === 'ios' ? REVENUECAT_API_KEY.ios : REVENUECAT_API_KEY.android,
-        // appUserID: "", // RevenueCat générera un ID automatiquement
+        appUserID: appUserID || undefined,
       });
 
+      // Récupérer la configuration de l'API
+      this.fetchAppConfig();
+
       this.isInitialized = true;
-      console.log('✅ RevenueCat initialisé avec succès');
+      console.log(`✅ RevenueCat initialisé avec succès ${appUserID ? `(User: ${appUserID})` : ''}`);
     } catch (error) {
       console.error('❌ Erreur lors de l\'initialisation de RevenueCat:', error);
+    }
+  }
+
+  async syncAppUserId(appUserID?: string | null): Promise<void> {
+    try {
+      const targetUserId = String(appUserID || '').trim();
+      if (!targetUserId) return;
+
+      const currentAppUserId = await this.getSafeAppUserId();
+      if (currentAppUserId === targetUserId) return;
+
+      // logIn fusionne l'utilisateur anonyme local avec l'identité stable serveur.
+      await Purchases.logIn(targetUserId);
+      console.log(`🔐 RevenueCat logIn appliqué (${currentAppUserId || 'anonymous'} -> ${targetUserId})`);
+    } catch (error) {
+      console.error('❌ Erreur sync RevenueCat appUserID:', error);
+    }
+  }
+
+  private async fetchAppConfig() {
+    try {
+      const response = await apiService.getAppConfig();
+      if (response.data?.dailySearchLimit) {
+        this.dailySearchLimit = response.data.dailySearchLimit;
+        console.log('⚙️ Limite de recherche quotidienne mise à jour:', this.dailySearchLimit);
+      }
+    } catch (error) {
+      console.error('❌ Erreur lors de la récupération de la config:', error);
     }
   }
 
@@ -61,25 +96,61 @@ class RevenueCatService {
         };
       }
 
-      const customerInfo = await Purchases.getCustomerInfo();
-      const obj = customerInfo.entitlements.active[ENTITLEMENT_ID];
-      const isSubscribed = typeof obj !== 'undefined';
+      let customerInfo = await Purchases.getCustomerInfo();
+      let activeEntitlements = customerInfo.entitlements.active || {};
+      let activeEntitlementKeys = Object.keys(activeEntitlements);
+      let isSubscribed = this.hasActiveSubscription(customerInfo);
 
-      const activeEntitlement = customerInfo.entitlements.active[ENTITLEMENT_ID];
-      const currentPlan = activeEntitlement?.productIdentifier || null;
-      const expirationDate = activeEntitlement?.expirationDate ? new Date(activeEntitlement.expirationDate) : null;
+      let activeEntitlement = activeEntitlements[ENTITLEMENT_ID] || activeEntitlements[activeEntitlementKeys[0]];
+      let currentPlan = activeEntitlement?.productIdentifier || null;
+      let expirationDate = activeEntitlement?.expirationDate ? new Date(activeEntitlement.expirationDate) : null;
+
+      // Auto-rattrapage: si non abonné, on retente après synchronisation de l'identité RevenueCat.
+      if (!isSubscribed) {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        const currentAppUserId = await this.getSafeAppUserId();
+
+        if (storedUserId && storedUserId !== currentAppUserId) {
+          console.log('🔄 Tentative de resync RevenueCat avant verdict non abonné');
+          await this.syncAppUserId(storedUserId);
+
+          customerInfo = await Purchases.getCustomerInfo();
+          activeEntitlements = customerInfo.entitlements.active || {};
+          activeEntitlementKeys = Object.keys(activeEntitlements);
+          isSubscribed = this.hasActiveSubscription(customerInfo);
+          activeEntitlement = activeEntitlements[ENTITLEMENT_ID] || activeEntitlements[activeEntitlementKeys[0]];
+          currentPlan = activeEntitlement?.productIdentifier || null;
+          expirationDate = activeEntitlement?.expirationDate ? new Date(activeEntitlement.expirationDate) : null;
+        }
+      }
 
       // Gérer le quota quotidien pour les utilisateurs gratuits
       const dailyQuotaRemaining = await this.getDailyQuotaRemaining();
 
-      return {
+      const status = {
         isSubscribed,
         currentPlan,
         expirationDate,
         dailyQuotaRemaining
       };
+      await this.persistLastSubscriptionStatus(status);
+
+      console.log('📡 RevenueCat status', {
+        appUserID: await this.getSafeAppUserId(),
+        originalAppUserId: (customerInfo as any)?.originalAppUserId,
+        activeEntitlements: activeEntitlementKeys,
+        activeSubscriptions: (customerInfo as any)?.activeSubscriptions || []
+      });
+
+      return status;
     } catch (error) {
       console.error('❌ Erreur lors de la récupération du statut:', error);
+      const cachedStatus = await this.getLastSubscriptionStatus();
+      if (cachedStatus) {
+        console.log('⚠️ RevenueCat indisponible, utilisation du dernier statut connu');
+        return cachedStatus;
+      }
+
       return {
         isSubscribed: false,
         currentPlan: null,
@@ -89,10 +160,25 @@ class RevenueCatService {
     }
   }
 
+  async isSubscribed(): Promise<boolean> {
+    const status = await this.getSubscriptionStatus();
+    return status.isSubscribed;
+  }
+
   async getOfferings(): Promise<PurchasesOffering | null> {
     try {
       const offerings = await Purchases.getOfferings();
-      return offerings.current;
+      const currentOffering = offerings.current;
+
+      // Rapporter la variante de paywall (Offering) à PostHog
+      if (currentOffering) {
+        analytics.setUserProperties({
+          paywall_variant: currentOffering.identifier
+        });
+        console.log(`📊 Paywall Variant reportée à PostHog: ${currentOffering.identifier}`);
+      }
+
+      return currentOffering;
     } catch (error) {
       console.error('❌ Erreur lors de la récupération des offres:', error);
       return null;
@@ -102,9 +188,9 @@ class RevenueCatService {
   async purchasePackage(packageToPurchase: any): Promise<boolean> {
     try {
       const { customerInfo } = await Purchases.purchasePackage(packageToPurchase);
-      const obj = customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
+      const isSubscribed = this.hasActiveSubscription(customerInfo);
 
-      if (typeof obj !== 'undefined') {
+      if (isSubscribed) {
         console.log('✅ Achat réussi');
         return true;
       } else {
@@ -120,10 +206,101 @@ class RevenueCatService {
   async restorePurchases(): Promise<boolean> {
     try {
       const customerInfo = await Purchases.restorePurchases();
-      const isSubscribed = customerInfo.entitlements.active[ENTITLEMENT_ID] !== undefined;
+      const isSubscribed = this.hasActiveSubscription(customerInfo);
       return isSubscribed;
     } catch (error) {
       console.error('❌ Erreur lors de la restauration:', error);
+      return false;
+    }
+  }
+
+  private hasActiveSubscription(customerInfo: any): boolean {
+    const active = customerInfo?.entitlements?.active || {};
+    if (active[ENTITLEMENT_ID]) {
+      return true;
+    }
+    // Fallback défensif: éviter les faux négatifs si entitlement ID diffère temporairement.
+    return Object.keys(active).length > 0;
+  }
+
+  private async persistLastSubscriptionStatus(status: SubscriptionStatus): Promise<void> {
+    try {
+      await AsyncStorage.setItem(LAST_SUBSCRIPTION_STATUS_KEY, JSON.stringify({
+        ...status,
+        expirationDate: status.expirationDate ? status.expirationDate.toISOString() : null,
+      }));
+    } catch {
+      // no-op
+    }
+  }
+
+  private async getLastSubscriptionStatus(): Promise<SubscriptionStatus | null> {
+    try {
+      const raw = await AsyncStorage.getItem(LAST_SUBSCRIPTION_STATUS_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return {
+        isSubscribed: Boolean(parsed.isSubscribed),
+        currentPlan: parsed.currentPlan ?? null,
+        expirationDate: parsed.expirationDate ? new Date(parsed.expirationDate) : null,
+        dailyQuotaRemaining: Number(parsed.dailyQuotaRemaining ?? 0),
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  private async getSafeAppUserId(): Promise<string | null> {
+    try {
+      return await Purchases.getAppUserID();
+    } catch {
+      return null;
+    }
+  }
+
+  private async getDailyQuotaRemaining(): Promise<number> {
+    try {
+      // Utiliser la date locale pour s'assurer que le quota se remet à zéro à minuit
+      const now = new Date();
+      const today = now.toLocaleDateString('fr-FR'); // Format: DD/MM/YYYY
+      const quotaKey = `daily_quota_${today}`;
+      const usedQuota = await AsyncStorage.getItem(quotaKey);
+
+      if (!usedQuota) {
+        await AsyncStorage.setItem(quotaKey, '0');
+        return this.dailySearchLimit;
+      }
+
+      const used = parseInt(usedQuota);
+      return Math.max(0, this.dailySearchLimit - used);
+    } catch (error) {
+      console.error('❌ Erreur lors de la récupération du quota:', error);
+      return 0;
+    }
+  }
+
+  async useDailyQuota(): Promise<boolean> {
+    try {
+      // Si un code promo est activé, pas de limite
+      const isPromoCodeActivated = await this.isPromoCodeActivated();
+      if (isPromoCodeActivated) {
+        return true;
+      }
+
+      const now = new Date();
+      const today = now.toLocaleDateString('fr-FR');
+      const quotaKey = `daily_quota_${today}`;
+      const usedQuota = await AsyncStorage.getItem(quotaKey);
+
+      const used = parseInt(usedQuota || '0');
+      if (used >= this.dailySearchLimit) {
+        return false; // Quota épuisé
+      }
+
+      await AsyncStorage.setItem(quotaKey, (used + 1).toString());
+      return true;
+    } catch (error) {
+      console.error('❌ Erreur lors de l\'utilisation du quota:', error);
       return false;
     }
   }
@@ -212,64 +389,18 @@ class RevenueCatService {
     return 'com.gokugen.cookeat';
   }
 
-  private async getDailyQuotaRemaining(): Promise<number> {
-    try {
-      // Utiliser la date locale pour s'assurer que le quota se remet à zéro à minuit
-      const now = new Date();
-      const today = now.toLocaleDateString('fr-FR'); // Format: DD/MM/YYYY
-      const quotaKey = `daily_quota_${today}`;
-      const usedQuota = await AsyncStorage.getItem(quotaKey);
-
-      if (!usedQuota) {
-        await AsyncStorage.setItem(quotaKey, '0');
-        return 1; // 1 recette gratuite par jour
-      }
-
-      const used = parseInt(usedQuota);
-      return Math.max(0, 1 - used);
-    } catch (error) {
-      console.error('❌ Erreur lors de la récupération du quota:', error);
-      return 0;
-    }
-  }
-
-  async useDailyQuota(): Promise<boolean> {
-    try {
-      // Si un code promo est activé, pas de limite
-      const isPromoCodeActivated = await this.isPromoCodeActivated();
-      if (isPromoCodeActivated) {
-        return true;
-      }
-
-      const today = new Date().toDateString();
-      const quotaKey = `daily_quota_${today}`;
-      const usedQuota = await AsyncStorage.getItem(quotaKey);
-
-      const used = parseInt(usedQuota || '0');
-      if (used >= 1) {
-        return false; // Quota épuisé
-      }
-
-      await AsyncStorage.setItem(quotaKey, (used + 1).toString());
-      return true;
-    } catch (error) {
-      console.error('❌ Erreur lors de l\'utilisation du quota:', error);
-      return false;
-    }
-  }
-
   // Méthodes pour gérer les codes promo
   async activatePromoCode(code: string): Promise<boolean> {
     try {
       // Valider le code promo via l'API
-      const validation = await promoCodeService.validatePromoCode(code.trim());
+      const response = await apiService.validatePromoCode(code.trim());
 
-      if (validation.success && validation.data?.isValid) {
+      if (response.data?.isValid) {
         await AsyncStorage.setItem(PROMO_CODE_STORAGE_KEY, 'true');
         console.log('✅ Code promo activé avec succès');
         return true;
       } else {
-        console.log('❌ Code promo invalide:', validation.message);
+        console.log('❌ Code promo invalide:', response.error || response.data?.message);
         return false;
       }
     } catch (error) {

@@ -1,152 +1,96 @@
-import { Tabs } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Dimensions, Platform, StyleSheet, View } from 'react-native';
-import { HapticTab } from '../../components/HapticTab';
+import { Tabs, router } from 'expo-router';
+import React from 'react';
+import { Platform, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { IconSymbol } from "../../components/ui/IconSymbol";
-import { Colors } from '../../constants/Colors';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { HapticTab } from '../../components/HapticTab';
 import I18n from '../../i18n';
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import Ionicons from '@expo/vector-icons/Ionicons';
-
-const { width, height } = Dimensions.get('window');
-
-// Composant personnalisé pour l'icône avec rond autour de l'icône active
-const TabIcon = ({ name, focused, color }: { name: any; focused: boolean; color: string }) => {
-  return (
-    <View style={styles.iconContainer}>
-      {focused && <View style={styles.activeCircle} />}
-      {name === "heart" && focused
-        ? <FontAwesome name="heart" size={24} color={focused ? Colors.light.button : 'white'} />
-        : name === "house"
-          ? <Ionicons name={focused ? "home" : "home-outline"} size={26} color={focused ? Colors.light.button : 'white'} />
-          : <IconSymbol
-            size={28}
-            name={focused ? `${name}.fill` : name}
-            color={focused ? Colors.light.button : 'white'}
-          />}
-    </View>
-  );
-};
+import { Colors } from '../../constants/Colors';
 
 export default function TabLayout() {
-  const colors = Colors.light;
-
-  const [showTabBar, setShowTabBar] = useState(true);
-  const tabBarOpacity = useRef(new Animated.Value(1)).current;
-  const tabBarTranslateY = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    // Exposer la fonction pour que l'écran principal puisse la modifier
-    (global as any).setTabBarVisibility = (visible: boolean) => {
-      setShowTabBar(visible);
-
-      if (visible) {
-        // Animation d'apparition
-        Animated.parallel([
-          Animated.timing(tabBarOpacity, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-          Animated.timing(tabBarTranslateY, {
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-        ]).start();
-      } else {
-        // Animation de disparition
-        Animated.parallel([
-          Animated.timing(tabBarOpacity, {
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-          Animated.timing(tabBarTranslateY, {
-            toValue: 100,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-        ]).start();
-      }
-    };
-  }, []);
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
       screenOptions={{
+        tabBarActiveTintColor: Colors.light.button,
+        tabBarInactiveTintColor: '#999',
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarLabel: '',
-        tabBarPosition: 'bottom',
-        // tabBarBackground: () => <View style={{ backgroundColor: Colors.light.button, position: 'absolute', left: -width / 3.84, height: 150, width: width }} />,
         tabBarStyle: {
-          position: 'absolute',
-          flexDirection: "row",
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: Colors.light.button,
-          borderTopWidth: 0,
-          borderRadius: 1000,
-          maxHeight: Platform.OS === 'ios' ? height * 0.08 : height * 0.092,
-          paddingHorizontal: 5,
-          marginHorizontal: "26%",
-          marginBottom: Platform.OS === 'ios' ? "5%" : "8%",
-          opacity: tabBarOpacity,
-          transform: [{ translateY: tabBarTranslateY }],
+          backgroundColor: 'white',
+          borderTopWidth: 1,
+          borderTopColor: '#E9E9E9',
+          overflow: 'visible',
+          height: Platform.OS === 'ios' ? 95 : 80,
+          paddingBottom: Platform.OS === 'ios' ? 30 : 15,
+          paddingTop: 10,
+        },
+        tabBarLabelStyle: {
+          fontFamily: 'Cronos Pro',
+          fontSize: 14,
+          fontWeight: '700',
+          marginTop: 4,
         },
       }}>
       <Tabs.Screen
         name="index"
         options={{
           title: I18n.t('tabs.home'),
-          tabBarIcon: ({ color, focused }) => <TabIcon name="house" focused={focused} color={color} />,
+          tabBarIcon: ({ color, focused }) => <IconSymbol size={32} name={focused ? "house.fill" : "house"} color={color} />,
         }}
       />
-      {/* <Tabs.Screen
-        name="search"
-        options={{
-          title: I18n.t('tabs.search'),
-          tabBarIcon: ({ color, focused }) => <TabIcon name="magnifyingglass" focused={focused} color={color} />,
-        }}
-      /> */}
       <Tabs.Screen
         name="favorites"
         options={{
           title: I18n.t('tabs.favorites'),
-          tabBarIcon: ({ color, focused }) => <TabIcon name="heart" focused={focused} color={color} />,
+          tabBarIcon: ({ color, focused }) => <IconSymbol size={32} name={focused ? "heart.fill" : "heart"} color={color} />,
         }}
       />
-      {/* <Tabs.Screen
-        name="offers"
-        options={{
-          title: I18n.t('tabs.offers'),
-          tabBarIcon: ({ color, focused }) => <TabIcon name="square.grid.2x2" focused={focused} color={color} />,
-        }}
-      /> */}
       <Tabs.Screen
         name="profile"
         options={{
-          title: I18n.t('tabs.profile'),
-          tabBarIcon: ({ color, focused }) => <TabIcon name="person" focused={focused} color={color} />,
+          title: I18n.t('profile.settings'),
+          tabBarIcon: ({ color, focused }) => <IconSymbol size={28} name={focused ? "settings.fill" : "settings"} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="plus"
+        options={{
+          title: '',
+          tabBarIcon: ({ color }) => <IconSymbol size={30} name="camera" color={color} />,
+          tabBarButton: (props: any) => (
+            <TouchableOpacity
+              {...props}
+              activeOpacity={0.8}
+              onPress={() => {
+                // Action pour le bouton caméra
+                router.push('/camera');
+              }}
+              style={{
+                top: -40,
+                justifyContent: 'center',
+                alignItems: 'center',
+                width: 70,
+                height: 70,
+              }}
+            >
+              <View style={{
+                width: 65,
+                height: 65,
+                borderRadius: 40,
+                backgroundColor: Colors.light.button,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+                <IconSymbol name="camera" size={30} color="white" />
+              </View>
+            </TouchableOpacity>
+          ),
         }}
       />
     </Tabs>
   );
 }
 
-const styles = StyleSheet.create({
-  iconContainer: {
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: height > 1000 ? height * 0.015 : Platform.OS === 'ios' ? height * 0.006 : height * 0.025,
-  },
-  activeCircle: {
-    position: 'absolute',
-    width: 60,
-    height: 60,
-    borderRadius: 300,
-    backgroundColor: 'white',
-  },
-});
+const styles = StyleSheet.create({});

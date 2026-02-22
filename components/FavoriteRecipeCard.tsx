@@ -1,5 +1,6 @@
 import React from 'react';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from './ui/IconSymbol';
 
@@ -37,7 +38,13 @@ export default function FavoriteRecipeCard({
   };
 
   return (
-    <TouchableOpacity style={[styles.container, { backgroundColor: colors.card }]} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.container, { backgroundColor: colors.card }]}
+      onPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        onPress?.();
+      }}
+    >
       <View style={styles.imageContainer}>
         {
           icon
@@ -70,7 +77,10 @@ export default function FavoriteRecipeCard({
         {onRemove && (
           <TouchableOpacity
             style={styles.removeButton}
-            onPress={onRemove}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              onRemove();
+            }}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <IconSymbol name="trash" size={24} color="grey" />

@@ -1,0 +1,8 @@
+<resources>
+  <string name="NSCameraUsageDescription">"CookEat AI souhaite accéder à ta caméra pour prendre des photos de tes ingrédients."</string>
+  <string name="NSPhotoLibraryUsageDescription">"CookEat AI souhaite accéder à ta bibliothèque photo pour reconnaitre les ingrédients que tu nous affiches."</string>
+  <string name="NSMicrophoneUsageDescription">"Cette application utilise le microphone pour la reconnaissance vocale afin de comprendre tes ingrédients disponibles."</string>
+  <string name="NSSpeechRecognitionUsageDescription">"CookEat utilise la reconnaissance vocale pour comprendre tes ingrédients et te proposer des recettes adaptées à ce que tu as chez toi."</string>
+  <string name="NSUserNotificationsUsageDescription">"Reçois des rappels et des suggestions de recettes personnalisées."</string>
+  <string name="NSUserTrackingUsageDescription">"Tes données nous permettent de te proposer des recettes et des publicités qui correspondent vraiment à tes goûts."</string>
+</resources>

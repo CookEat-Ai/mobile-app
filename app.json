@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "CookEat",
+    "name": "CookEat Ai",
     "slug": "cookeat",
     "version": "1.1.0",
     "orientation": "portrait",
@@ -17,11 +17,17 @@
       },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSPhotoLibraryUsageDescription": "CookEat AI souhaite accéder à votre bibliothèque photo pour reconnaitre les ingrédients que vous nous affichez.",
-        "NSMicrophoneUsageDescription": "Cette application utilise le microphone pour la reconnaissance vocale afin de comprendre vos ingrédients disponibles.",
-        "NSSpeechRecognitionUsageDescription": "CookEat utilise la reconnaissance vocale pour comprendre vos ingrédients et vous proposer des recettes adaptées à ce que vous avez chez vous.",
-        "NSUserNotificationsUsageDescription": "CookEat AI souhaite vous envoyer des notifications pour vous rappeler de cuisiner, vous proposer de nouvelles recettes adaptées à vos goûts et vous tenir informé de vos recettes favorites. Ces rappels vous aident à rester motivé et à découvrir de nouvelles saveurs culinaires."
-      }
+        "NSPhotoLibraryUsageDescription": "CookEat AI would like to access your photo library to recognize the ingredients you show us.",
+        "NSMicrophoneUsageDescription": "This app uses the microphone for voice recognition to understand your available ingredients.",
+        "NSSpeechRecognitionUsageDescription": "CookEat uses voice recognition to understand your ingredients and suggest recipes tailored to what you have at home.",
+        "NSUserNotificationsUsageDescription": "Recevez des rappels et des suggestions de recettes personnalisées.",
+        "NSUserTrackingUsageDescription": "Your data allows us to offer you recipes and advertisements that truly match your tastes."
+      },
+      "appleTeamId": "P48MLLHB99"
+    },
+    "locales": {
+      "fr": "./locales/ios/fr.json",
+      "en": "./locales/ios/en.json"
     },
     "android": {
       "playStoreUrl": "",
@@ -31,6 +37,7 @@
       },
       "edgeToEdgeEnabled": true,
       "permissions": [
+        "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
         "com.android.vending.BILLING",
         "android.permission.VIBRATE",
@@ -45,24 +52,49 @@
     },
     "plugins": [
       "./plugins/withGradleProperties",
+      "./plugins/withManifestFix",
       "expo-router",
+      [
+        "react-native-appsflyer",
+        {
+          "shouldUseStrictMode": false,
+          "shouldUsePurchaseConnector": true,
+          "preferAppsFlyerBackupRules": false
+        }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "cookeat",
+          "organization": "hadjadji-mohamed"
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "CookEat AI would like to access your camera to take photos of your ingredients."
+        }
+      ],
       "@react-native-voice/voice",
       [
         "expo-notifications",
         {
-          "color": "#FEB50A",
+          "color": "#FDF9E2",
           "enableBackgroundRemoteNotifications": true
         }
       ],
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splashscreen-icon.png",
-          "imageWidth": 200,
+          "image": "./assets/images/mascot.png",
+          "imageWidth": 300,
           "resizeMode": "contain",
-          "backgroundColor": "#FEB50A"
+          "backgroundColor": "#FDF9E2"
         }
-      ]
+      ],
+      "expo-secure-store",
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true
@@ -72,7 +104,7 @@
       "eas": {
         "projectId": "014735a5-662a-4ab0-84a8-d1e8653c94d6"
       },
-      "apiBaseUrl": "http://192.168.1.192:8083/api"
+      "apiBaseUrl": "http://192.168.1.124:8083/api"
     },
     "runtimeVersion": "1.0.0",
     "updates": {

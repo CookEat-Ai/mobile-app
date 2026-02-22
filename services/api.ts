@@ -1,6 +1,55 @@
+import * as Localization from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_BASE_URL } from '../config/api';
+import { API_BASE_URL, WS_URL } from '../config/api';
 import I18n from '../i18n';
+
+function parsePartialJSON(text: string): any {
+  if (!text || !text.trim()) return null;
+  try { return JSON.parse(text); } catch { /* partial */ }
+
+  let attempt = text;
+  let inString = false;
+  let escaped = false;
+
+  for (const char of attempt) {
+    if (escaped) { escaped = false; continue; }
+    if (char === '\\') { escaped = true; continue; }
+    if (char === '"') { inString = !inString; continue; }
+  }
+
+  if (inString) attempt += '"';
+
+  let changed = true;
+  while (changed) {
+    const before = attempt;
+    attempt = attempt.replace(/,\s*$/, '');
+    attempt = attempt.replace(/,\s*"[^"]*"\s*$/, '');
+    attempt = attempt.replace(/(\{)\s*"[^"]*"\s*$/, '$1');
+    attempt = attempt.replace(/,\s*"[^"]*"\s*:\s*(?:[^"\[{\s,}\]][^,}\]]*)?$/, '');
+    attempt = attempt.replace(/(\{)\s*"[^"]*"\s*:\s*(?:[^"\[{\s,}\]][^,}\]]*)?$/, '$1');
+    changed = attempt !== before;
+  }
+
+  let openBraces = 0;
+  let openBrackets = 0;
+  inString = false;
+  escaped = false;
+  for (const char of attempt) {
+    if (escaped) { escaped = false; continue; }
+    if (char === '\\') { escaped = true; continue; }
+    if (char === '"') { inString = !inString; continue; }
+    if (inString) continue;
+    if (char === '{') openBraces++;
+    if (char === '}') openBraces--;
+    if (char === '[') openBrackets++;
+    if (char === ']') openBrackets--;
+  }
+
+  for (let i = 0; i < openBrackets; i++) attempt += ']';
+  for (let i = 0; i < openBraces; i++) attempt += '}';
+
+  try { return JSON.parse(attempt); } catch { return null; }
+}
 
 interface ApiResponse<T> {
   data?: T;
@@ -9,36 +58,7 @@ interface ApiResponse<T> {
 }
 
 class ApiService {
-  private token: string | null = null;
-
   constructor() {
-    this.loadToken();
-  }
-
-  private async loadToken() {
-    try {
-      this.token = await AsyncStorage.getItem('authToken');
-    } catch (error) {
-      console.error('Erreur lors du chargement du token:', error);
-    }
-  }
-
-  private async saveToken(token: string) {
-    try {
-      await AsyncStorage.setItem('authToken', token);
-      this.token = token;
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde du token:', error);
-    }
-  }
-
-  private async removeToken() {
-    try {
-      await AsyncStorage.removeItem('authToken');
-      this.token = null;
-    } catch (error) {
-      console.error('Erreur lors de la suppression du token:', error);
-    }
   }
 
   private getHeaders(): HeadersInit {
@@ -46,11 +66,13 @@ class ApiService {
       'Content-Type': 'application/json',
     };
 
-    if (this.token) {
-      headers.Authorization = `Bearer ${this.token}`;
-    }
-
     return headers;
+  }
+
+  private getCurrentLanguage(): string {
+    // On s'assure de n'envoyer que le code de langue (ex: 'fr' au lieu de 'fr-FR')
+    const locale = I18n.locale || 'fr';
+    return locale.split('-')[0].split('_')[0].toLowerCase();
   }
 
   private async request<T>(
@@ -59,20 +81,24 @@ class ApiService {
   ): Promise<ApiResponse<T>> {
     try {
       const url = `${API_BASE_URL}${endpoint}`;
-      console.log(url)
+      
+      const headers: HeadersInit = { ...this.getHeaders() };
+      
+      // Si on envoie du FormData, on laisse le navigateur/fetch gérer le Content-Type
+      if (options.body instanceof FormData) {
+        if ('Content-Type' in headers) {
+          delete (headers as any)['Content-Type'];
+        }
+      }
+
       const response = await fetch(url, {
         ...options,
-        headers: this.getHeaders(),
+        headers,
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        if (response.status === 401) {
-          // Token expiré ou invalide
-          await this.removeToken();
-          throw new Error('Session expirée');
-        }
         throw new Error(data.message || 'Erreur de requête');
       }
 
@@ -83,93 +109,100 @@ class ApiService {
     }
   }
 
-  // Authentification
-  async login(email: string, password: string) {
-    const response = await this.request<{ token: string; user: any }>('/auth/sign', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (response.data?.token) {
-      await this.saveToken(response.data.token);
-    }
-
-    return response;
-  }
-
-  async register(firstName: string, email: string, password: string) {
-    const response = await this.request<{ token: string; user: any }>('/auth/signup', {
-      method: 'POST',
-      body: JSON.stringify({ firstName, email, password }),
-    });
-
-    if (response.data?.token) {
-      await this.saveToken(response.data.token);
-    }
-
-    return response;
-  }
-
-  // Méthode pour définir un token manuellement (utile pour les paiements guest)
-  async setToken(token: string) {
-    await this.saveToken(token);
-  }
-
-  async logout() {
-    await this.removeToken();
-  }
-
   // Utilisateur
-  async getCurrentUser() {
-    return this.request<any>('/users/who-am-i');
-  }
-
-  async updateUser(data: Partial<any>) {
-    return this.request<any>('/users', {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    });
+  async getCurrentUser(mobileId: string) {
+    return this.request<any>(`/users/who-am-i?mobileId=${mobileId}`);
   }
 
   // Recettes
-  async generateRecipes(ingredients: string, existingRecipes?: any[]) {
-    return this.request<{ recipes: any[] }>('/recipe/generate', {
-      method: 'POST',
-      body: JSON.stringify({
-        ingredients,
-        existingRecipes,
-        language: I18n.locale || 'fr'
-      }),
-    });
-  }
-
-  async generateSingleRecipeWithFilters(
+  generateRecipeStream(
     ingredients: string,
     dishType: string,
     duration: string,
     servings: number,
     cuisineStyle: string,
     diet: string,
-    calories: string,
+    goal: string,
+    equipments: string[],
+    allergies: string[],
     allowOtherIngredients: boolean,
-    existingRecipes?: any[]
-  ) {
-    return this.request<{ recipe: any }>('/recipe/generate-single', {
-      method: 'POST',
-      body: JSON.stringify({
-        ingredients,
-        dishType,
-        duration,
-        servings,
-        cuisineStyle,
-        diet,
-        calories,
-        allowOtherIngredients,
-        existingRecipes,
-        userId: await AsyncStorage.getItem('userId'),
-        language: I18n.locale || 'fr'
-      }),
+    isSubscribed: boolean,
+    callbacks: {
+      onRecipeChunk: (partial: any) => void;
+      onRecipe: (data: { recipe: any; isFirstGeneration: boolean }) => void;
+      onStepsChunk: (partial: any) => void;
+      onSteps: (data: { steps: any[] }) => void;
+      onDone: (data: { id: string }) => void;
+      onError: (message: string) => void;
+    }
+  ): { close: () => void } {
+    const month = new Date().getMonth();
+    const language = this.getCurrentLanguage();
+    let ws: WebSocket | null = null;
+
+    AsyncStorage.getItem('userId').then((userId) => {
+      ws = new WebSocket(WS_URL);
+
+      ws.onopen = () => {
+        ws?.send(JSON.stringify({
+          action: 'generate-recipe',
+          payload: {
+            ingredients, dishType, duration, servings, cuisineStyle, diet,
+            goal, equipments, allergies, allowOtherIngredients, isSubscribed,
+            month, language, userId
+          }
+        }));
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data as string);
+          switch (msg.event) {
+            case 'recipe-chunk': {
+              const partial = parsePartialJSON(msg.data.accumulated);
+              if (partial) callbacks.onRecipeChunk(partial);
+              break;
+            }
+            case 'recipe-complete':
+              callbacks.onRecipe(msg.data);
+              break;
+            case 'steps-chunk': {
+              const partial = parsePartialJSON(msg.data.accumulated);
+              if (partial) callbacks.onStepsChunk(partial);
+              break;
+            }
+            case 'steps-complete':
+              callbacks.onSteps(msg.data);
+              break;
+            case 'done':
+              callbacks.onDone(msg.data);
+              ws?.close();
+              break;
+            case 'error':
+              callbacks.onError(msg.data.message || 'Erreur de génération');
+              ws?.close();
+              break;
+          }
+        } catch (e) {
+          console.error('WS parse error:', e);
+        }
+      };
+
+      ws.onerror = (e) => {
+        console.error('WS error:', e);
+        callbacks.onError('Erreur de connexion WebSocket');
+      };
+
+      ws.onclose = () => {
+        ws = null;
+      };
+    }).catch(() => {
+      callbacks.onError('Erreur interne');
     });
+
+    return {
+      close: () => { ws?.close(); ws = null; }
+    };
   }
 
   async getRecipeIngredients(recipe: any) {
@@ -177,7 +210,7 @@ class ApiService {
       method: 'POST',
       body: JSON.stringify({
         recipe,
-        language: I18n.locale || 'fr'
+        language: this.getCurrentLanguage()
       }),
     });
   }
@@ -187,25 +220,69 @@ class ApiService {
       method: 'POST',
       body: JSON.stringify({
         recipe,
-        language: I18n.locale || 'fr'
+        userId: await AsyncStorage.getItem('userId'),
+        language: this.getCurrentLanguage()
       }),
     });
   }
 
   async processVoiceIngredients(voiceText: string) {
-    return this.request<{ ingredients: string[] }>('/recipe/process-voice-ingredients', {
+    return this.request<{ ingredients: { name: string; category: string }[] }>('/recipe/process-voice-ingredients', {
       method: 'POST',
       body: JSON.stringify({
         voiceText,
-        language: I18n.locale || 'fr'
+        language: this.getCurrentLanguage()
       }),
     });
   }
 
+  async processImageIngredients(imageUris: string[]) {
+    const formData = new FormData();
+    formData.append('language', this.getCurrentLanguage());
+    
+    imageUris.forEach((uri, index) => {
+      const filename = uri.split('/').pop() || `image_${index}.jpg`;
+      const match = /\.(\w+)$/.exec(filename);
+      const type = match ? `image/${match[1]}` : `image/jpeg`;
+      
+      formData.append('images', {
+        uri,
+        name: filename,
+        type,
+      } as any);
+    });
+
+    return this.request<{ ingredients: { name: string; category: string }[] }>('/recipe/process-image-ingredients', {
+      method: 'POST',
+      body: formData,
+    });
+  }
+
+  async processVideoIngredients(videoUri: string) {
+    const formData = new FormData();
+    formData.append('language', this.getCurrentLanguage());
+
+    const filename = videoUri.split('/').pop() || 'video.mp4';
+    const match = /\.(\w+)$/.exec(filename);
+    const type = match ? `video/${match[1]}` : `video/mp4`;
+
+    formData.append('video', {
+      uri: videoUri,
+      name: filename,
+      type,
+    } as any);
+
+    return this.request<{ ingredients: { name: string; category: string }[] }>('/recipe/process-video-ingredients', {
+      method: 'POST',
+      body: formData,
+    });
+  }
+
   async saveRecipe(recipe: any, userId?: string) {
+    const resolvedUserId = userId ?? await AsyncStorage.getItem('userId');
     return this.request<{ success: boolean; message: string; recipe: any }>('/recipe/save', {
       method: 'POST',
-      body: JSON.stringify({ recipe, userId, language: I18n.locale || 'fr' }),
+      body: JSON.stringify({ recipe, userId: resolvedUserId, language: this.getCurrentLanguage() }),
     });
   }
 
@@ -219,44 +296,68 @@ class ApiService {
     });
   }
 
-  async updateRecipe(recipeId: string, updates: any) {
-    return this.request<{ success: boolean; message: string; recipe: any }>(`/recipe/${recipeId}`, {
-      method: 'PUT',
-      body: JSON.stringify(updates),
-    });
-  }
-
-  async deleteRecipe(recipeId: string) {
-    return this.request<{ success: boolean; message: string }>(`/recipe/${recipeId}`, {
-      method: 'DELETE',
-    });
-  }
-
   async likeRecipe(recipeId: string) {
     return this.request<{ success: boolean; message: string; recipe: any }>(`/recipe/like/${recipeId}`, {
       method: 'POST',
     });
   }
 
-  async saveOnboardingAnswers(answers: Record<string, string>, mobileId: string) {
+  async getRecipeHistory(userId: string, page: number = 1, limit: number = 30) {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    return this.request<{ success: boolean; history: any[]; pagination?: { page: number; limit: number; total: number; hasMore: boolean } }>(`/recipe/history/${userId}?${params.toString()}`, {
+      method: 'GET',
+    });
+  }
+
+  async getRecipeById(id: string) {
+    return this.request<{ success: boolean; recipe: any }>(`/recipe/detail/${id}`, {
+      method: 'GET',
+    });
+  }
+
+  async saveOnboardingAnswers(answers: Record<string, string>, mobileId: string, timezone?: string) {
+    const country = Localization.region || undefined;
     return this.request<{ success: boolean; message: string; userId?: string }>('/user/onboarding', {
       method: 'POST',
-      body: JSON.stringify({ answers, mobileId }),
+      body: JSON.stringify({ answers, mobileId, timezone, country, language: this.getCurrentLanguage() }),
+    });
+  }
+
+  async getAppConfig() {
+    return this.request<{ dailySearchLimit: number }>('/config');
+  }
+
+  async validatePromoCode(code: string) {
+    return this.request<{ isValid: boolean; message?: string }>('/promo-code/validate', {
+      method: 'POST',
+      body: JSON.stringify({ code, language: this.getCurrentLanguage() }),
+    });
+  }
+
+  async validateImage(imageUrl: string) {
+    return this.request<{ isValid: boolean; details: any }>('/recipe/validate-image', {
+      method: 'POST',
+      body: JSON.stringify({ imageUrl }),
     });
   }
 
   // Notifications
-  async updateNotificationToken(mobileId: string, notificationToken: string) {
+  async updateNotificationToken(mobileId: string, notificationToken: string, timezone?: string) {
+    const country = Localization.region || undefined;
     return this.request<{ success: boolean; message: string }>('/user/notification-token', {
       method: 'POST',
-      body: JSON.stringify({ mobileId, notificationToken }),
+      body: JSON.stringify({ mobileId, notificationToken, timezone, country }),
     });
   }
 
-  async updateUserActivity(mobileId: string) {
+  async updateUserActivity(mobileId: string, timezone?: string) {
+    const country = Localization.region || undefined;
     return this.request<{ success: boolean; message: string }>('/user/activity', {
       method: 'POST',
-      body: JSON.stringify({ mobileId }),
+      body: JSON.stringify({ mobileId, timezone, country }),
     });
   }
 }

@@ -44,3 +44,5 @@ TO DO.txt
 
 # Ignore Gradle build output directory
 build
+
+.env.local

@@ -1,29 +1,77 @@
-import { router } from 'expo-router';
-import React, { useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
-  Alert,
+  Animated,
   Dimensions,
-  Image,
-  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  Platform,
+  Alert,
 } from 'react-native';
-import * as Notifications from 'expo-notifications';
-import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
+import I18n from '../../i18n';
+import analytics from '../../services/analytics';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import * as Notifications from 'expo-notifications';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useSubscription } from '../../hooks/useSubscription';
+import revenueCatService from '../../config/revenuecat';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
+const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 
 export default function ReminderScreen() {
-  const [isLoading, setIsLoading] = useState(false);
+  const insets = useSafeAreaInsets();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+  const [hasShownPaywall, setHasShownPaywall] = useState(false);
+  const { loadSubscriptionStatus } = useSubscription();
 
+  useEffect(() => {
+    analytics.track('Onboarding - Reminder Screen View');
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (hasShownPaywall) {
+        setHasShownPaywall(false);
+        handlePaywallReturn();
+      }
+    }, [hasShownPaywall])
+  );
+
+  const handlePaywallReturn = async () => {
+    // Recharger le statut pour vérifier si l'utilisateur s'est abonné
+    await loadSubscriptionStatus();
+
+    // Vérifier directement via le service pour être sûr d'avoir la donnée fraîche
+    const status = await revenueCatService.getSubscriptionStatus();
+
+    if (status.isSubscribed) {
+      await AsyncStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
+      router.replace('/(tabs)');
+    }
+  };
+
+  // TODO : move this code to the part after payment
   const handleActivateNotifications = async () => {
     try {
-      setIsLoading(true);
-
       // Demander les permissions de notification
       const { status: existingStatus } = await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
@@ -37,8 +85,8 @@ export default function ReminderScreen() {
       // Vérifier si les permissions ont été accordées
       if (finalStatus !== 'granted') {
         Alert.alert(
-          'Permissions refusées',
-          'Les notifications ne peuvent pas être activées sans votre autorisation. Vous pouvez les activer plus tard dans les paramètres de votre appareil.',
+          I18n.t('onboarding.notifications.permissionDeniedTitle'),
+          I18n.t('onboarding.notifications.permissionDeniedMessage'),
           [{ text: 'OK' }]
         );
         return;
@@ -55,195 +103,144 @@ export default function ReminderScreen() {
         }),
       });
 
-      // Programmer une notification de rappel (2 jours avant la fin de l'essai)
-      // Pour cet exemple, on programme une notification dans 1 minute
-      // TO DO : déplacer ce code dans la partie après paiement
+      // Programmer une notification de rappel (1 jour avant la fin de l'essai)
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: "Votre essai CookEat se termine bientôt !",
-          body: "Il vous reste 2 jours pour profiter de toutes les fonctionnalités premium. Continuez votre expérience culinaire !",
+          title: I18n.t('onboarding.reminder.title'),
+          body: I18n.t('onboarding.reminder.body'),
           data: { type: 'trial_reminder' },
         },
         trigger: {
           type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-          seconds: 5 * 24 * 60 * 60, // 5 jours
+          seconds: 1 * 24 * 60 * 60, // 1 jour
         },
       });
     } catch (error) {
       console.error('Erreur lors de l\'activation des notifications:', error);
       Alert.alert(
-        'Erreur',
-        'Impossible d\'activer les notifications. Veuillez réessayer.',
+        I18n.t('onboarding.notifications.errorTitle'),
+        I18n.t('onboarding.notifications.errorMessage'),
         [{ text: 'OK' }]
       );
     } finally {
-      setIsLoading(false);
+      Alert.alert(
+        I18n.t('onboarding.notifications.successTitle'),
+        I18n.t('onboarding.notifications.successMessage'),
+        [{ text: 'OK' }]
+      );
     }
   };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <Text style={{
-        fontSize: 30,
-        fontFamily: 'Degular',
-        color: Colors.light.text,
-        textAlign: 'right',
-        // marginTop: 20,
-        marginRight: 20
-      }}
-      >
-        CookEat AI
+  const handleContinue = () => {
+    setHasShownPaywall(true);
+    router.push({ pathname: '/paywall', params: { source: 'onboarding_reminder' } });
+  };
+
+  const renderTitle = () => {
+    const fullText = I18n.t('onboarding.reminder.title', { days: '1' });
+    const parts = fullText.split(/(1 jour|1 day)/);
+
+    return (
+      <Text style={styles.title}>
+        {parts.map((part, index) => (
+          <Text key={index} style={part.match(/1 jour|1 day/) ? styles.highlight : null}>
+            {part}
+          </Text>
+        ))}
       </Text>
+    );
+  };
 
+  return (
+    <SafeAreaView style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
       <View style={styles.content}>
-        {/* Section principale */}
-        <View style={styles.mainSection}>
-
-          <View style={{ flex: 1, marginBottom: 30 }}>
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
-              <Text style={styles.title}>Recevez des rappels pour <Text style={{ fontFamily: 'Degular', color: Colors.light.button }}>cuisiner</Text> et profiter de vos <Text style={{ fontFamily: 'Degular', color: Colors.light.button }}>recettes favorites</Text> !</Text>
-              <Text style={{
-                fontSize: 16,
-                fontFamily: 'Cronos Pro',
-                color: Colors.light.textSecondary,
-                marginTop: 16,
-                textAlign: 'center',
-                paddingHorizontal: 20,
-                lineHeight: 22
-              }}>
-                Nous vous enverrons des rappels discrets pour vous encourager à découvrir de nouvelles recettes et rester actif en cuisine.
-              </Text>
-            </View>
-
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <Image
-                source={require('../../assets/images/reminder.jpg')}
-                style={styles.illustration}
-              />
-            </View>
-
-            <TouchableOpacity style={styles.continueButton} onPress={handleActivateNotifications}>
-              <Text style={styles.buttonText}>Autoriser les notifications</Text>
-              <IconSymbol
-                style={{ position: 'absolute', right: 20 }}
-                name={Platform.OS === 'ios' ? "bell.fill" : "notifications"}
-                size={24}
-                color="white"
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={{ ...styles.continueButton, marginTop: 15 }} onPress={() => router.replace('/(tabs)')}>
-              <Text style={styles.buttonText}>Commencer</Text>
-              <IconSymbol
-                style={{ position: 'absolute', right: 20 }}
-                name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}
-                size={24}
-                color="white"
-              />
-            </TouchableOpacity>
-          </View>
+        <View style={styles.centerSection}>
+          <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }], alignItems: 'center' }}>
+            <Text style={styles.title}>🔔</Text>
+            {renderTitle()}
+          </Animated.View>
         </View>
+
+        <Animated.View style={[styles.bottomSection, { opacity: fadeAnim }]}>
+          <View style={styles.checkContainer}>
+            <Ionicons name="checkmark" size={20} color={Colors.light.text} />
+            <Text style={styles.checkText}>{I18n.t('onboarding.offerTrial.noPayment')}</Text>
+          </View>
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.continueButton}
+            onPress={handleContinue}
+          >
+            <Text style={styles.buttonText}>{I18n.t('onboarding.reminder.button')}</Text>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
-    </SafeAreaView >
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',//Colors.light.background,
+    backgroundColor: '#FDF9E2',
   },
   content: {
     flex: 1,
     paddingHorizontal: 24,
     justifyContent: 'space-between',
   },
-  mainSection: {
+  centerSection: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: height * 0.1,
   },
-  headerSection: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  emoji: {
-    fontSize: 64,
-    marginBottom: 16,
+  mascot: {
+    width: width * 0.6,
+    height: width * 0.6,
+    transform: [{ rotate: '20deg' }],
   },
   title: {
-    textAlign: 'center',
-    fontSize: width * 0.09,
+    fontSize: width * 0.08,
     fontFamily: 'Degular',
     color: Colors.light.text,
-    lineHeight: 36,
-    paddingHorizontal: 20,
-  },
-  descriptionSection: {
-    marginBottom: 48,
-    paddingHorizontal: 20,
-  },
-  description: {
-    textAlign: 'left',
-    fontSize: 18,
-    fontFamily: 'Cronos Pro Bold',
-    color: Colors.light.textSecondary,
-    lineHeight: 26,
+    textAlign: 'center',
+    lineHeight: width * 0.1,
   },
   highlight: {
-    color: Colors.light.text,
-    fontWeight: '600',
+    color: Colors.light.button, // Utilisation de la couleur du bouton pour la mise en évidence
   },
-  illustrationPlaceholder: {
-    width: width * 0.6,
-    height: width * 0.4,
-    backgroundColor: Colors.light.surface,
-    borderRadius: 20,
-    justifyContent: 'center',
+  bottomSection: {
+    gap: 10,
+    justifyContent: 'space-between',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
   },
-  placeholderText: {
-    fontSize: 48,
+  checkContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    opacity: 0.7,
   },
-  illustration: {
-    width: width * 0.6,
-    height: width * 0.5,
-    // resizeMode: 'contain',
-    marginBottom: 32,
-  },
-  buttonSection: {
-    paddingBottom: 40,
+  checkText: {
+    fontSize: 16,
+    fontFamily: 'Cronos Pro',
+    color: Colors.light.text,
   },
   continueButton: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: Colors.light.button,
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 200,
-    shadowColor: Colors.light.tint,
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
+    paddingVertical: 18,
+    borderRadius: 100,
+    width: '100%',
+    alignItems: 'center',
+    shadowColor: Colors.light.button,
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
-    marginTop: 50,
   },
   buttonText: {
     color: 'white',
-    fontSize: 20,
+    fontSize: 19,
     fontFamily: 'Degular',
   },
-}); 
+});

@@ -4,7 +4,7 @@
 const getApiBaseUrl = () => {
   // En développement local
   if (__DEV__) {
-    return 'http://192.168.1.192:8083/api';
+    return 'http://192.168.1.124:8083/api';
   }
 
   // En production (remplacez par votre vraie URL)
@@ -24,4 +24,8 @@ const getApiUrlFromConstants = () => {
   return getApiBaseUrl();
 };
 
-export const API_BASE_URL = getApiUrlFromConstants(); 
+export const API_BASE_URL = getApiUrlFromConstants();
+
+export const WS_URL = API_BASE_URL
+  .replace(/^http/, 'ws')
+  .replace(/\/api$/, '/ws');

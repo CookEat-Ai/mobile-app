@@ -28,10 +28,10 @@ export function useNotifications() {
 
     return () => {
       if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(notificationListener.current);
+        notificationListener.current.remove();
       }
       if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
+        responseListener.current.remove();
       }
     };
   }, []);
@@ -69,17 +69,7 @@ export function useNotifications() {
     }
   };
 
-  const scheduleLocalReminder = async (title: string, body: string, delayInSeconds: number) => {
-    try {
-      await notificationService.scheduleLocalNotification(title, body, delayInSeconds);
-    } catch (error) {
-      console.error('❌ Erreur lors de la planification du rappel:', error);
-    }
-  };
-
   return {
     updateActivity,
-    scheduleLocalReminder,
-    clearAllNotifications: notificationService.clearAllNotifications,
   };
 }
