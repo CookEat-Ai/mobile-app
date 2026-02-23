@@ -118,7 +118,7 @@ export default function HomeScreen() {
     // Calculer l'activité de la semaine (7 derniers jours)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const last7Days = Array(7).fill(0).map((_, i) => {
       const d = new Date(today);
       d.setDate(d.getDate() - (6 - i));
@@ -138,7 +138,7 @@ export default function HomeScreen() {
     // Calculer le streak actuel
     let streak = 0;
     let checkDate = new Date(today);
-    
+
     while (true) {
       const hasActivity = history.some(item => {
         const itemDate = new Date(item.createdAt);
@@ -159,7 +159,7 @@ export default function HomeScreen() {
             itemDate.setHours(0, 0, 0, 0);
             return itemDate.getTime() === yesterday.getTime();
           });
-          
+
           if (hasYesterdayActivity) {
             checkDate = yesterday;
             continue;
@@ -363,7 +363,13 @@ export default function HomeScreen() {
         scrollEventThrottle={16}
       >
         <View style={styles.titleContainer}>
-          <Text style={styles.mainTitle}>CookEat Ai</Text>
+          <View style={styles.mainTitleRow}>
+            <Text style={styles.mainTitle}>CookEat Ai</Text>
+            <Image
+              source={require('../../assets/images/mascot.png')}
+              style={styles.mainTitleMascot}
+            />
+          </View>
           <View style={styles.streakCard}>
             <View style={styles.streakLeft}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -460,10 +466,10 @@ export default function HomeScreen() {
           <View style={styles.historyContainer}>
             <Text style={styles.sectionTitle}>Historique</Text>
             {history.map((item) => (
-              <RecipeCard 
-                key={item.id} 
-                item={item as any} 
-                onPress={() => handleHistoryPress(item)} 
+              <RecipeCard
+                key={item.id}
+                item={item as any}
+                onPress={() => handleHistoryPress(item)}
               />
             ))}
             {isLoadingMoreHistory && (
@@ -484,12 +490,24 @@ const styles = StyleSheet.create({
   titleContainer: {
     paddingBottom: 30,
   },
+  mainTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    gap: 8,
+  },
   mainTitle: {
     fontSize: 32,
     fontFamily: 'Degular',
     fontWeight: 'bold',
     color: Colors.light.text,
     marginBottom: 8,
+  },
+  mainTitleMascot: {
+    width: 40,
+    height: 40,
+    marginBottom: 8,
+    transform: [{ rotate: '20deg' }],
   },
   introText: {
     fontSize: 18,

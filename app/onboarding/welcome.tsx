@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
-import React from 'react';
-import { Dimensions, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View, Easing } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/Colors';
 import I18n from '../../i18n';
@@ -10,6 +10,16 @@ const { width } = Dimensions.get('window');
 
 export default function WelcomeVideoScreen() {
   const insets = useSafeAreaInsets();
+  const mascotTranslateX = useRef(new Animated.Value(-width - 40)).current;
+
+  useEffect(() => {
+    Animated.timing(mascotTranslateX, {
+      toValue: 0,
+      duration: 750,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }, [mascotTranslateX]);
 
   return (
     <View
@@ -19,7 +29,10 @@ export default function WelcomeVideoScreen() {
       ]}
     >
       <View style={styles.brandRow}>
-        <Image source={require('../../assets/images/mascot.png')} style={styles.brandMascot} />
+        <Animated.Image
+          source={require('../../assets/images/mascot.png')}
+          style={[styles.brandMascot, { transform: [{ translateX: mascotTranslateX }, { rotate: '20deg' }] }]}
+        />
         <Text style={styles.brand}>CookEat Ai</Text>
       </View>
 
@@ -80,9 +93,8 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   brandMascot: {
-    width: 28,
-    height: 28,
-    transform: [{ rotate: '20deg' }],
+    width: 40,
+    height: 40,
   },
   continueButton: {
     backgroundColor: Colors.light.button,

@@ -1157,7 +1157,7 @@ export default function FormQuestionScreen() {
           style={[
             styles.continueButton,
             styles.continueButtonFloating,
-            (questions[index].multi && selectedOptions.length === 0 || ((questions[index].specialType === 'socialProof' || questions[index].specialType === 'notifications') && isReviewDelayActive)) && styles.continueButtonDisabled
+            (((questions[index].multi && !questions[index].optional) && selectedOptions.length === 0) || ((questions[index].specialType === 'socialProof' || questions[index].specialType === 'notifications') && isReviewDelayActive)) && styles.continueButtonDisabled
           ]}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -1172,7 +1172,9 @@ export default function FormQuestionScreen() {
               transitionToNextQuestion('');
             }
           }}
-          disabled={questions[index].multi ? selectedOptions.length === 0 : ((questions[index].specialType === 'socialProof' || questions[index].specialType === 'notifications') ? isReviewDelayActive : false)}
+          disabled={questions[index].multi
+            ? (!questions[index].optional && selectedOptions.length === 0)
+            : ((questions[index].specialType === 'socialProof' || questions[index].specialType === 'notifications') ? isReviewDelayActive : false)}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonText}>
