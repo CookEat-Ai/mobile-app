@@ -428,6 +428,14 @@ class RevenueCatService {
     }
   }
 
+  async invalidateCache(): Promise<void> {
+    try {
+      Purchases.invalidateCustomerInfoCache();
+    } catch {
+      // no-op
+    }
+  }
+
 }
 
 export default RevenueCatService.getInstance(); 

@@ -35,6 +35,8 @@ const MAPPING = {
   'arrow.right': { ios: 'arrow.right', android: 'arrow-forward' },
   'arrow_forward': { ios: 'arrow.right', android: 'arrow-forward' },
   'help': { ios: 'questionmark.circle', android: 'help-outline' },
+  'square.and.arrow.down': { ios: 'square.and.arrow.down', android: 'file-download' },
+  'square.and.arrow.down.fill': { ios: 'square.and.arrow.down.fill', android: 'file-download' },
 } as const;
 
 export function IconSymbol({

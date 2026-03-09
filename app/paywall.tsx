@@ -356,6 +356,12 @@ export default function PaywallScreen() {
     // Si on est dans l'onboarding, on marque comme terminé
     if (params.source?.toString().includes('onboarding')) {
       await AsyncStorage.setItem('onboarding_completed', 'true');
+      // Reset complet de la pile pour empêcher de revenir à l'onboarding
+      navigation.reset({
+        index: 0,
+        routes: [{ name: '(tabs)' as never }],
+      });
+      return;
     }
 
     // Fermer toutes les modales et aller sur home sans retour possible

@@ -15,8 +15,13 @@
       "day": "day",
       "days": "days"
     },
+    "deleteRecipe": {
+      "title": "Delete recipe",
+      "message": "Are you sure you want to delete \"%{title}\"?"
+    },
     "extractingIngredients": "Extracting ingredients...",
     "generatingRecipes": "Generating recipes...",
+    "generatedRecipes": "Generated recipes",
     "notifications": {
       "enabled": "Notifications enabled",
       "description": "You will now receive notifications from CookEat!",
@@ -195,10 +200,18 @@
       "Snack": "Snack"
     }
   },
+  "imported": {
+    "title": "Your imported recipes",
+    "noImported": "No imported recipes",
+    "noImportedDescription": "Import recipes from TikTok, Instagram or YouTube to find them here!",
+    "premiumTitle": "Unlimited imports",
+    "premiumDescription": "Import all the recipes you want from TikTok, Instagram and YouTube with no limits."
+  },
   "tabs": {
     "home": "Home",
     "recipes": "Recipes",
     "favorites": "Favorites",
+    "imported": "Imported",
     "search": "Search",
     "profile": "Profile"
   },
@@ -308,14 +321,16 @@
       "XKJXATBXR": {
         "1": "All recipes",
         "2": "Unlimited search",
-        "3": "No ads",
-        "4": "Exclusive recipes"
+        "3": "Unlimited TikTok & Insta import",
+        "4": "No ads",
+        "5": "Exclusive recipes"
       },
       "XKSRATBQW": {
         "1": "All recipes",
         "2": "Unlimited search",
-        "3": "No ads",
-        "4": "Exclusive recipes"
+        "3": "Unlimited TikTok & Insta import",
+        "4": "No ads",
+        "5": "Exclusive recipes"
       }
     }
   },
@@ -366,6 +381,7 @@
     "purchaseErrorDescription": "An error occurred while purchasing. Try again.",
     "features": {
       "unlimited": "Unlimited recipes",
+      "import": "Unlimited TikTok & Insta import",
       "favorites": "Save your favorites",
       "refine": "Refine result",
       "diet": "Personal diet",
@@ -434,7 +450,7 @@
     "activateMessage": "To receive our culinary reminders:",
     "manualInstructionIOS": "Go to Settings > CookEat > Notifications and enable 'Allow Notifications'",
     "manualInstructionAndroid": "Go to Settings > Apps > CookEat > Notifications and enable notifications",
-    "understood": "Got it",
+    "understood": "Got it!",
     "permissionDeniedTitle": "Permissions denied",
     "permissionDeniedMessage": "Notifications cannot be enabled without your permission. You can enable them later in your device settings.",
     "errorTitle": "Error",
@@ -819,7 +835,7 @@
     "activateMessage": "To receive our culinary reminders:",
     "manualInstructionIOS": "Go to Settings > CookEat > Notifications and enable 'Allow Notifications'",
     "manualInstructionAndroid": "Go to Settings > Apps > CookEat > Notifications and enable notifications",
-    "understood": "Understood",
+    "understood": "Understood!",
     "trialEndingTitle": "Your trial ends tomorrow",
     "trialEndingBody": "Make the most of CookEat AI today to keep your cooking momentum going 🍳"
   },
@@ -865,7 +881,14 @@
     "later": "Later",
     "seeOffers": "See offers",
     "onboardingContinue": "Continue!",
-    "onboardingContinuePremium": "Access my Premium recipes!"
+    "onboardingContinuePremium": "Access my Premium recipes!",
+    "viewOriginalVideo": "View original video",
+    "viewOnTikTok": "View on TikTok",
+    "viewOnInstagram": "View on Instagram",
+    "viewOnYouTube": "View on YouTube",
+    "unableToOpenVideo": "Unable to open video",
+    "imageUpdateError": "Error updating image",
+    "imagePickError": "Error picking image"
   },
   "recipe_loading": {
     "messages": [
@@ -927,5 +950,33 @@
       "Almost ready...",
       "Ready!"
     ]
+  },
+  "shareIntent": {
+    "importing": "Importing...",
+    "importingDescription": "We're analyzing the video and creating your recipe. This may take a few seconds.",
+    "progressStep": {
+      "init": "Preparing...",
+      "extracting_transcript": "Extracting transcript...",
+      "creating_recipe": "Creating recipe...",
+      "saving": "Saving..."
+    },
+    "success": "Recipe imported!",
+    "errorTitle": "Import failed",
+    "genericError": "An error occurred while importing the recipe. Make sure the video contains a recipe.",
+    "retry": "Retry",
+    "upgrade": "Upgrade to Premium",
+    "goHome": "Go to home"
+  },
+  "onboardingVideoImport": {
+    "title": "Import your recipes!",
+    "subtitle": "Seen a recipe on TikTok or Instagram?",
+    "howTo": "Here's how it's done 👇🏼",
+    "description": "Simply share the video to CookEat and the AI takes care of everything: ingredients, steps, and nutritional values.",
+    "howItWorks": "How it works?",
+    "step1": "1. Open TikTok or Instagram",
+    "step2": "2. Click 'Share'",
+    "step3": "3. Choose CookEat",
+    "button": "Got it!",
+    "skip": "Later"
   }
 }

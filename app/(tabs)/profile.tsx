@@ -34,7 +34,7 @@ export default function ProfileScreen() {
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const { subscriptionStatus, isLoading: subscriptionLoading, loadSubscriptionStatus, cancelSubscription } = useSubscription();
-  const [currentLanguage, setCurrentLanguage] = useState<'fr' | 'en'>('fr');
+  const [currentLanguage, setCurrentLanguage] = useState<'fr' | 'en'>((I18n.locale?.startsWith('fr') ? 'fr' : 'en') as 'fr' | 'en');
   const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] = useState(false);
   const screenHeight = Dimensions.get('window').height;
   const slideAnim = useRef(new Animated.Value(screenHeight)).current;
@@ -61,6 +61,16 @@ export default function ProfileScreen() {
       setIsSubscriptionModalVisible(false);
     });
   };
+
+  useEffect(() => {
+    const loadSavedLanguage = async () => {
+      const savedLang = await AsyncStorage.getItem('app_language');
+      if (savedLang === 'fr' || savedLang === 'en') {
+        setCurrentLanguage(savedLang);
+      }
+    };
+    loadSavedLanguage();
+  }, []);
 
   useFocusEffect(useCallback(() => {
     const checkSubscriptionStatus = async () => {

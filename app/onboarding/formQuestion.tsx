@@ -621,7 +621,7 @@ export default function FormQuestionScreen() {
         } catch (e) {
           console.error('Error requesting review:', e);
         }
-      }, 1000);
+      }, 3000);
 
       setTimeout(() => {
         setIsReviewDelayActive(false);

@@ -134,21 +134,27 @@ export default function IngredientSelectionScreen() {
         .join(', ');
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      const nextParams = {
+        streaming: 'true',
+        showGenerateButton: 'false',
+        ingredients: ingredientsString,
+        isOnboarding: 'true',
+        preferences: JSON.stringify({
+          dishType: 'Meal',
+          duration: 'Medium',
+          servings: 2,
+          cuisineStyle: 'All',
+          diet: 'None',
+          allowOtherIngredients: true
+        })
+      };
+
       router.replace({
-        pathname: '/recipe-detail',
+        pathname: '/recipe-loading',
         params: {
-          streaming: 'true',
-          showGenerateButton: 'false',
-          ingredients: ingredientsString,
-          isOnboarding: 'true',
-          preferences: JSON.stringify({
-            dishType: 'Meal',
-            duration: 'Medium',
-            servings: 2,
-            cuisineStyle: 'All',
-            diet: 'None',
-            allowOtherIngredients: true
-          })
+          nextPath: '/recipe-detail',
+          nextParams: JSON.stringify(nextParams),
+          startGeneration: 'true'
         }
       });
     }

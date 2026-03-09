@@ -2,7 +2,7 @@
   "expo": {
     "name": "CookEat Ai",
     "slug": "cookeat",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "cookeat",
@@ -95,7 +95,20 @@
         }
       ],
       "expo-secure-store",
-      "expo-video"
+      "expo-video",
+      [
+        "expo-share-intent",
+        {
+          "iosActivationRules": {
+            "NSExtensionActivationSupportsWebURLWithMaxCount": 1,
+            "NSExtensionActivationSupportsText": true
+          },
+          "androidIntentFilters": [
+            "text/*"
+          ],
+          "androidMultiIntentFilters": []
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

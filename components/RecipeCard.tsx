@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import FastImage from 'react-native-fast-image';
@@ -18,11 +18,16 @@ interface RecipeCardProps {
     steps?: any[];
   };
   onPress: () => void;
+  onLongPress?: () => void;
 }
 
-export const RecipeCard = ({ item, onPress }: RecipeCardProps) => {
+const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/150';
+
+export const RecipeCard = ({ item, onPress, onLongPress }: RecipeCardProps) => {
+  const [imageError, setImageError] = useState(false);
   const ingredientsCount = item.ingredientsCount || item.ingredients?.length || 0;
   const stepsCount = item.stepsCount || item.steps?.length || 0;
+  const imageUri = imageError || !item.image ? PLACEHOLDER_IMAGE : item.image;
 
   return (
     <TouchableOpacity
@@ -31,16 +36,22 @@ export const RecipeCard = ({ item, onPress }: RecipeCardProps) => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         onPress();
       }}
+      onLongPress={onLongPress ? () => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        onLongPress();
+      } : undefined}
+      delayLongPress={500}
       activeOpacity={0.8}
     >
       <View style={styles.content}>
         <FastImage
-          source={{ 
-            uri: item.image || 'https://via.placeholder.com/150',
+          source={{
+            uri: imageUri,
             priority: FastImage.priority.normal,
           }}
           style={styles.image}
           resizeMode={FastImage.resizeMode.cover}
+          onError={() => setImageError(true)}
         />
         <View style={styles.info}>
           <View style={styles.headerRow}>

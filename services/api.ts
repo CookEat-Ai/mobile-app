@@ -1,5 +1,6 @@
 import * as Localization from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import EventSource from 'react-native-sse';
 import { API_BASE_URL, WS_URL } from '../config/api';
 import I18n from '../i18n';
 
@@ -302,11 +303,14 @@ class ApiService {
     });
   }
 
-  async getRecipeHistory(userId: string, page: number = 1, limit: number = 30) {
+  async getRecipeHistory(userId: string, page: number = 1, limit: number = 30, options?: { isImported?: boolean }) {
     const params = new URLSearchParams({
       page: String(page),
       limit: String(limit),
     });
+    if (options?.isImported !== undefined) {
+      params.set('isImported', String(options.isImported));
+    }
     return this.request<{ success: boolean; history: any[]; pagination?: { page: number; limit: number; total: number; hasMore: boolean } }>(`/recipe/history/${userId}?${params.toString()}`, {
       method: 'GET',
     });
@@ -315,6 +319,13 @@ class ApiService {
   async getRecipeById(id: string) {
     return this.request<{ success: boolean; recipe: any }>(`/recipe/detail/${id}`, {
       method: 'GET',
+    });
+  }
+
+  async deleteRecipe(recipeId: string, userId: string) {
+    return this.request<{ success: boolean }>(`/recipe/${recipeId}`, {
+      method: 'DELETE',
+      body: JSON.stringify({ userId }),
     });
   }
 
@@ -344,6 +355,93 @@ class ApiService {
     });
   }
 
+  async importRecipeFromVideo(
+    videoUrl: string,
+    isSubscribed: boolean = false,
+    callbacks?: {
+      onProgress?: (progress: number, step?: string) => void;
+    }
+  ): Promise<ApiResponse<{ success: boolean; recipe: any }>> {
+    const userId = await AsyncStorage.getItem('userId');
+    const url = `${API_BASE_URL}/recipe/import-from-video`;
+    
+    return new Promise((resolve) => {
+      const es = new EventSource(url, {
+        method: 'POST',
+        headers: {
+          ...this.getHeaders() as any,
+        },
+        body: JSON.stringify({
+          url: videoUrl,
+          userId,
+          isSubscribed,
+          language: this.getCurrentLanguage(),
+        }),
+      });
+
+      let hasResolved = false;
+
+      es.addEventListener('progress', (event: any) => {
+        try {
+          const data = JSON.parse(event.data);
+          callbacks?.onProgress?.(data.progress ?? 0, data.step);
+        } catch (e) {
+          console.error('[SSE] Parse progress error:', e);
+        }
+      });
+
+      es.addEventListener('done', (event: any) => {
+        try {
+          const data = JSON.parse(event.data);
+          es.close();
+          if (!hasResolved) {
+            hasResolved = true;
+            resolve({ data: { success: data.success, recipe: data.recipe } });
+          }
+        } catch (e) {
+          console.error('[SSE] Parse done error:', e);
+          es.close();
+          if (!hasResolved) {
+            hasResolved = true;
+            resolve({ error: 'Erreur de réponse finale' });
+          }
+        }
+      });
+
+      es.addEventListener('error', (event: any) => {
+        console.error('[SSE] Error event:', event);
+        es.close();
+        if (!hasResolved) {
+          hasResolved = true;
+          const message = event.data ? JSON.parse(event.data).message : 'Erreur d\'import';
+          resolve({ error: message });
+        }
+      });
+
+      // Timeout de sécurité si rien ne se passe pendant 5 minutes
+      setTimeout(() => {
+        if (!hasResolved) {
+          es.close();
+          hasResolved = true;
+          resolve({ error: 'Délai d\'importation dépassé' });
+        }
+      }, 300000);
+    });
+  }
+
+  async updateRecipeImage(recipeId: string, imageUrl: string) {
+    const userId = await AsyncStorage.getItem('userId');
+    return this.request<{ success: boolean; recipe: any }>('/recipe/update-image', {
+      method: 'POST',
+      body: JSON.stringify({
+        recipeId,
+        imageUrl,
+        userId,
+        language: this.getCurrentLanguage(),
+      }),
+    });
+  }
+
   // Notifications
   async updateNotificationToken(mobileId: string, notificationToken: string, timezone?: string) {
     const country = Localization.region || undefined;
@@ -358,6 +456,31 @@ class ApiService {
     return this.request<{ success: boolean; message: string }>('/user/activity', {
       method: 'POST',
       body: JSON.stringify({ mobileId, timezone, country }),
+    });
+  }
+
+  async getFavorites(userId: string) {
+    return this.request<{ success: boolean; recipes: any[] }>(`/recipe/favorites/${userId}`, {
+      method: 'GET',
+    });
+  }
+
+  async addFavorite(userId: string, recipeId: string) {
+    return this.request<{ success: boolean }>(`/recipe/favorites/${userId}/add`, {
+      method: 'POST',
+      body: JSON.stringify({ recipeId }),
+    });
+  }
+
+  async removeFavorite(userId: string, recipeId: string) {
+    return this.request<{ success: boolean }>(`/recipe/favorites/${userId}/${recipeId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async checkFavorite(userId: string, recipeId: string) {
+    return this.request<{ success: boolean; isFavorite: boolean }>(`/recipe/favorites/${userId}/check/${recipeId}`, {
+      method: 'GET',
     });
   }
 }

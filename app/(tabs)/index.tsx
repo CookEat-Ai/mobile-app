@@ -1,10 +1,11 @@
 import { router, useFocusEffect } from "expo-router";
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import I18n from '../../i18n';
-import { ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, Platform, Image, Button, ActivityIndicator } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, Platform, Image, Button, ActivityIndicator, Alert, RefreshControl, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../constants/Colors';
+import { Ionicons } from '@expo/vector-icons';
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import revenueCatService from '../../config/revenuecat';
 import { useNotifications } from '../../hooks/useNotifications';
@@ -41,6 +42,16 @@ export default function HomeScreen() {
   const [isLoadingMoreHistory, setIsLoadingMoreHistory] = useState(false);
   const [streakCount, setStreakCount] = useState(0);
   const [weekActivity, setWeekActivity] = useState<boolean[]>(Array(7).fill(false));
+  const [refreshing, setRefreshing] = useState(false);
+
+  const animatedValues = useRef<Map<string, Animated.Value>>(new Map());
+
+  const getAnimatedValue = (id: string) => {
+    if (!animatedValues.current.has(id)) {
+      animatedValues.current.set(id, new Animated.Value(1));
+    }
+    return animatedValues.current.get(id)!;
+  };
 
   const { updateActivity } = useNotifications();
 
@@ -76,11 +87,28 @@ export default function HomeScreen() {
     checkSubscription();
   }, []);
 
+  const applyCachedImages = async () => {
+    const cached = await recipeStorage.getCachedImages();
+    if (Object.keys(cached).length === 0) return;
+    setHistory(prev => {
+      let changed = false;
+      const updated = prev.map(item => {
+        if (!item.image && cached[item.id]) {
+          changed = true;
+          return { ...item, image: cached[item.id] };
+        }
+        return item;
+      });
+      return changed ? updated : prev;
+    });
+  };
+
   useFocusEffect(
     useCallback(() => {
       loadPantryCount();
       checkSubscription();
-      loadHistory(1, true);
+      loadHistory(1, false);
+      applyCachedImages();
       maybeShowLaunchWheel();
     }, [])
   );
@@ -115,17 +143,22 @@ export default function HomeScreen() {
       return;
     }
 
-    // Calculer l'activité de la semaine (7 derniers jours)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const last7Days = Array(7).fill(0).map((_, i) => {
-      const d = new Date(today);
-      d.setDate(d.getDate() - (6 - i));
+    // Lundi de la semaine courante (ISO: lundi = 1)
+    const monday = new Date(today);
+    const dayOfWeek = today.getDay(); // 0=dim, 1=lun, ...
+    const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    monday.setDate(today.getDate() - diffToMonday);
+
+    const currentWeekDays = Array(7).fill(0).map((_, i) => {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
       return d;
     });
 
-    const activity = last7Days.map(date => {
+    const activity = currentWeekDays.map(date => {
       return history.some(item => {
         const itemDate = new Date(item.createdAt);
         itemDate.setHours(0, 0, 0, 0);
@@ -134,45 +167,12 @@ export default function HomeScreen() {
     });
 
     setWeekActivity(activity);
-
-    // Calculer le streak actuel
-    let streak = 0;
-    let checkDate = new Date(today);
-
-    while (true) {
-      const hasActivity = history.some(item => {
-        const itemDate = new Date(item.createdAt);
-        itemDate.setHours(0, 0, 0, 0);
-        return itemDate.getTime() === checkDate.getTime();
-      });
-
-      if (hasActivity) {
-        streak++;
-        checkDate.setDate(checkDate.getDate() - 1);
-      } else {
-        // Si pas d'activité aujourd'hui, on vérifie si on a eu une activité hier
-        if (streak === 0) {
-          const yesterday = new Date(today);
-          yesterday.setDate(yesterday.getDate() - 1);
-          const hasYesterdayActivity = history.some(item => {
-            const itemDate = new Date(item.createdAt);
-            itemDate.setHours(0, 0, 0, 0);
-            return itemDate.getTime() === yesterday.getTime();
-          });
-
-          if (hasYesterdayActivity) {
-            checkDate = yesterday;
-            continue;
-          }
-        }
-        break;
-      }
-    }
-    setStreakCount(streak);
+    setStreakCount(activity.filter(Boolean).length);
   };
 
   const loadHistory = async (page: number = 1, reset: boolean = false) => {
-    if (!reset && (!hasMoreHistory || isLoadingMoreHistory)) return;
+    if (!reset && isLoadingMoreHistory) return;
+    if (!reset && page > 1 && !hasMoreHistory) return;
 
     try {
       setIsLoadingMoreHistory(true);
@@ -186,7 +186,7 @@ export default function HomeScreen() {
         return;
       }
 
-      const response = await apiService.getRecipeHistory(userId, page, HISTORY_BATCH_SIZE);
+      const response = await apiService.getRecipeHistory(userId, page, HISTORY_BATCH_SIZE, { isImported: false });
       if (response.data?.history) {
         const imageById = new Map<string, string>();
         try {
@@ -205,13 +205,17 @@ export default function HomeScreen() {
           image: item.image || imageById.get(item.id),
         }));
         setHistory((prev) => {
-          const base = reset ? [] : prev;
-          const merged = [...base, ...newItems];
-          const deduped = new Map<string, HistoryItem>();
-          merged.forEach((item) => deduped.set(item.id, item));
-          return Array.from(deduped.values());
+          if (reset) {
+            return newItems;
+          }
+          const existingById = new Map<string, HistoryItem>();
+          prev.forEach((item) => existingById.set(item.id, item));
+          newItems.forEach((item) => existingById.set(item.id, item));
+          return Array.from(existingById.values());
         });
-        setHistoryPage(page);
+        if (reset || page > 1) {
+          setHistoryPage(page);
+        }
         if (typeof response.data.pagination?.hasMore === 'boolean') {
           setHasMoreHistory(response.data.pagination.hasMore);
         } else {
@@ -228,6 +232,16 @@ export default function HomeScreen() {
       setIsLoadingMoreHistory(false);
     }
   };
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([
+      loadHistory(1, true),
+      loadPantryCount(),
+      checkSubscription(),
+    ]);
+    setRefreshing(false);
+  }, []);
 
   const handleHistoryScroll = (event: any) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
@@ -292,6 +306,42 @@ export default function HomeScreen() {
     }
   };
 
+  const handleDeleteRecipe = (item: HistoryItem) => {
+    Alert.alert(
+      I18n.t('home.deleteRecipe.title'),
+      I18n.t('home.deleteRecipe.message', { title: item.title }),
+      [
+        { text: I18n.t('common.cancel'), style: 'cancel' },
+        {
+          text: I18n.t('common.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const userId = await resolveUserId();
+              if (!userId) return;
+
+              apiService.deleteRecipe(item.id, userId).catch((e) =>
+                console.error('Erreur lors de la suppression de la recette:', e)
+              );
+
+              const anim = getAnimatedValue(item.id);
+              Animated.timing(anim, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: false,
+              }).start(() => {
+                setHistory((prev) => prev.filter((h) => h.id !== item.id));
+                animatedValues.current.delete(item.id);
+              });
+            } catch (e) {
+              console.error('Erreur lors de la suppression de la recette:', e);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   const handleHistoryPress = async (item: HistoryItem) => {
     if (item.id.startsWith('mock-')) {
       // Données de test : naviguer avec les données fictives
@@ -327,21 +377,14 @@ export default function HomeScreen() {
     }
 
     try {
-      const response = await apiService.getRecipeById(item.id);
-      if (response.data?.recipe) {
-        const hydratedRecipe = {
-          ...response.data.recipe,
-          image: response.data.recipe.image || item.image,
-        };
-        router.push({
-          pathname: '/recipe-detail',
-          params: {
-            recipe: JSON.stringify(hydratedRecipe),
-            showGenerateButton: 'false',
-            isHistory: 'true'
-          }
-        });
-      }
+      router.push({
+        pathname: '/recipe-detail',
+        params: {
+          recipeId: item.id,
+          showGenerateButton: 'false',
+          isHistory: 'true'
+        }
+      });
     } catch (e) {
       console.error('Erreur lors du chargement de la recette:', e);
     }
@@ -361,6 +404,14 @@ export default function HomeScreen() {
         contentContainerStyle={{ paddingTop: insets.top + 20, paddingBottom: 100 }}
         onScroll={handleHistoryScroll}
         scrollEventThrottle={16}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.button}
+            progressViewOffset={insets.top + 20}
+          />
+        }
       >
         <View style={styles.titleContainer}>
           <View style={styles.mainTitleRow}>
@@ -383,10 +434,16 @@ export default function HomeScreen() {
             <View style={styles.streakRight}>
               <View style={styles.weekDaysRow}>
                 {Array(7).fill(0).map((_, i) => {
-                  const date = new Date();
-                  date.setDate(date.getDate() - (6 - i));
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  const dayOfWeek = today.getDay();
+                  const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+                  const monday = new Date(today);
+                  monday.setDate(today.getDate() - diffToMonday);
+                  const date = new Date(monday);
+                  date.setDate(monday.getDate() + i);
                   const dayName = date.toLocaleDateString(I18n.locale.startsWith('fr') ? 'fr-FR' : 'en-US', { weekday: 'short' }).slice(0, 2);
-                  const isToday = i === 6;
+                  const isToday = date.getTime() === today.getTime();
                   const isActive = weekActivity[i];
 
                   return (
@@ -464,14 +521,40 @@ export default function HomeScreen() {
         {/* Historique */}
         {history.length > 0 && (
           <View style={styles.historyContainer}>
-            <Text style={styles.sectionTitle}>Historique</Text>
-            {history.map((item) => (
-              <RecipeCard
-                key={item.id}
-                item={item as any}
-                onPress={() => handleHistoryPress(item)}
-              />
-            ))}
+            <View style={styles.historyHeader}>
+              <Text style={styles.sectionTitle}>{I18n.t('home.generatedRecipes')}</Text>
+              <TouchableOpacity onPress={() => router.push('/favorites-list')} activeOpacity={0.7}>
+                <Ionicons name="heart-outline" size={24} color="#FFD700" />
+              </TouchableOpacity>
+            </View>
+            {history.map((item) => {
+              const anim = getAnimatedValue(item.id);
+              return (
+                <Animated.View
+                  key={item.id}
+                  style={{
+                    opacity: anim,
+                    transform: [{
+                      scale: anim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0.8, 1],
+                      }),
+                    }],
+                    maxHeight: anim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 200],
+                    }),
+                    overflow: 'hidden',
+                  }}
+                >
+                  <RecipeCard
+                    item={item as any}
+                    onPress={() => handleHistoryPress(item)}
+                    onLongPress={() => handleDeleteRecipe(item)}
+                  />
+                </Animated.View>
+              );
+            })}
             {isLoadingMoreHistory && (
               <ActivityIndicator style={{ marginTop: 12 }} size="small" color={colors.button} />
             )}
@@ -720,11 +803,16 @@ const styles = StyleSheet.create({
   historyContainer: {
     marginTop: 30,
   },
+  historyHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
   sectionTitle: {
     fontSize: 24,
     fontFamily: 'Degular',
     fontWeight: 'bold',
     color: Colors.light.text,
-    marginBottom: 15,
   },
 });

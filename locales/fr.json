@@ -15,13 +15,18 @@
       "day": "jour",
       "days": "jours"
     },
+    "deleteRecipe": {
+      "title": "Supprimer la recette",
+      "message": "Tu es sûr de vouloir supprimer « %{title} » ?"
+    },
     "extractingIngredients": "Extraction des ingrédients en cours...",
     "generatingRecipes": "Génération des recettes en cours...",
+    "generatedRecipes": "Recettes générées",
     "voice": {
-    "start": "Appuie pour commencer",
-    "recording": "Donne-nous la liste de tes ingrédients, on t'écoute... 👂🏼",
-    "speaking": "Parle maintenant...",
-    "listening": "Écoute...",
+      "start": "Appuie pour commencer",
+      "recording": "Donne-nous la liste de tes ingrédients, on t'écoute... 👂🏼",
+      "speaking": "Parle maintenant...",
+      "listening": "Écoute...",
       "errorTitle": "Erreur de reconnaissance vocale",
       "errorDescriptionMicrophone": "On n'a pas accès au microphone. Vérifie les permissions dans les paramètres de l'appareil.",
       "errorDescriptionSpeech": "On n'a pas accès à la reconnaissance vocale. Vérifie les permissions dans les paramètres de l'appareil.",
@@ -187,10 +192,18 @@
       "difficile": "Difficile"
     }
   },
+  "imported": {
+    "title": "Tes recettes importées",
+    "noImported": "Aucune recette importée",
+    "noImportedDescription": "Importe des recettes depuis TikTok, Instagram ou YouTube pour les retrouver ici !",
+    "premiumTitle": "Import illimité",
+    "premiumDescription": "Importe toutes les recettes que tu veux depuis TikTok, Instagram et YouTube sans aucune limite."
+  },
   "tabs": {
     "home": "Accueil",
     "recipes": "Recettes",
     "favorites": "Favoris",
+    "imported": "Importées",
     "search": "Recherche",
     "profile": "Profil"
   },
@@ -302,14 +315,16 @@
       "XKJXATBXR": {
         "1": "Toutes les recettes",
         "2": "Recherche illimitée",
-        "3": "Sans publicités",
-        "4": "Recettes exclusives"
+        "3": "Import TikTok & Insta illimité",
+        "4": "Sans publicités",
+        "5": "Recettes exclusives"
       },
       "XKSRATBQW": {
         "1": "Toutes les recettes",
         "2": "Recherche illimitée",
-        "3": "Sans publicités",
-        "4": "Recettes exclusives"
+        "3": "Import TikTok & Insta illimité",
+        "4": "Sans publicités",
+        "5": "Recettes exclusives"
       }
     }
   },
@@ -361,6 +376,7 @@
     "purchaseErrorDescription": "Une erreur est survenue lors de l'achat. Réessaie.",
     "features": {
       "unlimited": "Recettes illimitées",
+      "import": "Import TikTok & Insta illimité",
       "favorites": "Sauve tes favoris",
       "refine": "Affiner résultat",
       "diet": "Régime perso",
@@ -429,7 +445,7 @@
     "activateMessage": "Pour recevoir tes rappels culinaires :",
     "manualInstructionIOS": "Va dans Réglages > CookEat > Notifications et active 'Autoriser les notifications'",
     "manualInstructionAndroid": "Va dans Paramètres > Apps > CookEat > Notifications et active les notifications",
-    "understood": "Compris",
+    "understood": "Compris !",
     "permissionDeniedTitle": "Permissions refusées",
     "permissionDeniedMessage": "Les notifications ne peuvent pas être activées sans ton autorisation. Tu peux les activer plus tard dans les paramètres de ton appareil.",
     "errorTitle": "Erreur",
@@ -814,7 +830,7 @@
     "activateMessage": "Pour recevoir tes rappels culinaires :",
     "manualInstructionIOS": "Va dans Réglages > CookEat > Notifications et active 'Autoriser les notifications'",
     "manualInstructionAndroid": "Va dans Paramètres > Apps > CookEat > Notifications et active les notifications",
-    "understood": "Compris",
+    "understood": "Compris !",
     "trialEndingTitle": "Ton essai se termine demain",
     "trialEndingBody": "Profite de CookEat AI aujourd'hui pour ne pas perdre ton élan en cuisine 🍳"
   },
@@ -860,7 +876,14 @@
     "later": "Plus tard",
     "seeOffers": "Voir les offres",
     "onboardingContinue": "Continuer !",
-    "onboardingContinuePremium": "Accéder à mes recettes Premium !"
+    "onboardingContinuePremium": "Accéder à mes recettes Premium !",
+    "viewOriginalVideo": "Voir la vidéo d'origine",
+    "viewOnTikTok": "Voir sur TikTok",
+    "viewOnInstagram": "Voir sur Instagram",
+    "viewOnYouTube": "Voir sur YouTube",
+    "unableToOpenVideo": "Impossible d'ouvrir la vidéo",
+    "imageUpdateError": "Erreur lors de la mise à jour de l'image",
+    "imagePickError": "Erreur lors du choix de l'image"
   },
   "recipe_loading": {
     "messages": [
@@ -922,5 +945,33 @@
       "Presque prêt...",
       "C'est prêt !"
     ]
+  },
+  "shareIntent": {
+    "importing": "Import en cours...",
+    "importingDescription": "On analyse la vidéo et on crée ta recette. Ça peut prendre quelques secondes.",
+    "progressStep": {
+      "init": "Préparation...",
+      "extracting_transcript": "Extraction de la transcription...",
+      "creating_recipe": "Création de la recette...",
+      "saving": "Enregistrement..."
+    },
+    "success": "Recette importée !",
+    "errorTitle": "Impossible d'importer",
+    "genericError": "Une erreur est survenue lors de l'import de la recette. Vérifie que la vidéo contient bien une recette.",
+    "retry": "Réessayer",
+    "upgrade": "Passer au Premium",
+    "goHome": "Retour à l'accueil"
+  },
+  "onboardingVideoImport": {
+    "title": "Importez vos recettes !",
+    "subtitle": "Vous avez vu une recette sur TikTok ou Instagram ?",
+    "howTo": "Voici comment faire 👇🏼",
+    "description": "Partagez simplement la vidéo vers CookEat et l'IA s'occupe de tout : ingrédients, étapes et valeurs nutritionnelles.",
+    "howItWorks": "Comment ça marche ?",
+    "step1": "1. Ouvrez TikTok ou Instagram",
+    "step2": "2. Cliquez sur 'Partager'",
+    "step3": "3. Choisissez CookEat",
+    "button": "Compris !",
+    "skip": "Plus tard"
   }
 }

@@ -7,33 +7,68 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0143C0BBD24A456FA170195B /* ShareExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = FCED75BE55244F94A60016E0 /* ShareExtension.appex */; };
+		0A7B91B5A0B04B4491987ED5 /* ShareExtensionPreprocessor.js in Resources */ = {isa = PBXBuildFile; fileRef = D7FEB33DFE5C4921891C8944 /* ShareExtensionPreprocessor.js */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		35A7050148A7B8E337BAD991 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8C5B300ED9060BD97C21DA8E /* PrivacyInfo.xcprivacy */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		449CF74FC9E32C2FDD99E0F9 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48C53A152CAB551B4A4A27B9 /* ExpoModulesProvider.swift */; };
-		A0EF8EB2182D439DBDF59D49 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A96EC2BD53664EE099959D56 /* InfoPlist.strings */; };
+		43D20B8E094A48F59C8EAA04 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7385C00F75610882D577A960 /* ExpoModulesProvider.swift */; };
+		60F4E41AD6544D1427C47BF3 /* libPods-CookEatAi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 690ECA777B4588483919704C /* libPods-CookEatAi.a */; };
+		63CAAE12D0FB4C2D82AFE679 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1FB265AC577F4B98956DDDD4 /* InfoPlist.strings */; };
+		7182ABCAB8674C9BA527406F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8E9CB4AB346B499D86808F0E /* InfoPlist.strings */; };
+		74A517A640BE460BBFFFF503 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EBD04638BC4940C7B56C2E3F /* MainInterface.storyboard */; };
+		850C495AEEF24024B4212CFB /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A7327F09F44B669B0052C7 /* ShareViewController.swift */; };
+		A6DA49742E1D49EC86273C0F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E754893013E24817BBEC6C11 /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		CA7E6CB7152F9C3FB4BCF9F2 /* libPods-CookEatAi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 647C27BD01383AC497B01640 /* libPods-CookEatAi.a */; };
-		DA09A81F2A2F4E8BAC5B14CB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0CED071B9AA54794BC570B8D /* InfoPlist.strings */; };
+		C035B83CF4A8D55FBFC1C6B5 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = E754893013E24817BBEC6C11 /* PrivacyInfo.xcprivacy */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		2363EA4F733E47C4B0D8D8A5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4E0EED5D3BA94EAA8E1935ED;
+			remoteInfo = ShareExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		46FF26CC085B45719279F117 /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				0143C0BBD24A456FA170195B /* ShareExtension.appex in Copy Files */,
+			);
+			name = "Copy Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		0CED071B9AA54794BC570B8D /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* CookEatAi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CookEatAi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = CookEatAi/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = CookEatAi/Info.plist; sourceTree = "<group>"; };
-		48C53A152CAB551B4A4A27B9 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-CookEatAi/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		647C27BD01383AC497B01640 /* libPods-CookEatAi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CookEatAi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		84A7AA1414B63E60A4B5F3EB /* Pods-CookEatAi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CookEatAi.release.xcconfig"; path = "Target Support Files/Pods-CookEatAi/Pods-CookEatAi.release.xcconfig"; sourceTree = "<group>"; };
-		8C5B300ED9060BD97C21DA8E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = CookEatAi/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		A96EC2BD53664EE099959D56 /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		14026322B66E4CE5A393E7C1 /* ShareExtension-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; path = "ShareExtension-Info.plist"; sourceTree = "<group>"; };
+		1FB265AC577F4B98956DDDD4 /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		34A7327F09F44B669B0052C7 /* ShareViewController.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		690ECA777B4588483919704C /* libPods-CookEatAi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CookEatAi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		72EA298770DB768214A42399 /* Pods-CookEatAi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CookEatAi.debug.xcconfig"; path = "Target Support Files/Pods-CookEatAi/Pods-CookEatAi.debug.xcconfig"; sourceTree = "<group>"; };
+		7385C00F75610882D577A960 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-CookEatAi/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		8E9CB4AB346B499D86808F0E /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = CookEatAi/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		D0C6EEEE00160528C9AE2769 /* Pods-CookEatAi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CookEatAi.debug.xcconfig"; path = "Target Support Files/Pods-CookEatAi/Pods-CookEatAi.debug.xcconfig"; sourceTree = "<group>"; };
+		C130285396D44CC3A64E6B75 /* ShareExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; path = ShareExtension.entitlements; sourceTree = "<group>"; };
+		C76333E48D455F582357532F /* Pods-CookEatAi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CookEatAi.release.xcconfig"; path = "Target Support Files/Pods-CookEatAi/Pods-CookEatAi.release.xcconfig"; sourceTree = "<group>"; };
+		D7FEB33DFE5C4921891C8944 /* ShareExtensionPreprocessor.js */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; path = ShareExtensionPreprocessor.js; sourceTree = "<group>"; };
+		E754893013E24817BBEC6C11 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		EBD04638BC4940C7B56C2E3F /* MainInterface.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; path = MainInterface.storyboard; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = CookEatAi/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* CookEatAi-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CookEatAi-Bridging-Header.h"; path = "CookEatAi/CookEatAi-Bridging-Header.h"; sourceTree = "<group>"; };
+		FCED75BE55244F94A60016E0 /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = 9; includeInIndex = 0; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,7 +76,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA7E6CB7152F9C3FB4BCF9F2 /* libPods-CookEatAi.a in Frameworks */,
+				60F4E41AD6544D1427C47BF3 /* libPods-CookEatAi.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A9E8DDC2C9CE4A0EA23A1B78 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,43 +99,46 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				8C5B300ED9060BD97C21DA8E /* PrivacyInfo.xcprivacy */,
 			);
 			name = CookEatAi;
 			sourceTree = "<group>";
 		};
-		1C9AC5D8CA04A994E923E7AA /* CookEatAi */ = {
+		1F1562592D990A7BBE69B19D /* CookEatAi */ = {
 			isa = PBXGroup;
 			children = (
-				48C53A152CAB551B4A4A27B9 /* ExpoModulesProvider.swift */,
+				7385C00F75610882D577A960 /* ExpoModulesProvider.swift */,
 			);
 			name = CookEatAi;
-			sourceTree = "<group>";
-		};
-		24EBFC0E8A9B704343412FFF /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				D0C6EEEE00160528C9AE2769 /* Pods-CookEatAi.debug.xcconfig */,
-				84A7AA1414B63E60A4B5F3EB /* Pods-CookEatAi.release.xcconfig */,
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				647C27BD01383AC497B01640 /* libPods-CookEatAi.a */,
+				690ECA777B4588483919704C /* libPods-CookEatAi.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		37763736FCEF44B58907D5CD /* en.lproj */ = {
+		49DF1EEFA87545FA950D3A45 /* fr.lproj */ = {
 			isa = PBXGroup;
 			children = (
-				A96EC2BD53664EE099959D56 /* InfoPlist.strings */,
+				8E9CB4AB346B499D86808F0E /* InfoPlist.strings */,
 			);
-			name = en.lproj;
+			name = fr.lproj;
+			sourceTree = "<group>";
+		};
+		6B403E5E5A7348CFB3DC833D /* ShareExtension */ = {
+			isa = PBXGroup;
+			children = (
+				34A7327F09F44B669B0052C7 /* ShareViewController.swift */,
+				EBD04638BC4940C7B56C2E3F /* MainInterface.storyboard */,
+				D7FEB33DFE5C4921891C8944 /* ShareExtensionPreprocessor.js */,
+				E754893013E24817BBEC6C11 /* PrivacyInfo.xcprivacy */,
+				14026322B66E4CE5A393E7C1 /* ShareExtension-Info.plist */,
+				C130285396D44CC3A64E6B75 /* ShareExtension.entitlements */,
+			);
+			path = ShareExtension;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -110,8 +155,9 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				24EBFC0E8A9B704343412FFF /* Pods */,
-				888F723BCA203EA4231B5ADD /* ExpoModulesProviders */,
+				6B403E5E5A7348CFB3DC833D /* ShareExtension */,
+				BFD16CAA773B1E77C02A8D45 /* Pods */,
+				D75071D27007C6781512242C /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -122,35 +168,45 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* CookEatAi.app */,
+				FCED75BE55244F94A60016E0 /* ShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		888F723BCA203EA4231B5ADD /* ExpoModulesProviders */ = {
+		930081B4746D4498BDDCFCC1 /* en.lproj */ = {
 			isa = PBXGroup;
 			children = (
-				1C9AC5D8CA04A994E923E7AA /* CookEatAi */,
+				1FB265AC577F4B98956DDDD4 /* InfoPlist.strings */,
 			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
-		A03909E17F6943D49F4817B7 /* fr.lproj */ = {
-			isa = PBXGroup;
-			children = (
-				0CED071B9AA54794BC570B8D /* InfoPlist.strings */,
-			);
-			name = fr.lproj;
+			name = en.lproj;
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
 				BB2F792C24A3F905000567C9 /* Expo.plist */,
-				A03909E17F6943D49F4817B7 /* fr.lproj */,
-				37763736FCEF44B58907D5CD /* en.lproj */,
+				49DF1EEFA87545FA950D3A45 /* fr.lproj */,
+				930081B4746D4498BDDCFCC1 /* en.lproj */,
 			);
 			name = Supporting;
 			path = CookEatAi/Supporting;
+			sourceTree = "<group>";
+		};
+		BFD16CAA773B1E77C02A8D45 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				72EA298770DB768214A42399 /* Pods-CookEatAi.debug.xcconfig */,
+				C76333E48D455F582357532F /* Pods-CookEatAi.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		D75071D27007C6781512242C /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				1F1562592D990A7BBE69B19D /* CookEatAi */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -161,23 +217,42 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "CookEatAi" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				0BFD07DCB0FA237083D2DD5B /* [Expo] Configure project */,
+				83D0F003CB39E681641BCB4E /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				CBEF77D24AD5407B8BE4511F /* Upload Debug Symbols to Sentry */,
-				337988C1AEB0D77BC1FC7F67 /* [CP] Embed Pods Frameworks */,
+				46FF26CC085B45719279F117 /* Copy Files */,
+				CE8611911EB74BCC96781089 /* Upload Debug Symbols to Sentry */,
+				6F889598B089DA367E645871 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				ED01F8C8A7B947539D355D4D /* PBXTargetDependency */,
 			);
 			name = CookEatAi;
 			productName = CookEatAi;
 			productReference = 13B07F961A680F5B00A75B9A /* CookEatAi.app */;
 			productType = "com.apple.product-type.application";
+		};
+		4E0EED5D3BA94EAA8E1935ED /* ShareExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F02F76101AFB4B7A87765EA1 /* Build configuration list for PBXNativeTarget "ShareExtension" */;
+			buildPhases = (
+				7CD346A399D4425ABAB54916 /* Sources */,
+				38CC82E0F4264C13B483F74F /* Resources */,
+				A9E8DDC2C9CE4A0EA23A1B78 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShareExtension;
+			productName = ShareExtension;
+			productReference = FCED75BE55244F94A60016E0 /* ShareExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -188,6 +263,7 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = P48MLLHB99;
 						LastSwiftMigration = 1250;
 					};
 				};
@@ -206,6 +282,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* CookEatAi */,
+				4E0EED5D3BA94EAA8E1935ED /* ShareExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -218,9 +295,19 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				DA09A81F2A2F4E8BAC5B14CB /* InfoPlist.strings in Resources */,
-				A0EF8EB2182D439DBDF59D49 /* InfoPlist.strings in Resources */,
-				35A7050148A7B8E337BAD991 /* PrivacyInfo.xcprivacy in Resources */,
+				7182ABCAB8674C9BA527406F /* InfoPlist.strings in Resources */,
+				63CAAE12D0FB4C2D82AFE679 /* InfoPlist.strings in Resources */,
+				C035B83CF4A8D55FBFC1C6B5 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		38CC82E0F4264C13B483F74F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				74A517A640BE460BBFFFF503 /* MainInterface.storyboard in Resources */,
+				0A7B91B5A0B04B4491987ED5 /* ShareExtensionPreprocessor.js in Resources */,
+				A6DA49742E1D49EC86273C0F /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,26 +351,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		0BFD07DCB0FA237083D2DD5B /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-CookEatAi/expo-configure-project.sh\"\n";
-		};
-		337988C1AEB0D77BC1FC7F67 /* [CP] Embed Pods Frameworks */ = {
+		6F889598B089DA367E645871 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -365,7 +433,26 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CookEatAi/Pods-CookEatAi-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CBEF77D24AD5407B8BE4511F /* Upload Debug Symbols to Sentry */ = {
+		83D0F003CB39E681641BCB4E /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-CookEatAi/expo-configure-project.sh\"\n";
+		};
+		CE8611911EB74BCC96781089 /* Upload Debug Symbols to Sentry */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -389,21 +476,37 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				449CF74FC9E32C2FDD99E0F9 /* ExpoModulesProvider.swift in Sources */,
+				43D20B8E094A48F59C8EAA04 /* ExpoModulesProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7CD346A399D4425ABAB54916 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				850C495AEEF24024B4212CFB /* ShareViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		ED01F8C8A7B947539D355D4D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4E0EED5D3BA94EAA8E1935ED /* ShareExtension */;
+			targetProxy = 2363EA4F733E47C4B0D8D8A5 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D0C6EEEE00160528C9AE2769 /* Pods-CookEatAi.debug.xcconfig */;
+			baseConfigurationReference = 72EA298770DB768214A42399 /* Pods-CookEatAi.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CookEatAi/CookEatAi.entitlements;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P48MLLHB99;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -416,7 +519,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -435,12 +538,12 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 84A7AA1414B63E60A4B5F3EB /* Pods-CookEatAi.release.xcconfig */;
+			baseConfigurationReference = C76333E48D455F582357532F /* Pods-CookEatAi.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CookEatAi/CookEatAi.entitlements;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = P48MLLHB99;
 				INFOPLIST_FILE = CookEatAi/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
@@ -448,7 +551,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2;
+				MARKETING_VERSION = 1.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -582,6 +685,62 @@
 			};
 			name = Release;
 		};
+		A72BFA8C323B49CDBA36D767 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P48MLLHB99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ShareExtension/ShareExtension-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.3.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.gokugen.cookeat.share-extension";
+				PRODUCT_NAME = ShareExtension;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CDA705486DB94FB18E42D0F1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = ShareExtension/ShareExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = P48MLLHB99;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "ShareExtension/ShareExtension-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.3.0;
+				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.gokugen.cookeat.share-extension";
+				PRODUCT_NAME = ShareExtension;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -599,6 +758,15 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F02F76101AFB4B7A87765EA1 /* Build configuration list for PBXNativeTarget "ShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A72BFA8C323B49CDBA36D767 /* Debug */,
+				CDA705486DB94FB18E42D0F1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

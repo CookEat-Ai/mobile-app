@@ -84,11 +84,7 @@ export default function OnboardingProfileReadyScreen() {
 
     analytics.track('onboarding_summary_dashboard_continue', { variant });
 
-    if (variant === 'C' || variant === 'D') {
-      router.replace('/onboarding/videoDemo');
-    } else {
-      router.replace('/onboarding/ahaMoment');
-    }
+    router.replace('/onboarding/videoImportTutorial');
   };
 
   return (

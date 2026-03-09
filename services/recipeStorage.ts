@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STORAGE_KEY = 'generated_recipes';
+const IMAGE_CACHE_KEY = 'recipe_image_cache';
 
 interface StoredRecipe {
   id: string;
@@ -64,6 +65,22 @@ class RecipeStorageService {
     } catch (error) {
       console.error('Erreur lors de la recherche des recettes existantes:', error);
       return [];
+    }
+  }
+
+  async cacheRecipeImage(recipeId: string, image: string): Promise<void> {
+    try {
+      const cache = JSON.parse(await AsyncStorage.getItem(IMAGE_CACHE_KEY) || '{}');
+      cache[recipeId] = image;
+      await AsyncStorage.setItem(IMAGE_CACHE_KEY, JSON.stringify(cache));
+    } catch { /* ignore */ }
+  }
+
+  async getCachedImages(): Promise<Record<string, string>> {
+    try {
+      return JSON.parse(await AsyncStorage.getItem(IMAGE_CACHE_KEY) || '{}');
+    } catch {
+      return {};
     }
   }
 

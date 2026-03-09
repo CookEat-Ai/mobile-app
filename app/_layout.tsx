@@ -1,7 +1,7 @@
 import { DefaultTheme, ThemeProvider } from "@react-navigation/native";
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import 'react-native-reanimated';
 import { RecipeProvider } from '../contexts/RecipeContext';
 import { useEffect } from 'react';
@@ -15,6 +15,7 @@ import apiService from '../services/api';
 import { getUniqueDeviceId } from '../services/deviceStorage';
 import * as Sentry from '@sentry/react-native';
 import { SENTRY_DSN } from '../config/sentry';
+import { ShareIntentProvider, useShareIntentContext } from 'expo-share-intent';
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -22,6 +23,40 @@ Sentry.init({
 });
 
 SplashScreen.preventAutoHideAsync();
+
+function extractUrl(text: string): string | null {
+  const match = text.match(/https?:\/\/[^\s]+/i);
+  return match ? match[0].replace(/[.,;:!?)]+$/, '') : null;
+}
+
+function ShareIntentHandler() {
+  const router = useRouter();
+  const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntentContext();
+
+  useEffect(() => {
+    if (!hasShareIntent || !shareIntent) return;
+
+    console.log('[ShareIntent] raw intent:', JSON.stringify(shareIntent));
+
+    const raw = shareIntent.webUrl || shareIntent.text || '';
+    const url = extractUrl(raw);
+
+    console.log('[ShareIntent] extracted url:', url);
+
+    resetShareIntent();
+
+    if (url) {
+      router.replace({
+        pathname: '/share-intent',
+        params: { url },
+      });
+    } else {
+      router.replace('/(tabs)');
+    }
+  }, [hasShareIntent, shareIntent, resetShareIntent, router]);
+
+  return null;
+}
 
 function RootLayout() {
   useEffect(() => {
@@ -119,19 +154,24 @@ function RootLayout() {
   }
 
   return (
-    <RecipeProvider>
-      <ThemeProvider value={DefaultTheme}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" options={{ headerShown: false, animation: 'none' }} />
-          <Stack.Screen name="onboarding" options={{ headerShown: false, animation: 'none' }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'none' }} />
-          <Stack.Screen name="recipe-detail" options={{ headerShown: false }} />
-          <Stack.Screen name="recipe-loading-modal" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
-          <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
-          <Stack.Screen name="paywall" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
-        </Stack>
-      </ThemeProvider>
-    </RecipeProvider>
+    <ShareIntentProvider>
+      <RecipeProvider>
+        <ThemeProvider value={DefaultTheme}>
+          <ShareIntentHandler />
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" options={{ headerShown: false, animation: 'none' }} />
+            <Stack.Screen name="onboarding" options={{ headerShown: false, animation: 'none' }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'none' }} />
+            <Stack.Screen name="recipe-detail" options={{ headerShown: false }} />
+            <Stack.Screen name="favorites-list" options={{ headerShown: false }} />
+            <Stack.Screen name="share-intent" options={{ headerShown: false, animation: 'fade' }} />
+            <Stack.Screen name="recipe-loading-modal" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+            <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+            <Stack.Screen name="paywall" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+          </Stack>
+        </ThemeProvider>
+      </RecipeProvider>
+    </ShareIntentProvider>
   );
 }
 

@@ -41,10 +41,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="favorites"
+        name="imported"
         options={{
-          title: I18n.t('tabs.favorites'),
-          tabBarIcon: ({ color, focused }) => <IconSymbol size={32} name={focused ? "heart.fill" : "heart"} color={color} />,
+          title: I18n.t('tabs.imported'),
+          tabBarIcon: ({ color, focused }) => <IconSymbol size={32} name={focused ? "square.and.arrow.down.fill" : "square.and.arrow.down"} color={color} />,
         }}
       />
       <Tabs.Screen

@@ -6,7 +6,7 @@ import { useVideoPlayer, VideoView } from 'expo-video';
 import Svg, { Circle } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { IconSymbol } from '../components/ui/IconSymbol';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useGlobalSearchParams } from 'expo-router';
 import { Colors } from '../constants/Colors';
 import * as Haptics from 'expo-haptics';
 import apiService from '../services/api';
@@ -19,22 +19,28 @@ const MAX_PHOTOS = 30;
 const MAX_VIDEO_DURATION = 40; // seconds
 
 export default function CameraScreen() {
-  const params = useLocalSearchParams<{ isOnboarding?: string, mode?: string, initialMode?: 'photo' | 'video' }>();
+  const params = useGlobalSearchParams();
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<'back' | 'front'>('back');
-  const [mode, setMode] = useState<'photo' | 'video'>(params.initialMode || 'photo');
+  const [mode, setMode] = useState<'photo' | 'video'>('photo');
+
+  useEffect(() => {
+    if (params.initialMode) {
+      setMode(params.initialMode as 'photo' | 'video');
+    }
+  }, []);
   const [isRecording, setIsRecording] = useState(false);
   const [recordedVideoUri, setRecordedVideoUri] = useState<string | null>(null);
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const [zoom, setZoom] = useState(0);
-  const [autofocusMode, setAutofocusMode] = useState<'on' | 'off'>('off');
+  const [focusPulsePoint, setFocusPulsePoint] = useState<{ x: number; y: number } | null>(null);
   const zoomRef = useRef(0);
   const isRecordingRef = useRef(false);
   const cameraRef = useRef<CameraView>(null);
-  const focusResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const focusInProgressRef = useRef(false);
+  const focusPulseScale = useRef(new Animated.Value(0.7)).current;
+  const focusPulseOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     isRecordingRef.current = isRecording;
@@ -44,18 +50,16 @@ export default function CameraScreen() {
     zoomRef.current = zoom;
   }, [zoom]);
 
-  useEffect(() => {
-    return () => {
-      if (focusResetTimeoutRef.current) {
-        clearTimeout(focusResetTimeoutRef.current);
-      }
-    };
-  }, []);
 
-  const player = useVideoPlayer(recordedVideoUri, (player) => {
-    player.loop = true;
-    player.play();
-  });
+  const player = useVideoPlayer(null);
+
+  useEffect(() => {
+    if (recordedVideoUri) {
+      player.replace(recordedVideoUri);
+      player.loop = true;
+      player.play();
+    }
+  }, [player, recordedVideoUri]);
 
   // Animation states
   const [loadingTextIndex, setLoadingTextIndex] = useState(0);
@@ -367,27 +371,32 @@ export default function CameraScreen() {
   };
 
   const handleTapToFocus = (event: GestureResponderEvent) => {
-    if (!permission?.granted || !cameraRef.current) return;
     if (recordedVideoUri || isLoading || isRecording || isCapturing) return;
-    if (mode !== 'photo') return;
-    if (focusInProgressRef.current) return;
+    if (focusPulsePoint) return;
 
-    const { locationY } = event.nativeEvent;
-    // Ignore la zone basse réservée aux contrôles pour éviter les faux focus.
-    if (locationY > Dimensions.get('window').height * 0.72) return;
+    const { locationX, locationY } = event.nativeEvent;
 
-    focusInProgressRef.current = true;
-    setAutofocusMode('on');
+    setFocusPulsePoint({ x: locationX, y: locationY });
+    focusPulseScale.setValue(0.6);
+    focusPulseOpacity.setValue(0.85);
+    Animated.parallel([
+      Animated.spring(focusPulseScale, {
+        toValue: 1,
+        friction: 6,
+        tension: 80,
+        useNativeDriver: true,
+      }),
+      Animated.timing(focusPulseOpacity, {
+        toValue: 0,
+        duration: 500,
+        delay: 200,
+        easing: Easing.out(Easing.quad),
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setFocusPulsePoint(null);
+    });
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
-
-    if (focusResetTimeoutRef.current) {
-      clearTimeout(focusResetTimeoutRef.current);
-    }
-
-    focusResetTimeoutRef.current = setTimeout(() => {
-      setAutofocusMode('off');
-      focusInProgressRef.current = false;
-    }, 450);
   };
 
   const finishCapture = async () => {
@@ -442,8 +451,8 @@ export default function CameraScreen() {
                 pathname: '/ingredient-list',
                 params: {
                   ingredients: ingredientsString,
-                  isOnboarding: params.isOnboarding,
-                  mode: params.mode
+                  isOnboarding: params.isOnboarding as string,
+                  mode: params.mode as string
                 }
               });
             }
@@ -510,8 +519,6 @@ export default function CameraScreen() {
         ref={cameraRef}
         mode={mode === 'photo' ? 'picture' : 'video'}
         zoom={zoom}
-        autofocus={autofocusMode}
-        onTouchEnd={handleTapToFocus}
       >
         <Animated.View
           style={[
@@ -530,7 +537,21 @@ export default function CameraScreen() {
           </View>
         )}
 
-        <SafeAreaView style={styles.overlay} {...panResponder.panHandlers}>
+        <SafeAreaView style={styles.overlay} {...panResponder.panHandlers} onTouchEnd={handleTapToFocus}>
+          {focusPulsePoint && (
+            <Animated.View
+              pointerEvents="none"
+              style={[
+                styles.focusPulse,
+                {
+                  left: focusPulsePoint.x - 20,
+                  top: focusPulsePoint.y - 20,
+                  opacity: focusPulseOpacity,
+                  transform: [{ scale: focusPulseScale }],
+                },
+              ]}
+            />
+          )}
           <View style={styles.topBar}>
             {!isRecording && (
               <>
@@ -951,5 +972,15 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: Colors.light.button,
     borderRadius: 5,
+  },
+  focusPulse: {
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    backgroundColor: 'rgba(255,255,255,0.12)',
+    zIndex: 120,
   },
 });
