@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Dimensions, Easing, StyleSheet, Text, View } from 'react-native';
+import { Animated, Dimensions, Easing, StyleSheet, Text, View, Image, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import FastImage from 'react-native-fast-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../constants/Colors';
 import I18n from '../i18n';
@@ -33,7 +32,10 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
   const loadingTextOpacity = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
-  const loadingMessages = useMemo(() => I18n.t('recipe_loading.messages'), []);
+  const loadingMessages = useMemo(() => {
+    const msgs = I18n.t('recipe_loading.messages');
+    return Array.isArray(msgs) ? msgs : ['Veuillez patienter...'];
+  }, []);
 
   useEffect(() => {
     const listenerId = loadingProgress.addListener(({ value }) => {
@@ -131,7 +133,7 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
       clearInterval(messageInterval);
       clearTimeout(doneTimer);
     };
-  }, [dismissOnly, duration, loadingMessages.length, loadingProgress, loadingTextOpacity, params.nextParams, params.nextPath, router, scaleAnim]);
+  }, [dismissOnly, duration, loadingMessages, loadingProgress, loadingTextOpacity, params.nextParams, params.nextPath, router, scaleAnim]);
 
   useEffect(() => {
     if (params.startGeneration !== 'true') return;
@@ -160,9 +162,9 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
     <View style={[styles.container, styles.loadingContainer, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <View style={styles.loadingContent}>
         <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-          <FastImage
+          <Image
             source={require('../assets/images/mascot.png')}
-            resizeMode={FastImage.resizeMode.contain}
+            resizeMode="contain"
             style={styles.loadingMascot}
           />
         </Animated.View>
@@ -222,10 +224,12 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   percentText: {
-    fontFamily: 'Degular',
     fontSize: 24,
-    fontWeight: 'bold',
     color: Colors.light.button,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   loadingTextWrapper: {
     height: 60,

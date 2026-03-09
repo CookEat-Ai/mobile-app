@@ -29,12 +29,12 @@ export default function AhaMomentScreen() {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 800,
+        duration: Platform.OS === 'android' ? 400 : 800,
         useNativeDriver: true,
       }),
       Animated.timing(slideAnim, {
         toValue: 0,
-        duration: 800,
+        duration: Platform.OS === 'android' ? 400 : 800,
         useNativeDriver: true,
       }),
     ]).start();
@@ -57,7 +57,11 @@ export default function AhaMomentScreen() {
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
       <View style={styles.content}>
         <View style={styles.centerSection}>
-          <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }], alignItems: 'center' }}>
+          <Animated.View 
+            style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }], alignItems: 'center' }}
+            needsOffscreenAlphaCompositing={true}
+            renderToHardwareTextureAndroid={Platform.OS === 'android'}
+          >
             <Text style={styles.emoji}>✨</Text>
             <Text style={styles.title}>{I18n.t('onboarding.ahaMoment.title')}</Text>
             <Text style={styles.subtitle}>{I18n.t('onboarding.ahaMoment.subtitle')}</Text>
@@ -65,7 +69,11 @@ export default function AhaMomentScreen() {
         </View>
       </View>
 
-      <Animated.View style={[styles.bottomSection, { opacity: fadeAnim }]}>
+      <Animated.View 
+        style={[styles.bottomSection, { opacity: fadeAnim }]}
+        needsOffscreenAlphaCompositing={true}
+        renderToHardwareTextureAndroid={Platform.OS === 'android'}
+      >
         <TouchableOpacity
           activeOpacity={0.8}
           style={styles.cameraButton}
@@ -149,14 +157,14 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 18,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: '#8C8C8C',
     textAlign: 'center',
     paddingHorizontal: 20,
   },
   bottomSection: {
     position: 'absolute',
-    bottom: 50,
+    bottom: Platform.OS === 'ios' ? 50 : 75,
     left: 24,
     right: 24,
     gap: 16,
@@ -179,8 +187,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: width * 0.05,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   skipButton: {
     paddingVertical: 12,
@@ -189,7 +199,7 @@ const styles = StyleSheet.create({
   skipButtonText: {
     color: '#8C8C8C',
     fontSize: 16,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     textDecorationLine: 'underline',
   },
 });

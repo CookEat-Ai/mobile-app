@@ -25,7 +25,7 @@ export default function WelcomeVideoScreen() {
     <View
       style={[
         styles.container,
-        { paddingTop: insets.top + 12, paddingBottom: Platform.OS === 'ios' ? 28 : insets.bottom + 20 },
+        { paddingTop: insets.top + 12, paddingBottom: Platform.OS === 'ios' ? 28 : insets.bottom + 10 },
       ]}
     >
       <View style={styles.brandRow}>
@@ -71,10 +71,10 @@ const styles = StyleSheet.create({
   tagline: {
     textAlign: 'center',
     color: Colors.light.textSecondary,
-    fontFamily: 'Cronos Pro Bold',
-    fontSize: width * 0.043,
+    fontFamily: 'CronosProBold',
+    fontSize: width * 0.05,
     paddingHorizontal: 6,
-    lineHeight: width * 0.055,
+    lineHeight: width * 0.065,
     maxWidth: '92%',
   },
   phoneWrapper: {

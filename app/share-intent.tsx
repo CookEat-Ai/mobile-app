@@ -3,6 +3,7 @@ import {
   Animated,
   Dimensions,
   Easing,
+  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,8 +15,8 @@ import FastImage from 'react-native-fast-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/Colors';
-import apiService from '../services/api';
-import recipeStorageService from '../services/recipeStorage';
+import { apiService } from '../services/api';
+import { recipeStorageService } from '../services/recipeStorage';
 import analytics from '../services/analytics';
 import revenueCatService from '../config/revenuecat';
 
@@ -83,7 +84,7 @@ export default function ShareIntentScreen() {
       easing: Easing.linear,
       useNativeDriver: false,
     }).start();
-  }, [displayProgress]);
+  }, [displayProgress, progressAnim]);
 
   useEffect(() => {
     Animated.loop(
@@ -334,10 +335,12 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   percentText: {
-    fontFamily: 'Degular',
     fontSize: 24,
-    fontWeight: 'bold',
     color: Colors.light.button,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   loadingTextWrapper: {
     height: 60,
@@ -363,8 +366,24 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.button,
     borderRadius: 5,
   },
+  title: {
+    fontSize: 28,
+    color: Colors.light.text,
+    textAlign: 'center',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
+  },
+  subtitle: {
+    fontFamily: 'CronosPro',
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    paddingHorizontal: 20,
+  },
   recipeTitle: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 18,
     color: Colors.light.button,
     textAlign: 'center',
@@ -392,7 +411,7 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     color: 'white',
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 18,
     fontWeight: '600',
   },
@@ -409,7 +428,7 @@ const styles = StyleSheet.create({
   },
   homeButtonText: {
     color: Colors.light.text,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 18,
     fontWeight: '600',
   },

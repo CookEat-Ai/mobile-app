@@ -16,6 +16,7 @@ import { getUniqueDeviceId } from '../services/deviceStorage';
 import * as Sentry from '@sentry/react-native';
 import { SENTRY_DSN } from '../config/sentry';
 import { ShareIntentProvider, useShareIntentContext } from 'expo-share-intent';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 Sentry.init({
   dsn: SENTRY_DSN,
@@ -124,8 +125,8 @@ function RootLayout() {
 
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    'Cronos Pro': require('../assets/fonts/Cronos Pro.ttf'),
-    'Cronos Pro Bold': require('../assets/fonts/Cronos Pro_bold.ttf'),
+    'CronosPro': require('../assets/fonts/CronosPro.otf'),
+    'CronosProBold': require('../assets/fonts/CronosProBold.otf'),
     'Degular': require('../assets/fonts/Degular.otf'),
     'Degular Semibold': require('../assets/fonts/Degular Semibold.otf'),
   });
@@ -154,24 +155,27 @@ function RootLayout() {
   }
 
   return (
-    <ShareIntentProvider>
-      <RecipeProvider>
-        <ThemeProvider value={DefaultTheme}>
-          <ShareIntentHandler />
-          <Stack screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="index" options={{ headerShown: false, animation: 'none' }} />
-            <Stack.Screen name="onboarding" options={{ headerShown: false, animation: 'none' }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'none' }} />
-            <Stack.Screen name="recipe-detail" options={{ headerShown: false }} />
-            <Stack.Screen name="favorites-list" options={{ headerShown: false }} />
-            <Stack.Screen name="share-intent" options={{ headerShown: false, animation: 'fade' }} />
-            <Stack.Screen name="recipe-loading-modal" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
-            <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
-            <Stack.Screen name="paywall" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
-          </Stack>
-        </ThemeProvider>
-      </RecipeProvider>
-    </ShareIntentProvider>
+    <SafeAreaProvider>
+      <ShareIntentProvider>
+        <RecipeProvider>
+          <ThemeProvider value={DefaultTheme}>
+            <ShareIntentHandler />
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" options={{ headerShown: false, animation: 'none' }} />
+              <Stack.Screen name="onboarding" options={{ headerShown: false, animation: 'none' }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'none' }} />
+              <Stack.Screen name="recipe-detail" options={{ headerShown: false }} />
+              <Stack.Screen name="favorites-list" options={{ headerShown: false }} />
+              <Stack.Screen name="share-intent" options={{ headerShown: false, animation: 'fade' }} />
+              <Stack.Screen name="recipe-loading" options={{ headerShown: false, animation: 'fade' }} />
+              <Stack.Screen name="recipe-loading-modal" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+              <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+              <Stack.Screen name="paywall" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+            </Stack>
+          </ThemeProvider>
+        </RecipeProvider>
+      </ShareIntentProvider>
+    </SafeAreaProvider>
   );
 }
 

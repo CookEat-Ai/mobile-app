@@ -49,7 +49,7 @@ type Option = {
   iconColor?: string;
 }
 
-const SocialProofContent = () => {
+const SocialProofContent = ({ onRate }: { onRate?: () => void }) => {
   const count = I18n.locale.startsWith('fr') ? '10 000' : '10,000';
   const fullText = I18n.t('onboarding.socialProof.title', { count });
   const parts = fullText.split(new RegExp(`(${count})`));
@@ -75,7 +75,12 @@ const SocialProofContent = () => {
       </Text>
 
       <View style={styles.ratingSection}>
-        <Text style={styles.ratingPrompt}>
+        <Text 
+          style={styles.ratingPrompt}
+          numberOfLines={2}
+          adjustsFontSizeToFit={true}
+          minimumFontScale={0.7}
+        >
           {I18n.t('onboarding.socialProof.subtitle')}
         </Text>
         <View style={styles.starsContainer}>
@@ -110,7 +115,7 @@ const SocialProofContent = () => {
   );
 };
 
-const NotificationsContent = () => {
+const NotificationsContent = ({ onNext }: { onNext?: () => void }) => {
   const fingerAnim = useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
@@ -208,7 +213,6 @@ const RatingBadge = ({ style }: { style?: any }) => {
 };
 
 export default function FormQuestionScreen() {
-  const AnimatedFastImage = useMemo(() => Animated.createAnimatedComponent(FastImage), []);
   const insets = useSafeAreaInsets();
 
   const questions: Question[] = useMemo(() => [
@@ -467,7 +471,7 @@ export default function FormQuestionScreen() {
 
         Animated.timing(contentOpacity, {
           toValue: 0,
-          duration: 140,
+          duration: Platform.OS === 'android' ? 100 : 140,
           useNativeDriver: true,
         }).start(() => {
           currentIndex += 1;
@@ -476,7 +480,7 @@ export default function FormQuestionScreen() {
 
           Animated.timing(contentOpacity, {
             toValue: 1,
-            duration: 450,
+            duration: Platform.OS === 'android' ? 200 : 450,
             useNativeDriver: true,
           }).start(step);
         });
@@ -548,7 +552,7 @@ export default function FormQuestionScreen() {
     Animated.timing(mascotOpacity, {
       delay: 200,
       toValue: 1,
-      duration: 1200,
+      duration: Platform.OS === 'android' ? 600 : 1200,
       useNativeDriver: true,
     }).start();
   }, [mascotOpacity]);
@@ -670,7 +674,7 @@ export default function FormQuestionScreen() {
         setTimeout(async () => {
           try {
             const { status: existingStatus } = await Notifications.getPermissionsAsync();
-            if (existingStatus === 'undetermined') {
+            if (existingStatus !== 'granted') {
               const { status } = await Notifications.requestPermissionsAsync();
               analytics.track('onboarding_notifications_choice', { allowed: status === 'granted' });
             }
@@ -831,7 +835,7 @@ export default function FormQuestionScreen() {
 
     Animated.timing(contentOpacity, {
       toValue: 0,
-      duration: 220,
+      duration: Platform.OS === 'android' ? 150 : 220,
       useNativeDriver: true,
     }).start(async () => {
       const isLastQuestion = index === questions.length - 1;
@@ -848,7 +852,7 @@ export default function FormQuestionScreen() {
 
       Animated.timing(contentOpacity, {
         toValue: 1,
-        duration: 1000,
+        duration: Platform.OS === 'android' ? 250 : 1000,
         useNativeDriver: true,
       }).start(() => {
         isTransitioningRef.current = false;
@@ -871,7 +875,7 @@ export default function FormQuestionScreen() {
     const isMulti = Boolean(questions[index].multi);
     const fallbackValue = isMulti ? selectedOptions : selectedOption;
     const rawAnswer = overrideValue ?? fallbackValue;
-    const answer = Array.isArray(rawAnswer) ? JSON.stringify(rawAnswer) : rawAnswer;
+    const answer = Array.isArray(rawAnswer) ? JSON.stringify(rawAnswer) : (rawAnswer || '');
 
     // Pour les specialType ou questions optionnelles, on autorise une réponse vide
     if (!questions[index].specialType && !answer && !questions[index].optional) return;
@@ -957,7 +961,7 @@ export default function FormQuestionScreen() {
         scrollEnabled={!questions[index].interstitial}
         contentContainerStyle={[
           styles.scrollContent,
-          (questions[index].multi || questions[index].interstitial || (questions[index].specialType && questions[index].specialType !== 'socialProof')) && styles.scrollContentWithButton,
+          (questions[index].multi || questions[index].optional || questions[index].interstitial || (questions[index].specialType && questions[index].specialType !== 'socialProof')) && styles.scrollContentWithButton,
           questions[index].specialType === 'socialProof' && { paddingBottom: 110 }
         ]}
         showsVerticalScrollIndicator={false}
@@ -1004,9 +1008,8 @@ export default function FormQuestionScreen() {
 
         {(!questions[index].hideProgress || questions[index].specialType === 'onboardingReady' || questions[index].specialType === 'socialProof' || questions[index].specialType === 'notifications') && (
           <View style={{ height: width * 0.25, justifyContent: 'center', alignItems: 'center', zIndex: 10 }}>
-            <AnimatedFastImage
+            <Animated.Image
               source={require('../../assets/images/mascot.png')}
-              resizeMode={FastImage.resizeMode.contain}
               style={[
                 styles.progressMascot,
                 {
@@ -1058,7 +1061,11 @@ export default function FormQuestionScreen() {
         <View style={styles.content}>
           {/* Section principale */}
           <View style={styles.mainSection}>
-            <Animated.View style={{ opacity: contentOpacity, flex: 1 }}>
+            <Animated.View
+              style={{ opacity: contentOpacity, flex: 1 }}
+              needsOffscreenAlphaCompositing={true}
+              renderToHardwareTextureAndroid={Platform.OS === 'android'}
+            >
               {questions[index].specialType === 'socialProof' ? (
                 <SocialProofContent onRate={() => {
                   analytics.track('onboarding_social_proof_rated');
@@ -1113,10 +1120,15 @@ export default function FormQuestionScreen() {
                               </View>
                             )}
                             <View style={styles.cardTextContainer}>
-                              <Text style={[
-                                styles.cardTitle,
-                                isSelected && styles.cardTitleSelected
-                              ]}>
+                              <Text
+                                style={[
+                                  styles.cardTitle,
+                                  isSelected && styles.cardTitleSelected
+                                ]}
+                                numberOfLines={1}
+                                adjustsFontSizeToFit={true}
+                                minimumFontScale={0.7}
+                              >
                                 {item.label}
                               </Text>
                             </View>
@@ -1272,13 +1284,17 @@ const styles = StyleSheet.create({
   cardsContainer: {
     width: '100%',
     gap: 16,
+    paddingHorizontal: Platform.OS === 'android' ? 4 : 0, // Espace pour l'élévation sur Android
+    paddingBottom: Platform.OS === 'android' ? 12 : 0, // Évite que l'ombre de la dernière option soit coupée
   },
   card: {
     backgroundColor: 'white',
     borderRadius: 200,
     padding: 20,
-    // borderWidth: 2,
-    // borderColor: Colors.light.border,
+    borderWidth: 2, // Fix Android shadow clipping bug
+    borderColor: 'transparent',
+    marginHorizontal: Platform.OS === 'android' ? 2 : 0, // Évite que l'ombre soit coupée
+    marginVertical: Platform.OS === 'android' ? 2 : 0,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -1346,17 +1362,18 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
-    fontSize: width * 0.046,
+    fontSize: width * 0.05,
     fontFamily: 'Degular',
     color: Colors.light.text,
     marginBottom: 4,
+    lineHeight: Platform.OS === 'android' ? width * 0.06 : undefined, // Fix truncation on Android
   },
   cardTitleSelected: {
     color: '#FEB50A',
   },
   cardDescription: {
     fontSize: 14,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.textSecondary,
   },
   cardDescriptionSelected: {
@@ -1366,7 +1383,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 24,
     right: 24,
-    bottom: 50,
+    bottom: Platform.OS === 'ios' ? 50 : 75,
   },
   continueButton: {
     flexDirection: 'row',
@@ -1405,7 +1422,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 18,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: '#8C8C8C',
     textAlign: 'center',
     paddingHorizontal: 20,
@@ -1415,11 +1432,15 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 30,
     gap: 12,
+    paddingHorizontal: Platform.OS === 'android' ? 4 : 0,
+    paddingBottom: Platform.OS === 'android' ? 8 : 0,
   },
   reviewCard: {
     backgroundColor: 'white',
     borderRadius: 16,
     padding: 16,
+    marginHorizontal: Platform.OS === 'android' ? 2 : 0,
+    marginVertical: Platform.OS === 'android' ? 2 : 0,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -1433,28 +1454,30 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   reviewName: {
-    fontFamily: 'Degular',
     fontSize: 16,
-    fontWeight: 'bold',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   stars: {
     flexDirection: 'row',
     gap: 2,
   },
   reviewText: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 14,
     color: Colors.light.textSecondary,
-    fontStyle: 'italic',
   },
   mockDialogContainer: {
     width: '100%',
     alignItems: 'center',
     marginTop: 20,
+    paddingHorizontal: Platform.OS === 'android' ? 10 : 0, // Espace pour l'élévation sur Android
   },
   mockDialog: {
-    width: '100%',
+    width: Platform.OS === 'android' ? '98%' : '100%', // Un peu moins large pour éviter le clipping
     backgroundColor: '#FFFFFF',
     borderRadius: 14,
     overflow: 'hidden',
@@ -1466,7 +1489,7 @@ const styles = StyleSheet.create({
   },
   mockDialogTitle: {
     fontSize: 17,
-    fontWeight: '600',
+    fontFamily: 'CronosProBold',
     textAlign: 'center',
     padding: 20,
     paddingTop: 25,
@@ -1529,9 +1552,11 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     color: '#E67E22',
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     fontSize: 16,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   topBadge: {
     backgroundColor: '#FFFBEB',
@@ -1544,17 +1569,20 @@ const styles = StyleSheet.create({
   },
   topBadgeText: {
     color: '#FEB50A',
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     fontSize: 14,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   ratingSection: {
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 24,
-    width: '100%',
+    width: Platform.OS === 'android' ? '98%' : '100%', // Un peu moins large sur Android pour l'ombre
     alignItems: 'center',
     marginVertical: 24,
+    marginHorizontal: Platform.OS === 'android' ? 4 : 0, // Espace pour l'ombre sur Android
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
@@ -1562,10 +1590,14 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   ratingPrompt: {
-    fontFamily: 'Degular',
     fontSize: 18,
     color: Colors.light.text,
+    textAlign: 'center',
     marginBottom: 12,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular' },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   starsContainer: {
     flexDirection: 'row',
@@ -1588,10 +1620,12 @@ const styles = StyleSheet.create({
   },
   ratingBadgeScore: {
     fontSize: 32,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: '#333',
     lineHeight: 36,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   ratingBadgeStars: {
     flexDirection: 'row',

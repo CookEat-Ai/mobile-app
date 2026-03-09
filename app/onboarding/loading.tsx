@@ -7,6 +7,7 @@ import {
   StyleSheet,
   View,
   Text,
+  Platform,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { Colors } from '../../constants/Colors';
@@ -63,7 +64,7 @@ export default function LoadingScreen() {
       setLoadingTextIndex((currentIndex) => {
         if (currentIndex < loadingMessages.length - 2) {
           const nextIndex = currentIndex + 1;
-          
+
           analytics.track('onboarding_loading_step', {
             step_index: nextIndex,
             step_text: loadingMessages[nextIndex]
@@ -193,10 +194,12 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   percentText: {
-    fontFamily: 'Degular',
     fontSize: 24,
-    fontWeight: 'bold',
     color: Colors.light.button,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   loadingTextWrapper: {
     height: 60,

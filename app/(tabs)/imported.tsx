@@ -1,12 +1,11 @@
 import { router, useFocusEffect } from "expo-router";
 import React, { useState, useCallback, useRef } from 'react';
 import I18n from '../../i18n';
-import { FlatList, StyleSheet, Text, View, RefreshControl, TouchableOpacity, Alert, Animated } from 'react-native';
+import { FlatList, StyleSheet, Text, View, RefreshControl, TouchableOpacity, Alert, Animated, Platform, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../constants/Colors';
 import { RecipeCard } from "../../components/RecipeCard";
-import { Wave } from "react-native-animated-spinkit";
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import apiService from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -37,7 +36,7 @@ export default function ImportedScreen() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(true);
+  const [isSubscribed, setIsSubscribed] = useState(__DEV__ ? false : true);
 
   const hasMoreRef = useRef(hasMore);
   hasMoreRef.current = hasMore;
@@ -268,7 +267,7 @@ export default function ImportedScreen() {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <Wave size={50} color={colors.button} />
+          <ActivityIndicator size="large" color={colors.button} />
         </View>
       ) : (
         <FlatList
@@ -317,7 +316,7 @@ export default function ImportedScreen() {
           ListFooterComponent={
             isLoadingMore && recipes.length > 0 ? (
               <View style={styles.footerLoader}>
-                <Wave size={30} color={colors.button} />
+                <ActivityIndicator size="small" color={colors.button} />
               </View>
             ) : null
           }
@@ -340,10 +339,12 @@ const styles = StyleSheet.create({
   },
   mainTitle: {
     fontSize: 32,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
     flex: 1,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   helpButton: {
     width: 40,
@@ -393,20 +394,24 @@ const styles = StyleSheet.create({
   proBadgeText: {
     color: 'white',
     fontSize: 12,
-    fontWeight: 'bold',
-    fontFamily: 'Degular',
     letterSpacing: 1,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   premiumTitle: {
-    fontFamily: 'Degular',
     fontSize: 22,
-    fontWeight: 'bold',
     color: 'white',
     marginBottom: 4,
     width: '90%',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   premiumDescription: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.9)',
     lineHeight: 20,
@@ -435,15 +440,17 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     fontSize: 20,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
     marginBottom: 8,
     textAlign: 'center',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   emptyDescription: {
     fontSize: 16,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.textSecondary,
     textAlign: 'center',
     lineHeight: 22,

@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, StatusBar, Image, Dimensions, Animated, Easing, Alert, PanResponder, GestureResponderEvent } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, StatusBar, Image, Dimensions, Animated, Easing, Alert, PanResponder, GestureResponderEvent, Platform } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import Svg, { Circle } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../components/ui/IconSymbol';
 import { router, useLocalSearchParams, useGlobalSearchParams } from 'expo-router';
 import { Colors } from '../constants/Colors';
@@ -19,6 +20,7 @@ const MAX_PHOTOS = 30;
 const MAX_VIDEO_DURATION = 40; // seconds
 
 export default function CameraScreen() {
+  const insets = useSafeAreaInsets();
   const params = useGlobalSearchParams();
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<'back' | 'front'>('back');
@@ -51,10 +53,10 @@ export default function CameraScreen() {
   }, [zoom]);
 
 
-  const player = useVideoPlayer(null);
+  const player = useVideoPlayer('');
 
   useEffect(() => {
-    if (recordedVideoUri) {
+    if (recordedVideoUri && player) {
       player.replace(recordedVideoUri);
       player.loop = true;
       player.play();
@@ -537,7 +539,7 @@ export default function CameraScreen() {
           </View>
         )}
 
-        <SafeAreaView style={styles.overlay} {...panResponder.panHandlers} onTouchEnd={handleTapToFocus}>
+        <View style={styles.overlay} {...panResponder.panHandlers} onTouchEnd={handleTapToFocus}>
           {focusPulsePoint && (
             <Animated.View
               pointerEvents="none"
@@ -552,7 +554,7 @@ export default function CameraScreen() {
               ]}
             />
           )}
-          <View style={styles.topBar}>
+          <View style={[styles.topBar, { paddingTop: insets.top > 0 ? insets.top : 20 }]}>
             {!isRecording && (
               <>
                 <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
@@ -575,7 +577,7 @@ export default function CameraScreen() {
             )}
           </View>
 
-          <View style={styles.bottomSection}>
+          <View style={[styles.bottomSection, { paddingBottom: Math.max(insets.bottom, 25) + 25 }]}>
             {/* {!isRecording && capturedImages.length === 0 && !recordedVideoUri && (
               <View style={styles.modeSwitcher}>
                 <TouchableOpacity
@@ -682,7 +684,7 @@ export default function CameraScreen() {
               </TouchableOpacity>
             )}
           </View>
-        </SafeAreaView>
+        </View>
       </CameraView>
     </View>
   );
@@ -701,7 +703,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   topBar: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -731,7 +734,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    top: 28,
+    top: Platform.OS === 'ios' ? 28 : 20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -745,14 +748,15 @@ const styles = StyleSheet.create({
   headerText: {
     color: 'white',
     fontSize: 22,
-    fontWeight: '800',
-    fontFamily: 'Cronos Pro',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+    ...Platform.select({
+      ios: { fontFamily: 'CronosPro', fontWeight: '800' as const },
+      android: { fontFamily: 'CronosProBold' },
+    }),
   },
   bottomSection: {
-    paddingBottom: 40,
     gap: 20,
   },
   bottomBar: {
@@ -791,7 +795,7 @@ const styles = StyleSheet.create({
   limitText: {
     color: 'white',
     fontSize: 12,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     marginTop: 8,
     fontWeight: '600',
   },
@@ -850,7 +854,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 20,
     fontWeight: 'bold',
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
   },
   permissionContainer: {
     flex: 1,
@@ -863,7 +867,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     color: 'white',
     fontSize: 18,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
   },
   permissionButton: {
     backgroundColor: Colors.light.button,
@@ -876,7 +880,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
   },
   backButton: {
     padding: 10,
@@ -884,7 +888,7 @@ const styles = StyleSheet.create({
   backButtonText: {
     color: 'white',
     fontSize: 16,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
   },
   // Mode Switcher
   modeSwitcher: {

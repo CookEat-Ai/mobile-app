@@ -22,19 +22,30 @@ import analytics from '../../services/analytics';
 
 const { width, height } = Dimensions.get('window');
 
-const TUTORIAL_IMAGES = [
-  require('../../assets/images/tuto/tuto-import-tiktok-1.png'),
-  require('../../assets/images/tuto/tuto-import-tiktok-2.png'),
-  require('../../assets/images/tuto/tuto-import-tiktok-3.png'),
-  require('../../assets/images/tuto/tuto-import-tiktok-4.png'),
-  require('../../assets/images/tuto/tuto-import-tiktok-5.png'),
-  require('../../assets/images/tuto/tuto-import-tiktok-6.png'),
+const TUTORIAL_IMAGES_IOS = [
+  require('../../assets/images/tuto/ios/tuto-import-tiktok-1.png'),
+  require('../../assets/images/tuto/ios/tuto-import-tiktok-2.png'),
+  require('../../assets/images/tuto/ios/tuto-import-tiktok-3.png'),
+  require('../../assets/images/tuto/ios/tuto-import-tiktok-4.png'),
+  require('../../assets/images/tuto/ios/tuto-import-tiktok-5.png'),
+  require('../../assets/images/tuto/ios/tuto-import-tiktok-6.png'),
+];
+
+const TUTORIAL_IMAGES_ANDROID = [
+  require('../../assets/images/tuto/android/tuto-import-tiktok-1.png'),
+  require('../../assets/images/tuto/android/tuto-import-tiktok-2.png'),
+  require('../../assets/images/tuto/android/tuto-import-tiktok-3.png'),
+  require('../../assets/images/tuto/android/tuto-import-tiktok-4.png'),
+  require('../../assets/images/tuto/android/tuto-import-tiktok-5.png'),
+  require('../../assets/images/tuto/android/tuto-import-tiktok-6.png'),
 ];
 
 export default function VideoImportTutorialScreen() {
   const insets = useSafeAreaInsets();
   const { isFromImport } = useLocalSearchParams();
   const isExternalCall = isFromImport === 'true';
+
+  const TUTORIAL_IMAGES = Platform.OS === 'ios' ? TUTORIAL_IMAGES_IOS : TUTORIAL_IMAGES_ANDROID;
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
@@ -104,7 +115,10 @@ export default function VideoImportTutorialScreen() {
     <View style={styles.carouselItem}>
       <View style={styles.iphoneWrapper}>
         <Image source={item} style={styles.tutorialImage} />
-        <Image source={require('../../assets/images/iphone.png')} style={styles.iphoneFrame} />
+        <Image
+          source={Platform.OS === 'ios' ? require('../../assets/images/iphone.png') : require('../../assets/images/android.png')}
+          style={styles.iphoneFrame}
+        />
       </View>
     </View>
   );
@@ -113,13 +127,20 @@ export default function VideoImportTutorialScreen() {
     <View
       style={[
         styles.container,
-        { paddingTop: insets.top + 12, paddingBottom: Platform.OS === 'ios' ? 28 : insets.bottom + 20 },
+        { paddingTop: insets.top + 12, paddingBottom: Platform.OS === 'ios' ? 28 : insets.bottom + 18 },
       ]}
     >
       <View style={styles.topSection}>
         <Animated.View style={[styles.header, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
           <Text style={styles.title}>{I18n.t('onboardingVideoImport.title')}</Text>
-          <Text style={styles.subtitle}>{I18n.t('onboardingVideoImport.subtitle')}</Text>
+          <Text
+            style={styles.subtitle}
+            numberOfLines={1}
+            adjustsFontSizeToFit={true}
+            minimumFontScale={0.7}
+          >
+            {I18n.t('onboardingVideoImport.subtitle')}
+          </Text>
           <Text style={styles.howToText}>{I18n.t('onboardingVideoImport.howTo')}</Text>
         </Animated.View>
 
@@ -179,27 +200,33 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 26,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
     textAlign: 'center',
     marginBottom: 6,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   subtitle: {
     fontSize: 16,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: '#666',
     textAlign: 'center',
     lineHeight: 20,
     paddingHorizontal: 10,
     marginBottom: 10,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   howToText: {
     fontSize: 16,
-    fontFamily: 'Cronos Pro Bold',
+    fontFamily: 'CronosProBold',
     color: Colors.light.text,
     textAlign: 'center',
     marginTop: 4,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   carouselContainer: {
     flex: 1,

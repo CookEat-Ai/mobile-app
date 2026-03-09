@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import FastImage from 'react-native-fast-image';
 import { Colors } from '../constants/Colors';
@@ -93,16 +93,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8F8FD',
     borderRadius: 24,
     marginBottom: 16,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 15,
-    elevation: 3,
+    // On ne met pas overflow: 'hidden' ici car ça coupe l'ombre sur Android
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 15,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
+    borderRadius: 24,
+    overflow: 'hidden',
   },
   image: {
     width: 90,
@@ -124,13 +132,12 @@ const styles = StyleSheet.create({
   },
   timeLeft: {
     fontSize: 18,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosProBold',
     color: '#CF817D',
-    fontWeight: 'bold',
   },
   timeRight: {
     fontSize: 13,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: '#AEAEB2',
     fontWeight: '500',
   },
@@ -152,14 +159,16 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 15,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: '#8E8E93',
     fontWeight: '500',
   },
   recipeTitle: {
     fontSize: 18,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
 });

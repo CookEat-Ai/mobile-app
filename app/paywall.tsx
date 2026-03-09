@@ -87,6 +87,12 @@ export default function PaywallScreen() {
   );
 
   useEffect(() => {
+    // En mode dev sur Android, on ferme le paywall automatiquement
+    if (__DEV__ && Platform.OS === 'android') {
+      exitPaywall();
+      return;
+    }
+
     if (viewState === 'WHEEL') {
       navigation.setOptions({
         gestureEnabled: false,
@@ -568,15 +574,17 @@ const styles = StyleSheet.create({
   },
   wheelTitle: {
     fontSize: 32,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
     textAlign: 'center',
     marginBottom: 10,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   wheelSubtitle: {
     fontSize: 16,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: '#8C8C8C',
     textAlign: 'center',
   },
@@ -610,9 +618,11 @@ const styles = StyleSheet.create({
   },
   segmentText: {
     fontSize: 24,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     transform: [{ rotate: '0deg' }],
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   wheelCenter: {
     position: 'absolute',
@@ -653,8 +663,10 @@ const styles = StyleSheet.create({
   spinButtonText: {
     color: 'white',
     fontSize: 20,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   disabledButton: {
     opacity: 0.6,
@@ -665,13 +677,15 @@ const styles = StyleSheet.create({
   },
   congratsText: {
     fontSize: 24,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.button,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   resultText: {
     fontSize: 18,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.text,
     textAlign: 'center',
     marginBottom: 10,
@@ -687,8 +701,10 @@ const styles = StyleSheet.create({
   claimButtonText: {
     color: 'white',
     fontSize: 18,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   loadingModalOverlay: {
     flex: 1,
@@ -699,7 +715,10 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 20,
     fontSize: 18,
-    fontFamily: 'Degular',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular' },
+      android: { fontFamily: 'Degular' },
+    }),
   },
 });

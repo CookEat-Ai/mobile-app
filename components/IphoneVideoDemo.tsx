@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { Image, Platform, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { ResizeMode, Video } from 'expo-av';
 
 type IphoneVideoDemoProps = {
@@ -7,6 +7,8 @@ type IphoneVideoDemoProps = {
 };
 
 export default function IphoneVideoDemo({ style }: IphoneVideoDemoProps) {
+  const frameSource = Platform.OS === 'ios' ? require('../assets/images/iphone.png') : require('../assets/images/android.png');
+
   return (
     <View style={[styles.wrapper, style]}>
       <Video
@@ -17,7 +19,7 @@ export default function IphoneVideoDemo({ style }: IphoneVideoDemoProps) {
         isMuted
         style={styles.video}
       />
-      <Image source={require('../assets/images/iphone.png')} style={styles.frame} />
+      <Image source={frameSource} style={styles.frame} />
     </View>
   );
 }

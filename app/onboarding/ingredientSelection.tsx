@@ -66,10 +66,15 @@ const IngredientCard = ({ item, isSelected, onSelect }: { item: IngredientItem, 
         ]}
       >
         <Text style={styles.ingredientEmoji}>{item.emoji}</Text>
-        <Text style={[
-          styles.ingredientLabel,
-          isSelected && styles.ingredientLabelSelected
-        ]}>
+        <Text 
+          style={[
+            styles.ingredientLabel,
+            isSelected && styles.ingredientLabelSelected
+          ]}
+          numberOfLines={1}
+          adjustsFontSizeToFit={true}
+          minimumFontScale={0.7}
+        >
           {item.label}
         </Text>
       </Animated.View>
@@ -291,7 +296,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    fontFamily: 'Cronos Pro Bold',
+    fontFamily: 'CronosProBold',
     color: '#8C8C8C',
     textAlign: 'center',
     marginTop: 12,
@@ -305,16 +310,20 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     gap: 12,
+    paddingHorizontal: Platform.OS === 'android' ? 4 : 0, // Espace pour les ombres
+    paddingBottom: Platform.OS === 'android' ? 12 : 0, // Évite que les ombres en bas soient coupées
   },
   ingredientCard: {
     backgroundColor: 'white',
-    width: (width - 48 - 12) / 2,
+    width: Platform.OS === 'android' ? (width - 48 - 12 - 8) / 2 : (width - 48 - 12) / 2, // Ajustement pour le paddingHorizontal
     borderRadius: 20,
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: 'transparent',
+    marginHorizontal: Platform.OS === 'android' ? 2 : 0, // Évite le clipping de l'ombre
+    marginVertical: Platform.OS === 'android' ? 2 : 0,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -330,16 +339,17 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   ingredientLabel: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: 'Degular',
     color: Colors.light.text,
+    lineHeight: Platform.OS === 'android' ? 22 : undefined, // Fix truncation on Android
   },
   ingredientLabelSelected: {
     color: '#FEB50A',
   },
   bottomSection: {
     position: 'absolute',
-    bottom: 40,
+    bottom: Platform.OS === 'ios' ? 40 : 70,
     left: 24,
     right: 24,
     gap: 12,
@@ -387,7 +397,7 @@ const styles = StyleSheet.create({
   skipButtonText: {
     color: '#8C8C8C',
     fontSize: 16,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     textDecorationLine: 'underline',
   },
 });

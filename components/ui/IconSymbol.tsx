@@ -20,7 +20,7 @@ const MAPPING = {
   'camera': { ios: 'camera', android: 'camera-alt' },
   'camera.fill': { ios: 'camera.fill', android: 'camera-alt' },
   'archivebox': { ios: 'archivebox.fill', android: 'inventory' },
-  'crown.fill': { ios: 'crown.fill', android: 'premium-badge' },
+    'crown.fill': { ios: 'crown.fill', android: 'workspace-premium' },
   'sparkles': { ios: 'sparkles', android: 'auto-fix-high' },
   'clock': { ios: 'clock', android: 'access-time' },
   'list.bullet': { ios: 'list.bullet', android: 'list' },

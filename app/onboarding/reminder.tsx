@@ -152,7 +152,7 @@ export default function ReminderScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
+    <SafeAreaView style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom + 30 }]}>
       <View style={styles.content}>
         <View style={styles.centerSection}>
           <Animated.View style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }], alignItems: 'center' }}>
@@ -202,10 +202,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: width * 0.08,
-    fontFamily: 'Degular',
     color: Colors.light.text,
     textAlign: 'center',
     lineHeight: width * 0.1,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular' },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   highlight: {
     color: Colors.light.button, // Utilisation de la couleur du bouton pour la mise en évidence
@@ -223,7 +226,7 @@ const styles = StyleSheet.create({
   },
   checkText: {
     fontSize: 16,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.text,
   },
   continueButton: {
@@ -241,6 +244,9 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 19,
-    fontFamily: 'Degular',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular' },
+      android: { fontFamily: 'Degular' },
+    }),
   },
 });

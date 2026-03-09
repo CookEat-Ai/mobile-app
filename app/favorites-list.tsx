@@ -1,7 +1,7 @@
 import { router, useFocusEffect } from "expo-router";
 import React, { useState, useCallback, useRef } from 'react';
 import I18n from '../i18n';
-import { FlatList, StyleSheet, Text, View, RefreshControl, TouchableOpacity } from 'react-native';
+import { FlatList, StyleSheet, Text, View, RefreshControl, TouchableOpacity, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -148,9 +148,11 @@ const styles = StyleSheet.create({
   },
   mainTitle: {
     fontSize: 24,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   scrollContent: {
     paddingHorizontal: 20,
@@ -170,7 +172,7 @@ const styles = StyleSheet.create({
   },
   noResultsText: {
     fontSize: 18,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.textSecondary,
     textAlign: 'center',
   },

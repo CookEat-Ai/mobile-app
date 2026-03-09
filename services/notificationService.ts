@@ -1,6 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import * as Localization from 'expo-localization';
+import Constants from 'expo-constants';
 import I18n from '../i18n';
 import { Platform, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -32,23 +33,29 @@ class NotificationService {
       let finalStatus = existingStatus;
 
       if (existingStatus !== 'granted') {
-        // Demander les permissions système (iOS affichera notre message personnalisé depuis Info.plist)
+        // Demander les permissions système
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
       }
 
       if (finalStatus !== 'granted') {
         console.log('❌ Permission pour les notifications refusée par l\'utilisateur');
-        Alert.alert(
-          I18n.t('notifications.disabledTitle'),
-          I18n.t('notifications.disabledMessage'),
-          [{ text: "OK" }]
-        );
         return null;
       }
 
       try {
-        token = (await Notifications.getExpoPushTokenAsync()).data;
+        // Récupérer le projectId depuis Constants
+        const projectId = Constants.expoConfig?.extra?.eas?.projectId || 
+                         Constants.easConfig?.projectId;
+
+        if (!projectId) {
+          console.error('❌ projectId EAS manquant dans app.json');
+        }
+
+        token = (await Notifications.getExpoPushTokenAsync({
+          projectId: projectId,
+        })).data;
+        
         this.expoPushToken = token;
 
         // Sauvegarder le token localement
@@ -60,18 +67,23 @@ class NotificationService {
         console.log('✅ Token de notification obtenu:', token);
       } catch (error) {
         console.error('❌ Erreur lors de l\'obtention du token:', error);
+        // Ne pas bloquer l'exécution si les notifications échouent
       }
     } else {
       console.log('❌ Les notifications push ne fonctionnent que sur un appareil physique');
     }
 
     if (Platform.OS === 'android') {
-      await Notifications.setNotificationChannelAsync('default', {
-        name: 'default',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FEB50A',
-      });
+      try {
+        await Notifications.setNotificationChannelAsync('default', {
+          name: 'default',
+          importance: Notifications.AndroidImportance.MAX,
+          vibrationPattern: [0, 250, 250, 250],
+          lightColor: '#FEB50A',
+        });
+      } catch (e) {
+        console.error('❌ Erreur lors de la configuration du canal Android:', e);
+      }
     }
 
     return token;

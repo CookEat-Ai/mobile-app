@@ -22,15 +22,17 @@ export default function TabLayout() {
           borderTopWidth: 1,
           borderTopColor: '#E9E9E9',
           overflow: 'visible',
-          height: Platform.OS === 'ios' ? 95 : 80,
-          paddingBottom: Platform.OS === 'ios' ? 30 : 15,
+          height: Platform.OS === 'ios' ? 95 : 80 + (insets.bottom > 0 ? insets.bottom - 10 : 0),
+          paddingBottom: Platform.OS === 'ios' ? 30 : (insets.bottom > 0 ? insets.bottom : 15),
           paddingTop: 10,
         },
         tabBarLabelStyle: {
-          fontFamily: 'Cronos Pro',
           fontSize: 14,
-          fontWeight: '700',
           marginTop: 4,
+          ...Platform.select({
+            ios: { fontFamily: 'CronosPro', fontWeight: '700' as const },
+            android: { fontFamily: 'CronosProBold' },
+          }),
         },
       }}>
       <Tabs.Screen

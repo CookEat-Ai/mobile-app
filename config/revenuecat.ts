@@ -82,6 +82,17 @@ class RevenueCatService {
   }
 
   async getSubscriptionStatus(): Promise<SubscriptionStatus> {
+    // En mode dev sur Android, on donne accès premium par défaut pour faciliter les tests
+    if (__DEV__ && Platform.OS === 'android') {
+      console.log('[DevMode] Access premium accordé par défaut sur Android');
+      return {
+        isSubscribed: true,
+        currentPlan: 'dev_mode',
+        expirationDate: null,
+        dailyQuotaRemaining: 999
+      };
+    }
+
     try {
       // Vérifier d'abord si un code promo a été activé
       const isPromoCodeActivated = await this.isPromoCodeActivated();

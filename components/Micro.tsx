@@ -553,6 +553,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     fontSize: 20,
     textAlign: 'center',
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
   },
 }); 

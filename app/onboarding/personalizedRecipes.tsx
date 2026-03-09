@@ -132,7 +132,7 @@ export default function PersonalizedRecipesScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
+    <SafeAreaView style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom + 30 }]}>
       <View style={styles.content}>
         <View style={styles.topSection}>
           <Animated.View style={[styles.cardsContainer, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
   },
   cardDescription: {
     fontSize: 16,
-    fontFamily: 'Cronos Pro Bold',
+    fontFamily: 'CronosProBold',
     color: '#8C8C8C',
     lineHeight: 16,
   },

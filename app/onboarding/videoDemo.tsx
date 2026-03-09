@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   restoreText: {
     color: '#8C8C8C',
     fontSize: 14,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     textDecorationLine: 'underline',
   },
   content: {
@@ -155,7 +155,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Degular',
     color: Colors.light.text,
     textAlign: 'center',
-    fontWeight: '800',
   },
   mockupContainer: {
     flex: 1,
@@ -168,7 +167,7 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     position: 'absolute',
-    bottom: 40,
+    bottom: Platform.OS === 'ios' ? 40 : 70,
     left: 24,
     right: 24,
     alignItems: 'center',
@@ -182,9 +181,11 @@ const styles = StyleSheet.create({
   },
   reassuranceText: {
     fontSize: 17,
-    fontFamily: 'Degular',
-    fontWeight: '600',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: '600' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   continueButton: {
     backgroundColor: Colors.light.button, // Ton bouton orange/jaune
@@ -201,13 +202,15 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 19,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   pricingText: {
     fontSize: 14,
     color: '#8C8C8C',
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     marginTop: 4,
   },
 });

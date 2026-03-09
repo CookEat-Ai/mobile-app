@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import React, { useState } from 'react';
 import I18n from '../i18n';
-import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CategoryButton from '../components/CategoryButton';
 import RecipeCard from '../components/RecipeCard';
@@ -388,10 +388,12 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   mainTitle: {
-    fontFamily: 'Degular',
     fontSize: 28,
-    fontWeight: 'bold',
     lineHeight: 34,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   categoriesContainer: {
     marginTop: 10,
@@ -407,11 +409,13 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontFamily: 'Degular',
     fontSize: 20,
-    fontWeight: 'bold',
     marginBottom: 16,
     paddingHorizontal: 20,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   recipesList: {
     paddingHorizontal: 20,

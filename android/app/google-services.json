@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "450199629482",
+    "project_id": "cookeat-dddf4",
+    "storage_bucket": "cookeat-dddf4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:450199629482:android:7e1f049fbb11dab1602ad3",
+        "android_client_info": {
+          "package_name": "com.gokugen.cookeat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASsL6yQn_ezYTBCqhFH2vRAJL0b1Qi-84"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

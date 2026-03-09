@@ -35,7 +35,7 @@ export default function HomeScreen() {
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [pantryCount, setPantryCount] = useState(0);
-  const [isSubscribed, setIsSubscribed] = useState(true); // Par défaut true pour éviter le flash de l'upsell
+  const [isSubscribed, setIsSubscribed] = useState(__DEV__ ? false : true); // Par défaut true pour éviter le flash de l'upsell, false en dev pour tester
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [historyPage, setHistoryPage] = useState(1);
   const [hasMoreHistory, setHasMoreHistory] = useState(true);
@@ -401,7 +401,11 @@ export default function HomeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ overflow: 'visible' }}
-        contentContainerStyle={{ paddingTop: insets.top + 20, paddingBottom: 100 }}
+        contentContainerStyle={{ 
+          paddingTop: insets.top + 20, 
+          paddingBottom: 100,
+          paddingHorizontal: 20
+        }}
         onScroll={handleHistoryScroll}
         scrollEventThrottle={16}
         refreshControl={
@@ -425,7 +429,7 @@ export default function HomeScreen() {
             <View style={styles.streakLeft}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text style={[styles.streakNumber, { color: colors.button }]}>{streakCount}</Text>
-                <Text style={{ fontSize: 32, marginLeft: 5 }}>🔥</Text>
+                <Text style={{ fontSize: Platform.OS === 'android' ? 24 : 32, marginLeft: 5 }}>🔥</Text>
               </View>
               <Text style={[styles.streakLabel, { color: colors.button }]}>
                 {streakCount > 1 ? I18n.t('home.streak.days') : I18n.t('home.streak.day')}
@@ -463,8 +467,8 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Upsell Premium - Affiché uniquement si non abonné */}
-        {!isSubscribed && (
+        {/* Upsell Premium - Affiché uniquement si non abonné, ou toujours en mode dev */}
+        {(!isSubscribed || __DEV__) && (
           <TouchableOpacity
             style={[styles.premiumCard, { marginBottom: 20 }]}
             onPress={() => router.push({ pathname: '/paywall', params: { source: 'home_banner' } })}
@@ -542,9 +546,11 @@ export default function HomeScreen() {
                     }],
                     maxHeight: anim.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [0, 200],
+                      outputRange: [0, 250],
                     }),
                     overflow: 'hidden',
+                    marginHorizontal: -12,
+                    paddingHorizontal: 12,
                   }}
                 >
                   <RecipeCard
@@ -568,7 +574,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
   },
   titleContainer: {
     paddingBottom: 30,
@@ -581,10 +586,12 @@ const styles = StyleSheet.create({
   },
   mainTitle: {
     fontSize: 32,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
     marginBottom: 8,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   mainTitleMascot: {
     width: 40,
@@ -595,42 +602,50 @@ const styles = StyleSheet.create({
   introText: {
     fontSize: 18,
     lineHeight: 24,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.textSecondary,
   },
   streakCard: {
     backgroundColor: 'white',
     borderRadius: 30,
-    padding: 20,
+    padding: Platform.OS === 'android' ? 12 : 20,
     flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
     marginTop: 10,
   },
   streakLeft: {
     alignItems: 'center',
-    paddingRight: 20,
+    paddingRight: Platform.OS === 'android' ? 12 : 20,
     borderRightWidth: 1,
     borderRightColor: '#F0F0F0',
   },
   streakNumber: {
-    fontSize: 48,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
-    lineHeight: 52,
+    fontSize: Platform.OS === 'android' ? 40 : 48,
+    lineHeight: Platform.OS === 'android' ? 44 : 52,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   streakLabel: {
-    fontSize: 18,
-    fontFamily: 'Cronos Pro',
+    fontSize: Platform.OS === 'android' ? 14 : 18,
+    fontFamily: 'CronosPro',
     fontWeight: '600',
   },
   streakRight: {
     flex: 1,
-    paddingLeft: 15,
+    paddingLeft: Platform.OS === 'android' ? 10 : 15,
   },
   weekDaysRow: {
     flexDirection: 'row',
@@ -639,11 +654,11 @@ const styles = StyleSheet.create({
   },
   dayContainer: {
     alignItems: 'center',
-    gap: 8,
+    gap: Platform.OS === 'android' ? 4 : 8,
   },
   dayName: {
-    fontSize: 14,
-    fontFamily: 'Cronos Pro',
+    fontSize: Platform.OS === 'android' ? 11 : 14,
+    fontFamily: 'CronosPro',
     color: '#AEAEB2',
     fontWeight: '500',
   },
@@ -652,9 +667,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   dayCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: Platform.OS === 'android' ? 24 : 32,
+    height: Platform.OS === 'android' ? 24 : 32,
+    borderRadius: Platform.OS === 'android' ? 12 : 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -668,22 +683,30 @@ const styles = StyleSheet.create({
     padding: 24,
     borderRadius: 20,
     backgroundColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 12,
-    elevation: 2,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
   cardTitle: {
-    fontFamily: 'Degular',
     textAlign: 'left',
     fontSize: 22,
-    fontWeight: 'bold',
     color: Colors.light.text,
     marginBottom: 8,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   cardDescription: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     textAlign: 'left',
     fontSize: 16,
     color: Colors.light.textSecondary,
@@ -691,15 +714,23 @@ const styles = StyleSheet.create({
   },
   premiumCard: {
     borderRadius: 24,
-    overflow: 'hidden',
-    elevation: 8,
-    shadowColor: '#FDB931',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#FDB931',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 8,
+        backgroundColor: '#FFD700',
+      },
+    }),
   },
   premiumGradient: {
     padding: 24,
+    borderRadius: 24,
+    overflow: 'hidden',
   },
   premiumContent: {
     flexDirection: 'row',
@@ -717,20 +748,24 @@ const styles = StyleSheet.create({
   proBadgeText: {
     color: 'white',
     fontSize: 12,
-    fontWeight: 'bold',
-    fontFamily: 'Degular',
     letterSpacing: 1,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   premiumTitle: {
-    fontFamily: 'Degular',
     fontSize: 22,
-    fontWeight: 'bold',
     color: 'white',
     marginBottom: 4,
     width: '90%',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   premiumDescription: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 16,
     color: 'rgba(255, 255, 255, 0.9)',
   },
@@ -746,11 +781,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 24,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 15,
-    elevation: 2,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 15,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
   },
   pantryCardHeader: {
     flexDirection: 'row',
@@ -765,13 +806,15 @@ const styles = StyleSheet.create({
   },
   pantryCardTitle: {
     fontSize: 20,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   pantryCardLink: {
     fontSize: 16,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontWeight: '600',
   },
   pantryCardContent: {
@@ -791,7 +834,7 @@ const styles = StyleSheet.create({
   },
   pantryStatText: {
     fontSize: 18,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: '#8E8E93',
   },
   pantrySeparator: {
@@ -811,8 +854,10 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 24,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
 });

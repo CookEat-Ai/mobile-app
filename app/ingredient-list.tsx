@@ -13,8 +13,9 @@ import {
   Platform,
   Dimensions,
   Modal,
-  TouchableWithoutFeedback,
   TextInput,
+  Pressable,
+  Keyboard,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
@@ -369,13 +370,14 @@ export default function RecipeSummaryScreen() {
     Animated.timing(filterSlideAnim, {
       toValue: screenHeight,
       duration: 300,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start(() => {
       setIsFilterModalVisible(false);
     });
   };
 
   const openCategoryAddModal = (categoryId: string) => {
+    Keyboard.dismiss();
     setCategoryAddModalCategoryId(categoryId);
     setSelectedIngredientsForCategoryModal([]);
     setIsCategoryAddModalVisible(true);
@@ -385,7 +387,7 @@ export default function RecipeSummaryScreen() {
     Animated.timing(categoryAddSlideAnim, {
       toValue: screenHeight,
       duration: 300,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start(() => {
       setIsCategoryAddModalVisible(false);
       setCategoryAddModalCategoryId(null);
@@ -430,7 +432,7 @@ export default function RecipeSummaryScreen() {
     if (isFilterModalVisible) {
       Animated.spring(filterSlideAnim, {
         toValue: 0,
-        useNativeDriver: true,
+        useNativeDriver: false,
         tension: 50,
         friction: 8
       }).start();
@@ -444,7 +446,7 @@ export default function RecipeSummaryScreen() {
       categoryAddSlideAnim.setValue(screenHeight);
       Animated.spring(categoryAddSlideAnim, {
         toValue: 0,
-        useNativeDriver: true,
+        useNativeDriver: false,
         tension: 50,
         friction: 8,
       }).start();
@@ -709,12 +711,13 @@ export default function RecipeSummaryScreen() {
   };
 
   const renderChip = (label: string, isSelected: boolean, onPress: () => void, key?: string, isPremium?: boolean) => (
-    <TouchableOpacity
+    <Pressable
       key={key}
-      style={[
+      style={({ pressed }) => [
         styles.chip,
         isSelected && styles.chipSelected,
-        isPremium && !subscriptionStatus.isSubscribed && !isFirstGeneration && params.isOnboarding !== 'true' && styles.chipPremium
+        isPremium && !subscriptionStatus.isSubscribed && !isFirstGeneration && params.isOnboarding !== 'true' && styles.chipPremium,
+        pressed && { opacity: 0.7 }
       ]}
       onPress={() => {
         if (isPremium && !subscriptionStatus.isSubscribed && !isFirstGeneration && params.isOnboarding !== 'true') {
@@ -723,6 +726,7 @@ export default function RecipeSummaryScreen() {
         }
         onPress();
       }}
+      hitSlop={4}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
         <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
@@ -732,7 +736,7 @@ export default function RecipeSummaryScreen() {
           <Ionicons name="lock-closed" size={12} color="#666" />
         )}
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   const scrollToCategory = (index: number) => {
@@ -1039,71 +1043,82 @@ export default function RecipeSummaryScreen() {
         statusBarTranslucent={true}
         onRequestClose={closeCategoryAddModal}
       >
-        <TouchableWithoutFeedback onPress={closeCategoryAddModal}>
-          <View style={styles.modalOverlay}>
-            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-              <Animated.View
-                style={[
-                  styles.modalContent,
-                  styles.categoryAddModalContent,
-                  { maxHeight: screenHeight * 0.85, transform: [{ translateY: categoryAddSlideAnim }] },
-                ]}
+        <View
+          style={styles.modalOverlay}
+          onTouchEnd={(e) => {
+            if (e.target === e.currentTarget) closeCategoryAddModal();
+          }}
+        >
+          <Animated.View
+            style={[
+              styles.modalContent,
+              styles.categoryAddModalContent,
+              {
+                maxHeight: screenHeight * 0.85,
+                transform: [{ translateY: categoryAddSlideAnim }],
+                paddingBottom: 0,
+              },
+            ]}
+          >
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {categoryAddModalCategoryId ? (CATEGORY_META[categoryAddModalCategoryId]?.title ?? categoryAddModalCategoryId) : ''}
+              </Text>
+              <TouchableOpacity onPress={closeCategoryAddModal} style={styles.modalCloseButton}>
+                <IconSymbol name="close" size={24} color="#000" />
+              </TouchableOpacity>
+            </View>
+            <ScrollView
+              style={styles.categoryAddModalBody}
+              contentContainerStyle={styles.categoryAddModalBodyContent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="always"
+            >
+              {categoryAddModalCategoryId && (() => {
+                const category = ingredientCategories.find(c => c.id === categoryAddModalCategoryId);
+                if (!category) return null;
+                const availableIngredients = category.ingredients.filter(
+                  (ing: { name: string }) => !ingredients.some(i => normalizeIngredientName(i.name) === normalizeIngredientName(ing.name))
+                );
+                return (
+                  <View style={styles.categoryAddModalGrid}>
+                    {availableIngredients.map((ingredient: { id: string; name: string; icon: string }) => {
+                      const isSelected = selectedIngredientsForCategoryModal.some(
+                        n => normalizeIngredientName(n) === normalizeIngredientName(ingredient.name)
+                      );
+                      return (
+                        <Pressable
+                          key={ingredient.id}
+                          style={({ pressed }) => [
+                            styles.manualIngredientItem,
+                            isSelected && styles.ingredientItemSelected,
+                            pressed && { opacity: 0.7 }
+                          ]}
+                          onPress={() => toggleCategoryModalIngredient(ingredient.name)}
+                          hitSlop={8}
+                        >
+                          <Text style={styles.ingredientIcon}>{ingredient.icon}</Text>
+                          <Text style={[styles.manualIngredientName, isSelected && styles.ingredientNameSelected]}>
+                            {ingredient.name}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                );
+              })()}
+            </ScrollView>
+            <View style={[styles.categoryAddModalFooter, { paddingBottom: Platform.OS === 'ios' ? 40 : Math.max(insets.bottom, 60) }]}>
+              <TouchableOpacity
+                style={[styles.categoryAddModalButton, selectedIngredientsForCategoryModal.length === 0 && styles.categoryAddModalButtonDisabled]}
+                onPress={confirmCategoryAddModal}
+                disabled={selectedIngredientsForCategoryModal.length === 0}
               >
-                <View style={styles.modalHeader}>
-                  <Text style={styles.modalTitle}>
-                    {categoryAddModalCategoryId ? (CATEGORY_META[categoryAddModalCategoryId]?.title ?? categoryAddModalCategoryId) : ''}
-                  </Text>
-                  <TouchableOpacity onPress={closeCategoryAddModal} style={styles.modalCloseButton}>
-                    <IconSymbol name="close" size={24} color="#000" />
-                  </TouchableOpacity>
-                </View>
-                <ScrollView
-                  style={styles.categoryAddModalBody}
-                  contentContainerStyle={styles.categoryAddModalBodyContent}
-                  showsVerticalScrollIndicator={false}
-                >
-                  {categoryAddModalCategoryId && (() => {
-                    const category = ingredientCategories.find(c => c.id === categoryAddModalCategoryId);
-                    if (!category) return null;
-                    const availableIngredients = category.ingredients.filter(
-                      (ing: { name: string }) => !ingredients.some(i => normalizeIngredientName(i.name) === normalizeIngredientName(ing.name))
-                    );
-                    return (
-                      <View style={styles.categoryAddModalGrid}>
-                        {availableIngredients.map((ingredient: { id: string; name: string; icon: string }) => {
-                          const isSelected = selectedIngredientsForCategoryModal.some(
-                            n => normalizeIngredientName(n) === normalizeIngredientName(ingredient.name)
-                          );
-                          return (
-                            <TouchableOpacity
-                              key={ingredient.id}
-                              style={[styles.manualIngredientItem, isSelected && styles.ingredientItemSelected]}
-                              onPress={() => toggleCategoryModalIngredient(ingredient.name)}
-                            >
-                              <Text style={styles.ingredientIcon}>{ingredient.icon}</Text>
-                              <Text style={[styles.manualIngredientName, isSelected && styles.ingredientNameSelected]}>
-                                {ingredient.name}
-                              </Text>
-                            </TouchableOpacity>
-                          );
-                        })}
-                      </View>
-                    );
-                  })()}
-                </ScrollView>
-                <View style={styles.categoryAddModalFooter}>
-                  <TouchableOpacity
-                    style={[styles.categoryAddModalButton, selectedIngredientsForCategoryModal.length === 0 && styles.categoryAddModalButtonDisabled]}
-                    onPress={confirmCategoryAddModal}
-                    disabled={selectedIngredientsForCategoryModal.length === 0}
-                  >
-                    <Text style={styles.categoryAddModalButtonText}>{I18n.t('recipeSummary.add')}</Text>
-                  </TouchableOpacity>
-                </View>
-              </Animated.View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
+                <Text style={styles.categoryAddModalButtonText}>{I18n.t('recipeSummary.add')}</Text>
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
+        </View>
       </Modal>
 
       {/* Modal des filtres */}
@@ -1114,16 +1129,19 @@ export default function RecipeSummaryScreen() {
         statusBarTranslucent={true}
         onRequestClose={closeFilterModal}
       >
-        <View style={styles.modalOverlay}>
-          <TouchableWithoutFeedback onPress={closeFilterModal}>
-            <View style={StyleSheet.absoluteFill} />
-          </TouchableWithoutFeedback>
+        <View
+          style={styles.modalOverlay}
+          onTouchEnd={(e) => {
+            if (e.target === e.currentTarget) closeFilterModal();
+          }}
+        >
           <Animated.View
             style={[
               styles.modalContent,
               {
                 transform: [{ translateY: filterSlideAnim }],
-                maxHeight: screenHeight * 0.85
+                maxHeight: screenHeight * 0.85,
+                paddingBottom: Platform.OS === 'ios' ? 40 : Math.max(insets.bottom, 60)
               }
             ]}
           >
@@ -1138,6 +1156,7 @@ export default function RecipeSummaryScreen() {
               style={styles.filterModalBody}
               showsVerticalScrollIndicator={false}
               bounces={false}
+              keyboardShouldPersistTaps="always"
             >
               <View style={styles.filterSection}>
                 <Text style={styles.filterSectionTitle}>{I18n.t('recipeSummary.dishType')}</Text>
@@ -1240,7 +1259,7 @@ export default function RecipeSummaryScreen() {
       </Modal>
 
       {/* Bouton générer */}
-      <View style={styles.generateButtonContainer}>
+      <View style={[styles.generateButtonContainer, { bottom: Math.max(insets.bottom, 45) + 15 }]}>
         {ingredients.length < MIN_INGREDIENTS && (
           <Text style={styles.minIngredientsText}>
             {I18n.t('recipeSummary.pleaseAddAtLeastFiveIngredients')} ({ingredients.length}/{MIN_INGREDIENTS})
@@ -1299,8 +1318,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   cardTitle: {
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   filterTrigger: {
     backgroundColor: 'white',
@@ -1323,9 +1344,11 @@ const styles = StyleSheet.create({
   },
   filterTriggerText: {
     fontSize: 16,
-    fontFamily: 'Degular',
-    fontWeight: '600',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: '600' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   modalOverlay: {
     flex: 1,
@@ -1337,7 +1360,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     padding: 24,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 24,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -1346,10 +1368,12 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   modalTitle: {
-    fontFamily: 'Degular',
     fontSize: 24,
-    fontWeight: 'bold',
     color: '#000',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   modalCloseButton: {
     padding: 5,
@@ -1362,10 +1386,12 @@ const styles = StyleSheet.create({
   },
   filterSectionTitle: {
     fontSize: 18,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.button,
     marginBottom: 12,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   chipsContainer: {
     flexDirection: 'row',
@@ -1389,7 +1415,7 @@ const styles = StyleSheet.create({
   },
   chipText: {
     fontSize: 14,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.textSecondary,
     fontWeight: '500',
   },
@@ -1407,14 +1433,14 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   switchLabel: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 16,
     fontWeight: 'bold',
     color: Colors.light.text,
     marginBottom: 4,
   },
   switchDescription: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 14,
     color: Colors.light.textSecondary,
   },
@@ -1453,17 +1479,19 @@ const styles = StyleSheet.create({
   filterCardLabel: {
     marginTop: 5,
     fontSize: 14,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.textSecondary,
     marginBottom: 2,
     textAlign: 'center',
   },
   filterCardValue: {
     fontSize: 16,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
     textAlign: 'center',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   section: {
     marginBottom: 30,
@@ -1476,9 +1504,11 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 32,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   roundAddButton: {
     width: 44,
@@ -1513,13 +1543,15 @@ const styles = StyleSheet.create({
   },
   groupTitle: {
     fontSize: 18,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   groupCount: {
     fontSize: 14,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.textSecondary,
     backgroundColor: '#F0F0F0',
     paddingHorizontal: 10,
@@ -1537,7 +1569,7 @@ const styles = StyleSheet.create({
   },
   categoryEmptyText: {
     fontSize: 15,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.textSecondary,
     fontStyle: 'italic',
     paddingVertical: 8,
@@ -1562,7 +1594,7 @@ const styles = StyleSheet.create({
   ingredientName: {
     flex: 1,
     fontSize: 17,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.text,
     paddingVertical: 4,
   },
@@ -1583,12 +1615,11 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     fontSize: 16,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.textSecondary,
   },
   generateButtonContainer: {
     position: 'absolute',
-    bottom: 40,
     left: 24,
     right: 24,
     alignItems: 'center',
@@ -1596,7 +1627,7 @@ const styles = StyleSheet.create({
   minIngredientsText: {
     color: Colors.light.textSecondary,
     fontSize: 14,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -1617,9 +1648,11 @@ const styles = StyleSheet.create({
   generateButtonText: {
     color: 'white',
     fontSize: 19,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     marginLeft: 10,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   generateButtonDisabled: {
     backgroundColor: '#ccc',
@@ -1668,7 +1701,7 @@ const styles = StyleSheet.create({
   },
   manualTextInput: {
     flex: 1,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 16,
     color: '#000',
     paddingRight: 10,
@@ -1698,9 +1731,11 @@ const styles = StyleSheet.create({
   },
   manualAddButtonText: {
     color: 'white',
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     fontSize: 14,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   liveTextContainer: {
     flexDirection: 'row',
@@ -1714,7 +1749,7 @@ const styles = StyleSheet.create({
   },
   liveText: {
     flex: 1,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 15,
     color: '#856404',
     fontStyle: 'italic',
@@ -1769,10 +1804,12 @@ const styles = StyleSheet.create({
   },
   modalSubtitle: {
     fontSize: 20,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.button,
     marginBottom: 15,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   manualSelectionInModal: {
     paddingBottom: 20,
@@ -1797,7 +1834,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   seeMoreText: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 14,
     color: Colors.light.button,
     fontWeight: 'bold',
@@ -1814,7 +1851,7 @@ const styles = StyleSheet.create({
     borderColor: '#E0E0E0',
   },
   tagText: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 13,
     color: Colors.light.text,
     marginRight: 4,
@@ -1834,9 +1871,11 @@ const styles = StyleSheet.create({
   },
   categoryTitle: {
     fontSize: 20,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   ingredientsGrid: {
     flexDirection: 'row',
@@ -1856,7 +1895,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 100,
+    paddingBottom: 20,
   },
   categoryAddModalGrid: {
     flexDirection: 'row',
@@ -1865,15 +1904,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   categoryAddModalFooter: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     padding: 24,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 24,
     backgroundColor: 'white',
     borderTopWidth: 1,
     borderTopColor: '#F0F0F0',
+    marginHorizontal: -24, // Pour toucher les bords de la modale
   },
   categoryAddModalButton: {
     backgroundColor: Colors.light.button,
@@ -1887,9 +1922,11 @@ const styles = StyleSheet.create({
   },
   categoryAddModalButtonText: {
     fontSize: 18,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: 'white',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   manualIngredientItem: {
     width: (width - 125) / 3, // Réduit légèrement pour garantir 3 colonnes sur tous les écrans
@@ -1912,7 +1949,7 @@ const styles = StyleSheet.create({
   },
   manualIngredientName: {
     fontSize: 12,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.text,
     textAlign: 'center'
   },

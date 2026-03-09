@@ -43,7 +43,7 @@ export default function ProfileScreen() {
     if (isSubscriptionModalVisible) {
       Animated.spring(slideAnim, {
         toValue: 0,
-        useNativeDriver: true,
+        useNativeDriver: false,
         tension: 50,
         friction: 8
       }).start();
@@ -56,7 +56,7 @@ export default function ProfileScreen() {
     Animated.timing(slideAnim, {
       toValue: screenHeight,
       duration: 300,
-      useNativeDriver: true,
+      useNativeDriver: false,
     }).start(() => {
       setIsSubscriptionModalVisible(false);
     });
@@ -290,7 +290,7 @@ export default function ProfileScreen() {
               </Text>
             </View>
           </View>
-        ) : subscriptionStatus.isSubscribed ? (
+        ) : (subscriptionStatus.isSubscribed && !__DEV__) ? (
           // Utilisateur avec abonnement - Style Premium
           <>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>
@@ -325,41 +325,46 @@ export default function ProfileScreen() {
             </View>
           </>
         ) : (
-          // Utilisateur sans abonnement - Card Upsell style Accueil
-          <TouchableOpacity
-            style={styles.premiumCard}
-            onPress={() => router.push({ pathname: '/paywall', params: { source: 'profile_banner' } })}
-            activeOpacity={0.9}
-          >
-            <LinearGradient
-              colors={['#FFD700', '#FDB931']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.premiumGradient}
+          // Utilisateur sans abonnement - Card Upsell style Accueil, ou mode dev
+          <>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>
+              {I18n.t('profile.plan')}
+            </Text>
+            <TouchableOpacity
+              style={styles.premiumCard}
+              onPress={() => router.push({ pathname: '/paywall', params: { source: 'profile_banner' } })}
+              activeOpacity={0.9}
             >
-              <View style={styles.premiumContent}>
-                <View style={{ flex: 1 }}>
-                  <View style={styles.proBadge}>
-                    <Text style={styles.proBadgeText}>PREMIUM</Text>
+              <LinearGradient
+                colors={['#FFD700', '#FDB931']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.premiumGradient}
+              >
+                <View style={styles.premiumContent}>
+                  <View style={{ flex: 1 }}>
+                    <View style={styles.proBadge}>
+                      <Text style={styles.proBadgeText}>PREMIUM</Text>
+                    </View>
+                    <Text style={styles.premiumTitle}>{I18n.t('profile.premiumTitle')}</Text>
+                    <Text style={styles.premiumDescription}>
+                      {I18n.t('profile.premiumPrice')}
+                    </Text>
                   </View>
-                  <Text style={styles.premiumTitle}>{I18n.t('profile.premiumTitle')}</Text>
-                  <Text style={styles.premiumDescription}>
-                    {I18n.t('profile.premiumPrice')}
-                  </Text>
+                  <View style={styles.premiumIconContainer}>
+                    <IconSymbol name="crown.fill" size={40} color="white" />
+                  </View>
                 </View>
-                <View style={styles.premiumIconContainer}>
-                  <IconSymbol name="crown.fill" size={40} color="white" />
-                </View>
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
+              </LinearGradient>
+            </TouchableOpacity>
+          </>
         )}
 
-      {/* Section Paramètres */}
-      <Text style={[styles.sectionTitle, { color: colors.text }]}>
-        {I18n.t('profile.generalSettings')}
-      </Text>
-      <View style={styles.card}>
+        {/* Section Paramètres */}
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>
+          {I18n.t('profile.generalSettings')}
+        </Text>
+        <View style={styles.card}>
           <TouchableOpacity style={styles.settingItem} onPress={handleNotificationsPress}>
             <IconSymbol name={Platform.OS === 'ios' ? "bell" : "notifications"} size={20} color={colors.button} />
             <Text style={[styles.settingText, { color: colors.text }]}>
@@ -442,13 +447,19 @@ export default function ProfileScreen() {
         statusBarTranslucent={true}
         onRequestClose={closeSubscriptionModal}
       >
-        <TouchableWithoutFeedback onPress={closeSubscriptionModal}>
-          <View style={styles.modalOverlay}>
-            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-              <Animated.View 
+        <View
+          style={styles.modalOverlay}
+          onTouchEnd={(e) => {
+            if (e.target === e.currentTarget) closeSubscriptionModal();
+          }}
+        >
+              <Animated.View
                 style={[
                   styles.modalContent,
-                  { transform: [{ translateY: slideAnim }] }
+                  {
+                    transform: [{ translateY: slideAnim }],
+                    paddingBottom: Platform.OS === 'ios' ? 40 : Math.max(insets.bottom, 30)
+                  }
                 ]}
               >
                 <View style={styles.modalHeader}>
@@ -477,7 +488,7 @@ export default function ProfileScreen() {
                     )}
                   </View>
 
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     style={[styles.closeModalButton, { backgroundColor: colors.button }]}
                     onPress={closeSubscriptionModal}
                     activeOpacity={0.8}
@@ -485,7 +496,7 @@ export default function ProfileScreen() {
                     <Text style={styles.closeModalButtonText}>{I18n.t('profile.continueCooking')}</Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     style={styles.hiddenCancelButton}
                     onPress={() => {
                       setIsSubscriptionModalVisible(false);
@@ -496,9 +507,7 @@ export default function ProfileScreen() {
                   </TouchableOpacity>
                 </View>
               </Animated.View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
+        </View>
       </Modal>
     </LinearGradient>
   );
@@ -524,12 +533,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   sectionTitle: {
-    fontFamily: 'Degular',
     fontSize: 24,
-    fontWeight: 'bold',
     marginBottom: 16,
     marginHorizontal: 20,
     marginTop: 8,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   separator: {
     height: 1,
@@ -566,20 +577,24 @@ const styles = StyleSheet.create({
   proBadgeText: {
     color: 'white',
     fontSize: 12,
-    fontWeight: 'bold',
-    fontFamily: 'Degular',
     letterSpacing: 1,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   premiumTitle: {
-    fontFamily: 'Degular',
     fontSize: 22,
-    fontWeight: 'bold',
     color: 'white',
     marginBottom: 4,
     width: '90%',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   premiumDescription: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 16,
     color: 'rgba(255, 255, 255, 0.9)',
   },
@@ -602,13 +617,12 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   preferenceLabel: {
-    fontFamily: 'Cronos Pro',
     fontSize: 18,
-    fontWeight: '600',
     marginBottom: 4,
+    fontFamily: 'CronosProBold'
   },
   preferenceDescription: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 18,
   },
   subscriptionInfo: {
@@ -627,19 +641,18 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   planBadgeText: {
-    fontFamily: 'Cronos Pro',
     fontSize: 14,
-    fontWeight: 'bold',
     letterSpacing: 0.5,
+    fontFamily: 'CronosProBold'
   },
   planName: {
-    fontFamily: 'Degular',
     fontSize: 20,
-    fontWeight: 'bold',
     marginBottom: 2,
+    fontFamily: 'Degular',
+    fontWeight: 'bold'
   },
   planExpiration: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 14,
   },
   cancelButton: {
@@ -652,10 +665,9 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   cancelButtonText: {
-    fontFamily: 'Cronos Pro',
     fontSize: 13,
-    fontWeight: 'bold',
     color: '#FF3B30',
+    fontFamily: 'CronosProBold'
   },
   manageButton: {
     flexDirection: 'row',
@@ -667,10 +679,9 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   manageButtonText: {
-    fontFamily: 'Cronos Pro',
     fontSize: 14,
-    fontWeight: '600',
     color: '#8E8E93',
+    fontFamily: 'CronosProBold'
   },
   modalOverlay: {
     flex: 1,
@@ -682,7 +693,6 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     padding: 24,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 24,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -691,9 +701,11 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   modalTitle: {
-    fontFamily: 'Degular',
     fontSize: 24,
-    fontWeight: 'bold',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   modalBody: {
     alignItems: 'center',
@@ -707,21 +719,23 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   modalPlanName: {
-    fontFamily: 'Degular',
     fontSize: 22,
-    fontWeight: 'bold',
     marginTop: 12,
     marginBottom: 8,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   modalPlanDescription: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 16,
     color: '#8E8E93',
     textAlign: 'center',
     marginBottom: 16,
   },
   modalExpirationText: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 14,
     color: '#AEAEB2',
   },
@@ -738,16 +752,18 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   closeModalButtonText: {
-    fontFamily: 'Degular',
     fontSize: 18,
-    fontWeight: 'bold',
     color: 'white',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   hiddenCancelButton: {
     paddingVertical: 10,
   },
   hiddenCancelButtonText: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 14,
     color: '#D1D1D6',
     textDecorationLine: 'underline',
@@ -758,18 +774,17 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
   },
   settingText: {
-    fontFamily: 'Cronos Pro',
-    fontSize: 18,
-    fontWeight: 'bold',
     flex: 1,
     marginLeft: 12,
+    fontSize: 18,
+    fontFamily: 'CronosProBold'
   },
   settingInfo: {
     flex: 1,
     marginLeft: 12,
   },
   settingDescription: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 16,
     marginTop: 2,
   },
@@ -783,7 +798,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   loadingText: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 14,
     marginTop: 8,
   },
@@ -798,9 +813,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   devResetButtonText: {
-    fontFamily: 'Cronos Pro',
     fontSize: 16,
-    fontWeight: 'bold',
     color: '#D9382A',
+    fontFamily: 'CronosProBold'
   },
 }); 

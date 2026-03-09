@@ -124,11 +124,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontFamily: 'Degular',
     fontSize: 18,
-    fontWeight: '600',
     marginBottom: 8,
     lineHeight: 20,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: '600' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   detailsRow: {
     flexDirection: 'row',
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   cookingTime: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosProBold',
     fontSize: 16,
     marginLeft: 4,
   },
@@ -149,7 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   ratingText: {
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     fontSize: 16,
     marginLeft: 4,
   },

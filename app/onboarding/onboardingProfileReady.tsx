@@ -20,27 +20,54 @@ import analytics from '../../services/analytics';
 const { width } = Dimensions.get('window');
 
 const NutriCard = ({ icon, label, value, unit, color, delay, fadeAnim, slideAnim }: any) => (
-  <Animated.View style={[
-    styles.nutriCard,
-    {
-      opacity: fadeAnim,
-      transform: [{ translateY: slideAnim }]
-    }
-  ]}>
+  <Animated.View
+    style={[
+      styles.nutriCard,
+      {
+        opacity: fadeAnim,
+        transform: [{ translateY: slideAnim }]
+      }
+    ]}
+    needsOffscreenAlphaCompositing={true}
+    renderToHardwareTextureAndroid={Platform.OS === 'android'}
+  >
     <View style={[styles.iconCircle, { backgroundColor: color + '20' }]}>
-      <MaterialCommunityIcons name={icon} size={20} color={color} />
+      <MaterialCommunityIcons name={icon} size={Platform.OS === 'android' ? 18 : 20} color={color} />
     </View>
-    <View>
-      <Text style={styles.nutriLabel}>{label}</Text>
+    <View style={{ flex: 1, paddingRight: 24 }}>
+      <Text
+        style={styles.nutriLabel}
+        numberOfLines={1}
+        adjustsFontSizeToFit={true}
+        minimumFontScale={0.7}
+      >
+        {label}
+      </Text>
       <View style={styles.valueRow}>
-        <Text style={styles.nutriValue}>{value}</Text>
-        {unit && <Text style={styles.nutriUnit}>{unit}</Text>}
+        <Text
+          style={styles.nutriValue}
+          numberOfLines={1}
+          adjustsFontSizeToFit={true}
+          minimumFontScale={0.7}
+        >
+          {value}
+        </Text>
+        {unit && (
+          <Text
+            style={styles.nutriUnit}
+            numberOfLines={1}
+            adjustsFontSizeToFit={true}
+            minimumFontScale={0.7}
+          >
+            {unit}
+          </Text>
+        )}
       </View>
     </View>
     <View style={styles.progressCircleContainer}>
       {/* Simulation d'un cercle de progression simple */}
       <View style={[styles.progressCircleBase, { borderColor: color + '30' }]}>
-        <View style={[styles.progressCircleFill, { borderColor: color, borderRightColor: 'transparent', borderBottomColor: 'transparent' }]} />
+        <View style={[styles.progressCircleFill, { borderTopColor: color, borderLeftColor: color, borderRightColor: 'transparent', borderBottomColor: 'transparent' }]} />
       </View>
     </View>
   </Animated.View>
@@ -66,13 +93,12 @@ export default function OnboardingProfileReadyScreen() {
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
-        duration: 800,
+        duration: Platform.OS === 'android' ? 400 : 800,
         useNativeDriver: true,
       }),
       Animated.timing(slideAnim, {
         toValue: 0,
-        duration: 800,
-        easing: Animated.createAnimatedComponent(View).defaultProps?.easing,
+        duration: Platform.OS === 'android' ? 400 : 800,
         useNativeDriver: true,
       })
     ]).start();
@@ -103,7 +129,14 @@ export default function OnboardingProfileReadyScreen() {
           <View style={styles.checkCircle}>
             <Ionicons name="checkmark" size={30} color={"white"} />
           </View>
-          <Text style={styles.title}>{I18n.t('onboardingProfileReady.title')}</Text>
+          <Text 
+            style={styles.title}
+            numberOfLines={2}
+            adjustsFontSizeToFit={true}
+            minimumFontScale={0.7}
+          >
+            {I18n.t('onboardingProfileReady.title')}
+          </Text>
           <Text style={styles.subtitle}>{I18n.t('onboardingProfileReady.subtitle')}</Text>
         </View>
 
@@ -153,7 +186,11 @@ export default function OnboardingProfileReadyScreen() {
           </View>
 
           {/* Match Score Card */}
-          <Animated.View style={[styles.healthScoreCard, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
+          <Animated.View
+            style={[styles.healthScoreCard, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}
+            needsOffscreenAlphaCompositing={true}
+            renderToHardwareTextureAndroid={Platform.OS === 'android'}
+          >
             <View style={styles.healthHeader}>
               <View style={styles.healthRow}>
                 <Ionicons name="sparkles" size={20} color="#FEB50A" />
@@ -228,7 +265,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
     textAlign: 'center',
     lineHeight: 34,
@@ -236,10 +272,10 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    fontFamily: 'Cronos Pro',
     color: Colors.light.textSecondary,
     textAlign: 'center',
     lineHeight: 22,
+    fontFamily: 'CronosProBold',
   },
   dashboardContainer: {
     backgroundColor: 'white',
@@ -258,41 +294,45 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   sectionSubtitle: {
     fontSize: 14,
-    fontFamily: 'Cronos Pro',
     color: '#8C8C8C',
+    fontFamily: 'CronosProBold',
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     gap: 12,
+    paddingHorizontal: Platform.OS === 'android' ? 2 : 0, // Espace pour les ombres sur Android
   },
   nutriCard: {
-    width: '48%',
+    width: Platform.OS === 'android' ? '47%' : '48%',
     backgroundColor: '#F8F9FA',
     borderRadius: 16,
-    padding: 16,
+    padding: Platform.OS === 'android' ? 10 : 16,
     flexDirection: 'row',
     alignItems: 'center',
     position: 'relative',
+    marginVertical: Platform.OS === 'android' ? 4 : 0,
   },
   iconCircle: {
-    width: 36,
-    height: 36,
+    width: Platform.OS === 'android' ? 32 : 36,
+    height: Platform.OS === 'android' ? 32 : 36,
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+    marginRight: Platform.OS === 'android' ? 6 : 10,
   },
   nutriLabel: {
-    fontSize: 12,
-    fontFamily: 'Cronos Pro',
+    fontSize: Platform.OS === 'android' ? 11 : 13,
+    fontFamily: 'CronosPro',
     color: '#8C8C8C',
   },
   valueRow: {
@@ -300,25 +340,27 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
   },
   nutriValue: {
-    fontSize: 18,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
+    fontSize: Platform.OS === 'android' ? 17 : 20,
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   nutriUnit: {
-    fontSize: 12,
-    fontFamily: 'Cronos Pro',
+    fontSize: Platform.OS === 'android' ? 11 : 13,
+    fontFamily: 'CronosPro',
     color: '#8C8C8C',
     marginLeft: 2,
   },
   progressCircleContainer: {
     position: 'absolute',
-    right: 12,
-    top: 12,
+    right: Platform.OS === 'android' ? 8 : 12,
+    top: Platform.OS === 'android' ? 10 : 12,
   },
   progressCircleBase: {
-    width: 24,
-    height: 24,
+    width: Platform.OS === 'android' ? 20 : 24,
+    height: Platform.OS === 'android' ? 20 : 24,
     borderRadius: 12,
     borderWidth: 2,
   },
@@ -347,15 +389,19 @@ const styles = StyleSheet.create({
   },
   healthLabel: {
     fontSize: 16,
-    fontFamily: 'Degular',
-    fontWeight: '600',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: '600' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   healthValue: {
     fontSize: 16,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   healthBarTrack: {
     height: 8,
@@ -374,7 +420,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     paddingHorizontal: 24,
-    paddingBottom: 40,
+    paddingBottom: Platform.OS === 'ios' ? 40 : 60,
     paddingTop: 20,
   },
   continueButton: {
@@ -391,7 +437,9 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 18,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
 });

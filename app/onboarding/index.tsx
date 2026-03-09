@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
   description: {
     textAlign: 'center',
     fontSize: width * 0.046,
-    fontFamily: 'Cronos Pro Bold',
+    fontFamily: 'CronosProBold',
     color: Colors.light.textSecondary,
     marginTop: 10,
   },

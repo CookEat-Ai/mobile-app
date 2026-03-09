@@ -328,10 +328,12 @@ const styles = StyleSheet.create({
   headerTitle: {
     flex: 1,
     fontSize: 20,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     textAlign: 'center',
     color: Colors.light.text,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   headerSpacer: {
     width: 34,
@@ -357,13 +359,15 @@ const styles = StyleSheet.create({
   },
   statNumber: {
     fontSize: 32,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.button,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   statLabel: {
     fontSize: 16,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.textSecondary,
     marginTop: 5,
   },
@@ -373,9 +377,11 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 28,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.button,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   emptyState: {
     backgroundColor: 'white',
@@ -394,14 +400,16 @@ const styles = StyleSheet.create({
   },
   emptyStateTitle: {
     fontSize: 18,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     color: Colors.light.text,
     marginBottom: 8,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   emptyStateDescription: {
     fontSize: 14,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.textSecondary,
     textAlign: 'center',
   },
@@ -429,7 +437,7 @@ const styles = StyleSheet.create({
   },
   itemName: {
     fontSize: 18,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.text,
   },
   removeButton: {
@@ -454,9 +462,11 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: 'white',
     fontSize: 16,
-    fontFamily: 'Degular',
-    fontWeight: 'bold',
     marginLeft: 8,
+    ...Platform.select({
+      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
+      android: { fontFamily: 'Degular' },
+    }),
   },
   continueButton: {
     position: 'absolute',
@@ -488,7 +498,7 @@ const styles = StyleSheet.create({
   },
   voiceDescription: {
     fontSize: 16,
-    fontFamily: 'Cronos Pro',
+    fontFamily: 'CronosPro',
     color: Colors.light.textSecondary,
     textAlign: 'center',
     lineHeight: 22,
