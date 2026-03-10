@@ -137,7 +137,7 @@ export default function OnboardingProfileReadyScreen() {
           >
             {I18n.t('onboardingProfileReady.title')}
           </Text>
-          <Text style={styles.subtitle}>{I18n.t('onboardingProfileReady.subtitle')}</Text>
+          <Text style={styles.subtitle} numberOfLines={2} adjustsFontSizeToFit={true} minimumFontScale={0.7}>{I18n.t('onboardingProfileReady.subtitle')}</Text>
         </View>
 
         <View style={styles.dashboardContainer}>
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     color: Colors.light.textSecondary,
     textAlign: 'center',
     lineHeight: 22,
-    fontFamily: 'CronosPro',
+    fontFamily: Platform.OS === 'android' ? 'CronosProBold' : 'CronosPro',
   },
   dashboardContainer: {
     backgroundColor: 'white',
@@ -295,10 +295,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   sectionSubtitle: {
     fontSize: 14,
@@ -342,10 +339,7 @@ const styles = StyleSheet.create({
   nutriValue: {
     fontSize: Platform.OS === 'android' ? 17 : 20,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   nutriUnit: {
     fontSize: Platform.OS === 'android' ? 11 : 13,
@@ -390,18 +384,12 @@ const styles = StyleSheet.create({
   healthLabel: {
     fontSize: 16,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: '600' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   healthValue: {
     fontSize: 16,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   healthBarTrack: {
     height: 8,
@@ -437,9 +425,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: 18,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
 });

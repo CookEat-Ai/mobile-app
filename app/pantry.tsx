@@ -330,10 +330,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   headerSpacer: {
     width: 34,
@@ -360,10 +357,7 @@ const styles = StyleSheet.create({
   statNumber: {
     fontSize: 32,
     color: Colors.light.button,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   statLabel: {
     fontSize: 16,
@@ -378,10 +372,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 28,
     color: Colors.light.button,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   emptyState: {
     backgroundColor: 'white',
@@ -402,10 +393,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: Colors.light.text,
     marginBottom: 8,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   emptyStateDescription: {
     fontSize: 14,
@@ -463,10 +451,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     marginLeft: 8,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   continueButton: {
     position: 'absolute',

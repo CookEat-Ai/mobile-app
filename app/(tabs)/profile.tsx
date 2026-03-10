@@ -453,60 +453,60 @@ export default function ProfileScreen() {
             if (e.target === e.currentTarget) closeSubscriptionModal();
           }}
         >
-              <Animated.View
-                style={[
-                  styles.modalContent,
-                  {
-                    transform: [{ translateY: slideAnim }],
-                    paddingBottom: Platform.OS === 'ios' ? 40 : Math.max(insets.bottom, 30)
-                  }
-                ]}
+          <Animated.View
+            style={[
+              styles.modalContent,
+              {
+                transform: [{ translateY: slideAnim }],
+                paddingBottom: Platform.OS === 'ios' ? 40 : Math.max(insets.bottom, 30)
+              }
+            ]}
+          >
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>{I18n.t('profile.mySubscription')}</Text>
+              <TouchableOpacity onPress={closeSubscriptionModal}>
+                <IconSymbol name="close" size={24} color="#000" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalBody}>
+              <View style={styles.modalPlanCard}>
+                <View style={styles.planBadge}>
+                  <IconSymbol name="crown.fill" size={20} color={colors.button} />
+                  <Text style={[styles.planBadgeText, { color: colors.button, fontSize: 16 }]}>
+                    {I18n.t('profile.premium')}
+                  </Text>
+                </View>
+                <Text style={styles.modalPlanName}>{I18n.t('profile.premiumPlan')}</Text>
+                <Text style={styles.modalPlanDescription}>
+                  {I18n.t('profile.premiumBenefits')}
+                </Text>
+                {subscriptionStatus.expirationDate && (
+                  <Text style={styles.modalExpirationText}>
+                    {I18n.t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString(I18n.locale === 'fr' ? 'fr-FR' : 'en-US')}
+                  </Text>
+                )}
+              </View>
+
+              <TouchableOpacity
+                style={[styles.closeModalButton, { backgroundColor: colors.button }]}
+                onPress={closeSubscriptionModal}
+                activeOpacity={0.8}
               >
-                <View style={styles.modalHeader}>
-                  <Text style={styles.modalTitle}>{I18n.t('profile.mySubscription')}</Text>
-                  <TouchableOpacity onPress={closeSubscriptionModal}>
-                    <IconSymbol name="close" size={24} color="#000" />
-                  </TouchableOpacity>
-                </View>
+                <Text style={styles.closeModalButtonText}>{I18n.t('profile.continueCooking')}</Text>
+              </TouchableOpacity>
 
-                <View style={styles.modalBody}>
-                  <View style={styles.modalPlanCard}>
-                    <View style={styles.planBadge}>
-                      <IconSymbol name="crown.fill" size={20} color={colors.button} />
-                      <Text style={[styles.planBadgeText, { color: colors.button, fontSize: 16 }]}>
-                        {I18n.t('profile.premium')}
-                      </Text>
-                    </View>
-                    <Text style={styles.modalPlanName}>{I18n.t('profile.premiumPlan')}</Text>
-                    <Text style={styles.modalPlanDescription}>
-                      {I18n.t('profile.premiumBenefits')}
-                    </Text>
-                    {subscriptionStatus.expirationDate && (
-                      <Text style={styles.modalExpirationText}>
-                        {I18n.t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString(I18n.locale === 'fr' ? 'fr-FR' : 'en-US')}
-                      </Text>
-                    )}
-                  </View>
-
-                  <TouchableOpacity
-                    style={[styles.closeModalButton, { backgroundColor: colors.button }]}
-                    onPress={closeSubscriptionModal}
-                    activeOpacity={0.8}
-                  >
-                    <Text style={styles.closeModalButtonText}>{I18n.t('profile.continueCooking')}</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.hiddenCancelButton}
-                    onPress={() => {
-                      setIsSubscriptionModalVisible(false);
-                      handleCancelSubscription();
-                    }}
-                  >
-                    <Text style={styles.hiddenCancelButtonText}>{I18n.t('profile.cancelMySubscription')}</Text>
-                  </TouchableOpacity>
-                </View>
-              </Animated.View>
+              <TouchableOpacity
+                style={styles.hiddenCancelButton}
+                onPress={() => {
+                  setIsSubscriptionModalVisible(false);
+                  handleCancelSubscription();
+                }}
+              >
+                <Text style={styles.hiddenCancelButtonText}>{I18n.t('profile.cancelMySubscription')}</Text>
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
         </View>
       </Modal>
     </LinearGradient>
@@ -537,10 +537,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     marginHorizontal: 20,
     marginTop: 8,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   separator: {
     height: 1,
@@ -578,20 +575,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 12,
     letterSpacing: 1,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   premiumTitle: {
     fontSize: 22,
     color: 'white',
     marginBottom: 4,
     width: '90%',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   premiumDescription: {
     fontFamily: 'CronosPro',
@@ -648,8 +639,7 @@ const styles = StyleSheet.create({
   planName: {
     fontSize: 20,
     marginBottom: 2,
-    fontFamily: 'Degular',
-    fontWeight: 'bold'
+    fontFamily: 'Degular'
   },
   planExpiration: {
     fontFamily: 'CronosPro',
@@ -702,10 +692,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 24,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   modalBody: {
     alignItems: 'center',
@@ -722,10 +709,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     marginTop: 12,
     marginBottom: 8,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   modalPlanDescription: {
     fontFamily: 'CronosPro',
@@ -754,10 +738,7 @@ const styles = StyleSheet.create({
   closeModalButtonText: {
     fontSize: 18,
     color: 'white',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   hiddenCancelButton: {
     paddingVertical: 10,

@@ -63,10 +63,9 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 12,
-    fontWeight: '600',
+    fontFamily: 'CronosProBold',
     marginTop: 8,
-    textAlign: 'center',
-    fontFamily: 'CronosPro',
+    textAlign: 'center'
   },
   moreContainer: {
     alignItems: 'center',

@@ -149,10 +149,7 @@ const styles = StyleSheet.create({
   mainTitle: {
     fontSize: 24,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   scrollContent: {
     paddingHorizontal: 20,

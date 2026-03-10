@@ -127,10 +127,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 8,
     lineHeight: 20,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: '600' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   detailsRow: {
     flexDirection: 'row',

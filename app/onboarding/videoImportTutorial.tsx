@@ -203,10 +203,7 @@ const styles = StyleSheet.create({
     color: Colors.light.text,
     textAlign: 'center',
     marginBottom: 6,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   subtitle: {
     fontSize: 16,

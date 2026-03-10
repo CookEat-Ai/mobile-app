@@ -57,7 +57,7 @@ export default function AhaMomentScreen() {
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
       <View style={styles.content}>
         <View style={styles.centerSection}>
-          <Animated.View 
+          <Animated.View
             style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }], alignItems: 'center' }}
             needsOffscreenAlphaCompositing={true}
             renderToHardwareTextureAndroid={Platform.OS === 'android'}
@@ -69,7 +69,7 @@ export default function AhaMomentScreen() {
         </View>
       </View>
 
-      <Animated.View 
+      <Animated.View
         style={[styles.bottomSection, { opacity: fadeAnim }]}
         needsOffscreenAlphaCompositing={true}
         renderToHardwareTextureAndroid={Platform.OS === 'android'}
@@ -187,10 +187,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontSize: width * 0.05,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   skipButton: {
     paddingVertical: 12,

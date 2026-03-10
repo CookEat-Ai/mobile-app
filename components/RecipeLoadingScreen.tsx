@@ -226,10 +226,7 @@ const styles = StyleSheet.create({
   percentText: {
     fontSize: 24,
     color: Colors.light.button,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   loadingTextWrapper: {
     height: 60,

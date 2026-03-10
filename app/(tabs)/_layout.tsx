@@ -29,10 +29,7 @@ export default function TabLayout() {
         tabBarLabelStyle: {
           fontSize: 14,
           marginTop: 4,
-          ...Platform.select({
-            ios: { fontFamily: 'CronosPro', fontWeight: '700' as const },
-            android: { fontFamily: 'CronosProBold' },
-          }),
+          fontFamily: 'CronosProBold'
         },
       }}>
       <Tabs.Screen

@@ -389,10 +389,7 @@ const styles = StyleSheet.create({
   mainTitle: {
     fontSize: 28,
     lineHeight: 34,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   categoriesContainer: {
     marginTop: 10,
@@ -411,10 +408,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 16,
     paddingHorizontal: 20,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   recipesList: {
     paddingHorizontal: 20,

@@ -577,10 +577,7 @@ const styles = StyleSheet.create({
     color: Colors.light.text,
     textAlign: 'center',
     marginBottom: 10,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   wheelSubtitle: {
     fontSize: 16,
@@ -619,10 +616,7 @@ const styles = StyleSheet.create({
   segmentText: {
     fontSize: 24,
     transform: [{ rotate: '0deg' }],
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   wheelCenter: {
     position: 'absolute',
@@ -663,10 +657,7 @@ const styles = StyleSheet.create({
   spinButtonText: {
     color: 'white',
     fontSize: 20,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   disabledButton: {
     opacity: 0.6,
@@ -678,10 +669,7 @@ const styles = StyleSheet.create({
   congratsText: {
     fontSize: 24,
     color: Colors.light.button,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   resultText: {
     fontSize: 18,
@@ -701,10 +689,7 @@ const styles = StyleSheet.create({
   claimButtonText: {
     color: 'white',
     fontSize: 18,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   loadingModalOverlay: {
     flex: 1,

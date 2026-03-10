@@ -252,7 +252,7 @@ export default function ImportedScreen() {
       style={[styles.container, { paddingTop: insets.top + 40 }]}
     >
       <View style={styles.titleContainer}>
-        <Text style={styles.mainTitle}>{I18n.t('imported.title')}</Text>
+        <Text style={styles.mainTitle} numberOfLines={1} adjustsFontSizeToFit>{I18n.t('imported.title')}</Text>
         <TouchableOpacity
           style={styles.helpButton}
           onPress={() => router.push({
@@ -341,10 +341,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: Colors.light.text,
     flex: 1,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   helpButton: {
     width: 40,
@@ -395,20 +392,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 12,
     letterSpacing: 1,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   premiumTitle: {
     fontSize: 22,
     color: 'white',
     marginBottom: 4,
     width: '90%',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   premiumDescription: {
     fontFamily: 'CronosPro',
@@ -443,10 +434,7 @@ const styles = StyleSheet.create({
     color: Colors.light.text,
     marginBottom: 8,
     textAlign: 'center',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   emptyDescription: {
     fontSize: 16,

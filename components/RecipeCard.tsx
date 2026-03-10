@@ -139,9 +139,8 @@ const styles = StyleSheet.create({
   },
   timeRight: {
     fontSize: 13,
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
     color: '#AEAEB2',
-    fontWeight: '500',
   },
   statsRow: {
     flexDirection: 'row',
@@ -161,16 +160,12 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 15,
-    fontFamily: 'CronosPro',
-    color: '#8E8E93',
-    fontWeight: '500',
+    fontFamily: 'CronosProBold',
+    color: '#8E8E93'
   },
   recipeTitle: {
     fontSize: 18,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
 });

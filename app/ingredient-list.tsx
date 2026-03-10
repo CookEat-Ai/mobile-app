@@ -728,7 +728,7 @@ export default function RecipeSummaryScreen() {
       hitSlop={4}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-        <Text style={[styles.chipText, isSelected && styles.chipTextSelected]}>
+        <Text style={isSelected ? styles.chipTextSelected : styles.chipText}>
           {label}
         </Text>
         {isPremium && !subscriptionStatus.isSubscribed && !isFirstGeneration && params.isOnboarding !== 'true' && (
@@ -829,7 +829,7 @@ export default function RecipeSummaryScreen() {
               onPress={() => handleIngredientToggle(ingredient.name, category.id)}
             >
               <Text style={styles.ingredientIcon}>{ingredient.icon}</Text>
-              <Text style={[styles.manualIngredientName, isSelected && styles.ingredientNameSelected]}>
+              <Text style={isSelected ? styles.ingredientNameSelected : styles.manualIngredientName}>
                 {ingredient.name}
               </Text>
             </TouchableOpacity>
@@ -1317,10 +1317,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   cardTitle: {
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   filterTrigger: {
     backgroundColor: 'white',
@@ -1344,10 +1341,7 @@ const styles = StyleSheet.create({
   filterTriggerText: {
     fontSize: 16,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: '600' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   modalOverlay: {
     flex: 1,
@@ -1369,10 +1363,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 24,
     color: '#000',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   modalCloseButton: {
     padding: 5,
@@ -1387,10 +1378,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: Colors.light.button,
     marginBottom: 12,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   chipsContainer: {
     flexDirection: 'row',
@@ -1415,12 +1403,12 @@ const styles = StyleSheet.create({
   chipText: {
     fontSize: 14,
     fontFamily: 'CronosPro',
-    color: Colors.light.textSecondary,
-    fontWeight: '500',
+    color: Colors.light.textSecondary
   },
   chipTextSelected: {
-    color: 'white',
-    fontWeight: 'bold',
+    fontSize: 14,
+    fontFamily: 'CronosProBold',
+    color: 'white'
   },
   switchContainer: {
     flexDirection: 'row',
@@ -1432,9 +1420,8 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   switchLabel: {
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
     fontSize: 16,
-    fontWeight: 'bold',
     color: Colors.light.text,
     marginBottom: 4,
   },
@@ -1487,10 +1474,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: Colors.light.text,
     textAlign: 'center',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   section: {
     marginBottom: 30,
@@ -1504,10 +1488,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 32,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   roundAddButton: {
     width: 44,
@@ -1543,10 +1524,7 @@ const styles = StyleSheet.create({
   groupTitle: {
     fontSize: 18,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   groupCount: {
     fontSize: 14,
@@ -1648,10 +1626,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 19,
     marginLeft: 10,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   generateButtonDisabled: {
     backgroundColor: '#ccc',
@@ -1731,10 +1706,7 @@ const styles = StyleSheet.create({
   manualAddButtonText: {
     color: 'white',
     fontSize: 14,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   liveTextContainer: {
     flexDirection: 'row',
@@ -1805,10 +1777,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: Colors.light.button,
     marginBottom: 15,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   manualSelectionInModal: {
     paddingBottom: 20,
@@ -1833,10 +1802,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   seeMoreText: {
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
     fontSize: 14,
     color: Colors.light.button,
-    fontWeight: 'bold',
     textDecorationLine: 'underline',
   },
   tag: {
@@ -1871,10 +1839,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     fontSize: 20,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   ingredientsGrid: {
     flexDirection: 'row',
@@ -1922,10 +1887,7 @@ const styles = StyleSheet.create({
   categoryAddModalButtonText: {
     fontSize: 18,
     color: 'white',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   manualIngredientItem: {
     width: (width - 125) / 3, // Réduit légèrement pour garantir 3 colonnes sur tous les écrans
@@ -1953,8 +1915,10 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   ingredientNameSelected: {
+    fontSize: 12,
+    fontFamily: 'CronosProBold',
     color: 'white',
-    fontWeight: 'bold',
+    textAlign: 'center'
   },
   loadingOverlay: {
     position: 'absolute',

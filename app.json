@@ -59,6 +59,7 @@
       "./plugins/withGradleProperties",
       "./plugins/withManifestFix",
       "./plugins/withSentryXcodeEnv",
+      "./plugins/withNativePatches",
       "expo-router",
       [
         "expo-font",

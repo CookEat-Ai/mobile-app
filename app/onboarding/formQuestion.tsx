@@ -1462,10 +1462,7 @@ const styles = StyleSheet.create({
   reviewName: {
     fontSize: 16,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   stars: {
     flexDirection: 'row',
@@ -1559,10 +1556,7 @@ const styles = StyleSheet.create({
   badgeText: {
     color: '#E67E22',
     fontSize: 16,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   topBadge: {
     backgroundColor: '#FFFBEB',
@@ -1576,10 +1570,7 @@ const styles = StyleSheet.create({
   topBadgeText: {
     color: '#FEB50A',
     fontSize: 14,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   ratingSection: {
     backgroundColor: 'white',
@@ -1628,10 +1619,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: '#333',
     lineHeight: 36,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   ratingBadgeStars: {
     flexDirection: 'row',

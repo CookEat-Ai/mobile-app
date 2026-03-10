@@ -1622,14 +1622,12 @@ const styles = StyleSheet.create({
   ingredientName: {
     fontFamily: 'CronosProBold',
     fontSize: 16,
-    fontWeight: '600',
     color: '#000',
     marginBottom: 4,
   },
   ingredientQuantity: {
     fontFamily: 'CronosProBold',
     fontSize: 18,
-    fontWeight: 'bold',
     color: '#000',
     maxWidth: '66%',
     flexShrink: 1,
@@ -1648,8 +1646,7 @@ const styles = StyleSheet.create({
   tagText: {
     fontFamily: 'CronosProBold',
     fontSize: 10,
-    color: '#000',
-    fontWeight: '500',
+    color: '#000'
   },
   bottomButtonContainer: {
     position: 'absolute',
@@ -1671,8 +1668,7 @@ const styles = StyleSheet.create({
   rateButtonText: {
     color: 'white',
     fontFamily: 'CronosProBold',
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 18
   },
   favoriteButtonDisabled: {
     backgroundColor: '#ccc',
@@ -1736,7 +1732,6 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontFamily: 'CronosProBold',
     fontSize: 18,
-    fontWeight: 'bold',
     color: '#000',
     marginBottom: 8,
   },

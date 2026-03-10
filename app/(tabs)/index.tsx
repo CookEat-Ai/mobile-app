@@ -410,8 +410,8 @@ export default function HomeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={{ overflow: 'visible' }}
-        contentContainerStyle={{ 
-          paddingTop: insets.top + 20, 
+        contentContainerStyle={{
+          paddingTop: insets.top + 20,
           paddingBottom: 100,
           paddingHorizontal: 20
         }}
@@ -461,7 +461,7 @@ export default function HomeScreen() {
 
                   return (
                     <View key={i} style={styles.dayContainer}>
-                      <Text style={[styles.dayName, isToday && styles.todayName]}>{dayName}</Text>
+                      <Text style={isToday ? styles.todayName : styles.dayName}>{dayName}</Text>
                       <View style={[
                         styles.dayCircle,
                         isActive ? { backgroundColor: colors.button } : styles.dayCircleInactive
@@ -597,10 +597,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: Colors.light.text,
     marginBottom: 8,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   mainTitleMascot: {
     width: 40,
@@ -642,15 +639,11 @@ const styles = StyleSheet.create({
   streakNumber: {
     fontSize: Platform.OS === 'android' ? 40 : 48,
     lineHeight: Platform.OS === 'android' ? 44 : 52,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   streakLabel: {
     fontSize: Platform.OS === 'android' ? 14 : 18,
-    fontFamily: 'CronosPro',
-    fontWeight: '600',
+    fontFamily: 'CronosProBold'
   },
   streakRight: {
     flex: 1,
@@ -668,12 +661,12 @@ const styles = StyleSheet.create({
   dayName: {
     fontSize: Platform.OS === 'android' ? 11 : 14,
     fontFamily: 'CronosPro',
-    color: '#AEAEB2',
-    fontWeight: '500',
+    color: '#AEAEB2'
   },
   todayName: {
+    fontSize: Platform.OS === 'android' ? 11 : 14,
+    fontFamily: 'CronosProBold',
     color: '#1C1C1E',
-    fontWeight: 'bold',
   },
   dayCircle: {
     width: Platform.OS === 'android' ? 24 : 32,
@@ -709,10 +702,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: Colors.light.text,
     marginBottom: 8,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   cardDescription: {
     fontFamily: 'CronosPro',
@@ -758,20 +748,14 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 12,
     letterSpacing: 1,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   premiumTitle: {
     fontSize: 22,
     color: 'white',
     marginBottom: 4,
     width: '90%',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   premiumDescription: {
     fontFamily: 'CronosPro',
@@ -816,15 +800,11 @@ const styles = StyleSheet.create({
   pantryCardTitle: {
     fontSize: 20,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   pantryCardLink: {
     fontSize: 16,
-    fontFamily: 'CronosPro',
-    fontWeight: '600',
+    fontFamily: 'CronosProBold'
   },
   pantryCardContent: {
     flexDirection: 'row',
@@ -864,9 +844,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 24,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
 });

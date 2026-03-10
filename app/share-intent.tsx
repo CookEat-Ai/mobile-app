@@ -54,7 +54,7 @@ export default function ShareIntentScreen() {
           }
           return 100;
         }
-        
+
         let increment = 0;
         if (progress > prev) {
           // Catch up phase: move faster to reach the real progress
@@ -67,7 +67,7 @@ export default function ShareIntentScreen() {
           // unless progress is set to 100
           increment = Math.max(0.01, (100 - prev) / 600);
         }
-        
+
         const next = prev + increment;
         return next >= 100 ? (isDataReady ? 100 : 99.9) : next;
       });
@@ -283,9 +283,9 @@ export default function ShareIntentScreen() {
 
             <View style={styles.buttonContainer}>
               {isQuotaError ? (
-                <TouchableOpacity 
-                  style={styles.retryButton} 
-                  onPress={() => router.push({ pathname: '/paywall', params: { source: 'video_import_quota' } })} 
+                <TouchableOpacity
+                  style={styles.retryButton}
+                  onPress={() => router.push({ pathname: '/paywall', params: { source: 'video_import_quota' } })}
                   activeOpacity={0.8}
                 >
                   <Ionicons name="sparkles" size={20} color="white" />
@@ -337,10 +337,7 @@ const styles = StyleSheet.create({
   percentText: {
     fontSize: 24,
     color: Colors.light.button,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   loadingTextWrapper: {
     height: 60,
@@ -370,10 +367,7 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: Colors.light.text,
     textAlign: 'center',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   subtitle: {
     fontFamily: 'CronosPro',
@@ -383,11 +377,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   recipeTitle: {
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
     fontSize: 18,
     color: Colors.light.button,
-    textAlign: 'center',
-    fontWeight: '600',
+    textAlign: 'center'
   },
   successIcon: {
     marginBottom: 8,
@@ -411,9 +404,8 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     color: 'white',
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
     fontSize: 18,
-    fontWeight: '600',
   },
   homeButton: {
     backgroundColor: 'white',
@@ -428,8 +420,7 @@ const styles = StyleSheet.create({
   },
   homeButtonText: {
     color: Colors.light.text,
-    fontFamily: 'CronosPro',
-    fontSize: 18,
-    fontWeight: '600',
+    fontFamily: 'CronosProBold',
+    fontSize: 18
   },
 });
