@@ -17,7 +17,7 @@ import { Colors } from '../constants/Colors';
 import { IconSymbol } from "./ui/IconSymbol";
 import { useVoice, resetVoiceCompletely } from '../hooks/useVoice';
 import Voice from '@react-native-voice/voice';
-import { Audio } from 'expo-av';
+import { getRecordingPermissionsAsync, requestRecordingPermissionsAsync } from 'expo-audio';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Haptics from 'expo-haptics';
 
@@ -216,12 +216,11 @@ export default function Micro({
       } else {
         // Pour iOS, vérifier explicitement les permissions
         try {
-          // 1. Vérifier la permission microphone avec expo-av
-          const { status: microphoneStatus } = await Audio.getPermissionsAsync();
+          const { status: microphoneStatus } = await getRecordingPermissionsAsync();
           console.log('Statut permission microphone:', microphoneStatus);
 
           if (microphoneStatus !== 'granted') {
-            const { status: newMicrophoneStatus } = await Audio.requestPermissionsAsync();
+            const { status: newMicrophoneStatus } = await requestRecordingPermissionsAsync();
             console.log('Nouveau statut permission microphone:', newMicrophoneStatus);
 
             if (newMicrophoneStatus !== 'granted') {

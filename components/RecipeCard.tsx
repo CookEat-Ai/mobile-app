@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import FastImage from 'react-native-fast-image';
+import { Image } from 'expo-image';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from './ui/IconSymbol';
 
@@ -25,6 +25,11 @@ const PLACEHOLDER_IMAGE = 'https://via.placeholder.com/150';
 
 export const RecipeCard = ({ item, onPress, onLongPress }: RecipeCardProps) => {
   const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [item?.image]);
+
   const ingredientsCount = item.ingredientsCount || item.ingredients?.length || 0;
   const stepsCount = item.stepsCount || item.steps?.length || 0;
   const imageUri = imageError || !item.image ? PLACEHOLDER_IMAGE : item.image;
@@ -44,13 +49,10 @@ export const RecipeCard = ({ item, onPress, onLongPress }: RecipeCardProps) => {
       activeOpacity={0.8}
     >
       <View style={styles.content}>
-        <FastImage
-          source={{
-            uri: imageUri,
-            priority: FastImage.priority.normal,
-          }}
+        <Image
+          source={{ uri: imageUri }}
           style={styles.image}
-          resizeMode={FastImage.resizeMode.cover}
+          contentFit="cover"
           onError={() => setImageError(true)}
         />
         <View style={styles.info}>

@@ -107,7 +107,7 @@ export default function HomeScreen() {
     useCallback(() => {
       loadPantryCount();
       checkSubscription();
-      loadHistory(1, false);
+      loadHistory(1, false); // On ne reset plus pour préserver la position du scroll
       applyCachedImages();
       maybeShowLaunchWheel();
     }, [])
@@ -209,8 +209,17 @@ export default function HomeScreen() {
             return newItems;
           }
           const existingById = new Map<string, HistoryItem>();
-          prev.forEach((item) => existingById.set(item.id, item));
-          newItems.forEach((item) => existingById.set(item.id, item));
+          if (page === 1) {
+            // Si on recharge la page 1 sans reset, on veut les nouveaux au début
+            newItems.forEach((item) => existingById.set(item.id, item));
+            prev.forEach((item) => {
+              if (!existingById.has(item.id)) existingById.set(item.id, item);
+            });
+          } else {
+            // Pour les pages suivantes, on ajoute à la fin
+            prev.forEach((item) => existingById.set(item.id, item));
+            newItems.forEach((item) => existingById.set(item.id, item));
+          }
           return Array.from(existingById.values());
         });
         if (reset || page > 1) {

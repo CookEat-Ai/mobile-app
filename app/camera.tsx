@@ -1,5 +1,21 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, StatusBar, Image, Dimensions, Animated, Easing, Alert, PanResponder, GestureResponderEvent, Platform } from 'react-native';
+import {
+  Dimensions,
+  Platform,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+  TouchableOpacity,
+  Text,
+  Animated,
+  Easing,
+  PanResponder,
+  GestureResponderEvent,
+  StatusBar,
+  Alert
+} from 'react-native';
+import { Image } from 'expo-image';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { useVideoPlayer, VideoView } from 'expo-video';
@@ -12,7 +28,6 @@ import { Colors } from '../constants/Colors';
 import * as Haptics from 'expo-haptics';
 import apiService from '../services/api';
 import I18n from '../i18n';
-import FastImage from 'react-native-fast-image';
 
 const { width } = Dimensions.get('window');
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -53,7 +68,7 @@ export default function CameraScreen() {
   }, [zoom]);
 
 
-  const player = useVideoPlayer('');
+  const player = useVideoPlayer(recordedVideoUri || null);
 
   useEffect(() => {
     if (recordedVideoUri && player) {
@@ -142,8 +157,8 @@ export default function CameraScreen() {
   ).current;
 
   const loadingMessages = useMemo(() => {
-    return mode === 'photo' 
-      ? I18n.t('camera.loadingMessagesPhoto') 
+    return mode === 'photo'
+      ? I18n.t('camera.loadingMessagesPhoto')
       : I18n.t('camera.loadingMessagesVideo');
   }, [mode]);
 
@@ -215,7 +230,7 @@ export default function CameraScreen() {
         if (loadingTextIndexRef.current < loadingMessages.length - 1) {
           loadingTextIndexRef.current += 1;
           const nextIndex = loadingTextIndexRef.current;
-          
+
           Animated.timing(loadingTextOpacity, {
             toValue: 0,
             duration: 400,
@@ -342,7 +357,6 @@ export default function CameraScreen() {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
           const video = await cameraRef.current.recordAsync({
             maxDuration: MAX_VIDEO_DURATION,
-            quality: '720p',
           });
           if (video) {
             setRecordedVideoUri(video.uri);
@@ -479,9 +493,9 @@ export default function CameraScreen() {
         <StatusBar barStyle="dark-content" />
         <View style={styles.loadingContent}>
           <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-            <FastImage
+            <Image
               source={require('../assets/images/mascot.png')}
-              resizeMode={FastImage.resizeMode.contain}
+              contentFit="contain"
               style={styles.loadingMascot}
             />
           </Animated.View>
@@ -521,171 +535,170 @@ export default function CameraScreen() {
         ref={cameraRef}
         mode={mode === 'photo' ? 'picture' : 'video'}
         zoom={zoom}
-      >
-        <Animated.View
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: 'white', opacity: flashOpacity, zIndex: 100 }
-          ]}
-          pointerEvents="none"
-        />
-        {recordedVideoUri && (
-          <View style={styles.videoPreviewContainer}>
-            <VideoView
-              player={player}
-              style={styles.videoPreview}
-              contentMode="cover"
-            />
-          </View>
+      />
+      <Animated.View
+        style={[
+          StyleSheet.absoluteFill,
+          { backgroundColor: 'white', opacity: flashOpacity, zIndex: 100 }
+        ]}
+        pointerEvents="none"
+      />
+      {recordedVideoUri && (
+        <View style={styles.videoPreviewContainer}>
+          <VideoView
+            player={player}
+            style={styles.videoPreview}
+            contentFit="cover"
+          />
+        </View>
+      )}
+
+      <View style={styles.overlay} {...panResponder.panHandlers} onTouchEnd={handleTapToFocus}>
+        {focusPulsePoint && (
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              styles.focusPulse,
+              {
+                left: focusPulsePoint.x - 20,
+                top: focusPulsePoint.y - 20,
+                opacity: focusPulseOpacity,
+                transform: [{ scale: focusPulseScale }],
+              },
+            ]}
+          />
         )}
+        <View style={[styles.topBar, { paddingTop: insets.top > 0 ? insets.top : 20 }]}>
+          {!isRecording && (
+            <>
+              <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
+                <IconSymbol name="close" size={30} color="white" />
+              </TouchableOpacity>
 
-        <View style={styles.overlay} {...panResponder.panHandlers} onTouchEnd={handleTapToFocus}>
-          {focusPulsePoint && (
-            <Animated.View
-              pointerEvents="none"
-              style={[
-                styles.focusPulse,
-                {
-                  left: focusPulsePoint.x - 20,
-                  top: focusPulsePoint.y - 20,
-                  opacity: focusPulseOpacity,
-                  transform: [{ scale: focusPulseScale }],
-                },
-              ]}
-            />
+              <View style={styles.headerLogo}>
+                <Image
+                  source={require('../assets/images/mascot.png')}
+                  style={styles.headerMascot}
+                  contentFit="contain"
+                />
+                <Text style={styles.headerText}>CookEat Ai</Text>
+              </View>
+
+              <TouchableOpacity style={styles.helpButton} onPress={showOnboarding}>
+                <IconSymbol name="help" size={30} color="white" />
+              </TouchableOpacity>
+            </>
           )}
-          <View style={[styles.topBar, { paddingTop: insets.top > 0 ? insets.top : 20 }]}>
-            {!isRecording && (
-              <>
-                <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-                  <IconSymbol name="close" size={30} color="white" />
-                </TouchableOpacity>
+        </View>
 
-                <View style={styles.headerLogo}>
-                  <FastImage
-                    source={require('../assets/images/mascot.png')}
-                    style={styles.headerMascot}
-                    resizeMode={FastImage.resizeMode.contain}
-                  />
-                  <Text style={styles.headerText}>CookEat Ai</Text>
-                </View>
+        <View style={[styles.bottomSection, { paddingBottom: Math.max(insets.bottom, 25) + 25 }]}>
+          {/* {!isRecording && capturedImages.length === 0 && !recordedVideoUri && (
+            <View style={styles.modeSwitcher}>
+              <TouchableOpacity
+                style={[styles.modeButton, mode === 'photo' && styles.modeButtonActive]}
+                onPress={() => {
+                  setMode('photo');
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }}
+              >
+                <Text style={[styles.modeText, mode === 'photo' && styles.modeTextActive]}>{I18n.t('camera.modes.photo')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modeButton, mode === 'video' && styles.modeButtonActive]}
+                onPress={() => {
+                  setMode('video');
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                }}
+              >
+                <Text style={[styles.modeText, mode === 'video' && styles.modeTextActive]}>{I18n.t('camera.modes.video')}</Text>
+              </TouchableOpacity>
+            </View>
+          )} */}
 
-                <TouchableOpacity style={styles.helpButton} onPress={showOnboarding}>
-                  <IconSymbol name="help" size={30} color="white" />
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
-
-          <View style={[styles.bottomSection, { paddingBottom: Math.max(insets.bottom, 25) + 25 }]}>
-            {/* {!isRecording && capturedImages.length === 0 && !recordedVideoUri && (
-              <View style={styles.modeSwitcher}>
-                <TouchableOpacity
-                  style={[styles.modeButton, mode === 'photo' && styles.modeButtonActive]}
-                  onPress={() => {
-                    setMode('photo');
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  }}
-                >
-                  <Text style={[styles.modeText, mode === 'photo' && styles.modeTextActive]}>{I18n.t('camera.modes.photo')}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.modeButton, mode === 'video' && styles.modeButtonActive]}
-                  onPress={() => {
-                    setMode('video');
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  }}
-                >
-                  <Text style={[styles.modeText, mode === 'video' && styles.modeTextActive]}>{I18n.t('camera.modes.video')}</Text>
-                </TouchableOpacity>
-              </View>
-            )} */}
-
-            <View style={styles.bottomBar}>
-              <View style={styles.sideButtonContainer}>
-              </View>
-
-              <View style={styles.captureContainer}>
-                {!recordedVideoUri && (
-                  <Animated.View
-                    style={{ transform: [{ scale: shutterScale }] }}
-                  >
-                    <TouchableOpacity
-                      style={[
-                        styles.captureButton,
-                        mode === 'video' && isRecording && styles.captureButtonRecording,
-                        (isCapturing || (mode === 'photo' && capturedImages.length >= MAX_PHOTOS)) && styles.captureButtonDisabled
-                      ]}
-                      onPress={mode === 'photo' ? takePicture : handleVideoCapture}
-                      activeOpacity={(isCapturing || (mode === 'photo' && capturedImages.length >= MAX_PHOTOS)) ? 1 : 0.7}
-                      disabled={isCapturing}
-                    >
-                      {mode === 'video' && isRecording && (
-                        <View style={StyleSheet.absoluteFill}>
-                          <Svg width={circleSize} height={circleSize} style={{ transform: [{ rotate: '-90deg' }] }}>
-                            <AnimatedCircle
-                              cx={circleSize / 2}
-                              cy={circleSize / 2}
-                              r={radius}
-                              stroke="#FF3B30"
-                              strokeWidth={strokeWidth}
-                              fill="transparent"
-                              strokeDasharray={circumference}
-                              strokeDashoffset={videoProgress.interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [circumference, 0],
-                              })}
-                              strokeLinecap="round"
-                            />
-                          </Svg>
-                        </View>
-                      )}
-                      <View style={[
-                        styles.captureButtonInner,
-                        mode === 'video' && styles.captureButtonInnerVideo,
-                        mode === 'video' && isRecording && styles.captureButtonInnerRecording
-                      ]}>
-                        {mode === 'photo' && capturedImages.length > 0 && capturedImages.length < MAX_PHOTOS && (
-                          <IconSymbol name="plus" size={40} color={Colors.light.button} weight="bold" />
-                        )}
-                        {mode === 'photo' && capturedImages.length >= MAX_PHOTOS && (
-                          <IconSymbol name="checkmark" size={40} color={Colors.light.button} weight="bold" />
-                        )}
-                      </View>
-                    </TouchableOpacity>
-                  </Animated.View>
-                )}
-                {mode === 'photo' && capturedImages.length >= MAX_PHOTOS && (
-                  <Text style={styles.limitText}>{I18n.t('camera.maxPhotosReached')}</Text>
-                )}
-              </View>
-
-              <View style={styles.sideButtonContainer}>
-                {mode === 'photo' && lastImage && (
-                  <TouchableOpacity
-                    style={styles.thumbnailWrapper}
-                    activeOpacity={0.8}
-                  >
-                    <View style={styles.thumbnailImageContainer}>
-                      <Image source={{ uri: lastImage }} style={styles.thumbnail} />
-                    </View>
-                    <View style={styles.badge}>
-                      <Text style={styles.badgeText}>{capturedImages.length}</Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
-              </View>
+          <View style={styles.bottomBar}>
+            <View style={styles.sideButtonContainer}>
             </View>
 
-            {((mode === 'photo' && capturedImages.length > 0) || (mode === 'video' && recordedVideoUri)) && (
-              <TouchableOpacity style={styles.finishButton} onPress={finishCapture}>
-                <Text style={styles.finishButtonText}>{I18n.t('camera.finishButton')}</Text>
-                <IconSymbol name="chevron-forward" size={20} color="white" weight="bold" />
-              </TouchableOpacity>
-            )}
+            <View style={styles.captureContainer}>
+              {!recordedVideoUri && (
+                <Animated.View
+                  style={{ transform: [{ scale: shutterScale }] }}
+                >
+                  <TouchableOpacity
+                    style={[
+                      styles.captureButton,
+                      mode === 'video' && isRecording && styles.captureButtonRecording,
+                      (isCapturing || (mode === 'photo' && capturedImages.length >= MAX_PHOTOS)) && styles.captureButtonDisabled
+                    ]}
+                    onPress={mode === 'photo' ? takePicture : handleVideoCapture}
+                    activeOpacity={(isCapturing || (mode === 'photo' && capturedImages.length >= MAX_PHOTOS)) ? 1 : 0.7}
+                    disabled={isCapturing}
+                  >
+                    {mode === 'video' && isRecording && (
+                      <View style={StyleSheet.absoluteFill}>
+                        <Svg width={circleSize} height={circleSize} style={{ transform: [{ rotate: '-90deg' }] }}>
+                          <AnimatedCircle
+                            cx={circleSize / 2}
+                            cy={circleSize / 2}
+                            r={radius}
+                            stroke="#FF3B30"
+                            strokeWidth={strokeWidth}
+                            fill="transparent"
+                            strokeDasharray={circumference}
+                            strokeDashoffset={videoProgress.interpolate({
+                              inputRange: [0, 1],
+                              outputRange: [circumference, 0],
+                            })}
+                            strokeLinecap="round"
+                          />
+                        </Svg>
+                      </View>
+                    )}
+                    <View style={[
+                      styles.captureButtonInner,
+                      mode === 'video' && styles.captureButtonInnerVideo,
+                      mode === 'video' && isRecording && styles.captureButtonInnerRecording
+                    ]}>
+                      {mode === 'photo' && capturedImages.length > 0 && capturedImages.length < MAX_PHOTOS && (
+                        <IconSymbol name="plus" size={40} color={Colors.light.button} weight="bold" />
+                      )}
+                      {mode === 'photo' && capturedImages.length >= MAX_PHOTOS && (
+                        <IconSymbol name="checkmark" size={40} color={Colors.light.button} weight="bold" />
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                </Animated.View>
+              )}
+              {mode === 'photo' && capturedImages.length >= MAX_PHOTOS && (
+                <Text style={styles.limitText}>{I18n.t('camera.maxPhotosReached')}</Text>
+              )}
+            </View>
+
+            <View style={styles.sideButtonContainer}>
+              {mode === 'photo' && lastImage && (
+                <TouchableOpacity
+                  style={styles.thumbnailWrapper}
+                  activeOpacity={0.8}
+                >
+                  <View style={styles.thumbnailImageContainer}>
+                    <Image source={{ uri: lastImage }} style={styles.thumbnail} />
+                  </View>
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>{capturedImages.length}</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
+
+          {((mode === 'photo' && capturedImages.length > 0) || (mode === 'video' && recordedVideoUri)) && (
+            <TouchableOpacity style={styles.finishButton} onPress={finishCapture}>
+              <Text style={styles.finishButtonText}>{I18n.t('camera.finishButton')}</Text>
+              <IconSymbol name="chevron-forward" size={20} color="white" weight="bold" />
+            </TouchableOpacity>
+          )}
         </View>
-      </CameraView>
+      </View>
     </View>
   );
 }
@@ -699,7 +712,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   overlay: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject,
     justifyContent: 'space-between',
   },
   topBar: {
@@ -751,10 +764,7 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
-    ...Platform.select({
-      ios: { fontFamily: 'CronosPro', fontWeight: '800' as const },
-      android: { fontFamily: 'CronosProBold' },
-    }),
+    fontFamily: 'Degular'
   },
   bottomSection: {
     gap: 20,
@@ -795,9 +805,8 @@ const styles = StyleSheet.create({
   limitText: {
     color: 'white',
     fontSize: 12,
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
     marginTop: 8,
-    fontWeight: '600',
   },
   thumbnailWrapper: {
     width: 55,
@@ -853,8 +862,7 @@ const styles = StyleSheet.create({
   finishButtonText: {
     color: 'white',
     fontSize: 20,
-    fontWeight: 'bold',
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
   },
   permissionContainer: {
     flex: 1,
@@ -878,9 +886,8 @@ const styles = StyleSheet.create({
   },
   permissionButtonText: {
     color: 'white',
-    fontWeight: 'bold',
     fontSize: 16,
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
   },
   backButton: {
     padding: 10,

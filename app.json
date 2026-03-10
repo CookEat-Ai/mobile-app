@@ -12,9 +12,6 @@
       "appStoreUrl": "https://apps.apple.com/fr/app/cookeat-ai/id6748924011",
       "supportsTablet": true,
       "bundleIdentifier": "com.gokugen.cookeat",
-      "config": {
-        "usesNonExemptEncryption": false
-      },
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSPhotoLibraryUsageDescription": "CookEat AI would like to access your photo library to recognize the ingredients you show us.",
@@ -35,7 +32,6 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
@@ -52,6 +48,14 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "buildReactNativeFromSource": true
+          }
+        }
+      ],
       "./plugins/withGradleProperties",
       "./plugins/withManifestFix",
       "./plugins/withSentryXcodeEnv",
@@ -120,7 +124,9 @@
           ],
           "androidMultiIntentFilters": []
         }
-      ]
+      ],
+      "expo-image",
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true

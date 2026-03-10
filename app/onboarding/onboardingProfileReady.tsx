@@ -129,7 +129,7 @@ export default function OnboardingProfileReadyScreen() {
           <View style={styles.checkCircle}>
             <Ionicons name="checkmark" size={30} color={"white"} />
           </View>
-          <Text 
+          <Text
             style={styles.title}
             numberOfLines={2}
             adjustsFontSizeToFit={true}
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     color: Colors.light.textSecondary,
     textAlign: 'center',
     lineHeight: 22,
-    fontFamily: 'CronosProBold',
+    fontFamily: 'CronosPro',
   },
   dashboardContainer: {
     backgroundColor: 'white',

@@ -7,44 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		07A20EAB8F2F44FEB28E1843 /* Degular Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C73E2A9467F644FE94AAF79E /* Degular Semibold.otf */; };
+		057115C859C045CEBDE57F7F /* CronosProBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C3BEF19166594FA38BC0A8A1 /* CronosProBold.otf */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		34C788E567E64962BC4A74E0 /* ShareExtensionPreprocessor.js in Resources */ = {isa = PBXBuildFile; fileRef = 076C7AE73B6E4BFC9C7A63D7 /* ShareExtensionPreprocessor.js */; };
+		29DA0C31FAD34C9850E56037 /* libPods-CookEatAi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 572AF57AA54E25AD8D545B48 /* libPods-CookEatAi.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		43D27CA3AB926433152653B1 /* libPods-CookEatAi.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C75F6D117DCE120E3DEE8A3 /* libPods-CookEatAi.a */; };
-		467BBEC428E532EE4CA6275E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C7D0F050897A4430B2DF22B4 /* PrivacyInfo.xcprivacy */; };
-		50D3DAFB4FF643CE946DBE76 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03BDA2C9CDFE4604B1537ED4 /* ShareViewController.swift */; };
-		65BB47A809104AB8BD59CF8F /* ShareExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = 24433D368BB7420AAB5E3437 /* ShareExtension.appex */; };
-		7183D152CAB16F48724D5E23 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB359C8ED1123DEC2CA63295 /* ExpoModulesProvider.swift */; };
-		7E7D9D9A8AF34FA9916592CF /* CronosProBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 8F53B598BEF84870B24C0B97 /* CronosProBold.otf */; };
-		8B62178DEFDF4AB684359902 /* CronosPro.otf in Resources */ = {isa = PBXBuildFile; fileRef = BFD19FAC216B4E2DBE452DC0 /* CronosPro.otf */; };
-		9E6493FBD66448D89CA19FC1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 9ADF843262014ACD9F98E625 /* InfoPlist.strings */; };
-		AE9FDABBF76C4F10BB2E5396 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = C7D0F050897A4430B2DF22B4 /* PrivacyInfo.xcprivacy */; };
-		B5F964BCB2214D6DBF91EA60 /* Degular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 66BA6484CB7F4544B31ED4A1 /* Degular.otf */; };
+		44AD46D2B726449F8AA98B7E /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D2368E7742324D3093D9BFD1 /* MainInterface.storyboard */; };
+		6A7C9CC6F1E04DE8A8269151 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C88BE09340A4140868A2B5F /* ShareViewController.swift */; };
+		95BC5715F8744E3FA91D07D7 /* Degular Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 73052C2501F64448810EF6B3 /* Degular Semibold.otf */; };
+		ADABC85A2C474BBBBE00E44F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8B23771CF8B54B528B1E4EA7 /* PrivacyInfo.xcprivacy */; };
+		BAA3193C56EF4350A43CD4B1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 30D05917269B49988EC20C8F /* InfoPlist.strings */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		C9B5FA8A1BA24E8E9D8F4560 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 37E83C8AC7F54FA891581608 /* MainInterface.storyboard */; };
-		E9B69AAF67614B7CA3737E7E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 010FC027B1024A5681FA240D /* InfoPlist.strings */; };
+		C1793B5121A048A184DCBDEC /* ShareExtension.appex in Copy Files */ = {isa = PBXBuildFile; fileRef = 3670D70A819447179FC3130F /* ShareExtension.appex */; };
+		C73DBEE8033D47C2891E5AD1 /* CronosPro.otf in Resources */ = {isa = PBXBuildFile; fileRef = 98EF2C6F8DB54A5BABB1A8DC /* CronosPro.otf */; };
+		CD014612F205D2B649CCF047 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377D74C3C7D52E20E724F9B2 /* ExpoModulesProvider.swift */; };
+		EBA6512B8F5C43219828A689 /* ShareExtensionPreprocessor.js in Resources */ = {isa = PBXBuildFile; fileRef = 9265963CFBF945DABAD84BC9 /* ShareExtensionPreprocessor.js */; };
+		EF817E9EF1BB46E290E510D3 /* Degular.otf in Resources */ = {isa = PBXBuildFile; fileRef = D87510B5854140A9B5B75C01 /* Degular.otf */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
+		F3614EBAAEF02690EAA60A9D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 8B23771CF8B54B528B1E4EA7 /* PrivacyInfo.xcprivacy */; };
+		FDFB3983DA4E4CA79D3D8731 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FE3300D04382434898A7196D /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0772814917A54F649A01875E /* PBXContainerItemProxy */ = {
+		191E072C4920473FBB19EE43 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F707563A249442DFA339E5EB;
+			remoteGlobalIDString = 4FE56448E97745709B7C020A;
 			remoteInfo = ShareExtension;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		8A12B34E89B14BB3BC741C4D /* Copy Files */ = {
+		C542B04EF9694E31BF995FCB /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				65BB47A809104AB8BD59CF8F /* ShareExtension.appex in Copy Files */,
+				C1793B5121A048A184DCBDEC /* ShareExtension.appex in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -52,31 +52,31 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		010FC027B1024A5681FA240D /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		03BDA2C9CDFE4604B1537ED4 /* ShareViewController.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShareViewController.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
-		076C7AE73B6E4BFC9C7A63D7 /* ShareExtensionPreprocessor.js */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = ShareExtensionPreprocessor.js; path = ShareExtensionPreprocessor.js; sourceTree = "<group>"; };
-		0A689B340ADD61D84E23FE4B /* Pods-CookEatAi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CookEatAi.release.xcconfig"; path = "Target Support Files/Pods-CookEatAi/Pods-CookEatAi.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* CookEatAi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CookEatAi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = CookEatAi/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = CookEatAi/Info.plist; sourceTree = "<group>"; };
-		24433D368BB7420AAB5E3437 /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = undefined; name = ShareExtension.appex; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		37E83C8AC7F54FA891581608 /* MainInterface.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = MainInterface.storyboard; path = MainInterface.storyboard; sourceTree = "<group>"; };
-		4C75F6D117DCE120E3DEE8A3 /* libPods-CookEatAi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CookEatAi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		66BA6484CB7F4544B31ED4A1 /* Degular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Degular.otf; path = ../assets/fonts/Degular.otf; sourceTree = "<group>"; };
-		82A274492DF24163BEC31E16 /* ShareExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = ShareExtension.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
-		89F5DD49216C4C42A66C8C69 /* ShareExtension-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "ShareExtension-Info.plist"; path = "ShareExtension-Info.plist"; sourceTree = "<group>"; };
-		8F53B598BEF84870B24C0B97 /* CronosProBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = CronosProBold.otf; path = ../assets/fonts/CronosProBold.otf; sourceTree = "<group>"; };
-		9ADF843262014ACD9F98E625 /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		A3BCCD9E6968BB63D3583679 /* Pods-CookEatAi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CookEatAi.debug.xcconfig"; path = "Target Support Files/Pods-CookEatAi/Pods-CookEatAi.debug.xcconfig"; sourceTree = "<group>"; };
+		2C88BE09340A4140868A2B5F /* ShareViewController.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = ShareViewController.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		30D05917269B49988EC20C8F /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		3670D70A819447179FC3130F /* ShareExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = undefined; name = ShareExtension.appex; path = ShareExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		377D74C3C7D52E20E724F9B2 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-CookEatAi/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		572AF57AA54E25AD8D545B48 /* libPods-CookEatAi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CookEatAi.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		600A9FA013F3473B93832CDA /* ShareExtension.entitlements */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = ShareExtension.entitlements; path = ShareExtension.entitlements; sourceTree = "<group>"; };
+		73052C2501F64448810EF6B3 /* Degular Semibold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Degular Semibold.otf"; path = "../assets/fonts/Degular Semibold.otf"; sourceTree = "<group>"; };
+		7B54051D71D62ABBF36E23A7 /* Pods-CookEatAi.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CookEatAi.debug.xcconfig"; path = "Target Support Files/Pods-CookEatAi/Pods-CookEatAi.debug.xcconfig"; sourceTree = "<group>"; };
+		8B23771CF8B54B528B1E4EA7 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = PrivacyInfo.xcprivacy; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		9265963CFBF945DABAD84BC9 /* ShareExtensionPreprocessor.js */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = ShareExtensionPreprocessor.js; path = ShareExtensionPreprocessor.js; sourceTree = "<group>"; };
+		98EF2C6F8DB54A5BABB1A8DC /* CronosPro.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = CronosPro.otf; path = ../assets/fonts/CronosPro.otf; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = CookEatAi/SplashScreen.storyboard; sourceTree = "<group>"; };
+		AD0EDB5076E5754E3CB2E5F5 /* Pods-CookEatAi.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CookEatAi.release.xcconfig"; path = "Target Support Files/Pods-CookEatAi/Pods-CookEatAi.release.xcconfig"; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		BFD19FAC216B4E2DBE452DC0 /* CronosPro.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = CronosPro.otf; path = ../assets/fonts/CronosPro.otf; sourceTree = "<group>"; };
-		C73E2A9467F644FE94AAF79E /* Degular Semibold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Degular Semibold.otf"; path = "../assets/fonts/Degular Semibold.otf"; sourceTree = "<group>"; };
-		C7D0F050897A4430B2DF22B4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = PrivacyInfo.xcprivacy; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		DB359C8ED1123DEC2CA63295 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-CookEatAi/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		BE297014650D49DA9E92723D /* ShareExtension-Info.plist */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.xml; name = "ShareExtension-Info.plist"; path = "ShareExtension-Info.plist"; sourceTree = "<group>"; };
+		C3BEF19166594FA38BC0A8A1 /* CronosProBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = CronosProBold.otf; path = ../assets/fonts/CronosProBold.otf; sourceTree = "<group>"; };
+		D2368E7742324D3093D9BFD1 /* MainInterface.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = MainInterface.storyboard; path = MainInterface.storyboard; sourceTree = "<group>"; };
+		D87510B5854140A9B5B75C01 /* Degular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Degular.otf; path = ../assets/fonts/Degular.otf; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = CookEatAi/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* CookEatAi-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "CookEatAi-Bridging-Header.h"; path = "CookEatAi/CookEatAi-Bridging-Header.h"; sourceTree = "<group>"; };
+		FE3300D04382434898A7196D /* InfoPlist.strings */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,11 +84,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43D27CA3AB926433152653B1 /* libPods-CookEatAi.a in Frameworks */,
+				29DA0C31FAD34C9850E56037 /* libPods-CookEatAi.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		75BD9D1CBAE848D2AAE5F73D /* Frameworks */ = {
+		9A112FB0F01E4886B4F2219E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -98,6 +98,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		093190B517A744A9A8275ED6 /* fr.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				FE3300D04382434898A7196D /* InfoPlist.strings */,
+			);
+			name = fr.lproj;
+			path = "";
+			sourceTree = "<group>";
+		};
 		13B07FAE1A68108700A75B9A /* CookEatAi */ = {
 			isa = PBXGroup;
 			children = (
@@ -115,27 +124,35 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				4C75F6D117DCE120E3DEE8A3 /* libPods-CookEatAi.a */,
+				572AF57AA54E25AD8D545B48 /* libPods-CookEatAi.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		391AD4A014B744EC9050DE25 /* fr.lproj */ = {
+		3E6350DCDFE04D139ECD4B32 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				010FC027B1024A5681FA240D /* InfoPlist.strings */,
+				98EF2C6F8DB54A5BABB1A8DC /* CronosPro.otf */,
+				C3BEF19166594FA38BC0A8A1 /* CronosProBold.otf */,
+				D87510B5854140A9B5B75C01 /* Degular.otf */,
+				73052C2501F64448810EF6B3 /* Degular Semibold.otf */,
 			);
-			name = fr.lproj;
+			name = Resources;
 			path = "";
 			sourceTree = "<group>";
 		};
-		7EADCC6CFF22491FB29C93B4 /* en.lproj */ = {
+		4FC9DF1228FF4DAEA1F528CA /* ShareExtension */ = {
 			isa = PBXGroup;
 			children = (
-				9ADF843262014ACD9F98E625 /* InfoPlist.strings */,
+				2C88BE09340A4140868A2B5F /* ShareViewController.swift */,
+				D2368E7742324D3093D9BFD1 /* MainInterface.storyboard */,
+				9265963CFBF945DABAD84BC9 /* ShareExtensionPreprocessor.js */,
+				8B23771CF8B54B528B1E4EA7 /* PrivacyInfo.xcprivacy */,
+				BE297014650D49DA9E92723D /* ShareExtension-Info.plist */,
+				600A9FA013F3473B93832CDA /* ShareExtension.entitlements */,
 			);
-			name = en.lproj;
-			path = "";
+			name = ShareExtension;
+			path = ShareExtension;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -152,10 +169,10 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				B914927CB51E480BAB1ED8A9 /* ShareExtension */,
-				D5AC193F38C14FA283AE26F8 /* Resources */,
-				93200A92276EBFFC95B272E4 /* Pods */,
-				EC96FF823CDF509E5E6BDF90 /* ExpoModulesProviders */,
+				4FC9DF1228FF4DAEA1F528CA /* ShareExtension */,
+				3E6350DCDFE04D139ECD4B32 /* Resources */,
+				8A7DFA413FEC0CB3B6A36A1B /* Pods */,
+				C170C06637EE439E9FA7C33C /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -166,72 +183,55 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* CookEatAi.app */,
-				24433D368BB7420AAB5E3437 /* ShareExtension.appex */,
+				3670D70A819447179FC3130F /* ShareExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		93200A92276EBFFC95B272E4 /* Pods */ = {
+		8A7DFA413FEC0CB3B6A36A1B /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				A3BCCD9E6968BB63D3583679 /* Pods-CookEatAi.debug.xcconfig */,
-				0A689B340ADD61D84E23FE4B /* Pods-CookEatAi.release.xcconfig */,
+				7B54051D71D62ABBF36E23A7 /* Pods-CookEatAi.debug.xcconfig */,
+				AD0EDB5076E5754E3CB2E5F5 /* Pods-CookEatAi.release.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		9DF37851210A5863ED72F200 /* CookEatAi */ = {
+		A3A1710022984065B98012F5 /* CookEatAi */ = {
 			isa = PBXGroup;
 			children = (
-				DB359C8ED1123DEC2CA63295 /* ExpoModulesProvider.swift */,
+				377D74C3C7D52E20E724F9B2 /* ExpoModulesProvider.swift */,
 			);
 			name = CookEatAi;
-			sourceTree = "<group>";
-		};
-		B914927CB51E480BAB1ED8A9 /* ShareExtension */ = {
-			isa = PBXGroup;
-			children = (
-				03BDA2C9CDFE4604B1537ED4 /* ShareViewController.swift */,
-				37E83C8AC7F54FA891581608 /* MainInterface.storyboard */,
-				076C7AE73B6E4BFC9C7A63D7 /* ShareExtensionPreprocessor.js */,
-				C7D0F050897A4430B2DF22B4 /* PrivacyInfo.xcprivacy */,
-				89F5DD49216C4C42A66C8C69 /* ShareExtension-Info.plist */,
-				82A274492DF24163BEC31E16 /* ShareExtension.entitlements */,
-			);
-			name = ShareExtension;
-			path = ShareExtension;
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
 				BB2F792C24A3F905000567C9 /* Expo.plist */,
-				391AD4A014B744EC9050DE25 /* fr.lproj */,
-				7EADCC6CFF22491FB29C93B4 /* en.lproj */,
+				093190B517A744A9A8275ED6 /* fr.lproj */,
+				C7D968EAEC8646088FE7F57F /* en.lproj */,
 			);
 			name = Supporting;
 			path = CookEatAi/Supporting;
 			sourceTree = "<group>";
 		};
-		D5AC193F38C14FA283AE26F8 /* Resources */ = {
+		C170C06637EE439E9FA7C33C /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				BFD19FAC216B4E2DBE452DC0 /* CronosPro.otf */,
-				8F53B598BEF84870B24C0B97 /* CronosProBold.otf */,
-				66BA6484CB7F4544B31ED4A1 /* Degular.otf */,
-				C73E2A9467F644FE94AAF79E /* Degular Semibold.otf */,
-			);
-			name = Resources;
-			path = "";
-			sourceTree = "<group>";
-		};
-		EC96FF823CDF509E5E6BDF90 /* ExpoModulesProviders */ = {
-			isa = PBXGroup;
-			children = (
-				9DF37851210A5863ED72F200 /* CookEatAi */,
+				A3A1710022984065B98012F5 /* CookEatAi */,
 			);
 			name = ExpoModulesProviders;
+			sourceTree = "<group>";
+		};
+		C7D968EAEC8646088FE7F57F /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				30D05917269B49988EC20C8F /* InfoPlist.strings */,
+			);
+			name = en.lproj;
+			path = "";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -242,33 +242,33 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "CookEatAi" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				5C20755295B312445DC0FF1D /* [Expo] Configure project */,
+				5BB5C70249261929B95FCCEB /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				8A12B34E89B14BB3BC741C4D /* Copy Files */,
-				86130995D07040F4A070D76F /* Upload Debug Symbols to Sentry */,
-				1EBFA1528C2E25B9879F1F59 /* [CP] Embed Pods Frameworks */,
+				C542B04EF9694E31BF995FCB /* Copy Files */,
+				50105BF8CEB74C829CE0777A /* Upload Debug Symbols to Sentry */,
+				1601C459F399533F4148AA2F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				091A96C7BD424E41B5B37D97 /* PBXTargetDependency */,
+				0D89AD8C48F0460AAF050906 /* PBXTargetDependency */,
 			);
 			name = CookEatAi;
 			productName = CookEatAi;
 			productReference = 13B07F961A680F5B00A75B9A /* CookEatAi.app */;
 			productType = "com.apple.product-type.application";
 		};
-		F707563A249442DFA339E5EB /* ShareExtension */ = {
+		4FE56448E97745709B7C020A /* ShareExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AAE19894B249414E9C8CEDF1 /* Build configuration list for PBXNativeTarget "ShareExtension" */;
+			buildConfigurationList = 0693689E2A8747E98739D64A /* Build configuration list for PBXNativeTarget "ShareExtension" */;
 			buildPhases = (
-				5032B1CD46EB4773AF680556 /* Sources */,
-				6C2504E8116043F6A41B0D24 /* Resources */,
-				75BD9D1CBAE848D2AAE5F73D /* Frameworks */,
+				830084B223694A229DEDD264 /* Sources */,
+				F371BD199EBB4CA297C33BB8 /* Resources */,
+				9A112FB0F01E4886B4F2219E /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -276,7 +276,7 @@
 			);
 			name = ShareExtension;
 			productName = ShareExtension;
-			productReference = 24433D368BB7420AAB5E3437 /* ShareExtension.appex */;
+			productReference = 3670D70A819447179FC3130F /* ShareExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -307,7 +307,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* CookEatAi */,
-				F707563A249442DFA339E5EB /* ShareExtension */,
+				4FE56448E97745709B7C020A /* ShareExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -320,23 +320,23 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				E9B69AAF67614B7CA3737E7E /* InfoPlist.strings in Resources */,
-				9E6493FBD66448D89CA19FC1 /* InfoPlist.strings in Resources */,
-				8B62178DEFDF4AB684359902 /* CronosPro.otf in Resources */,
-				7E7D9D9A8AF34FA9916592CF /* CronosProBold.otf in Resources */,
-				B5F964BCB2214D6DBF91EA60 /* Degular.otf in Resources */,
-				07A20EAB8F2F44FEB28E1843 /* Degular Semibold.otf in Resources */,
-				467BBEC428E532EE4CA6275E /* PrivacyInfo.xcprivacy in Resources */,
+				FDFB3983DA4E4CA79D3D8731 /* InfoPlist.strings in Resources */,
+				BAA3193C56EF4350A43CD4B1 /* InfoPlist.strings in Resources */,
+				C73DBEE8033D47C2891E5AD1 /* CronosPro.otf in Resources */,
+				057115C859C045CEBDE57F7F /* CronosProBold.otf in Resources */,
+				EF817E9EF1BB46E290E510D3 /* Degular.otf in Resources */,
+				95BC5715F8744E3FA91D07D7 /* Degular Semibold.otf in Resources */,
+				F3614EBAAEF02690EAA60A9D /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		6C2504E8116043F6A41B0D24 /* Resources */ = {
+		F371BD199EBB4CA297C33BB8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9B5FA8A1BA24E8E9D8F4560 /* MainInterface.storyboard in Resources */,
-				34C788E567E64962BC4A74E0 /* ShareExtensionPreprocessor.js in Resources */,
-				AE9FDABBF76C4F10BB2E5396 /* PrivacyInfo.xcprivacy in Resources */,
+				44AD46D2B726449F8AA98B7E /* MainInterface.storyboard in Resources */,
+				EBA6512B8F5C43219828A689 /* ShareExtensionPreprocessor.js in Resources */,
+				ADABC85A2C474BBBBE00E44F /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,6 +350,8 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/.xcode.env",
+				"$(SRCROOT)/.xcode.env.local",
 			);
 			name = "Bundle React Native code and images";
 			outputPaths = (
@@ -380,25 +382,39 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		1EBFA1528C2E25B9879F1F59 /* [CP] Embed Pods Frameworks */ = {
+		1601C459F399533F4148AA2F /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-CookEatAi/Pods-CookEatAi-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermesvm.framework/hermesvm",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermes.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermesvm.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CookEatAi/Pods-CookEatAi-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5C20755295B312445DC0FF1D /* [Expo] Configure project */ = {
+		50105BF8CEB74C829CE0777A /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Debug Symbols to Sentry";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh `${NODE_BINARY:-node} --print \"require('path').dirname(require.resolve('@sentry/react-native/package.json')) + '/scripts/sentry-xcode-debug-files.sh'\"`";
+		};
+		5BB5C70249261929B95FCCEB /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -407,11 +423,16 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/.xcode.env",
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/CookEatAi/CookEatAi.entitlements",
+				"$(SRCROOT)/Pods/Target Support Files/Pods-CookEatAi/expo-configure-project.sh",
 			);
 			name = "[Expo] Configure project";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(SRCROOT)/Pods/Target Support Files/Pods-CookEatAi/ExpoModulesProvider.swift",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -428,11 +449,11 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXApplication/ExpoApplication_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXNotifications/ExpoNotifications_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXUpdates/EXUpdates.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoDevice/ExpoDevice_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoFileSystem/ExpoFileSystem_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoLocalization/ExpoLocalization_privacy.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoNotifications/ExpoNotifications_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/ExpoSystemUI/ExpoSystemUI_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/PurchaseConnector/PurchaseConnector_Privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/PurchasesHybridCommon/PurchasesHybridCommon.bundle",
@@ -445,6 +466,7 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-cxxreact/React-cxxreact_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RevenueCat/RevenueCat.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/RevenueCatUI/RevenueCat_RevenueCatUI.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImage/SDWebImage.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/Sentry/Sentry.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/boost/boost_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/glog/glog_privacy.bundle",
@@ -455,11 +477,11 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoApplication_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoConstants_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoNotifications_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXUpdates.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoDevice_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoFileSystem_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoLocalization_privacy.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoNotifications_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/ExpoSystemUI_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/PurchaseConnector_Privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/PurchasesHybridCommon.bundle",
@@ -472,6 +494,7 @@
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/React-cxxreact_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RevenueCat.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/RevenueCat_RevenueCatUI.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/SDWebImage.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/Sentry.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/boost_privacy.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/glog_privacy.bundle",
@@ -481,22 +504,6 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CookEatAi/Pods-CookEatAi-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		86130995D07040F4A070D76F /* Upload Debug Symbols to Sentry */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(DWARF_DSYM_FOLDER_PATH)/$(DWARF_DSYM_FILE_NAME)/Contents/Resources/DWARF/$(PRODUCT_NAME)",
-				"$(DWARF_DSYM_FOLDER_PATH)/$(DWARF_DSYM_FILE_NAME)",
-			);
-			name = "Upload Debug Symbols to Sentry";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/bin/sh `${NODE_BINARY:-node} --print \"require('path').dirname(require.resolve('@sentry/react-native/package.json')) + '/scripts/sentry-xcode-debug-files.sh'\"`";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -505,32 +512,32 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				7183D152CAB16F48724D5E23 /* ExpoModulesProvider.swift in Sources */,
+				CD014612F205D2B649CCF047 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		5032B1CD46EB4773AF680556 /* Sources */ = {
+		830084B223694A229DEDD264 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50D3DAFB4FF643CE946DBE76 /* ShareViewController.swift in Sources */,
+				6A7C9CC6F1E04DE8A8269151 /* ShareViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		091A96C7BD424E41B5B37D97 /* PBXTargetDependency */ = {
+		0D89AD8C48F0460AAF050906 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F707563A249442DFA339E5EB /* ShareExtension */;
-			targetProxy = 0772814917A54F649A01875E /* PBXContainerItemProxy */;
+			target = 4FE56448E97745709B7C020A /* ShareExtension */;
+			targetProxy = 191E072C4920473FBB19EE43 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A3BCCD9E6968BB63D3583679 /* Pods-CookEatAi.debug.xcconfig */;
+			baseConfigurationReference = 7B54051D71D62ABBF36E23A7 /* Pods-CookEatAi.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -567,7 +574,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0A689B340ADD61D84E23FE4B /* Pods-CookEatAi.release.xcconfig */;
+			baseConfigurationReference = AD0EDB5076E5754E3CB2E5F5 /* Pods-CookEatAi.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -596,7 +603,7 @@
 			};
 			name = Release;
 		};
-		13E98436E50B4E1087A70626 /* Debug */ = {
+		43F8E7C568AF44EDA927BD74 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -681,10 +688,8 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -739,10 +744,8 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_CFLAGS = "$(inherited)";
+				OTHER_CPLUSPLUSFLAGS = "$(inherited)";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;
@@ -750,7 +753,7 @@
 			};
 			name = Release;
 		};
-		8989873BF6D64A30A6D1F3BB /* Release */ = {
+		AB909CC868EA413F9A4425DB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -779,6 +782,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0693689E2A8747E98739D64A /* Build configuration list for PBXNativeTarget "ShareExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				43F8E7C568AF44EDA927BD74 /* Debug */,
+				AB909CC868EA413F9A4425DB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "CookEatAi" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -793,15 +805,6 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		AAE19894B249414E9C8CEDF1 /* Build configuration list for PBXNativeTarget "ShareExtension" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				13E98436E50B4E1087A70626 /* Debug */,
-				8989873BF6D64A30A6D1F3BB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

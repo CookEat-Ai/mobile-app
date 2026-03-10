@@ -17,7 +17,7 @@ import {
   Share,
   Platform
 } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../constants/Colors';
 import { searchImage } from "../services/image";
@@ -1019,13 +1019,12 @@ export default function RecipeDetailScreen() {
         {/* Section Image avec boutons overlay */}
         <View style={styles.imageContainer}>
           {recipe.image && (
-            <FastImage
+            <Image
               source={{
                 uri: recipe.image,
-                priority: FastImage.priority.high,
               }}
               style={styles.recipeImage}
-              resizeMode={FastImage.resizeMode.cover}
+              contentFit="cover"
               onLoadEnd={() => setLoadingImage(false)}
               onError={handleImageError}
             />
@@ -1464,10 +1463,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     fontSize: 16,
     color: '#000',
-    ...Platform.select({
-      ios: { fontFamily: 'CronosPro', fontWeight: '700' as const },
-      android: { fontFamily: 'CronosProBold' },
-    }),
+    fontFamily: 'CronosProBold'
   },
   backButton: {
     position: 'absolute',
@@ -1532,10 +1528,7 @@ const styles = StyleSheet.create({
   brandTitle: {
     fontSize: 24,
     color: Colors.light.text,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   infoContainer: {
     paddingHorizontal: 20,
@@ -1545,13 +1538,10 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: '#000',
     marginBottom: 20,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   recipeDescription: {
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
     fontSize: 16,
     color: '#666',
     lineHeight: 22,
@@ -1578,8 +1568,8 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     textAlign: 'center',
-    fontFamily: 'CronosPro',
-    fontSize: 12,
+    fontFamily: 'CronosProBold',
+    fontSize: 16,
     color: '#666',
     marginTop: 8,
     marginBottom: 4,
@@ -1588,10 +1578,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     color: '#000',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   ingredientsSection: {
     marginTop: 30,
@@ -1606,10 +1593,7 @@ const styles = StyleSheet.create({
   ingredientsTitle: {
     fontSize: 20,
     color: '#000',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   ingredientItem: {
     flexDirection: 'row',
@@ -1636,14 +1620,14 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   ingredientName: {
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
     fontSize: 16,
     fontWeight: '600',
     color: '#000',
     marginBottom: 4,
   },
   ingredientQuantity: {
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
@@ -1662,7 +1646,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   tagText: {
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
     fontSize: 10,
     color: '#000',
     fontWeight: '500',
@@ -1686,7 +1670,7 @@ const styles = StyleSheet.create({
   },
   rateButtonText: {
     color: 'white',
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
     fontSize: 18,
     fontWeight: '600',
   },
@@ -1731,18 +1715,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: Colors.light.text,
     textAlign: 'center',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular' },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   stepsTitle: {
     fontSize: 20,
     color: '#000',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   stepItem: {
     backgroundColor: 'white',
@@ -1756,14 +1734,15 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   stepTitle: {
-    fontFamily: 'CronosPro',
+    fontFamily: 'CronosProBold',
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
     marginBottom: 8,
   },
   stepDescription: {
-    fontSize: 16,
+    fontFamily: 'CronosPro',
+    fontSize: 18,
     color: '#666',
   },
   bonAppetitSection: {
@@ -1792,15 +1771,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   chefTipTitle: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#855D00',
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   chefTipText: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#5C4A00',
     lineHeight: 20,
     fontFamily: 'CronosPro',
@@ -1813,10 +1789,7 @@ const styles = StyleSheet.create({
   },
   bonAppetitText: {
     fontSize: 32,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
   likeRecipeButton: {
     flexDirection: 'row',
@@ -1833,8 +1806,7 @@ const styles = StyleSheet.create({
   },
   likeRecipeText: {
     fontSize: 16,
-    fontFamily: 'CronosPro',
-    fontWeight: '600',
+    fontFamily: 'CronosProBold',
     marginLeft: 8,
   },
   loadingContainer: {
@@ -1882,9 +1854,6 @@ const styles = StyleSheet.create({
   videoLinkText: {
     color: 'white',
     fontSize: 16,
-    ...Platform.select({
-      ios: { fontFamily: 'Degular', fontWeight: 'bold' as const },
-      android: { fontFamily: 'Degular' },
-    }),
+    fontFamily: 'Degular'
   },
 }); 

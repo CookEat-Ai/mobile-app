@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import { Animated, Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View, Easing } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Image } from 'expo-image';
 import { Colors } from '../../constants/Colors';
 import I18n from '../../i18n';
 import IphoneVideoDemo from '../../components/IphoneVideoDemo';
@@ -29,10 +30,15 @@ export default function WelcomeVideoScreen() {
       ]}
     >
       <View style={styles.brandRow}>
-        <Animated.Image
-          source={require('../../assets/images/mascot.png')}
-          style={[styles.brandMascot, { transform: [{ translateX: mascotTranslateX }, { rotate: '20deg' }] }]}
-        />
+        <Animated.View style={{ transform: [{ translateX: mascotTranslateX }, { rotate: '20deg' }] }}>
+          <Image
+            source={require('../../assets/images/mascot.png')}
+            contentFit="contain"
+            transition={0}
+            cachePolicy="memory-disk"
+            style={styles.brandMascot}
+          />
+        </Animated.View>
         <Text style={styles.brand}>CookEat Ai</Text>
       </View>
 

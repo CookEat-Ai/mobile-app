@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import I18n from '../i18n';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import FastImage from 'react-native-fast-image';
+import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/Colors';
@@ -230,9 +230,9 @@ export default function ShareIntentScreen() {
         {status === 'loading' && (
           <>
             <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-              <FastImage
+              <Image
                 source={require('../assets/images/mascot.png')}
-                resizeMode={FastImage.resizeMode.contain}
+                contentFit="contain"
                 style={styles.loadingMascot}
               />
             </Animated.View>

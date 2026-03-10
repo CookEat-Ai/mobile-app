@@ -1,23 +1,28 @@
 import React from 'react';
 import { Image, Platform, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { ResizeMode, Video } from 'expo-av';
+import { useVideoPlayer, VideoView } from 'expo-video';
 
 type IphoneVideoDemoProps = {
   style?: StyleProp<ViewStyle>;
 };
 
+const videoSource = require('../assets/videos/demo.mp4');
+
 export default function IphoneVideoDemo({ style }: IphoneVideoDemoProps) {
   const frameSource = Platform.OS === 'ios' ? require('../assets/images/iphone.png') : require('../assets/images/android.png');
 
+  const player = useVideoPlayer(videoSource, player => {
+    player.loop = true;
+    player.muted = true;
+    player.play();
+  });
+
   return (
     <View style={[styles.wrapper, style]}>
-      <Video
-        source={require('../assets/videos/demo.mp4')}
-        resizeMode={ResizeMode.COVER}
-        shouldPlay
-        isLooping
-        isMuted
+      <VideoView
+        player={player}
         style={styles.video}
+        nativeControls={false}
       />
       <Image source={frameSource} style={styles.frame} />
     </View>

@@ -50,7 +50,7 @@ export default function FavoriteRecipeCard({
           icon
             ? <Text style={{ fontSize: 34 }}>{icon}</Text>
             : image
-              ? <Image src={image} style={styles.image} />
+              ? <Image source={{ uri: image }} style={styles.image} />
               : <Text style={{ fontSize: 34 }}>🍲</Text>
         }
       </View>

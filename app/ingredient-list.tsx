@@ -32,7 +32,6 @@ import { useSubscription } from '../hooks/useSubscription';
 
 import { useVoice } from '../hooks/useVoice';
 import Voice from '@react-native-voice/voice';
-import { Audio } from 'expo-av';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const { width } = Dimensions.get('window');

@@ -4,7 +4,7 @@ import I18n from '../i18n';
 import { FlatList, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CategoryButton from '../components/CategoryButton';
-import RecipeCard from '../components/RecipeCard';
+import { RecipeCard } from '../components/RecipeCard';
 import SearchBar from '../components/SearchBar';
 import { Colors } from '../constants/Colors';
 
@@ -358,14 +358,13 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
                 <RecipeCard
-                  title={item.title}
-                  image={item.image}
-                  isLiked={likedRecipes.has(item.id)}
+                  item={{
+                    id: item.id,
+                    title: item.title,
+                    image: item.image,
+                    cooking_time: `${item.cookingTime} min`,
+                  }}
                   onPress={() => handleRecipePress(item)}
-                  onLikePress={() => handleLikePress(item.id)}
-                  cookingTime={item.cookingTime}
-                  difficulty={item.difficulty}
-                  rating={item.rating}
                 />
               )}
             />

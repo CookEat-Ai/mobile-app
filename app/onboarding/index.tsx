@@ -17,7 +17,7 @@ import { Colors } from '../../constants/Colors';
 import I18n from '../../i18n';
 import analytics from '../../services/analytics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import FastImage from "react-native-fast-image";
+import { Image } from 'expo-image';
 
 const { width } = Dimensions.get('window');
 
@@ -170,9 +170,11 @@ export default function WelcomeScreen() {
               ],
             }}
           >
-            <FastImage
+            <Image
               source={require('../../assets/images/mascot.png')}
-              resizeMode={FastImage.resizeMode.contain}
+              contentFit="contain"
+              transition={0}
+              cachePolicy="memory-disk"
               style={[
                 styles.illustration,
                 { transform: [{ rotate: '20deg' }] }

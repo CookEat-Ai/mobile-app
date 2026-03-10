@@ -9,7 +9,7 @@ import {
   Text,
   Platform,
 } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import { Image } from 'expo-image';
 import { Colors } from '../../constants/Colors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import I18n from '../../i18n';
@@ -132,9 +132,11 @@ export default function LoadingScreen() {
     <View style={[styles.container, styles.loadingContainer, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <View style={styles.loadingContent}>
         <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-          <FastImage
+          <Image
             source={require('../../assets/images/mascot.png')}
-            resizeMode={FastImage.resizeMode.contain}
+            contentFit="contain"
+            transition={0}
+            cachePolicy="memory-disk"
             style={styles.loadingMascot}
           />
         </Animated.View>

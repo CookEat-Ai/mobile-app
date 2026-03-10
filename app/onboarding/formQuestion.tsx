@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import * as Localization from 'expo-localization';
-import FastImage from 'react-native-fast-image';
+import { Image } from 'expo-image';
 import * as Notifications from 'expo-notifications';
 import * as StoreReview from 'expo-store-review';
 import { FontAwesome6, Ionicons } from '@expo/vector-icons';
@@ -75,7 +75,7 @@ const SocialProofContent = ({ onRate }: { onRate?: () => void }) => {
       </Text>
 
       <View style={styles.ratingSection}>
-        <Text 
+        <Text
           style={styles.ratingPrompt}
           numberOfLines={2}
           adjustsFontSizeToFit={true}
@@ -625,7 +625,7 @@ export default function FormQuestionScreen() {
         } catch (e) {
           console.error('Error requesting review:', e);
         }
-      }, 3000);
+      }, 2000);
 
       setTimeout(() => {
         setIsReviewDelayActive(false);
@@ -1008,10 +1008,8 @@ export default function FormQuestionScreen() {
 
         {(!questions[index].hideProgress || questions[index].specialType === 'onboardingReady' || questions[index].specialType === 'socialProof' || questions[index].specialType === 'notifications') && (
           <View style={{ height: width * 0.25, justifyContent: 'center', alignItems: 'center', zIndex: 10 }}>
-            <Animated.Image
-              source={require('../../assets/images/mascot.png')}
+            <Animated.View
               style={[
-                styles.progressMascot,
                 {
                   opacity: mascotOpacity,
                   transform: [
@@ -1041,7 +1039,15 @@ export default function FormQuestionScreen() {
                   alignSelf: 'center',
                 }
               ]}
-            />
+            >
+              <Image
+                source={require('../../assets/images/mascot.png')}
+                contentFit="contain"
+                transition={0}
+                cachePolicy="memory-disk"
+                style={styles.progressMascot}
+              />
+            </Animated.View>
             <RatingBadge
               style={{
                 position: 'absolute',
