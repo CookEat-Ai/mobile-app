@@ -1,4 +1,5 @@
 import appsFlyer from 'react-native-appsflyer';
+import { Platform } from 'react-native';
 import { AF_DEV_KEY, AF_APP_ID } from '../config/appsflyer';
 
 class AppsFlyerService {
@@ -7,15 +8,20 @@ class AppsFlyerService {
   init() {
     if (this.isInitialized) return;
 
+    const options: any = {
+      devKey: AF_DEV_KEY,
+      isDebug: __DEV__,
+      onInstallConversionDataListener: true,
+      onDeepLinkListener: true,
+      timeToWaitForATTUserAuthorization: 10,
+    };
+
+    if (Platform.OS === 'ios') {
+      options.appId = AF_APP_ID;
+    }
+
     appsFlyer.initSdk(
-      {
-        devKey: AF_DEV_KEY,
-        isDebug: __DEV__,
-        appId: AF_APP_ID,
-        onInstallConversionDataListener: true,
-        onDeepLinkListener: true,
-        timeToWaitForATTUserAuthorization: 10, // Optionnel, si vous utilisez ATT plus tard
-      },
+      options,
       (result: unknown) => {
         console.log('✅ AppsFlyer initialisé:', result);
         this.isInitialized = true;

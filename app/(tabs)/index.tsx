@@ -1,7 +1,7 @@
 import { router, useFocusEffect } from "expo-router";
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import I18n from '../../i18n';
-import { ScrollView, StyleSheet, Text, View, Dimensions, TouchableOpacity, Platform, Image, Button, ActivityIndicator, Alert, RefreshControl, Animated } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, TouchableOpacity, Platform, Image, ActivityIndicator, Alert, RefreshControl, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../constants/Colors';
@@ -14,10 +14,8 @@ import { apiService } from '../../services/api';
 import { getUniqueDeviceId } from '../../services/deviceStorage';
 import { RecipeCard } from "../../components/RecipeCard";
 import recipeStorage from "../../services/recipeStorage";
-import * as Sentry from '@sentry/react-native';
 import { hasShownWheelInSession, markWheelShownInSession } from '../../services/sessionFlags';
 
-const { width } = Dimensions.get('window');
 const STORAGE_KEY = 'pantry_ingredients';
 const HISTORY_BATCH_SIZE = 30;
 
