@@ -45,18 +45,16 @@ class AnalyticsService {
   }
 
   async requestTrackingPermission(): Promise<void> {
-    if (Platform.OS === 'ios') {
-      try {
-        const { status } = await requestTrackingPermissionsAsync();
-        console.log(`[Analytics] iOS Tracking Status requested: ${status}`);
+    try {
+      const { status } = await requestTrackingPermissionsAsync();
+      console.log(`[Analytics] ${Platform.OS} Tracking Status requested: ${status}`);
 
-        // Si l'utilisateur a répondu (accepté ou refusé), on ré-identifie pour mettre à jour l'IDFA dans PostHog/AppsFlyer
-        if (this.userId) {
-          this.identify(this.userId);
-        }
-      } catch (error) {
-        console.error('❌ Erreur demande permission tracking:', error);
+      // Si l'utilisateur a répondu (accepté ou refusé), on ré-identifie pour mettre à jour l'IDFA/GAID dans PostHog/AppsFlyer
+      if (this.userId) {
+        this.identify(this.userId);
       }
+    } catch (error) {
+      console.error('❌ Erreur demande permission tracking:', error);
     }
   }
 

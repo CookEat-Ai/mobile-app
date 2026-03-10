@@ -37,7 +37,8 @@
         "android.permission.RECORD_AUDIO",
         "com.android.vending.BILLING",
         "android.permission.VIBRATE",
-        "android.permission.WAKE_LOCK"
+        "android.permission.WAKE_LOCK",
+        "com.google.android.gms.permission.AD_ID"
       ],
       "package": "com.gokugen.cookeat",
       "googleServicesFile": "./google-services.json"

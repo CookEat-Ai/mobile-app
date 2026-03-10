@@ -218,8 +218,11 @@
   "common": {
     "searchPlaceholder": "Search here",
     "loading": "Loading...",
+    "success": "Success",
     "error": "Error",
     "cancel": "Cancel",
+    "confirm": "Confirm",
+    "unexpectedError": "An unexpected error occurred",
     "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
@@ -227,6 +230,10 @@
     "seeAll": "See all",
     "seeMore": "See more",
     "seeLess": "See less"
+  },
+  "promoCode": {
+    "activated": "Promo code successfully activated!",
+    "invalid": "Invalid promo code"
   },
   "profile": {
     "guest": "Guest",
@@ -304,7 +311,14 @@
     "languages": {
       "french": "Français",
       "english": "English"
-    }
+    },
+    "deleteAccount": "Delete my data",
+    "deleteAccountTitle": "Delete permanently?",
+    "deleteAccountMessage": "Are you sure you want to delete your account and all your data? This action is irreversible.",
+    "deleteAccountConfirmTitle": "Final confirmation",
+    "deleteAccountConfirmMessage": "All your favorite recipes, pantry, and preferences will be erased forever. Are you certain?",
+    "deleteAccountButton": "Yes, delete everything",
+    "deleteError": "An error occurred during deletion."
   },
   "offers": {
     "title": "Choose your plan",

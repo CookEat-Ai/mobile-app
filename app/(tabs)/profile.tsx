@@ -240,6 +240,49 @@ export default function ProfileScreen() {
     }
   };
 
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      I18n.t('profile.deleteAccountTitle'),
+      I18n.t('profile.deleteAccountMessage'),
+      [
+        { text: I18n.t('common.cancel'), style: 'cancel' },
+        {
+          text: I18n.t('common.confirm'),
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert(
+              I18n.t('profile.deleteAccountConfirmTitle'),
+              I18n.t('profile.deleteAccountConfirmMessage'),
+              [
+                { text: I18n.t('common.cancel'), style: 'cancel' },
+                {
+                  text: I18n.t('profile.deleteAccountButton'),
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      // Conserver la langue avant de tout effacer
+                      const currentLang = await AsyncStorage.getItem('app_language');
+                      await AsyncStorage.clear();
+                      if (currentLang) {
+                        await AsyncStorage.setItem('app_language', currentLang);
+                      }
+
+                      // Revenir à l'onboarding
+                      router.replace('/onboarding/welcome');
+                    } catch (error) {
+                      console.error('Erreur lors de la suppression du compte:', error);
+                      Alert.alert(I18n.t('common.error'), I18n.t('profile.deleteError'));
+                    }
+                  }
+                }
+              ]
+            );
+          },
+        },
+      ]
+    );
+  };
+
   const handleResetOnboardingDev = () => {
     Alert.alert(
       'Mode dev',
@@ -290,7 +333,7 @@ export default function ProfileScreen() {
               </Text>
             </View>
           </View>
-        ) : (subscriptionStatus.isSubscribed && !__DEV__) ? (
+        ) : (subscriptionStatus.isSubscribed) ? (
           // Utilisateur avec abonnement - Style Premium
           <>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>
@@ -401,6 +444,18 @@ export default function ProfileScreen() {
               </Text>
             </View>
             <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
+          </TouchableOpacity>
+
+          <View style={styles.separator} />
+
+          <TouchableOpacity style={styles.settingItem} onPress={handleDeleteAccount}>
+            <IconSymbol name="trash" size={20} color="#FF3B30" />
+            <View style={styles.settingInfo}>
+              <Text style={[styles.settingText, { marginLeft: 0, color: "#FF3B30" }]}>
+                {I18n.t('profile.deleteAccount')}
+              </Text>
+            </View>
+            <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color="#FF3B30" />
           </TouchableOpacity>
         </View>
 

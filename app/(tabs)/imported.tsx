@@ -36,7 +36,7 @@ export default function ImportedScreen() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [isSubscribed, setIsSubscribed] = useState(__DEV__ ? false : true);
+  const [isSubscribed, setIsSubscribed] = useState(true);
 
   const hasMoreRef = useRef(hasMore);
   hasMoreRef.current = hasMore;
@@ -273,7 +273,7 @@ export default function ImportedScreen() {
         <FlatList
           data={recipes}
           keyExtractor={(item) => item.id}
-          ListHeaderComponent={!isSubscribed || __DEV__ ? renderPremiumCard : null}
+          ListHeaderComponent={!isSubscribed ? renderPremiumCard : null}
           renderItem={({ item }) => {
             const anim = getAnimatedValue(item.id);
             return (

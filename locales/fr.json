@@ -210,8 +210,11 @@
   "common": {
     "searchPlaceholder": "Rechercher ici",
     "loading": "Chargement...",
+    "success": "Succès",
     "error": "Erreur",
     "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "unexpectedError": "Une erreur inattendue est survenue",
     "save": "Enregistrer",
     "delete": "Supprimer",
     "edit": "Modifier",
@@ -219,6 +222,10 @@
     "seeAll": "Voir tout",
     "seeMore": "Voir plus",
     "seeLess": "Voir moins"
+  },
+  "promoCode": {
+    "activated": "Code promo activé avec succès !",
+    "invalid": "Code promo invalide"
   },
   "profile": {
     "guest": "Invité",
@@ -298,7 +305,14 @@
     "languages": {
       "french": "Français",
       "english": "English"
-    }
+    },
+    "deleteAccount": "Supprimer mes données",
+    "deleteAccountTitle": "Supprimer définitivement ?",
+    "deleteAccountMessage": "Es-tu vraiment sûr de vouloir supprimer ton compte et toutes tes données ? Cette action est irréversible.",
+    "deleteAccountConfirmTitle": "Dernière confirmation",
+    "deleteAccountConfirmMessage": "Toutes tes recettes favorites, ton garde-manger et tes préférences seront effacés à jamais. Es-tu certain ?",
+    "deleteAccountButton": "Oui, supprimer tout",
+    "deleteError": "Une erreur est survenue lors de la suppression."
   },
   "offers": {
     "title": "Choisis ton plan",

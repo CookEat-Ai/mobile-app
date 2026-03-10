@@ -33,7 +33,7 @@ export default function HomeScreen() {
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [pantryCount, setPantryCount] = useState(0);
-  const [isSubscribed, setIsSubscribed] = useState(__DEV__ ? false : true); // Par défaut true pour éviter le flash de l'upsell, false en dev pour tester
+  const [isSubscribed, setIsSubscribed] = useState(true); // Par défaut true pour éviter le flash de l'upsell
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [historyPage, setHistoryPage] = useState(1);
   const [hasMoreHistory, setHasMoreHistory] = useState(true);
@@ -475,7 +475,7 @@ export default function HomeScreen() {
         </View>
 
         {/* Upsell Premium - Affiché uniquement si non abonné, ou toujours en mode dev */}
-        {(!isSubscribed || __DEV__) && (
+        {(!isSubscribed) && (
           <TouchableOpacity
             style={[styles.premiumCard, { marginBottom: 20 }]}
             onPress={() => router.push({ pathname: '/paywall', params: { source: 'home_banner' } })}
