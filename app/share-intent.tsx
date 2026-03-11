@@ -19,6 +19,8 @@ import { apiService } from '../services/api';
 import { recipeStorageService } from '../services/recipeStorage';
 import analytics from '../services/analytics';
 import revenueCatService from '../config/revenuecat';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getUniqueDeviceId } from '../services/deviceStorage';
 
 const { width } = Dimensions.get('window');
 
@@ -144,6 +146,21 @@ export default function ShareIntentScreen() {
 
     (async () => {
       try {
+        // S'assurer qu'un utilisateur existe côté serveur avant l'importation
+        // car l'importation a besoin d'un userId pour le quota et l'historique
+        let userId = await AsyncStorage.getItem('userId');
+        if (!userId) {
+          const mobileId = await getUniqueDeviceId();
+          console.log('[ShareIntent] Creating minimal user for mobileId:', mobileId);
+          const userResponse = await apiService.saveOnboardingAnswers({ skipped_onboarding: 'true' }, mobileId);
+          if (userResponse.data?.userId) {
+            userId = userResponse.data.userId;
+            await AsyncStorage.setItem('userId', userId);
+            analytics.identify(userId);
+            console.log('[ShareIntent] Minimal user created:', userId);
+          }
+        }
+
         const { isSubscribed } = await revenueCatService.getSubscriptionStatus();
         const response = await apiService.importRecipeFromVideo(params.url!, isSubscribed, {
           onProgress: (p, step) => {
@@ -163,6 +180,11 @@ export default function ShareIntentScreen() {
           setStatus('error');
           return;
         }
+
+        // Importation réussie : on marque l'onboarding comme terminé
+        // pour éviter d'y revenir au prochain lancement
+        await AsyncStorage.setItem('onboarding_completed', 'true');
+        await AsyncStorage.setItem('questions_answered', 'true');
 
         setRecipe(response.data.recipe);
         setProgress(100);
@@ -200,6 +222,18 @@ export default function ShareIntentScreen() {
       hasStarted.current = true;
       (async () => {
         try {
+          // S'assurer qu'un utilisateur existe côté serveur avant l'importation
+          let userId = await AsyncStorage.getItem('userId');
+          if (!userId) {
+            const mobileId = await getUniqueDeviceId();
+            const userResponse = await apiService.saveOnboardingAnswers({ skipped_onboarding: 'true' }, mobileId);
+            if (userResponse.data?.userId) {
+              userId = userResponse.data.userId;
+              await AsyncStorage.setItem('userId', userId);
+              analytics.identify(userId);
+            }
+          }
+
           const { isSubscribed: sub } = await revenueCatService.getSubscriptionStatus();
           const response = await apiService.importRecipeFromVideo(params.url!, sub, {
             onProgress: (p, step) => {
@@ -212,6 +246,11 @@ export default function ShareIntentScreen() {
             setStatus('error');
             return;
           }
+
+          // Importation réussie : on marque l'onboarding comme terminé
+          await AsyncStorage.setItem('onboarding_completed', 'true');
+          await AsyncStorage.setItem('questions_answered', 'true');
+
           setRecipe(response.data.recipe);
           setProgress(100);
           setIsDataReady(true);

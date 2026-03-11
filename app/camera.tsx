@@ -568,7 +568,7 @@ export default function CameraScreen() {
             ]}
           />
         )}
-        <View style={[styles.topBar, { paddingTop: insets.top > 0 ? insets.top : 20 }]}>
+        <View style={styles.topBar}>
           {!isRecording && (
             <>
               <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
@@ -716,8 +716,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   topBar: {
+    paddingTop: 20,
     paddingHorizontal: 20,
-    paddingBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -744,17 +744,13 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   headerLogo: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: Platform.OS === 'ios' ? 28 : 20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerMascot: {
-    width: 42,
-    height: 42,
+    width: 52,
+    height: 52,
     marginRight: 2,
     transform: [{ rotate: '20deg' }],
   },

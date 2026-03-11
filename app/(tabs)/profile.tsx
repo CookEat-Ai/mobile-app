@@ -132,10 +132,9 @@ export default function ProfileScreen() {
 
   const handlePrivacyPolicyPress = async () => {
     try {
-      // URL de la politique de confidentialité (à adapter selon votre politique)
-      const url = I18n.locale === 'fr'
-        ? 'https://drive.google.com/file/d/1Uwa45KaIrYlDzpS00YFunhBVB-a4zkSi/view?usp=sharing'
-        : 'https://drive.google.com/file/d/15eNZBgSnTP4cUFJ7tLi9F0kZCsyQZPUW/view?usp=sharing';
+      const url = I18n.locale?.startsWith('fr')
+        ? 'https://cookeat.info/legal/fr'
+        : 'https://cookeat.info/legal/en';
 
       if (Platform.OS === 'android') {
         Linking.openURL(url);
@@ -154,9 +153,11 @@ export default function ProfileScreen() {
 
   const handleTermsOfServicePress = async () => {
     try {
-      WebBrowser.openBrowserAsync(
-        'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/'
-      )
+      const url = I18n.locale?.startsWith('fr')
+        ? 'https://cookeat.info/legal/fr'
+        : 'https://cookeat.info/legal/en';
+
+      WebBrowser.openBrowserAsync(url);
     } catch (error) {
       console.error('Erreur lors de l\'ouverture des conditions d\'utilisation:', error);
       Alert.alert(

@@ -16,13 +16,20 @@ let voiceInstance: any = null;
 // Fonction pour créer une nouvelle instance de Voice
 const createVoiceInstance = () => {
   try {
+    if (!Voice) {
+      console.warn('Voice n\'est pas disponible');
+      return false;
+    }
+
     // Détruire l'ancienne instance si elle existe
     if (voiceInstance) {
-      Voice.destroy().then(() => {
-        Voice.removeAllListeners();
-      }).catch(() => {
-        Voice.removeAllListeners();
-      });
+      try {
+        if (typeof Voice.removeAllListeners === 'function') {
+          Voice.removeAllListeners();
+        }
+      } catch (e) {}
+      
+      Voice.destroy().catch(() => {});
     }
 
     // Créer une nouvelle instance
@@ -37,7 +44,7 @@ const createVoiceInstance = () => {
 // Fonction globale pour forcer l'arrêt de Voice
 export const forceStopVoiceGlobally = async () => {
   try {
-    if (globalIsRecording) {
+    if (globalIsRecording && Voice) {
       await Voice.stop();
       globalIsRecording = false;
       console.log('Voice arrêté globalement');
@@ -52,8 +59,19 @@ export const forceStopVoiceGlobally = async () => {
 export const cleanupVoiceGlobally = async () => {
   try {
     await forceStopVoiceGlobally();
-    await Voice.destroy();
-    Voice.removeAllListeners();
+    if (Voice) {
+      try {
+        if (typeof Voice.removeAllListeners === 'function') {
+          Voice.removeAllListeners();
+        }
+      } catch (e) {}
+      
+      try {
+        if (typeof Voice.destroy === 'function') {
+          await Voice.destroy();
+        }
+      } catch (e) {}
+    }
     voiceInstance = null;
   } catch (error) {
     console.error('Erreur lors du nettoyage global de Voice:', error);
@@ -68,8 +86,19 @@ export const resetVoiceCompletely = async () => {
     await forceStopVoiceGlobally();
 
     // Détruire complètement Voice
-    await Voice.destroy();
-    Voice.removeAllListeners();
+    if (Voice) {
+      try {
+        if (typeof Voice.removeAllListeners === 'function') {
+          Voice.removeAllListeners();
+        }
+      } catch (e) {}
+
+      try {
+        if (typeof Voice.destroy === 'function') {
+          await Voice.destroy();
+        }
+      } catch (e) {}
+    }
 
     // Réinitialiser les variables globales
     globalIsRecording = false;
@@ -96,7 +125,7 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
 
     try {
       // Créer une nouvelle instance de Voice
-      if (!createVoiceInstance()) {
+      if (!createVoiceInstance() || !Voice) {
         return;
       }
 
@@ -185,7 +214,9 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
         clearTimeout(recordingTimeoutRef.current);
         recordingTimeoutRef.current = null;
       }
-      await Voice.stop();
+      if (Voice) {
+        await Voice.stop();
+      }
       globalIsRecording = false;
       setIsRecording(false);
       setLiveText('');
@@ -210,7 +241,7 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
       }
 
       // Recréer l'instance Voice pour éviter les conflits
-      if (!createVoiceInstance()) {
+      if (!createVoiceInstance() || !Voice) {
         console.error('Impossible de créer une instance Voice');
         return;
       }
@@ -246,7 +277,9 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
         clearTimeout(recordingTimeoutRef.current);
         recordingTimeoutRef.current = null;
       }
-      await Voice.stop();
+      if (Voice) {
+        await Voice.stop();
+      }
       globalIsRecording = false;
       setIsRecording(false);
       options.onRecordingStateChange?.(false);

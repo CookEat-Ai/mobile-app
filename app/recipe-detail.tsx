@@ -646,26 +646,27 @@ export default function RecipeDetailScreen() {
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8,
-        base64: true,
+        base64: false, // Plus besoin du base64
       });
 
-      if (!result.canceled && result.assets[0].base64) {
+      if (!result.canceled && result.assets[0].uri) {
         setIsUpdatingImage(true);
-        const base64Image = `data:image/jpeg;base64,${result.assets[0].base64}`;
+        const imageUri = result.assets[0].uri;
 
         // Appel API pour mettre à jour l'image (si on a un _id ou id)
         if (recipe.id) {
-          const response = await apiService.updateRecipeImage(recipe.id, base64Image);
-          if (response.data?.success) {
-            setRecipe(prev => ({ ...prev, image: base64Image }));
+          const response = await apiService.updateRecipeImage(recipe.id, imageUri);
+          if (response.data?.success && response.data.recipe.image) {
+            const serverImageUrl = response.data.recipe.image;
+            setRecipe(prev => ({ ...prev, image: serverImageUrl }));
             // Mettre à jour aussi dans le storage local
-            recipeStorageService.saveGeneratedRecipe({ ...recipe, image: base64Image }, params.ingredients as string[]);
+            recipeStorageService.saveGeneratedRecipe({ ...recipe, image: serverImageUrl }, params.ingredients as string[]);
           } else {
             Alert.alert(I18n.t('common.error'), I18n.t('recipeDetail.imageUpdateError'));
           }
         } else {
-          // Si la recette n'est pas encore sauvegardée, on met juste à jour l'état local
-          setRecipe(prev => ({ ...prev, image: base64Image }));
+          // Si la recette n'est pas encore sauvegardée, on met juste à jour l'état local avec l'URI temporaire
+          setRecipe(prev => ({ ...prev, image: imageUri }));
         }
       }
     } catch (error) {

@@ -8,7 +8,7 @@ import analytics from '../services/analytics';
 // Configuration RevenueCat
 export const REVENUECAT_API_KEY = {
   ios: 'appl_lhnWEUTIJSRJjlJziMnDGcLpsPh',
-  android: 'goog_YOUR_PUBLIC_ANDROID_API_KEY_HERE'
+  android: 'goog_BfHUBiwaxkMgsDMpuFljunoNrCh'
 };
 
 export const ENTITLEMENT_ID = 'Pro';
@@ -83,15 +83,15 @@ class RevenueCatService {
 
   async getSubscriptionStatus(): Promise<SubscriptionStatus> {
     // En mode dev sur Android, on donne accès premium par défaut pour faciliter les tests
-    if (__DEV__ && Platform.OS === 'android') {
-      console.log('[DevMode] Access premium accordé par défaut sur Android');
-      return {
-        isSubscribed: true,
-        currentPlan: 'dev_mode',
-        expirationDate: null,
-        dailyQuotaRemaining: 999
-      };
-    }
+    // if (__DEV__ && Platform.OS === 'android') {
+    //   console.log('[DevMode] Access premium accordé par défaut sur Android');
+    //   return {
+    //     isSubscribed: true,
+    //     currentPlan: 'dev_mode',
+    //     expirationDate: null,
+    //     dailyQuotaRemaining: 999
+    //   };
+    // }
 
     try {
       // Vérifier d'abord si un code promo a été activé

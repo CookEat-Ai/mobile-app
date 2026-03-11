@@ -429,16 +429,32 @@ class ApiService {
     });
   }
 
-  async updateRecipeImage(recipeId: string, imageUrl: string) {
+  async updateRecipeImage(recipeId: string, imageUri: string) {
     const userId = await AsyncStorage.getItem('userId');
+    const formData = new FormData();
+    formData.append('recipeId', recipeId);
+    if (userId) formData.append('userId', userId);
+    formData.append('language', this.getCurrentLanguage());
+
+    // Si c'est une URI locale (commence par file:// ou /)
+    if (imageUri.startsWith('file://') || imageUri.startsWith('/')) {
+      const filename = imageUri.split('/').pop() || 'recipe.jpg';
+      const match = /\.(\w+)$/.exec(filename);
+      const type = match ? `image/${match[1]}` : `image/jpeg`;
+      
+      formData.append('image', {
+        uri: imageUri,
+        name: filename,
+        type,
+      } as any);
+    } else {
+      // Sinon on envoie l'URL (pour compatibilité)
+      formData.append('imageUrl', imageUri);
+    }
+
     return this.request<{ success: boolean; recipe: any }>('/recipe/update-image', {
       method: 'POST',
-      body: JSON.stringify({
-        recipeId,
-        imageUrl,
-        userId,
-        language: this.getCurrentLanguage(),
-      }),
+      body: formData,
     });
   }
 

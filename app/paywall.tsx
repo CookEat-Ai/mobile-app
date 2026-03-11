@@ -88,10 +88,10 @@ export default function PaywallScreen() {
 
   useEffect(() => {
     // En mode dev sur Android, on ferme le paywall automatiquement
-    if (__DEV__ && Platform.OS === 'android') {
-      exitPaywall();
-      return;
-    }
+    // if (__DEV__ && Platform.OS === 'android') {
+    //   exitPaywall();
+    //   return;
+    // }
 
     if (viewState === 'WHEEL') {
       navigation.setOptions({
