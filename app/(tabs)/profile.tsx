@@ -25,6 +25,8 @@ import { Colors } from '../../constants/Colors';
 import { useSubscription } from '../../hooks/useSubscription';
 import * as WebBrowser from "expo-web-browser";
 import I18n from '../../i18n';
+import api from '../../services/api';
+import { getUniqueDeviceId } from '../../services/deviceStorage';
 
 const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 const QUESTIONS_ANSWERED_KEY = 'questions_answered';
@@ -261,6 +263,15 @@ export default function ProfileScreen() {
                   style: 'destructive',
                   onPress: async () => {
                     try {
+                      // Récupérer le mobileId pour la suppression côté API
+                      const mobileId = await getUniqueDeviceId();
+                      if (mobileId) {
+                        const response = await api.deleteUser(mobileId);
+                        if (response.error) {
+                          throw new Error(response.error);
+                        }
+                      }
+
                       // Conserver la langue avant de tout effacer
                       const currentLang = await AsyncStorage.getItem('app_language');
                       await AsyncStorage.clear();

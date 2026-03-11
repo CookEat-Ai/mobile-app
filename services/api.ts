@@ -475,6 +475,13 @@ class ApiService {
     });
   }
 
+  async deleteUser(mobileId: string) {
+    return this.request<{ success: boolean; message: string }>('/user/delete', {
+      method: 'POST',
+      body: JSON.stringify({ mobileId }),
+    });
+  }
+
   async getFavorites(userId: string) {
     return this.request<{ success: boolean; recipes: any[] }>(`/recipe/favorites/${userId}`, {
       method: 'GET',
