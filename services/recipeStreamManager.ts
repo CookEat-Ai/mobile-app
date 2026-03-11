@@ -88,6 +88,9 @@ class RecipeStreamManager {
               ...current.snapshot,
               recipe: { ...current.snapshot.recipe, ...recipe },
             };
+            if (Array.isArray(recipe.steps) && recipe.steps.length > 0) {
+              current.snapshot.steps = recipe.steps;
+            }
             this.emit(current);
           }
         },

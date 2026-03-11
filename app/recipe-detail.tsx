@@ -193,7 +193,7 @@ export default function RecipeDetailScreen() {
 
   const [loadingRecipe, setLoadingRecipe] = useState(isStreaming || !!recipeIdParam);
   const [loadingSteps, setLoadingSteps] = useState(isStreaming || !recipe.steps?.length);
-  const [streamingRecipe, setStreamingRecipe] = useState(isStreaming);
+  const [streamingTitleAndIngredients, setStreamingTitleAndIngredients] = useState(isStreaming);
   const [streamingSteps, setStreamingSteps] = useState(isStreaming);
   const [isFirstGeneration, setIsFirstGeneration] = useState(params.isFirstGeneration === 'true');
   const [loadingImage, setLoadingImage] = useState(isStreaming || !recipe.image);
@@ -318,6 +318,7 @@ export default function RecipeDetailScreen() {
 
     if (Array.isArray(snapshot.steps) && snapshot.steps.length > 0) {
       setRecipe((prev) => ({ ...prev, steps: snapshot.steps }));
+      setStreamingTitleAndIngredients(false);
       setLoadingSteps(false);
     }
 
@@ -326,7 +327,7 @@ export default function RecipeDetailScreen() {
     }
 
     if (snapshot.isDone) {
-      setStreamingRecipe(false);
+      setStreamingTitleAndIngredients(false);
       setStreamingSteps(false);
     }
   }, [fetchUniqueImageForTitle, registerSessionRecipeId, saveImageForSession]);
@@ -350,7 +351,7 @@ export default function RecipeDetailScreen() {
 
       const unsubscribe = recipeStreamManager.subscribe(prefetchStreamId, (snapshot) => {
         if (snapshot.error) {
-          setStreamingRecipe(false);
+          setStreamingTitleAndIngredients(false);
           setStreamingSteps(false);
           setLoadingRecipe(false);
           setLoadingSteps(false);
@@ -404,6 +405,10 @@ export default function RecipeDetailScreen() {
             if (r.id) registerSessionRecipeId(streamSessionId, r.id);
             setRecipe((prev) => ({ ...prev, ...r }));
             if (r.title) setLoadingRecipe(false);
+            if (Array.isArray(r.steps) && r.steps.length > 0) {
+              setStreamingTitleAndIngredients(false);
+              setLoadingSteps(false);
+            }
             if (r.title && (r.cooking_time || r.difficulty || r.dish_type) && firstTimeImage.current) {
               firstTimeImage.current = false;
               fetchUniqueImageForTitleRef.current(r.title).then((image) => {
@@ -420,8 +425,11 @@ export default function RecipeDetailScreen() {
           if (streamSessionIdRef.current !== streamSessionId) return;
           setRecipe((prev) => ({ ...prev, ...data.recipe }));
           setLoadingRecipe(false);
-          setStreamingRecipe(false);
+          setStreamingTitleAndIngredients(false);
           setIsFirstGeneration(data.isFirstGeneration);
+          if (Array.isArray(data.recipe.steps) && data.recipe.steps.length > 0) {
+            setLoadingSteps(false);
+          }
           if (firstTimeImage.current) {
             firstTimeImage.current = false;
             fetchUniqueImageForTitleRef.current(data.recipe.title).then((image) => {
@@ -452,7 +460,7 @@ export default function RecipeDetailScreen() {
         onError: (message) => {
           if (streamSessionIdRef.current !== streamSessionId) return;
           Alert.alert(I18n.t('recipeDetail.error'), message);
-          setStreamingRecipe(false);
+          setStreamingTitleAndIngredients(false);
           setStreamingSteps(false);
           setLoadingRecipe(false);
           setLoadingSteps(false);
@@ -585,7 +593,7 @@ export default function RecipeDetailScreen() {
   useEffect(() => {
     if (!recipe.id || !recipe.title || !recipe.image) return;
     if (!recipe.steps || recipe.steps.length === 0) return;
-    if (streamingRecipe || streamingSteps) return;
+    if (streamingTitleAndIngredients || streamingSteps) return;
     if (isGeneratingNewRecipe) return;
     if (savedRecipeIdRef.current === recipe.id) return;
 
@@ -602,7 +610,7 @@ export default function RecipeDetailScreen() {
       .catch((error) => {
         console.error('Erreur lors de la sauvegarde de la recette:', error);
       });
-  }, [recipe, streamingRecipe, streamingSteps, isGeneratingNewRecipe, params.ingredients]);
+  }, [recipe, streamingTitleAndIngredients, streamingSteps, isGeneratingNewRecipe, params.ingredients]);
 
   useEffect(() => {
     if (!recipe.id) return;
@@ -801,7 +809,7 @@ export default function RecipeDetailScreen() {
       setIsGeneratingNewRecipe(true);
       setLoadingRecipe(true);
       setLoadingSteps(true);
-      setStreamingRecipe(true);
+      setStreamingTitleAndIngredients(true);
       setStreamingSteps(true);
       setLoadingImage(true);
       setIsLiked(false);
@@ -875,6 +883,10 @@ export default function RecipeDetailScreen() {
                 setLoadingRecipe(false);
                 setIsGeneratingNewRecipe(false);
               }
+              if (Array.isArray(r.steps) && r.steps.length > 0) {
+                setStreamingTitleAndIngredients(false);
+                setLoadingSteps(false);
+              }
               if (r.title && (r.cooking_time || r.difficulty || r.dish_type) && firstTimeImage.current) {
                 firstTimeImage.current = false;
                 setLoadingImage(true);
@@ -892,13 +904,16 @@ export default function RecipeDetailScreen() {
             if (streamSessionIdRef.current !== streamSessionId) return;
             setRecipe((prev) => ({ ...prev, ...data.recipe }));
             setLoadingRecipe(false);
-            setStreamingRecipe(false);
+            setStreamingTitleAndIngredients(false);
             setIsGeneratingNewRecipe(false);
             setIsFirstGeneration(data.isFirstGeneration);
             setIsLiked(false);
             setIsFavorite(false);
             firstTime.current = true;
             firstTimeSteps.current = true;
+            if (Array.isArray(data.recipe.steps) && data.recipe.steps.length > 0) {
+              setLoadingSteps(false);
+            }
 
             if (firstTimeImage.current) {
               firstTimeImage.current = false;
@@ -928,7 +943,7 @@ export default function RecipeDetailScreen() {
           onDone: (data) => {
             if (data?.id) registerSessionRecipeId(streamSessionId, data.id);
             if (streamSessionIdRef.current !== streamSessionId) return;
-            setStreamingRecipe(false);
+            setStreamingTitleAndIngredients(false);
             setStreamingSteps(false);
             setIsGeneratingNewRecipe(false);
           },
@@ -938,7 +953,7 @@ export default function RecipeDetailScreen() {
             setIsGeneratingNewRecipe(false);
             setLoadingRecipe(false);
             setLoadingSteps(false);
-            setStreamingRecipe(false);
+            setStreamingTitleAndIngredients(false);
             setStreamingSteps(false);
             setLoadingImage(false);
           }
@@ -1240,8 +1255,8 @@ export default function RecipeDetailScreen() {
           {/* Section Ingrédients */}
           <View style={styles.ingredientsSection}>
             <View style={styles.sectionTitleRow}>
-              <Text style={styles.ingredientsTitle}>{I18n.t('recipeDetail.ingredients')} {!streamingRecipe && recipe.ingredients?.length ? `(${recipe.ingredients.length})` : ''}</Text>
-              {streamingRecipe && <ActivityIndicator size="small" color={Colors.light.button} />}
+              <Text style={styles.ingredientsTitle}>{I18n.t('recipeDetail.ingredients')} {!streamingTitleAndIngredients && recipe.ingredients?.length ? `(${recipe.ingredients.length})` : ''}</Text>
+              {streamingTitleAndIngredients && <ActivityIndicator size="small" color={Colors.light.button} />}
             </View>
 
             {(isModalActive || !recipe.ingredients || recipe.ingredients.length === 0) ? <IngredientItemSkeleton /> :
@@ -1267,13 +1282,13 @@ export default function RecipeDetailScreen() {
                       </View>
                       {ingredient.quantity ? (
                         <TypewriterText text={ingredient.quantity} style={styles.ingredientQuantity} animate={false} />
-                      ) : streamingRecipe ? (
+                      ) : streamingTitleAndIngredients ? (
                         <Skeleton width={50} height={16} borderRadius={4} />
                       ) : null}
                     </FadeInView>
                   ) : null
                 ))}
-                {streamingRecipe && <IngredientItemSkeleton />}
+                {streamingTitleAndIngredients && <IngredientItemSkeleton />}
               </>}
           </View>
 

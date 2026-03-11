@@ -7,7 +7,10 @@
     "icon": "./assets/images/icon.png",
     "scheme": "cookeat",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "locales": {
+      "fr": "./locales/ios/fr.json",
+      "en": "./locales/ios/en.json"
+    },
     "ios": {
       "appStoreUrl": "https://apps.apple.com/fr/app/cookeat-ai/id6748924011",
       "supportsTablet": true,
@@ -22,12 +25,7 @@
       },
       "appleTeamId": "P48MLLHB99"
     },
-    "locales": {
-      "fr": "./locales/ios/fr.json",
-      "en": "./locales/ios/en.json"
-    },
     "android": {
-      "playStoreUrl": "",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon-android.png",
         "backgroundColor": "#ffffff"
@@ -52,6 +50,11 @@
       [
         "expo-build-properties",
         {
+          "android": {
+            "lintOptions": {
+              "disable": ["ExtraTranslation"]
+            }
+          },
           "ios": {
             "buildReactNativeFromSource": true
           }

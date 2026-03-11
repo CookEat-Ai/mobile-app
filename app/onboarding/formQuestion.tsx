@@ -1411,6 +1411,8 @@ const styles = StyleSheet.create({
   continueButtonDisabled: {
     backgroundColor: Colors.light.border,
     opacity: 0.6,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   buttonText: {
     color: 'white',
@@ -1492,7 +1494,6 @@ const styles = StyleSheet.create({
   },
   mockDialogTitle: {
     fontSize: 17,
-    fontFamily: 'CronosProBold',
     textAlign: 'center',
     padding: 20,
     paddingTop: 25,

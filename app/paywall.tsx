@@ -661,6 +661,8 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.6,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   resultContainer: {
     alignItems: 'center',

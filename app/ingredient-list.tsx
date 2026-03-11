@@ -55,6 +55,7 @@ interface RecipePreferences {
 }
 
 const STORAGE_KEY = 'pantry_ingredients';
+const PREFERENCES_STORAGE_KEY = 'recipe_preferences';
 const MIN_INGREDIENTS = 5;
 
 export default function RecipeSummaryScreen() {
@@ -278,7 +279,7 @@ export default function RecipeSummaryScreen() {
       const isFirst = history.length === 0;
       setIsFirstGeneration(isFirst);
 
-      // 2. Load ingredients from params if present
+      // 2. Load ingredients from params if present, else from storage
       if (params.ingredients) {
         let ingredientsList: Ingredient[];
         try {
@@ -311,6 +312,15 @@ export default function RecipeSummaryScreen() {
         } else {
           setIngredients(ingredientsList);
           saveIngredientsToPantry(ingredientsList);
+        }
+      } else {
+        const stored = await AsyncStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          try {
+            setIngredients(JSON.parse(stored));
+          } catch (e) {
+            console.error('Erreur lors du chargement des ingrédients stockés:', e);
+          }
         }
       }
 
@@ -522,8 +532,28 @@ export default function RecipeSummaryScreen() {
     onLiveTextChange: (text) => handleLiveTextChange(text)
   });
 
+  const savePreferencesToStorage = async (items: RecipePreferences) => {
+    try {
+      await AsyncStorage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify(items));
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde des préférences:', error);
+    }
+  };
+
   const loadOnboardingPreferences = async (isFirst: boolean) => {
     try {
+      // 1. D'abord charger les préférences persistées de cet écran
+      const savedPrefsRaw = await AsyncStorage.getItem(PREFERENCES_STORAGE_KEY);
+      if (savedPrefsRaw) {
+        try {
+          const savedPrefs = JSON.parse(savedPrefsRaw);
+          setPreferences(savedPrefs);
+          return;
+        } catch (e) {
+          console.error('Erreur lors du parsing des préférences sauvegardées:', e);
+        }
+      }
+
       const updates: Partial<RecipePreferences> = {};
 
       // Diet is always synced if exists
@@ -550,8 +580,6 @@ export default function RecipeSummaryScreen() {
           };
           if (servingsMap[cookingForWho]) updates.servings = servingsMap[cookingForWho];
         }
-
-        // Type de plat, temps et cuisine : non issus de l'onboarding, toujours les défauts (Repas, Peu importe, Tout)
 
         // Equipments (Multi)
         const equipmentRaw = await AsyncStorage.getItem('equipments');
@@ -662,7 +690,11 @@ export default function RecipeSummaryScreen() {
   };
 
   const updatePreference = (key: keyof RecipePreferences, value: any) => {
-    setPreferences(prev => ({ ...prev, [key]: value }));
+    setPreferences(prev => {
+      const updated = { ...prev, [key]: value };
+      savePreferencesToStorage(updated);
+      return updated;
+    });
   };
 
   const toggleDiet = (id: string) => {
@@ -1630,6 +1662,8 @@ const styles = StyleSheet.create({
   },
   generateButtonDisabled: {
     backgroundColor: '#ccc',
+    shadowOpacity: 0,
+    elevation: 0,
   },
   manualSelectionContainer: {
     marginBottom: 30,
