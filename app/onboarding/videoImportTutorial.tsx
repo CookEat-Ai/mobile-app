@@ -210,10 +210,10 @@ const styles = StyleSheet.create({
     fontFamily: 'CronosPro',
     color: '#666',
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 22,
     paddingHorizontal: 10,
     marginBottom: 10,
-    includeFontPadding: false,
+    includeFontPadding: Platform.OS === 'ios' ? false : true,
     textAlignVertical: 'center',
   },
   howToText: {
@@ -222,7 +222,8 @@ const styles = StyleSheet.create({
     color: Colors.light.text,
     textAlign: 'center',
     marginTop: 4,
-    includeFontPadding: false,
+    lineHeight: 24,
+    includeFontPadding: Platform.OS === 'ios' ? false : true,
     textAlignVertical: 'center',
   },
   carouselContainer: {
