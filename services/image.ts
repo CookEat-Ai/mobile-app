@@ -143,7 +143,7 @@ async function searchImageFromPinterest(keywords: string, existingImages: string
             continue;
           }
         }
-        
+
         console.log('[searchImage] title=', keywords, 'source=pinterest-api url=', candidate.url);
         return candidate.url;
       }
@@ -182,7 +182,7 @@ async function searchImageFromPinterest(keywords: string, existingImages: string
             continue;
           }
         }
-        
+
         console.log('[searchImage] title=', keywords, 'source=pinterest-pin-page url=', ogImageUrl);
         return ogImageUrl;
       }
@@ -210,13 +210,94 @@ async function searchImageFromPinterest(keywords: string, existingImages: string
           continue;
         }
       }
-      
+
       console.log('[searchImage] title=', keywords, 'source=pinterest-html url=', imageUrl);
       return imageUrl;
     }
   }
 
   return null;
+}
+
+async function searchImageFromGoogle(keywords: string, existingImages: string[]) {
+  const searchParams = new URLSearchParams({
+    q: keywords,
+    tbm: 'isch',
+    hl: 'fr',
+  });
+  const searchUrl = `https://www.google.com/search?${searchParams.toString()}`;
+
+  try {
+    const response = await fetch(searchUrl, {
+      headers: {
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'accept-language': 'fr-FR,fr;q=0.9,en;q=0.8',
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+      },
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const html = await response.text();
+    const candidates: string[] = [];
+
+    // Google embeds original image URLs as ["url", width, height] in script blocks
+    const urlPattern = /\["(https?:\/\/(?!encrypted-tbn|www\.google|maps\.google|lh\d\.google|play\.google|gstatic|googleapis)[^"]+)",\s*(\d+),\s*(\d+)\]/g;
+    let match;
+
+    while ((match = urlPattern.exec(html)) !== null) {
+      const width = parseInt(match[2], 10);
+      const height = parseInt(match[3], 10);
+      if (width < 200 || height < 200) continue;
+
+      const url = match[1]
+        .replace(/\\u003d/g, '=')
+        .replace(/\\u0026/g, '&')
+        .replace(/\\u002F/g, '/')
+        .replace(/\\\//g, '/');
+
+      if (isValidImageUrl(url, existingImages)) {
+        candidates.push(url);
+      }
+    }
+
+    // Fallback: data-ou attributes (older Google format)
+    if (candidates.length === 0) {
+      const dataPattern = /data-ou="(https?:\/\/[^"]+)"/g;
+      while ((match = dataPattern.exec(html)) !== null) {
+        const url = decodeURIComponent(match[1]);
+        if (isValidImageUrl(url, existingImages)) {
+          candidates.push(url);
+        }
+      }
+    }
+
+    const uniqueCandidates = [...new Set(candidates)];
+
+    let validationCount = 0;
+    for (const imageUrl of uniqueCandidates) {
+      if (await canUseImage(imageUrl)) {
+        if (validationCount < 2) {
+          validationCount++;
+          const validation = await apiService.validateImage(imageUrl);
+          if (validation.data?.isValid === false) {
+            console.log('[searchImage] Image rejetée par l\'IA (texte ou non-alimentaire):', imageUrl);
+            continue;
+          }
+        }
+
+        console.log('[searchImage] title=', keywords, 'source=google url=', imageUrl);
+        return imageUrl;
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Google image search error:', error instanceof Error ? error.message : String(error));
+    return null;
+  }
 }
 
 async function searchImageFromDuckDuckGo(keywords: string, existingImages: string[]) {
@@ -258,9 +339,10 @@ async function searchImageFromDuckDuckGo(keywords: string, existingImages: strin
     const results: any[] = data.results ?? [];
 
     // Trier par largeur décroissante pour commencer par les images les plus larges
-    const sorted = [...results]
-      .filter(r => isValidImageUrl(r.image, existingImages))
-      .sort((a, b) => b.width - a.width);
+    // const sorted = [...results]
+    //   .filter(r => isValidImageUrl(r.image, existingImages))
+    //   .sort((a, b) => b.width - a.width);
+    const sorted = results
 
     for (const result of sorted) {
       if (await canUseImage(result.image as string)) {
@@ -277,17 +359,16 @@ async function searchImageFromDuckDuckGo(keywords: string, existingImages: strin
 }
 
 export async function searchImage(keywords: string, existingImages: string[]) {
-  // Amélioration de la recherche pour favoriser les photos de plats et éviter le texte/recettes
-  const enhancedKeywords = `${keywords} food photography plated professional delicious -recipe -text -infographic`;
-  // Temporairement désactivé: on met de côté Pinterest pour ne garder que DuckDuckGo.
-  // try {
-  //   const pinterestImage = await searchImageFromPinterest(enhancedKeywords, existingImages);
-  //   if (pinterestImage) {
-  //     return pinterestImage;
-  //   }
-  // } catch (error) {
-  //   console.warn('Pinterest search failed, fallback to DuckDuckGo:', error instanceof Error ? error.message : String(error));
-  // }
+  // 1) Google Images
+  try {
+    const googleImage = await searchImageFromGoogle(keywords, existingImages);
+    if (googleImage) {
+      return googleImage;
+    }
+  } catch (error) {
+    console.warn('Google search failed, fallback to DuckDuckGo:', error instanceof Error ? error.message : String(error));
+  }
 
-  return searchImageFromDuckDuckGo(enhancedKeywords, existingImages);
+  // 2) Fallback: DuckDuckGo
+  return searchImageFromDuckDuckGo(keywords, existingImages);
 }
