@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, ActivityIndicator, Text, TouchableOpacity, Animated, Easing, Alert, Dimensions, Image, Platform, BackHandler } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Wave } from "react-native-animated-spinkit";
 import RevenueCatUI from 'react-native-purchases-ui';
 import Purchases, { PurchasesOffering } from 'react-native-purchases';
@@ -80,6 +81,7 @@ export default function PaywallScreen() {
 
   const params = useLocalSearchParams();
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const [viewState, setViewState] = useState<PaywallState>(
     params.initialState === 'WHEEL' ? 'WHEEL' :
@@ -490,7 +492,7 @@ export default function PaywallScreen() {
             </Animated.View>
           </View>
 
-          <View style={styles.wheelFooter}>
+          <View style={[styles.wheelFooter, { bottom: Platform.OS === 'android' ? insets.bottom + 20 : 0 }]}>
             {spinResult ? (
               <Animated.View style={styles.resultContainer}>
                 <Text style={styles.congratsText}>{I18n.t('luckyWheel.congrats')}</Text>

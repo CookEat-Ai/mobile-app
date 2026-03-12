@@ -18,13 +18,15 @@ class AnalyticsService {
     try {
       let uniqueId = await getUniqueDeviceId();
 
-      if (POSTHOG_API_KEY && !POSTHOG_API_KEY.includes('YOUR_POSTHOG')) {
+      if (!__DEV__ && POSTHOG_API_KEY && !POSTHOG_API_KEY.includes('YOUR_POSTHOG')) {
         this.posthog = new PostHog(POSTHOG_API_KEY, {
           host: POSTHOG_HOST,
         });
 
         this.posthog.identify(uniqueId);
         console.log('✅ PostHog initialisé');
+      } else if (__DEV__) {
+        console.log('⚠️ PostHog désactivé en mode développement');
       }
 
       appsFlyerService.init();
