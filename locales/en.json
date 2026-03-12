@@ -11,6 +11,7 @@
     "manualDescription": "Select your ingredients",
     "continue": "Continue",
     "ingredients": "ingredients",
+    "ingredient": "ingredient",
     "streak": {
       "day": "day",
       "days": "days"

@@ -5,11 +5,13 @@ import { IconSymbol } from "../../components/ui/IconSymbol";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HapticTab } from '../../components/HapticTab';
 import I18n from '../../i18n';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { Colors } from '../../constants/Colors';
 import revenueCatService from '../../config/revenuecat';
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
+  const { locale } = useLanguage();
   const [tapCount, setTapCount] = useState(0);
   const [showSecretModal, setShowSecretModal] = useState(false);
   const [secretCode, setSecretCode] = useState('');
@@ -97,7 +99,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="profile"
           options={{
-            title: I18n.t('profile.settings'),
+            title: I18n.t('tabs.profile'),
             tabBarIcon: ({ color, focused }) => <IconSymbol size={28} name={focused ? "settings.fill" : "settings"} color={color} />,
             tabBarButton: (props) => (
               <HapticTab

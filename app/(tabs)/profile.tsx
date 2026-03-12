@@ -25,6 +25,7 @@ import { Colors } from '../../constants/Colors';
 import { useSubscription } from '../../hooks/useSubscription';
 import * as WebBrowser from "expo-web-browser";
 import I18n from '../../i18n';
+import { useLanguage } from '../../contexts/LanguageContext';
 import api from '../../services/api';
 import { getUniqueDeviceId } from '../../services/deviceStorage';
 
@@ -35,6 +36,7 @@ export default function ProfileScreen() {
 
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
+  const { setLanguage } = useLanguage();
   const { subscriptionStatus, isLoading: subscriptionLoading, loadSubscriptionStatus, cancelSubscription } = useSubscription();
   const [currentLanguage, setCurrentLanguage] = useState<'fr' | 'en'>((I18n.locale?.startsWith('fr') ? 'fr' : 'en') as 'fr' | 'en');
   const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] = useState(false);
@@ -201,14 +203,7 @@ export default function ProfileScreen() {
   const handleLanguagePress = async () => {
     const newLanguage = currentLanguage === 'fr' ? 'en' : 'fr';
     setCurrentLanguage(newLanguage);
-    I18n.locale = newLanguage;
-
-    // Sauvegarder le choix dans AsyncStorage
-    try {
-      await AsyncStorage.setItem('app_language', newLanguage);
-    } catch (error) {
-      console.error('Erreur lors de la sauvegarde de la langue:', error);
-    }
+    await setLanguage(newLanguage);
   };
 
   const getLanguageText = () => {
@@ -228,8 +223,8 @@ export default function ProfileScreen() {
         // Sur iOS, ouvrir les paramètres de l'app
         await Linking.openURL('app-settings:');
       } else {
-        // Sur Android, ouvrir les paramètres de notifications
-        await Linking.openURL('android-app://com.android.settings/.notification.NotificationAccessSettings');
+        // Sur Android, ouvrir les paramètres de l'app (où l'utilisateur peut gérer les notifications)
+        await Linking.openSettings();
       }
     } catch (error) {
       console.error('Erreur lors de l\'ouverture des paramètres:', error);

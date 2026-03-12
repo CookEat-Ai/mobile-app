@@ -18,6 +18,8 @@ import { SENTRY_DSN } from '../config/sentry';
 import { ShareIntentProvider, useShareIntentContext } from 'expo-share-intent';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { LanguageProvider } from '../contexts/LanguageContext';
+
 Sentry.init({
   dsn: SENTRY_DSN,
   enabled: !__DEV__,
@@ -155,27 +157,29 @@ function RootLayout() {
   }
 
   return (
-    <SafeAreaProvider>
-      <ShareIntentProvider>
-        <RecipeProvider>
-          <ThemeProvider value={DefaultTheme}>
-            <ShareIntentHandler />
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="index" options={{ headerShown: false, animation: 'none' }} />
-              <Stack.Screen name="onboarding" options={{ headerShown: false, animation: 'none' }} />
-              <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'none' }} />
-              <Stack.Screen name="recipe-detail" options={{ headerShown: false }} />
-              <Stack.Screen name="favorites-list" options={{ headerShown: false }} />
-              <Stack.Screen name="share-intent" options={{ headerShown: false, animation: 'fade' }} />
-              <Stack.Screen name="recipe-loading" options={{ headerShown: false, animation: 'fade' }} />
-              <Stack.Screen name="recipe-loading-modal" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
-              <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
-              <Stack.Screen name="paywall" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
-            </Stack>
-          </ThemeProvider>
-        </RecipeProvider>
-      </ShareIntentProvider>
-    </SafeAreaProvider>
+    <LanguageProvider>
+      <SafeAreaProvider>
+        <ShareIntentProvider>
+          <RecipeProvider>
+            <ThemeProvider value={DefaultTheme}>
+              <ShareIntentHandler />
+              <Stack screenOptions={{ headerShown: false }}>
+                <Stack.Screen name="index" options={{ headerShown: false, animation: 'none' }} />
+                <Stack.Screen name="onboarding" options={{ headerShown: false, animation: 'none' }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'none' }} />
+                <Stack.Screen name="recipe-detail" options={{ headerShown: false }} />
+                <Stack.Screen name="favorites-list" options={{ headerShown: false }} />
+                <Stack.Screen name="share-intent" options={{ headerShown: false, animation: 'fade' }} />
+                <Stack.Screen name="recipe-loading" options={{ headerShown: false, animation: 'fade' }} />
+                <Stack.Screen name="recipe-loading-modal" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+                <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+                <Stack.Screen name="paywall" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+              </Stack>
+            </ThemeProvider>
+          </RecipeProvider>
+        </ShareIntentProvider>
+      </SafeAreaProvider>
+    </LanguageProvider>
   );
 }
 

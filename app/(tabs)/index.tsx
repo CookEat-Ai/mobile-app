@@ -523,7 +523,7 @@ export default function HomeScreen() {
             <View style={styles.pantryStatItem}>
               <View style={[styles.dot, { backgroundColor: '#4CAF50' }]} />
               <Text style={styles.pantryStatText}>
-                {pantryCount} {pantryCount <= 1 ? 'ingrédient' : 'ingrédients'}
+                {pantryCount} {pantryCount <= 1 ? I18n.t('home.ingredient') : I18n.t('home.ingredients')}
               </Text>
             </View>
           </View>
