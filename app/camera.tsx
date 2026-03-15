@@ -568,7 +568,7 @@ export default function CameraScreen() {
             ]}
           />
         )}
-        <View style={styles.topBar}>
+        <View style={{ ...styles.topBar, paddingTop: Platform.OS === 'android' ? insets.top + 10 : 20 }}>
           {!isRecording && (
             <>
               <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
@@ -716,8 +716,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   topBar: {
-    paddingTop: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: Platform.OS === 'android' ? 10 : 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

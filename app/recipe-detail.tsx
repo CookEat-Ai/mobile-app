@@ -1134,7 +1134,7 @@ export default function RecipeDetailScreen() {
                   <Ionicons name="time-outline" size={24} color="#666" />
                   <Text style={styles.metricLabel}>{I18n.t('recipeDetail.cookingTime')}</Text>
                 </View>
-                <Text style={styles.metricValue}>{recipe.cooking_time}</Text>
+                <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{recipe.cooking_time}</Text>
               </FadeInView>
             ) : (
               <Skeleton width="30%" height={90} borderRadius={12} />
@@ -1146,7 +1146,7 @@ export default function RecipeDetailScreen() {
                   <Ionicons name="star-outline" size={24} color="#666" />
                   <Text style={styles.metricLabel}>{I18n.t('recipeDetail.difficulty')}</Text>
                 </View>
-                <Text style={styles.metricValue}>{translateDifficulty(recipe.difficulty)}</Text>
+                <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{translateDifficulty(recipe.difficulty)}</Text>
               </FadeInView>
             ) : (
               <Skeleton width="30%" height={90} borderRadius={12} />
@@ -1158,7 +1158,7 @@ export default function RecipeDetailScreen() {
                   <Ionicons name="people-outline" size={24} color="#666" />
                   <Text style={styles.metricLabel}>{I18n.t('recipeDetail.servings')}</Text>
                 </View>
-                <Text style={styles.metricValue}>{recipe.servings}</Text>
+                <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{recipe.servings}</Text>
               </FadeInView>
             ) : (
               <Skeleton width="30%" height={90} borderRadius={12} />
@@ -1179,7 +1179,7 @@ export default function RecipeDetailScreen() {
                     <Text style={styles.metricLabel}>{I18n.t('recipeDetail.calories')}</Text>
                   </View>
                   {isSubscribed || isFirstGeneration || params.isOnboarding === 'true' || params.showGenerateButton === 'false'
-                    ? <Text style={styles.metricValue}>
+                    ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>
                       {recipe.calories.toString().replace(/\s*(per serving|par portion|par personne|per person|\/p|\/portion|\/serving)\s*/gi, '').trim() + I18n.t('recipeDetail.perServing')}
                     </Text>
                     : <Ionicons name="lock-closed-outline" size={24} color="black" />
@@ -1202,7 +1202,7 @@ export default function RecipeDetailScreen() {
                     <Text style={styles.metricLabel}>{I18n.t('recipeDetail.proteins')}</Text>
                   </View>
                   {isSubscribed || isFirstGeneration || params.isOnboarding === 'true' || params.showGenerateButton === 'false'
-                    ? <Text style={styles.metricValue}>{recipe.proteins}</Text>
+                    ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{recipe.proteins}</Text>
                     : <Ionicons name="lock-closed-outline" size={24} color="black" />
                   }
                 </TouchableOpacity>
@@ -1223,7 +1223,7 @@ export default function RecipeDetailScreen() {
                     <Text style={styles.metricLabel}>{I18n.t('recipeDetail.lipids')}</Text>
                   </View>
                   {isSubscribed || isFirstGeneration || params.isOnboarding === 'true' || params.showGenerateButton === 'false'
-                    ? <Text style={styles.metricValue}>{recipe.lipids}</Text>
+                    ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{recipe.lipids}</Text>
                     : <Ionicons name="lock-closed-outline" size={24} color="black" />
                   }
                 </TouchableOpacity>

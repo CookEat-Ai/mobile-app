@@ -52,7 +52,9 @@
         {
           "android": {
             "lintOptions": {
-              "disable": ["ExtraTranslation"]
+              "disable": [
+                "ExtraTranslation"
+              ]
             }
           },
           "ios": {
@@ -140,8 +142,7 @@
       "router": {},
       "eas": {
         "projectId": "014735a5-662a-4ab0-84a8-d1e8653c94d6"
-      },
-      "apiBaseUrl": "http://192.168.1.24:8083/api"
+      }
     },
     "runtimeVersion": "1.0.0",
     "updates": {
