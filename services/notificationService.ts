@@ -2,7 +2,7 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import * as Localization from 'expo-localization';
 import Constants from 'expo-constants';
-import I18n from '../i18n';
+import i18n from '../i18n';
 import { Platform, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUniqueDeviceId } from './deviceStorage';
@@ -176,13 +176,13 @@ class NotificationService {
    */
   showManualNotificationInstructions(): void {
     const instructions = Platform.OS === 'ios'
-      ? I18n.t('notifications.manualInstructionIOS')
-      : I18n.t('notifications.manualInstructionAndroid');
+      ? i18n.t('notifications.manualInstructionIOS')
+      : i18n.t('notifications.manualInstructionAndroid');
 
     Alert.alert(
-      I18n.t('notifications.activateTitle'),
-      `${I18n.t('notifications.activateMessage')}\n\n${instructions}`,
-      [{ text: I18n.t('notifications.understood') }]
+      i18n.t('notifications.activateTitle'),
+      `${i18n.t('notifications.activateMessage')}\n\n${instructions}`,
+      [{ text: i18n.t('notifications.understood') }]
     );
   }
 }

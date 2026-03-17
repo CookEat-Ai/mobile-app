@@ -9,14 +9,12 @@ import {
   TouchableOpacity,
   View,
   Platform,
-  Alert,
 } from 'react-native';
 import { Colors } from '../../constants/Colors';
-import I18n from '../../i18n';
+import { useTranslation } from 'react-i18next';
 import analytics from '../../services/analytics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import * as Notifications from 'expo-notifications';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSubscription } from '../../hooks/useSubscription';
 import revenueCatService from '../../config/revenuecat';
@@ -30,6 +28,7 @@ export default function ReminderScreen() {
   const slideAnim = useRef(new Animated.Value(20)).current;
   const [hasShownPaywall, setHasShownPaywall] = useState(false);
   const { loadSubscriptionStatus } = useSubscription();
+  const { t } = useTranslation();
 
   useEffect(() => {
     analytics.track('Onboarding - Reminder Screen View');
@@ -69,75 +68,27 @@ export default function ReminderScreen() {
     }
   };
 
-  // TODO : move this code to the part after payment
-  const handleActivateNotifications = async () => {
-    try {
-      // Demander les permissions de notification
-      const { status: existingStatus } = await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
 
-      // Si les permissions ne sont pas accordées, les demander
-      if (existingStatus !== 'granted') {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
+  const handleContinue = async () => {
+    setHasShownPaywall(true);
 
-      // Vérifier si les permissions ont été accordées
-      if (finalStatus !== 'granted') {
-        Alert.alert(
-          I18n.t('onboarding.notifications.permissionDeniedTitle'),
-          I18n.t('onboarding.notifications.permissionDeniedMessage'),
-          [{ text: 'OK' }]
-        );
-        return;
-      }
-
-      // Configurer les notifications
-      await Notifications.setNotificationHandler({
-        handleNotification: async () => ({
-          shouldShowAlert: true,
-          shouldPlaySound: true,
-          shouldSetBadge: false,
-          shouldShowBanner: true,
-          shouldShowList: true,
-        }),
-      });
-
-      // Programmer une notification de rappel (1 jour avant la fin de l'essai)
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: I18n.t('onboarding.reminder.title'),
-          body: I18n.t('onboarding.reminder.body'),
-          data: { type: 'trial_reminder' },
-        },
-        trigger: {
-          type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-          seconds: 1 * 24 * 60 * 60, // 1 jour
+    const pendingDiscount = await AsyncStorage.getItem('pending_promo_discount');
+    if (pendingDiscount) {
+      router.push({
+        pathname: '/paywall',
+        params: {
+          source: 'onboarding_reminder',
+          initialState: 'PROMO_DISCOUNTED',
+          promoDiscount: pendingDiscount,
         },
       });
-    } catch (error) {
-      console.error('Erreur lors de l\'activation des notifications:', error);
-      Alert.alert(
-        I18n.t('onboarding.notifications.errorTitle'),
-        I18n.t('onboarding.notifications.errorMessage'),
-        [{ text: 'OK' }]
-      );
-    } finally {
-      Alert.alert(
-        I18n.t('onboarding.notifications.successTitle'),
-        I18n.t('onboarding.notifications.successMessage'),
-        [{ text: 'OK' }]
-      );
+    } else {
+      router.push({ pathname: '/paywall', params: { source: 'onboarding_reminder' } });
     }
   };
 
-  const handleContinue = () => {
-    setHasShownPaywall(true);
-    router.push({ pathname: '/paywall', params: { source: 'onboarding_reminder' } });
-  };
-
   const renderTitle = () => {
-    const fullText = I18n.t('onboarding.reminder.title', { days: '1' });
+    const fullText = t('onboarding.reminder.title', { days: '1' });
     const parts = fullText.split(/(1 jour|1 day)/);
 
     return (
@@ -164,7 +115,7 @@ export default function ReminderScreen() {
         <Animated.View style={[styles.bottomSection, { opacity: fadeAnim }]}>
           <View style={styles.checkContainer}>
             <Ionicons name="checkmark" size={20} color={Colors.light.text} />
-            <Text style={styles.checkText}>{I18n.t('onboarding.offerTrial.noPayment')}</Text>
+            <Text style={styles.checkText}>{t('onboarding.offerTrial.noPayment')}</Text>
           </View>
 
           <TouchableOpacity
@@ -172,7 +123,7 @@ export default function ReminderScreen() {
             style={styles.continueButton}
             onPress={handleContinue}
           >
-            <Text style={styles.buttonText}>{I18n.t('onboarding.reminder.button')}</Text>
+            <Text style={styles.buttonText}>{t('onboarding.reminder.button')}</Text>
           </TouchableOpacity>
         </Animated.View>
       </View>

@@ -3,20 +3,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   ActivityIndicator,
   Alert,
-  Image,
   Linking,
   Platform,
   ScrollView,
   StyleSheet,
-  Switch,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
   Modal,
-  TouchableWithoutFeedback,
   Animated,
-  Dimensions
+  Dimensions,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard
 } from 'react-native';
+import Reanimated, { FadeInDown } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -24,8 +26,7 @@ import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
 import { useSubscription } from '../../hooks/useSubscription';
 import * as WebBrowser from "expo-web-browser";
-import I18n from '../../i18n';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
 import { getUniqueDeviceId } from '../../services/deviceStorage';
 
@@ -36,12 +37,17 @@ export default function ProfileScreen() {
 
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
-  const { setLanguage } = useLanguage();
+  const { t, i18n } = useTranslation();
   const { subscriptionStatus, isLoading: subscriptionLoading, loadSubscriptionStatus, cancelSubscription } = useSubscription();
-  const [currentLanguage, setCurrentLanguage] = useState<'fr' | 'en'>((I18n.locale?.startsWith('fr') ? 'fr' : 'en') as 'fr' | 'en');
+  const [currentLanguage, setCurrentLanguage] = useState<'fr' | 'en'>((i18n.language?.startsWith('fr') ? 'fr' : 'en') as 'fr' | 'en');
   const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] = useState(false);
+  const [isPromoModalVisible, setIsPromoModalVisible] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoError, setPromoError] = useState('');
   const screenHeight = Dimensions.get('window').height;
   const slideAnim = useRef(new Animated.Value(screenHeight)).current;
+  const promoSlideAnim = useRef(new Animated.Value(screenHeight)).current;
 
   useEffect(() => {
     if (isSubscriptionModalVisible) {
@@ -55,6 +61,64 @@ export default function ProfileScreen() {
       slideAnim.setValue(screenHeight);
     }
   }, [isSubscriptionModalVisible]);
+
+  useEffect(() => {
+    if (isPromoModalVisible) {
+      Animated.spring(promoSlideAnim, {
+        toValue: 0,
+        useNativeDriver: false,
+        tension: 50,
+        friction: 8,
+      }).start();
+    } else {
+      promoSlideAnim.setValue(screenHeight);
+    }
+  }, [isPromoModalVisible]);
+
+  const closePromoModal = () => {
+    Animated.timing(promoSlideAnim, {
+      toValue: screenHeight,
+      duration: 300,
+      useNativeDriver: false,
+    }).start(() => {
+      setIsPromoModalVisible(false);
+      setPromoCode('');
+      setPromoError('');
+    });
+  };
+
+  const handleValidatePromoCode = async () => {
+    if (!promoCode.trim()) return;
+    setPromoError('');
+    setPromoLoading(true);
+
+    try {
+      const response = await api.validatePromoCode(promoCode.trim());
+
+      if (response.data?.isValid && response.data.discountPercentage) {
+        await AsyncStorage.setItem('pending_promo_code', promoCode.trim().toUpperCase());
+        await AsyncStorage.setItem('pending_promo_discount', String(response.data.discountPercentage));
+        closePromoModal();
+
+        setTimeout(() => {
+          router.push({
+            pathname: '/paywall',
+            params: {
+              source: 'profile_promo_code',
+              initialState: 'PROMO_DISCOUNTED',
+              promoDiscount: String(response.data!.discountPercentage),
+            },
+          });
+        }, 400);
+      } else {
+        setPromoError(response.error || t('promoCode.invalid'));
+      }
+    } catch {
+      setPromoError(t('promoCode.invalid'));
+    } finally {
+      setPromoLoading(false);
+    }
+  };
 
   const closeSubscriptionModal = () => {
     Animated.timing(slideAnim, {
@@ -83,22 +147,17 @@ export default function ProfileScreen() {
     checkSubscriptionStatus();
   }, []));
 
-  const handleUpgradeToPremium = () => {
-    // Naviguer vers le paywall
-    router.push({ pathname: '/paywall', params: { source: 'profile_settings' } });
-  };
-
   const handleCancelSubscription = () => {
     Alert.alert(
-      I18n.t('profile.cancelSubscriptionTitle'),
-      I18n.t('profile.cancelSubscriptionMessage'),
+      t('profile.cancelSubscriptionTitle'),
+      t('profile.cancelSubscriptionMessage'),
       [
         {
-          text: I18n.t('profile.cancel'),
+          text: t('profile.cancel'),
           style: 'cancel',
         },
         {
-          text: I18n.t('profile.confirm'),
+          text: t('profile.confirm'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -115,16 +174,16 @@ export default function ProfileScreen() {
                 // );
               } else {
                 Alert.alert(
-                  I18n.t('profile.cancellationErrorTitle'),
-                  I18n.t('profile.cancellationErrorMessage'),
+                  t('profile.cancellationErrorTitle'),
+                  t('profile.cancellationErrorMessage'),
                   [{ text: 'OK' }]
                 );
               }
             } catch (error) {
               console.error('Erreur lors de la cancellation:', error);
               Alert.alert(
-                I18n.t('profile.cancellationErrorTitle'),
-                I18n.t('profile.cancellationErrorMessage'),
+                t('profile.cancellationErrorTitle'),
+                t('profile.cancellationErrorMessage'),
                 [{ text: 'OK' }]
               );
             }
@@ -136,7 +195,7 @@ export default function ProfileScreen() {
 
   const handlePrivacyPolicyPress = async () => {
     try {
-      const url = I18n.locale?.startsWith('fr')
+      const url = i18n.language?.startsWith('fr')
         ? 'https://cookeat.info/legal/fr'
         : 'https://cookeat.info/legal/en';
 
@@ -148,8 +207,8 @@ export default function ProfileScreen() {
     } catch (error) {
       console.error('Erreur lors de l\'ouverture de la politique de confidentialité:', error);
       Alert.alert(
-        I18n.t('common.error'),
-        I18n.t('profile.privacyError'),
+        t('common.error'),
+        t('profile.privacyError'),
         [{ text: 'OK' }]
       );
     }
@@ -157,7 +216,7 @@ export default function ProfileScreen() {
 
   const handleTermsOfServicePress = async () => {
     try {
-      const url = I18n.locale?.startsWith('fr')
+      const url = i18n.language?.startsWith('fr')
         ? 'https://cookeat.info/legal/fr'
         : 'https://cookeat.info/legal/en';
 
@@ -165,8 +224,8 @@ export default function ProfileScreen() {
     } catch (error) {
       console.error('Erreur lors de l\'ouverture des conditions d\'utilisation:', error);
       Alert.alert(
-        I18n.t('common.error'),
-        I18n.t('profile.termsError'),
+        t('common.error'),
+        t('profile.termsError'),
         [{ text: 'OK' }]
       );
     }
@@ -174,8 +233,8 @@ export default function ProfileScreen() {
 
   const handleFeedbackPress = async () => {
     try {
-      const subject = encodeURIComponent(I18n.t('profile.feedbackSubject'));
-      const body = encodeURIComponent(I18n.t('profile.feedbackBody'));
+      const subject = encodeURIComponent(t('profile.feedbackSubject'));
+      const body = encodeURIComponent(t('profile.feedbackBody'));
 
       const mailtoUrl = `mailto:no-reply@cookeat.info?subject=${subject}&body=${body}`;
 
@@ -185,17 +244,17 @@ export default function ProfileScreen() {
       } else {
         // Fallback : copier l'email dans le presse-papiers
         Alert.alert(
-          I18n.t('profile.emailNotAvailableTitle'),
-          I18n.t('profile.emailNotAvailableMessage'),
-          [{ text: I18n.t('common.ok') }]
+          t('profile.emailNotAvailableTitle'),
+          t('profile.emailNotAvailableMessage'),
+          [{ text: t('common.ok') }]
         );
       }
     } catch (error) {
       console.error('Erreur lors de l\'ouverture de l\'email:', error);
       Alert.alert(
-        I18n.t('common.error'),
-        I18n.t('profile.emailError'),
-        [{ text: I18n.t('common.ok') }]
+        t('common.error'),
+        t('profile.emailError'),
+        [{ text: t('common.ok') }]
       );
     }
   };
@@ -203,17 +262,18 @@ export default function ProfileScreen() {
   const handleLanguagePress = async () => {
     const newLanguage = currentLanguage === 'fr' ? 'en' : 'fr';
     setCurrentLanguage(newLanguage);
-    await setLanguage(newLanguage);
+    await i18n.changeLanguage(newLanguage);
+    await AsyncStorage.setItem('app_language', newLanguage);
   };
 
   const getLanguageText = () => {
     switch (currentLanguage) {
       case 'fr':
-        return I18n.t('profile.languages.french');
+        return t('profile.languages.french');
       case 'en':
-        return I18n.t('profile.languages.english');
+        return t('profile.languages.english');
       default:
-        return I18n.t('profile.languages.french');
+        return t('profile.languages.french');
     }
   };
 
@@ -233,28 +293,28 @@ export default function ProfileScreen() {
         await Linking.openSettings();
       } catch (fallbackError) {
         console.error('Erreur lors de l\'ouverture des paramètres généraux:', fallbackError);
-        Alert.alert(I18n.t('common.error'), I18n.t('profile.settingsError'));
+        Alert.alert(t('common.error'), t('profile.settingsError'));
       }
     }
   };
 
   const handleDeleteAccount = () => {
     Alert.alert(
-      I18n.t('profile.deleteAccountTitle'),
-      I18n.t('profile.deleteAccountMessage'),
+      t('profile.deleteAccountTitle'),
+      t('profile.deleteAccountMessage'),
       [
-        { text: I18n.t('common.cancel'), style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: I18n.t('common.confirm'),
+          text: t('common.confirm'),
           style: 'destructive',
           onPress: () => {
             Alert.alert(
-              I18n.t('profile.deleteAccountConfirmTitle'),
-              I18n.t('profile.deleteAccountConfirmMessage'),
+              t('profile.deleteAccountConfirmTitle'),
+              t('profile.deleteAccountConfirmMessage'),
               [
-                { text: I18n.t('common.cancel'), style: 'cancel' },
+                { text: t('common.cancel'), style: 'cancel' },
                 {
-                  text: I18n.t('profile.deleteAccountButton'),
+                  text: t('profile.deleteAccountButton'),
                   style: 'destructive',
                   onPress: async () => {
                     try {
@@ -278,7 +338,7 @@ export default function ProfileScreen() {
                       router.replace('/onboarding/welcome');
                     } catch (error) {
                       console.error('Erreur lors de la suppression du compte:', error);
-                      Alert.alert(I18n.t('common.error'), I18n.t('profile.deleteError'));
+                      Alert.alert(t('common.error'), t('profile.deleteError'));
                     }
                   }
                 }
@@ -295,7 +355,7 @@ export default function ProfileScreen() {
       'Mode dev',
       'Revenir au debut de l’onboarding ?',
       [
-        { text: I18n.t('common.cancel'), style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
           text: 'Confirmer',
           style: 'destructive',
@@ -308,7 +368,7 @@ export default function ProfileScreen() {
               router.replace('/onboarding/welcome');
             } catch (error) {
               console.error('Erreur reset onboarding (dev):', error);
-              Alert.alert(I18n.t('common.error'), 'Impossible de reinitialiser l’onboarding.');
+              Alert.alert(t('common.error'), t('profile.onboardingResetError'));
             }
           },
         },
@@ -332,19 +392,19 @@ export default function ProfileScreen() {
 
         {/* Section Plan */}
         {subscriptionLoading ? (
-          <View style={styles.card}>
+          <Reanimated.View entering={FadeInDown.duration(400).delay(50)} style={styles.card}>
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="small" color={colors.button} />
               <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-                {I18n.t('profile.loadingSubscription')}
+                {t('profile.loadingSubscription')}
               </Text>
             </View>
-          </View>
+          </Reanimated.View>
         ) : (subscriptionStatus.isSubscribed) ? (
           // Utilisateur avec abonnement - Style Premium
-          <>
+          <Reanimated.View entering={FadeInDown.duration(400).delay(50)}>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>
-              {I18n.t('profile.plan')}
+              {t('profile.plan')}
             </Text>
             <View style={styles.card}>
               <View style={styles.subscriptionInfo}>
@@ -352,15 +412,15 @@ export default function ProfileScreen() {
                   <View style={styles.planBadge}>
                     <IconSymbol name="crown.fill" size={16} color={colors.button} />
                     <Text style={[styles.planBadgeText, { color: colors.button }]}>
-                      {I18n.t('profile.premium')}
+                      {t('profile.premium')}
                     </Text>
                   </View>
                   <Text style={[styles.planName, { color: colors.text }]}>
-                    {I18n.t('profile.premiumPlan')}
+                    {t('profile.premiumPlan')}
                   </Text>
                   {subscriptionStatus.expirationDate && (
                     <Text style={[styles.planExpiration, { color: colors.textSecondary }]}>
-                      {I18n.t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString(I18n.locale === 'fr' ? 'fr-FR' : 'en-US')}
+                      {t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString(i18n.language === 'fr' ? 'fr-FR' : 'en-US')}
                     </Text>
                   )}
                 </View>
@@ -368,17 +428,17 @@ export default function ProfileScreen() {
                   style={styles.manageButton}
                   onPress={() => setIsSubscriptionModalVisible(true)}
                 >
-                  <Text style={styles.manageButtonText}>{I18n.t('profile.manage')}</Text>
+                  <Text style={styles.manageButtonText}>{t('profile.manage')}</Text>
                   <IconSymbol name="chevron-forward" size={14} color="#8E8E93" />
                 </TouchableOpacity>
               </View>
             </View>
-          </>
+          </Reanimated.View>
         ) : (
           // Utilisateur sans abonnement - Card Upsell style Accueil, ou mode dev
-          <>
+          <Reanimated.View entering={FadeInDown.duration(400).delay(50)}>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>
-              {I18n.t('profile.plan')}
+              {t('profile.plan')}
             </Text>
             <TouchableOpacity
               style={styles.premiumCard}
@@ -396,9 +456,9 @@ export default function ProfileScreen() {
                     <View style={styles.proBadge}>
                       <Text style={styles.proBadgeText}>PREMIUM</Text>
                     </View>
-                    <Text style={styles.premiumTitle}>{I18n.t('profile.premiumTitle')}</Text>
+                    <Text style={styles.premiumTitle}>{t('profile.premiumTitle')}</Text>
                     <Text style={styles.premiumDescription}>
-                      {I18n.t('profile.premiumPrice')}
+                      {t('profile.premiumPrice')}
                     </Text>
                   </View>
                   <View style={styles.premiumIconContainer}>
@@ -407,98 +467,123 @@ export default function ProfileScreen() {
                 </View>
               </LinearGradient>
             </TouchableOpacity>
-          </>
+          </Reanimated.View>
         )}
 
         {/* Section Paramètres */}
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          {I18n.t('profile.generalSettings')}
-        </Text>
-        <View style={styles.card}>
-          <TouchableOpacity style={styles.settingItem} onPress={handleNotificationsPress}>
-            <IconSymbol name={Platform.OS === 'ios' ? "bell" : "notifications"} size={20} color={colors.button} />
-            <Text style={[styles.settingText, { color: colors.text }]}>
-              {I18n.t('profile.notifications')}
-            </Text>
-            <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
-          </TouchableOpacity>
-
-          <View style={styles.separator} />
-
-          <TouchableOpacity style={styles.settingItem} onPress={handleFeedbackPress}>
-            <IconSymbol name="envelope" size={20} color={colors.button} />
-            <View style={styles.settingInfo}>
-              <Text style={[styles.settingText, { marginLeft: 0, marginBottom: 5, color: colors.text }]}>
-                {I18n.t('profile.feedback')}
+        <Reanimated.View entering={FadeInDown.duration(400).delay(100)}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            {t('profile.generalSettings')}
+          </Text>
+          <View style={styles.card}>
+            <TouchableOpacity style={styles.settingItem} onPress={handleNotificationsPress}>
+              <IconSymbol name={Platform.OS === 'ios' ? "bell" : "notifications"} size={20} color={colors.button} />
+              <Text style={[styles.settingText, { color: colors.text }]}>
+                {t('profile.notifications')}
               </Text>
-              <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                {I18n.t('profile.feedbackDescription')}
-              </Text>
-            </View>
-            <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
-          </TouchableOpacity>
+              <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
+            </TouchableOpacity>
 
-          <View style={styles.separator} />
+            <View style={styles.separator} />
 
-          <TouchableOpacity style={styles.settingItem} onPress={handleLanguagePress}>
-            <IconSymbol name="globe" size={20} color={colors.button} />
-            <View style={styles.settingInfo}>
-              <Text style={[styles.settingText, { marginLeft: 0, marginBottom: 5, color: colors.text }]}>
-                {I18n.t('profile.language')}
-              </Text>
-              <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                {getLanguageText()}
-              </Text>
-            </View>
-            <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.settingItem} onPress={handleFeedbackPress}>
+              <IconSymbol name="envelope" size={20} color={colors.button} />
+              <View style={styles.settingInfo}>
+                <Text style={[styles.settingText, { marginLeft: 0, marginBottom: 5, color: colors.text }]}>
+                  {t('profile.feedback')}
+                </Text>
+                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
+                  {t('profile.feedbackDescription')}
+                </Text>
+              </View>
+              <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
+            </TouchableOpacity>
 
-          <View style={styles.separator} />
+            <View style={styles.separator} />
 
-          <TouchableOpacity style={styles.settingItem} onPress={handleDeleteAccount}>
-            <IconSymbol name="trash" size={20} color="#FF3B30" />
-            <View style={styles.settingInfo}>
-              <Text style={[styles.settingText, { marginLeft: 0, color: "#FF3B30" }]}>
-                {I18n.t('profile.deleteAccount')}
-              </Text>
-            </View>
-            <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color="#FF3B30" />
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity style={styles.settingItem} onPress={handleLanguagePress}>
+              <IconSymbol name="globe" size={20} color={colors.button} />
+              <View style={styles.settingInfo}>
+                <Text style={[styles.settingText, { marginLeft: 0, marginBottom: 5, color: colors.text }]}>
+                  {t('profile.language')}
+                </Text>
+                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
+                  {getLanguageText()}
+                </Text>
+              </View>
+              <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
+            </TouchableOpacity>
+
+            {!subscriptionStatus.isSubscribed && (
+              <>
+                <View style={styles.separator} />
+
+                <TouchableOpacity style={styles.settingItem} onPress={() => setIsPromoModalVisible(true)}>
+                  <IconSymbol name="pricetag" size={20} color={colors.button} />
+                  <View style={styles.settingInfo}>
+                    <Text style={[styles.settingText, { marginLeft: 0, marginBottom: 5, color: colors.text }]}>
+                      {t('profile.promoCode')}
+                    </Text>
+                    <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
+                      {t('profile.promoCodeDescription')}
+                    </Text>
+                  </View>
+                  <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
+                </TouchableOpacity>
+              </>
+            )}
+
+            <View style={styles.separator} />
+
+            <TouchableOpacity style={styles.settingItem} onPress={handleDeleteAccount}>
+              <IconSymbol name="trash" size={20} color="#FF3B30" />
+              <View style={styles.settingInfo}>
+                <Text style={[styles.settingText, { marginLeft: 0, color: "#FF3B30" }]}>
+                  {t('profile.deleteAccount')}
+                </Text>
+              </View>
+              <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color="#FF3B30" />
+            </TouchableOpacity>
+          </View>
+        </Reanimated.View>
 
         {__DEV__ && (
-          <TouchableOpacity
-            style={styles.devResetButton}
-            onPress={handleResetOnboardingDev}
-            activeOpacity={0.85}
-          >
-            <Text style={styles.devResetButtonText}>Reset onboarding (dev)</Text>
-          </TouchableOpacity>
+          <Reanimated.View entering={FadeInDown.duration(400).delay(150)}>
+            <TouchableOpacity
+              style={styles.devResetButton}
+              onPress={handleResetOnboardingDev}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.devResetButtonText}>Reset onboarding (dev)</Text>
+            </TouchableOpacity>
+          </Reanimated.View>
         )}
 
         {/* Section Mentions légales */}
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>
-          {I18n.t('profile.legal')}
-        </Text>
-        <View style={styles.card}>
-          <TouchableOpacity style={styles.settingItem} onPress={handlePrivacyPolicyPress}>
-            <IconSymbol name="doc.text" size={20} color={colors.button} />
-            <Text style={[styles.settingText, { color: colors.text }]}>
-              {I18n.t('profile.privacyPolicy')}
-            </Text>
-            <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
-          </TouchableOpacity>
+        <Reanimated.View entering={FadeInDown.duration(400).delay(200)}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>
+            {t('profile.legal')}
+          </Text>
+          <View style={styles.card}>
+            <TouchableOpacity style={styles.settingItem} onPress={handlePrivacyPolicyPress}>
+              <IconSymbol name="doc.text" size={20} color={colors.button} />
+              <Text style={[styles.settingText, { color: colors.text }]}>
+                {t('profile.privacyPolicy')}
+              </Text>
+              <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
+            </TouchableOpacity>
 
-          <View style={styles.separator} />
+            <View style={styles.separator} />
 
-          <TouchableOpacity style={styles.settingItem} onPress={handleTermsOfServicePress}>
-            <IconSymbol name="doc.text" size={20} color={colors.button} />
-            <Text style={[styles.settingText, { color: colors.text }]}>
-              {I18n.t('profile.termsOfService')}
-            </Text>
-            <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity style={styles.settingItem} onPress={handleTermsOfServicePress}>
+              <IconSymbol name="doc.text" size={20} color={colors.button} />
+              <Text style={[styles.settingText, { color: colors.text }]}>
+                {t('profile.termsOfService')}
+              </Text>
+              <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
+            </TouchableOpacity>
+          </View>
+        </Reanimated.View>
       </ScrollView>
 
       {/* Modal de gestion d'abonnement */}
@@ -509,67 +594,146 @@ export default function ProfileScreen() {
         statusBarTranslucent={true}
         onRequestClose={closeSubscriptionModal}
       >
-        <View
+        <TouchableWithoutFeedback onPress={closeSubscriptionModal}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalOverlayInner}>
+              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <Animated.View
+                  style={[
+                    styles.modalContent,
+                    {
+                      transform: [{ translateY: slideAnim }],
+                      paddingBottom: Platform.OS === 'ios' ? 40 : Math.max(insets.bottom, 30)
+                    }
+                  ]}
+                >
+                  <View style={styles.modalHeader}>
+                    <Text style={styles.modalTitle}>{t('profile.mySubscription')}</Text>
+                    <TouchableOpacity onPress={closeSubscriptionModal}>
+                      <IconSymbol name="close" size={24} color="#000" />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.modalBody}>
+                    <View style={styles.modalPlanCard}>
+                      <View style={styles.planBadge}>
+                        <IconSymbol name="crown.fill" size={20} color={colors.button} />
+                        <Text style={[styles.planBadgeText, { color: colors.button, fontSize: 16 }]}>
+                          {t('profile.premium')}
+                        </Text>
+                      </View>
+                      <Text style={styles.modalPlanName}>{t('profile.premiumPlan')}</Text>
+                      <Text style={styles.modalPlanDescription}>
+                        {t('profile.premiumBenefits')}
+                      </Text>
+                      {subscriptionStatus.expirationDate && (
+                        <Text style={styles.modalExpirationText}>
+                          {t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString(i18n.language === 'fr' ? 'fr-FR' : 'en-US')}
+                        </Text>
+                      )}
+                    </View>
+
+                    <TouchableOpacity
+                      style={[styles.closeModalButton, { backgroundColor: colors.button }]}
+                      onPress={closeSubscriptionModal}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={styles.closeModalButtonText}>{t('profile.continueCooking')}</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.hiddenCancelButton}
+                      onPress={() => {
+                        setIsSubscriptionModalVisible(false);
+                        handleCancelSubscription();
+                      }}
+                    >
+                      <Text style={styles.hiddenCancelButtonText}>{t('profile.cancelMySubscription')}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </Animated.View>
+              </TouchableWithoutFeedback>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+      {/* Modal de code promo */}
+      <Modal
+        visible={isPromoModalVisible}
+        transparent={true}
+        animationType="fade"
+        statusBarTranslucent={true}
+        onRequestClose={closePromoModal}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.modalOverlay}
-          onTouchEnd={(e) => {
-            if (e.target === e.currentTarget) closeSubscriptionModal();
-          }}
         >
-          <Animated.View
-            style={[
-              styles.modalContent,
-              {
-                transform: [{ translateY: slideAnim }],
-                paddingBottom: Platform.OS === 'ios' ? 40 : Math.max(insets.bottom, 30)
-              }
-            ]}
-          >
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{I18n.t('profile.mySubscription')}</Text>
-              <TouchableOpacity onPress={closeSubscriptionModal}>
-                <IconSymbol name="close" size={24} color="#000" />
-              </TouchableOpacity>
+          <TouchableWithoutFeedback onPress={closePromoModal}>
+            <View style={styles.modalOverlayInner}>
+              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <Animated.View
+                  style={[
+                    styles.modalContent,
+                    {
+                      transform: [{ translateY: promoSlideAnim }],
+                      paddingBottom: Platform.OS === 'ios' ? 40 : Math.max(insets.bottom, 30),
+                    },
+                  ]}
+                >
+                  <View style={styles.modalHeader}>
+                    <Text style={styles.modalTitle}>{t('profile.promoCodeTitle')}</Text>
+                    <TouchableOpacity onPress={closePromoModal}>
+                      <IconSymbol name="close" size={24} color="#000" />
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.modalBody}>
+                    <View style={styles.promoInputContainer}>
+                      <TextInput
+                        style={styles.promoInput}
+                        value={promoCode}
+                        onChangeText={(text) => {
+                          setPromoCode(text.toUpperCase());
+                          setPromoError('');
+                        }}
+                        placeholder={t('profile.promoCodePlaceholder')}
+                        placeholderTextColor="#AEAEB2"
+                        autoCapitalize="characters"
+                        autoCorrect={false}
+                        returnKeyType="done"
+                        onSubmitEditing={handleValidatePromoCode}
+                      />
+                    </View>
+
+                    {promoError ? (
+                      <Text style={styles.promoErrorText}>{promoError}</Text>
+                    ) : null}
+
+                    <TouchableOpacity
+                      style={[
+                        styles.closeModalButton,
+                        { backgroundColor: colors.button },
+                        (!promoCode.trim() || promoLoading) && { opacity: 0.5 },
+                      ]}
+                      onPress={handleValidatePromoCode}
+                      disabled={!promoCode.trim() || promoLoading}
+                      activeOpacity={0.8}
+                    >
+                      {promoLoading ? (
+                        <ActivityIndicator color="#fff" />
+                      ) : (
+                        <Text style={styles.closeModalButtonText}>
+                          {t('profile.promoCodeValidate')}
+                        </Text>
+                      )}
+                    </TouchableOpacity>
+                  </View>
+                </Animated.View>
+              </TouchableWithoutFeedback>
             </View>
-
-            <View style={styles.modalBody}>
-              <View style={styles.modalPlanCard}>
-                <View style={styles.planBadge}>
-                  <IconSymbol name="crown.fill" size={20} color={colors.button} />
-                  <Text style={[styles.planBadgeText, { color: colors.button, fontSize: 16 }]}>
-                    {I18n.t('profile.premium')}
-                  </Text>
-                </View>
-                <Text style={styles.modalPlanName}>{I18n.t('profile.premiumPlan')}</Text>
-                <Text style={styles.modalPlanDescription}>
-                  {I18n.t('profile.premiumBenefits')}
-                </Text>
-                {subscriptionStatus.expirationDate && (
-                  <Text style={styles.modalExpirationText}>
-                    {I18n.t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString(I18n.locale === 'fr' ? 'fr-FR' : 'en-US')}
-                  </Text>
-                )}
-              </View>
-
-              <TouchableOpacity
-                style={[styles.closeModalButton, { backgroundColor: colors.button }]}
-                onPress={closeSubscriptionModal}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.closeModalButtonText}>{I18n.t('profile.continueCooking')}</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.hiddenCancelButton}
-                onPress={() => {
-                  setIsSubscriptionModalVisible(false);
-                  handleCancelSubscription();
-                }}
-              >
-                <Text style={styles.hiddenCancelButtonText}>{I18n.t('profile.cancelMySubscription')}</Text>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
       </Modal>
     </LinearGradient>
   );
@@ -740,6 +904,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'flex-end',
   },
+  modalOverlayInner: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
   modalContent: {
     backgroundColor: 'white',
     borderTopLeftRadius: 32,
@@ -859,5 +1027,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#D9382A',
     fontFamily: 'CronosProBold'
+  },
+  promoInputContainer: {
+    width: '100%',
+    backgroundColor: '#F8F8FD',
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: '#F2F2F7',
+    paddingHorizontal: 16,
+    marginBottom: 12,
+  },
+  promoInput: {
+    fontSize: 18,
+    fontFamily: 'Degular',
+    color: '#081A10',
+    paddingVertical: 16,
+    letterSpacing: 2,
+    textAlign: 'center',
+  },
+  promoErrorText: {
+    color: '#FF3B30',
+    fontSize: 14,
+    fontFamily: 'CronosPro',
+    marginBottom: 12,
+    textAlign: 'center',
   },
 }); 

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import I18n from '../i18n';
+import { useTranslation } from 'react-i18next';
 import {
   Animated,
   Dimensions,
@@ -11,13 +11,11 @@ import {
   Alert,
   Linking,
   Platform,
-  PermissionsAndroid
 } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from "./ui/IconSymbol";
 import { useVoice, resetVoiceCompletely } from '../hooks/useVoice';
-import Voice from '@react-native-voice/voice';
-import { getRecordingPermissionsAsync, requestRecordingPermissionsAsync } from 'expo-audio';
+import { ExpoSpeechRecognitionModule } from 'expo-speech-recognition';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Haptics from 'expo-haptics';
 
@@ -42,6 +40,7 @@ export default function Micro({
   onClick,
   hideStatusText = false
 }: MicroProps) {
+  const { t } = useTranslation();
   const colors = Colors.light;
 
 
@@ -184,68 +183,14 @@ export default function Micro({
     middleCircleAnim.setValue(1);
   };
 
-  // Vérifier les permissions microphone et reconnaissance vocale
   const checkVoicePermissions = async (): Promise<boolean> => {
     try {
-      if (Platform.OS === 'android') {
-        // Pour Android, vérifier la permission RECORD_AUDIO
-        const granted = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO);
-
-        if (granted) {
-          console.log('Permission microphone déjà accordée');
-          return true;
-        }
-
-        const result = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-          {
-            title: I18n.t('micro.permissionTitle'),
-            message: I18n.t('micro.permissionMessage'),
-            buttonNeutral: I18n.t('micro.later'),
-            buttonNegative: I18n.t('micro.cancel'),
-            buttonPositive: I18n.t('micro.allow'),
-          }
-        );
-
-        if (result !== PermissionsAndroid.RESULTS.GRANTED) {
-          showPermissionAlert('microphone');
-          return false;
-        }
-
+      const result = await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+      if (result.granted) {
         return true;
-      } else {
-        // Pour iOS, vérifier explicitement les permissions
-        try {
-          const { status: microphoneStatus } = await getRecordingPermissionsAsync();
-          console.log('Statut permission microphone:', microphoneStatus);
-
-          if (microphoneStatus !== 'granted') {
-            const { status: newMicrophoneStatus } = await requestRecordingPermissionsAsync();
-            console.log('Nouveau statut permission microphone:', newMicrophoneStatus);
-
-            if (newMicrophoneStatus !== 'granted') {
-              showPermissionAlert('microphone');
-              return false;
-            }
-          }
-
-          // 2. Vérifier la reconnaissance vocale avec Voice
-          const isVoiceAvailable = await Voice.isAvailable();
-          console.log('Voice disponible (reconnaissance vocale):', isVoiceAvailable);
-
-          if (!isVoiceAvailable) {
-            showPermissionAlert('speech');
-            return false;
-          }
-
-          console.log('✅ Permissions microphone et reconnaissance vocale OK');
-          return true;
-        } catch (error: any) {
-          console.log('❌ Erreur lors de la vérification des permissions iOS:', error);
-          showPermissionAlert('both');
-          return false;
-        }
       }
+      showPermissionAlert(Platform.OS === 'ios' ? 'both' : 'microphone');
+      return false;
     } catch (error) {
       console.error('Erreur lors de la vérification des permissions:', error);
       showPermissionAlert('both');
@@ -261,21 +206,21 @@ export default function Micro({
     if (Platform.OS === 'ios') {
       switch (permissionType) {
         case 'microphone':
-          title = I18n.t('home.voice.errorTitle');
-          message = I18n.t('home.voice.errorDescriptionMicrophone');
+          title = t('home.voice.errorTitle');
+          message = t('home.voice.errorDescriptionMicrophone');
           break;
         case 'speech':
-          title = I18n.t('home.voice.errorTitle');
-          message = I18n.t('home.voice.errorDescriptionSpeech');
+          title = t('home.voice.errorTitle');
+          message = t('home.voice.errorDescriptionSpeech');
           break;
         case 'both':
         default:
-          message = I18n.t('home.voice.errorDescriptionBoth');
+          message = t('home.voice.errorDescriptionBoth');
           break;
       }
     } else {
-      title = I18n.t('micro.requiredTitle');
-      message = I18n.t('micro.requiredMessage');
+      title = t('micro.requiredTitle');
+      message = t('micro.requiredMessage');
     }
 
     Alert.alert(
@@ -283,11 +228,11 @@ export default function Micro({
       message,
       [
         {
-          text: I18n.t('home.voice.errorButtonCancel'),
+          text: t('home.voice.errorButtonCancel'),
           style: 'cancel'
         },
         {
-          text: I18n.t('home.voice.errorButtonSettings'),
+          text: t('home.voice.errorButtonSettings'),
           onPress: () => Linking.openSettings(),
           style: 'default'
         }
@@ -446,7 +391,7 @@ export default function Micro({
               }
             ]}
           >
-            {isRecording ? I18n.t('home.voice.recording') : I18n.t('home.voice.start')}
+            {isRecording ? t('home.voice.recording') : t('home.voice.start')}
           </Animated.Text>
         )}
       </Animated.View>

@@ -7,12 +7,11 @@ import {
   StyleSheet,
   View,
   Text,
-  Platform,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { Colors } from '../../constants/Colors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import I18n from '../../i18n';
+import { useTranslation } from 'react-i18next';
 import analytics from "../../services/analytics";
 
 const { width } = Dimensions.get('window');
@@ -24,8 +23,12 @@ export default function LoadingScreen() {
   const loadingProgress = useRef(new Animated.Value(0)).current;
   const loadingTextOpacity = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const { t } = useTranslation();
 
-  const loadingMessages = useMemo(() => I18n.t('onboarding_loading.messages'), []);
+  const loadingMessages = useMemo(() => {
+    const msgs = t('onboarding_loading.messages', { returnObjects: true });
+    return Array.isArray(msgs) ? msgs : [];
+  }, [t]);
 
   React.useEffect(() => {
     // Listener pour le pourcentage

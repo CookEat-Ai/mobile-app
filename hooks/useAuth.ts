@@ -42,7 +42,7 @@ export const useAuth = () => {
           isAuthenticated: false,
         });
       }
-    } catch (error) {
+    } catch {
       setAuthState({
         user: null,
         isLoading: false,

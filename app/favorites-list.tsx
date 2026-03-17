@@ -1,7 +1,8 @@
 import { router, useFocusEffect } from "expo-router";
 import React, { useState, useCallback, useRef } from 'react';
-import I18n from '../i18n';
-import { FlatList, StyleSheet, Text, View, RefreshControl, TouchableOpacity, Platform } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { FlatList, StyleSheet, Text, View, RefreshControl, TouchableOpacity } from 'react-native';
+import Reanimated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -26,6 +27,7 @@ interface Recipe {
 }
 
 export default function FavoritesListScreen() {
+  const { t } = useTranslation();
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -80,13 +82,16 @@ export default function FavoritesListScreen() {
       locations={[0, 0.3]}
       style={[styles.container, { paddingTop: insets.top }]}
     >
-      <View style={styles.header}>
+      <Reanimated.View
+        entering={FadeInDown.duration(400).delay(50)}
+        style={styles.header}
+      >
         <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
-        <Text style={styles.mainTitle}>{I18n.t('favorites.title')}</Text>
+        <Text style={styles.mainTitle}>{t('favorites.title')}</Text>
         <View style={{ width: 40 }} />
-      </View>
+      </Reanimated.View>
 
       {loading ? (
         <View style={styles.loadingContainer}>
@@ -96,11 +101,15 @@ export default function FavoritesListScreen() {
         <FlatList
           data={recipes}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <RecipeCard
-              item={item as any}
-              onPress={() => handleRecipePress(item)}
-            />
+          renderItem={({ item, index }) => (
+            <Reanimated.View
+              entering={FadeInDown.duration(400).delay(150 + index * 50)}
+            >
+              <RecipeCard
+                item={item as any}
+                onPress={() => handleRecipePress(item)}
+              />
+            </Reanimated.View>
           )}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
@@ -113,7 +122,7 @@ export default function FavoritesListScreen() {
           }
           ListEmptyComponent={
             <View style={styles.noResultsContainer}>
-              <Text style={styles.noResultsText}>{I18n.t('favorites.noFavorites')}</Text>
+              <Text style={styles.noResultsText}>{t('favorites.noFavorites')}</Text>
             </View>
           }
         />

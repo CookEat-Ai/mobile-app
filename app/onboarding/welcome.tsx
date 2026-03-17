@@ -4,7 +4,7 @@ import { Animated, Dimensions, Platform, StyleSheet, Text, TouchableOpacity, Vie
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Colors } from '../../constants/Colors';
-import I18n from '../../i18n';
+import { useTranslation } from 'react-i18next';
 import IphoneVideoDemo from '../../components/IphoneVideoDemo';
 
 const { width } = Dimensions.get('window');
@@ -12,6 +12,7 @@ const { width } = Dimensions.get('window');
 export default function WelcomeVideoScreen() {
   const insets = useSafeAreaInsets();
   const mascotTranslateX = useRef(new Animated.Value(-width - 40)).current;
+  const { t } = useTranslation();
 
   useEffect(() => {
     Animated.timing(mascotTranslateX, {
@@ -45,7 +46,7 @@ export default function WelcomeVideoScreen() {
       {/* iphone component video demo */}
       <View style={styles.topSection}>
         <Text style={styles.tagline}>
-          {I18n.t('onboarding.welcomeTagline')}
+          {t('onboarding.welcomeTagline')}
         </Text>
         <IphoneVideoDemo style={styles.phoneWrapper} />
       </View>
@@ -55,7 +56,7 @@ export default function WelcomeVideoScreen() {
         style={styles.continueButton}
         onPress={() => router.replace('/onboarding/formQuestion')}
       >
-        <Text style={styles.buttonText}>{I18n.t('onboarding.continue')}</Text>
+        <Text style={styles.buttonText}>{t('onboarding.continue')}</Text>
       </TouchableOpacity>
     </View>
   );

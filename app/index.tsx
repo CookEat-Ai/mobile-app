@@ -3,7 +3,7 @@ import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import 'react-native-reanimated';
-import I18n from '../i18n';
+import { useTranslation } from 'react-i18next';
 import { resetVoiceCompletely } from '../hooks/useVoice';
 import analytics from '../services/analytics';
 
@@ -11,6 +11,7 @@ const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 const QUESTIONS_ANSWERED_KEY = 'questions_answered';
 
 export default function RootLayout() {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [onboardingCompleted, setOnboardingCompleted] = useState(false);
   const [questionsAnswered, setQuestionsAnswered] = useState(false);
@@ -65,7 +66,7 @@ export default function RootLayout() {
   };
 
   if (isLoading)
-    return <Text>{I18n.t('common.loading')}</Text>
+    return <Text>{t('common.loading')}</Text>
 
   if (!onboardingCompleted) {
     if (questionsAnswered)

@@ -10,13 +10,14 @@ import {
   Animated,
   ActivityIndicator,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Colors } from '../../constants/Colors';
 import analytics from '../../services/analytics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import I18n from "../../i18n";
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -86,36 +87,37 @@ export default function IngredientSelectionScreen() {
   const insets = useSafeAreaInsets();
   const [selectedIngredients, setSelectedIngredients] = useState<string[]>(DEFAULT_SELECTED);
   const isLoading = false;
+  const { t } = useTranslation();
 
   const INGREDIENTS = useMemo(() => [
-    { id: '1', label: I18n.t('onboarding.ingredientSelection.ingredients.tomatoes'), emoji: '🍅' },
-    { id: '2', label: I18n.t('onboarding.ingredientSelection.ingredients.chicken'), emoji: '🍗' },
-    { id: '3', label: I18n.t('onboarding.ingredientSelection.ingredients.avocado'), emoji: '🥑' },
-    { id: '4', label: I18n.t('onboarding.ingredientSelection.ingredients.eggs'), emoji: '🥚' },
-    { id: '5', label: I18n.t('onboarding.ingredientSelection.ingredients.pasta'), emoji: '🍝' },
-    { id: '6', label: I18n.t('onboarding.ingredientSelection.ingredients.cheese'), emoji: '🧀' },
-    { id: '7', label: I18n.t('onboarding.ingredientSelection.ingredients.onions'), emoji: '🧅' },
-    { id: '8', label: I18n.t('onboarding.ingredientSelection.ingredients.potatoes'), emoji: '🥔' },
-    { id: '9', label: I18n.t('onboarding.ingredientSelection.ingredients.mushrooms'), emoji: '🍄' },
-    { id: '10', label: I18n.t('onboarding.ingredientSelection.ingredients.rice'), emoji: '🍚' },
-    { id: '11', label: I18n.t('onboarding.ingredientSelection.ingredients.broccoli'), emoji: '🥦' },
-    { id: '12', label: I18n.t('onboarding.ingredientSelection.ingredients.salmon'), emoji: '🐟' },
-    { id: '13', label: I18n.t('onboarding.ingredientSelection.ingredients.zucchini'), emoji: '🥒' },
-    { id: '14', label: I18n.t('onboarding.ingredientSelection.ingredients.garlic'), emoji: '🧄' },
-    { id: '15', label: I18n.t('onboarding.ingredientSelection.ingredients.shrimp'), emoji: '🍤' },
-    { id: '16', label: I18n.t('onboarding.ingredientSelection.ingredients.chili'), emoji: '🌶️' },
-    { id: '17', label: I18n.t('onboarding.ingredientSelection.ingredients.lemon'), emoji: '🍋' },
-    { id: '18', label: I18n.t('onboarding.ingredientSelection.ingredients.basil'), emoji: '🌿' },
-    { id: '19', label: I18n.t('onboarding.ingredientSelection.ingredients.beef'), emoji: '🥩' },
-    { id: '20', label: I18n.t('onboarding.ingredientSelection.ingredients.carrots'), emoji: '🥕' },
-    { id: '21', label: I18n.t('onboarding.ingredientSelection.ingredients.spinach'), emoji: '🍃' },
-    { id: '22', label: I18n.t('onboarding.ingredientSelection.ingredients.peppers'), emoji: '🫑' },
-    { id: '23', label: I18n.t('onboarding.ingredientSelection.ingredients.lentils'), emoji: '🍲' },
-    { id: '24', label: I18n.t('onboarding.ingredientSelection.ingredients.cream'), emoji: '🥛' },
-    { id: '25', label: I18n.t('onboarding.ingredientSelection.ingredients.flour'), emoji: '🌾' },
-    { id: '26', label: I18n.t('onboarding.ingredientSelection.ingredients.butter'), emoji: '🧈' },
-    { id: '27', label: I18n.t('onboarding.ingredientSelection.ingredients.tuna'), emoji: '🐟' },
-    { id: '28', label: I18n.t('onboarding.ingredientSelection.ingredients.turkey'), emoji: '🦃' },
+    { id: '1', label: t('onboarding.ingredientSelection.ingredients.tomatoes'), emoji: '🍅' },
+    { id: '2', label: t('onboarding.ingredientSelection.ingredients.chicken'), emoji: '🍗' },
+    { id: '3', label: t('onboarding.ingredientSelection.ingredients.avocado'), emoji: '🥑' },
+    { id: '4', label: t('onboarding.ingredientSelection.ingredients.eggs'), emoji: '🥚' },
+    { id: '5', label: t('onboarding.ingredientSelection.ingredients.pasta'), emoji: '🍝' },
+    { id: '6', label: t('onboarding.ingredientSelection.ingredients.cheese'), emoji: '🧀' },
+    { id: '7', label: t('onboarding.ingredientSelection.ingredients.onions'), emoji: '🧅' },
+    { id: '8', label: t('onboarding.ingredientSelection.ingredients.potatoes'), emoji: '🥔' },
+    { id: '9', label: t('onboarding.ingredientSelection.ingredients.mushrooms'), emoji: '🍄' },
+    { id: '10', label: t('onboarding.ingredientSelection.ingredients.rice'), emoji: '🍚' },
+    { id: '11', label: t('onboarding.ingredientSelection.ingredients.broccoli'), emoji: '🥦' },
+    { id: '12', label: t('onboarding.ingredientSelection.ingredients.salmon'), emoji: '🐟' },
+    { id: '13', label: t('onboarding.ingredientSelection.ingredients.zucchini'), emoji: '🥒' },
+    { id: '14', label: t('onboarding.ingredientSelection.ingredients.garlic'), emoji: '🧄' },
+    { id: '15', label: t('onboarding.ingredientSelection.ingredients.shrimp'), emoji: '🍤' },
+    { id: '16', label: t('onboarding.ingredientSelection.ingredients.chili'), emoji: '🌶️' },
+    { id: '17', label: t('onboarding.ingredientSelection.ingredients.lemon'), emoji: '🍋' },
+    { id: '18', label: t('onboarding.ingredientSelection.ingredients.basil'), emoji: '🌿' },
+    { id: '19', label: t('onboarding.ingredientSelection.ingredients.beef'), emoji: '🥩' },
+    { id: '20', label: t('onboarding.ingredientSelection.ingredients.carrots'), emoji: '🥕' },
+    { id: '21', label: t('onboarding.ingredientSelection.ingredients.spinach'), emoji: '🍃' },
+    { id: '22', label: t('onboarding.ingredientSelection.ingredients.peppers'), emoji: '🫑' },
+    { id: '23', label: t('onboarding.ingredientSelection.ingredients.lentils'), emoji: '🍲' },
+    { id: '24', label: t('onboarding.ingredientSelection.ingredients.cream'), emoji: '🥛' },
+    { id: '25', label: t('onboarding.ingredientSelection.ingredients.flour'), emoji: '🌾' },
+    { id: '26', label: t('onboarding.ingredientSelection.ingredients.butter'), emoji: '🧈' },
+    { id: '27', label: t('onboarding.ingredientSelection.ingredients.tuna'), emoji: '🐟' },
+    { id: '28', label: t('onboarding.ingredientSelection.ingredients.turkey'), emoji: '🦃' },
   ], []);
 
   React.useEffect(() => {
@@ -170,7 +172,15 @@ export default function IngredientSelectionScreen() {
     const variant = await analytics.getOnboardingVariant();
 
     if (variant === 'B') {
-      router.push({ pathname: '/paywall', params: { source: 'onboarding_variant_b' } });
+      const pendingDiscount = await AsyncStorage.getItem('pending_promo_discount');
+      if (pendingDiscount) {
+        router.push({
+          pathname: '/paywall',
+          params: { source: 'onboarding_variant_b', initialState: 'PROMO_DISCOUNTED', promoDiscount: pendingDiscount },
+        });
+      } else {
+        router.push({ pathname: '/paywall', params: { source: 'onboarding_variant_b' } });
+      }
     } else {
       router.replace('/onboarding/personalizedRecipes');
     }
@@ -183,20 +193,22 @@ export default function IngredientSelectionScreen() {
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
       <View style={styles.progressHeader}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={handleBackPress}
-          activeOpacity={0.7}
-        >
-          <FontAwesome6 name="arrow-left" size={18} color={Colors.light.textSecondary} />
-        </TouchableOpacity>
+        {router.canGoBack() && (
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={handleBackPress}
+            activeOpacity={0.7}
+          >
+            <FontAwesome6 name="arrow-left" size={18} color={Colors.light.textSecondary} />
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.title}>{I18n.t('onboarding.ingredientSelection.title')}</Text>
+          <Text style={styles.title}>{t('onboarding.ingredientSelection.title')}</Text>
           <Text style={styles.subtitle}>
-            {I18n.t('onboarding.ingredientSelection.subtitle')}
+            {t('onboarding.ingredientSelection.subtitle')}
           </Text>
         </View>
 
@@ -230,7 +242,7 @@ export default function IngredientSelectionScreen() {
               <ActivityIndicator color="white" />
             ) : (
               <>
-                <Text style={styles.buttonText}>{I18n.t('onboarding.ingredientSelection.generateRecipe')}</Text>
+                <Text style={styles.buttonText}>{t('onboarding.ingredientSelection.generateRecipe')}</Text>
                 {selectedIngredients.length > 0 && selectedIngredients.length < MIN_INGREDIENTS && (
                   <View style={styles.badge}>
                     <Text style={styles.badgeText}>{selectedIngredients.length}/{MIN_INGREDIENTS}</Text>
@@ -245,7 +257,7 @@ export default function IngredientSelectionScreen() {
             onPress={handleSkip}
             style={styles.skipButton}
           >
-            <Text style={styles.skipButtonText}>{I18n.t('onboarding.ingredientSelection.skip')}</Text>
+            <Text style={styles.skipButtonText}>{t('onboarding.ingredientSelection.skip')}</Text>
           </TouchableOpacity>
         </View>
       </View>

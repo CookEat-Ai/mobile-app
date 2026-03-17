@@ -20,7 +20,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Ionicons, FontAwesome6 } from '@expo/vector-icons';
-import I18n from '../i18n';
+import { useTranslation } from 'react-i18next';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from '../components/ui/IconSymbol';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -31,7 +31,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSubscription } from '../hooks/useSubscription';
 
 import { useVoice } from '../hooks/useVoice';
-import Voice from '@react-native-voice/voice';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const { width } = Dimensions.get('window');
@@ -59,180 +58,181 @@ const PREFERENCES_STORAGE_KEY = 'recipe_preferences';
 const MIN_INGREDIENTS = 5;
 
 export default function RecipeSummaryScreen() {
+  const { t } = useTranslation();
   const ingredientCategories = useMemo(() => [
     {
       id: 'legumes',
-      title: I18n.t('home.categories.vegetables.title'),
+      title: t('home.categories.vegetables.title'),
       icon: '🥬',
       ingredients: [
-        { id: 'carotte', name: I18n.t('home.categories.vegetables.carrot'), icon: '🥕' },
-        { id: 'tomate', name: I18n.t('home.categories.vegetables.tomato'), icon: '🍅' },
-        { id: 'oignon', name: I18n.t('home.categories.vegetables.onion'), icon: '🧅' },
-        { id: 'poivron', name: I18n.t('home.categories.vegetables.pepper'), icon: '🫑' },
-        { id: 'courgette', name: I18n.t('home.categories.vegetables.courgette'), icon: '🥒' },
-        { id: 'brocoli', name: I18n.t('home.categories.vegetables.broccoli'), icon: '🥦' },
-        { id: 'epinard', name: I18n.t('home.categories.vegetables.spinach'), icon: '🥬' },
-        { id: 'poireau', name: I18n.t('home.categories.vegetables.leek'), icon: '🧄' },
-        { id: 'ail', name: I18n.t('home.categories.vegetables.garlic'), icon: '🧄' },
-        { id: 'champignon', name: I18n.t('home.categories.vegetables.mushroom'), icon: '🍄' },
-        { id: 'concombre', name: I18n.t('home.categories.vegetables.cucumber'), icon: '🥒' },
-        { id: 'chou-fleur', name: I18n.t('home.categories.vegetables.cauliflower'), icon: '🥬' },
+        { id: 'carotte', name: t('home.categories.vegetables.carrot'), icon: '🥕' },
+        { id: 'tomate', name: t('home.categories.vegetables.tomato'), icon: '🍅' },
+        { id: 'oignon', name: t('home.categories.vegetables.onion'), icon: '🧅' },
+        { id: 'poivron', name: t('home.categories.vegetables.pepper'), icon: '🫑' },
+        { id: 'courgette', name: t('home.categories.vegetables.courgette'), icon: '🥒' },
+        { id: 'brocoli', name: t('home.categories.vegetables.broccoli'), icon: '🥦' },
+        { id: 'epinard', name: t('home.categories.vegetables.spinach'), icon: '🥬' },
+        { id: 'poireau', name: t('home.categories.vegetables.leek'), icon: '🧄' },
+        { id: 'ail', name: t('home.categories.vegetables.garlic'), icon: '🧄' },
+        { id: 'champignon', name: t('home.categories.vegetables.mushroom'), icon: '🍄' },
+        { id: 'concombre', name: t('home.categories.vegetables.cucumber'), icon: '🥒' },
+        { id: 'chou-fleur', name: t('home.categories.vegetables.cauliflower'), icon: '🥬' },
       ]
     },
     {
       id: 'viandes',
-      title: I18n.t('home.categories.meats.title'),
+      title: t('home.categories.meats.title'),
       icon: '🍖',
       ingredients: [
-        { id: 'poulet', name: I18n.t('home.categories.meats.chicken'), icon: '🍗' },
-        { id: 'boeuf', name: I18n.t('home.categories.meats.beef'), icon: '🥩' },
-        { id: 'porc', name: I18n.t('home.categories.meats.pork'), icon: '🥓' },
-        { id: 'agneau', name: I18n.t('home.categories.meats.lamb'), icon: '🐑' },
-        { id: 'dinde', name: I18n.t('home.categories.meats.turkey'), icon: '🦃' },
-        { id: 'veau', name: I18n.t('home.categories.meats.veal'), icon: '🐄' },
+        { id: 'poulet', name: t('home.categories.meats.chicken'), icon: '🍗' },
+        { id: 'boeuf', name: t('home.categories.meats.beef'), icon: '🥩' },
+        { id: 'porc', name: t('home.categories.meats.pork'), icon: '🥓' },
+        { id: 'agneau', name: t('home.categories.meats.lamb'), icon: '🐑' },
+        { id: 'dinde', name: t('home.categories.meats.turkey'), icon: '🦃' },
+        { id: 'veau', name: t('home.categories.meats.veal'), icon: '🐄' },
       ]
     },
     {
       id: 'poissons',
-      title: I18n.t('home.categories.fish.title'),
+      title: t('home.categories.fish.title'),
       icon: '🐟',
       ingredients: [
-        { id: 'saumon', name: I18n.t('home.categories.fish.salmon'), icon: '🐟' },
-        { id: 'thon', name: I18n.t('home.categories.fish.tuna'), icon: '🐠' },
-        { id: 'cabillaud', name: I18n.t('home.categories.fish.cod'), icon: '🐡' },
-        { id: 'sardine', name: I18n.t('home.categories.fish.sardine'), icon: '🐟' },
-        { id: 'maquereau', name: I18n.t('home.categories.fish.maquereau'), icon: '🐠' },
-        { id: 'bar', name: I18n.t('home.categories.fish.bar'), icon: '🐡' },
+        { id: 'saumon', name: t('home.categories.fish.salmon'), icon: '🐟' },
+        { id: 'thon', name: t('home.categories.fish.tuna'), icon: '🐠' },
+        { id: 'cabillaud', name: t('home.categories.fish.cod'), icon: '🐡' },
+        { id: 'sardine', name: t('home.categories.fish.sardine'), icon: '🐟' },
+        { id: 'maquereau', name: t('home.categories.fish.maquereau'), icon: '🐠' },
+        { id: 'bar', name: t('home.categories.fish.bar'), icon: '🐡' },
       ]
     },
     {
       id: 'necessites',
-      title: I18n.t('home.categories.essentials.title'),
+      title: t('home.categories.essentials.title'),
       icon: '🍚',
       ingredients: [
-        { id: 'pates', name: I18n.t('home.categories.essentials.pasta'), icon: '🍝' },
-        { id: 'riz', name: I18n.t('home.categories.essentials.rice'), icon: '🍚' },
-        { id: 'semoule', name: I18n.t('home.categories.essentials.semolina'), icon: '🍚' },
-        { id: 'creme', name: I18n.t('home.categories.essentials.cream'), icon: '🥛' },
-        { id: 'lait', name: I18n.t('home.categories.essentials.milk'), icon: '🥛' },
-        { id: 'huile', name: I18n.t('home.categories.essentials.oil'), icon: '🫒' },
-        { id: 'beurre', name: I18n.t('home.categories.essentials.butter'), icon: '🧈' },
-        { id: 'oeufs', name: I18n.t('home.categories.essentials.eggs'), icon: '🥚' },
-        { id: 'farine', name: I18n.t('home.categories.essentials.flour'), icon: '🌾' },
+        { id: 'pates', name: t('home.categories.essentials.pasta'), icon: '🍝' },
+        { id: 'riz', name: t('home.categories.essentials.rice'), icon: '🍚' },
+        { id: 'semoule', name: t('home.categories.essentials.semolina'), icon: '🍚' },
+        { id: 'creme', name: t('home.categories.essentials.cream'), icon: '🥛' },
+        { id: 'lait', name: t('home.categories.essentials.milk'), icon: '🥛' },
+        { id: 'huile', name: t('home.categories.essentials.oil'), icon: '🫒' },
+        { id: 'beurre', name: t('home.categories.essentials.butter'), icon: '🧈' },
+        { id: 'oeufs', name: t('home.categories.essentials.eggs'), icon: '🥚' },
+        { id: 'farine', name: t('home.categories.essentials.flour'), icon: '🌾' },
       ]
     },
     {
       id: 'fromages',
-      title: I18n.t('home.categories.cheeses.title'),
+      title: t('home.categories.cheeses.title'),
       icon: '🧀',
       ingredients: [
-        { id: 'emmental', name: I18n.t('home.categories.cheeses.emmental'), icon: '🧀' },
-        { id: 'cheddar', name: I18n.t('home.categories.cheeses.cheddar'), icon: '🧀' },
-        { id: 'mozzarella', name: I18n.t('home.categories.cheeses.mozzarella'), icon: '🧀' },
-        { id: 'parmesan', name: I18n.t('home.categories.cheeses.parmesan'), icon: '🧀' },
-        { id: 'brie', name: I18n.t('home.categories.cheeses.brie'), icon: '🧀' },
-        { id: 'camembert', name: I18n.t('home.categories.cheeses.camembert'), icon: '🧀' },
-        { id: 'roquefort', name: I18n.t('home.categories.cheeses.roquefort'), icon: '🧀' },
-        { id: 'feta', name: I18n.t('home.categories.cheeses.feta'), icon: '🧀' },
+        { id: 'emmental', name: t('home.categories.cheeses.emmental'), icon: '🧀' },
+        { id: 'cheddar', name: t('home.categories.cheeses.cheddar'), icon: '🧀' },
+        { id: 'mozzarella', name: t('home.categories.cheeses.mozzarella'), icon: '🧀' },
+        { id: 'parmesan', name: t('home.categories.cheeses.parmesan'), icon: '🧀' },
+        { id: 'brie', name: t('home.categories.cheeses.brie'), icon: '🧀' },
+        { id: 'camembert', name: t('home.categories.cheeses.camembert'), icon: '🧀' },
+        { id: 'roquefort', name: t('home.categories.cheeses.roquefort'), icon: '🧀' },
+        { id: 'feta', name: t('home.categories.cheeses.feta'), icon: '🧀' },
       ]
     },
     {
       id: 'epices',
-      title: I18n.t('home.categories.spices.title'),
+      title: t('home.categories.spices.title'),
       icon: '🌶️',
       ingredients: [
-        { id: 'sel', name: I18n.t('home.categories.spices.salt'), icon: '🧂' },
-        { id: 'poivre', name: I18n.t('home.categories.spices.pepper'), icon: '🫙' },
-        { id: 'paprika', name: I18n.t('home.categories.spices.paprika'), icon: '🌶️' },
-        { id: 'cumin', name: I18n.t('home.categories.spices.cumin'), icon: '🌿' },
-        { id: 'curry', name: I18n.t('home.categories.spices.curry'), icon: '🫙' },
-        { id: 'herbes', name: I18n.t('home.categories.spices.herbes'), icon: '🌿' },
-        { id: 'basilic', name: I18n.t('home.categories.spices.basil'), icon: '🌿' },
-        { id: 'persil', name: I18n.t('home.categories.spices.parsley'), icon: '🌿' },
-        { id: 'coriandre', name: I18n.t('home.categories.spices.coriander'), icon: '🌿' },
-        { id: 'cannelle', name: I18n.t('home.categories.spices.cinnamon'), icon: '🫙' },
-        { id: 'gingembre', name: I18n.t('home.categories.spices.ginger'), icon: '🫚' },
-        { id: 'moutarde', name: I18n.t('home.categories.spices.mustard'), icon: '🫙' },
-        { id: 'vinaigre', name: I18n.t('home.categories.spices.vinegar'), icon: '🫙' },
-        { id: 'miel', name: I18n.t('home.categories.spices.honey'), icon: '🍯' },
-        { id: 'citron', name: I18n.t('home.categories.spices.lemon'), icon: '🍋' },
-        { id: 'origan', name: I18n.t('home.categories.spices.oregano'), icon: '🌿' },
-        { id: 'thym', name: I18n.t('home.categories.spices.thyme'), icon: '🌿' },
-        { id: 'piment', name: I18n.t('home.categories.spices.chili'), icon: '🌶️' },
+        { id: 'sel', name: t('home.categories.spices.salt'), icon: '🧂' },
+        { id: 'poivre', name: t('home.categories.spices.pepper'), icon: '🫙' },
+        { id: 'paprika', name: t('home.categories.spices.paprika'), icon: '🌶️' },
+        { id: 'cumin', name: t('home.categories.spices.cumin'), icon: '🌿' },
+        { id: 'curry', name: t('home.categories.spices.curry'), icon: '🫙' },
+        { id: 'herbes', name: t('home.categories.spices.herbes'), icon: '🌿' },
+        { id: 'basilic', name: t('home.categories.spices.basil'), icon: '🌿' },
+        { id: 'persil', name: t('home.categories.spices.parsley'), icon: '🌿' },
+        { id: 'coriandre', name: t('home.categories.spices.coriander'), icon: '🌿' },
+        { id: 'cannelle', name: t('home.categories.spices.cinnamon'), icon: '🫙' },
+        { id: 'gingembre', name: t('home.categories.spices.ginger'), icon: '🫚' },
+        { id: 'moutarde', name: t('home.categories.spices.mustard'), icon: '🫙' },
+        { id: 'vinaigre', name: t('home.categories.spices.vinegar'), icon: '🫙' },
+        { id: 'miel', name: t('home.categories.spices.honey'), icon: '🍯' },
+        { id: 'citron', name: t('home.categories.spices.lemon'), icon: '🍋' },
+        { id: 'origan', name: t('home.categories.spices.oregano'), icon: '🌿' },
+        { id: 'thym', name: t('home.categories.spices.thyme'), icon: '🌿' },
+        { id: 'piment', name: t('home.categories.spices.chili'), icon: '🌶️' },
       ]
     },
     {
       id: 'fruits',
-      title: I18n.t('home.categories.fruits.title'),
+      title: t('home.categories.fruits.title'),
       icon: '🍎',
       ingredients: [
-        { id: 'pomme', name: I18n.t('home.categories.fruits.apple'), icon: '🍎' },
-        { id: 'banane', name: I18n.t('home.categories.fruits.banana'), icon: '🍌' },
-        { id: 'orange', name: I18n.t('home.categories.fruits.orange'), icon: '🍊' },
-        { id: 'fraise', name: I18n.t('home.categories.fruits.strawberry'), icon: '🍓' },
-        { id: 'raisin', name: I18n.t('home.categories.fruits.raisin'), icon: '🍇' },
-        { id: 'kiwi', name: I18n.t('home.categories.fruits.kiwi'), icon: '🥝' },
-        { id: 'ananas', name: I18n.t('home.categories.fruits.pineapple'), icon: '🍍' },
-        { id: 'mangue', name: I18n.t('home.categories.fruits.mango'), icon: '🥭' },
+        { id: 'pomme', name: t('home.categories.fruits.apple'), icon: '🍎' },
+        { id: 'banane', name: t('home.categories.fruits.banana'), icon: '🍌' },
+        { id: 'orange', name: t('home.categories.fruits.orange'), icon: '🍊' },
+        { id: 'fraise', name: t('home.categories.fruits.strawberry'), icon: '🍓' },
+        { id: 'raisin', name: t('home.categories.fruits.raisin'), icon: '🍇' },
+        { id: 'kiwi', name: t('home.categories.fruits.kiwi'), icon: '🥝' },
+        { id: 'ananas', name: t('home.categories.fruits.pineapple'), icon: '🍍' },
+        { id: 'mangue', name: t('home.categories.fruits.mango'), icon: '🥭' },
       ]
     }
   ], []);
 
   const DISH_TYPES = useMemo(() => [
-    { id: 'all', label: I18n.t('recipeSummary.any') },
-    { id: 'dinner', label: I18n.t('search.categories.dinner') },
-    { id: 'gratin', label: I18n.t('recipeSummary.gratin') },
-    { id: 'soup', label: I18n.t('recipeSummary.soup') },
-    { id: 'brunch', label: I18n.t('recipeSummary.brunch') },
-    { id: 'salad', label: I18n.t('recipeSummary.salad') },
-    { id: 'dessert', label: I18n.t('search.categories.dessert') },
+    { id: 'all', label: t('recipeSummary.any') },
+    { id: 'dinner', label: t('search.categories.dinner') },
+    { id: 'gratin', label: t('recipeSummary.gratin') },
+    { id: 'soup', label: t('recipeSummary.soup') },
+    { id: 'brunch', label: t('recipeSummary.brunch') },
+    { id: 'salad', label: t('recipeSummary.salad') },
+    { id: 'dessert', label: t('search.categories.dessert') },
   ], []);
 
   const DURATIONS = useMemo(() => [
-    { id: 'all', label: I18n.t('recipeSummary.any') },
-    { id: 'fast', label: I18n.t('recipeSummary.quick') },
-    { id: 'medium', label: I18n.t('recipeSummary.medium') },
-    { id: 'long', label: I18n.t('recipeSummary.long') },
+    { id: 'all', label: t('recipeSummary.any') },
+    { id: 'fast', label: t('recipeSummary.quick') },
+    { id: 'medium', label: t('recipeSummary.medium') },
+    { id: 'long', label: t('recipeSummary.long') },
   ], []);
 
   const DIETS = useMemo(() => [
-    { id: 'vegan', label: I18n.t('recipeSummary.vegan') },
-    { id: 'vegetarian', label: I18n.t('recipeSummary.vegetarian') },
-    { id: 'halal', label: I18n.t('recipeSummary.halal') },
-    { id: 'keto', label: I18n.t('recipeSummary.keto') },
-    { id: 'paleo', label: I18n.t('recipeSummary.paleo') }
+    { id: 'vegan', label: t('recipeSummary.vegan') },
+    { id: 'vegetarian', label: t('recipeSummary.vegetarian') },
+    { id: 'halal', label: t('recipeSummary.halal') },
+    { id: 'keto', label: t('recipeSummary.keto') },
+    { id: 'paleo', label: t('recipeSummary.paleo') }
   ], []);
 
   const CUISINE_STYLES = useMemo(() => [
-    { id: 'french', label: I18n.t('recipeSummary.french') },
-    { id: 'italian', label: I18n.t('recipeSummary.italian') },
-    { id: 'mediterranean', label: I18n.t('recipeSummary.mediterranean') },
-    { id: 'asian', label: I18n.t('recipeSummary.asian') },
-    { id: 'spicy', label: I18n.t('recipeSummary.spicy') },
-    { id: 'mexican', label: I18n.t('recipeSummary.mexican') },
-    { id: 'indian', label: I18n.t('recipeSummary.indian') },
+    { id: 'french', label: t('recipeSummary.french') },
+    { id: 'italian', label: t('recipeSummary.italian') },
+    { id: 'mediterranean', label: t('recipeSummary.mediterranean') },
+    { id: 'asian', label: t('recipeSummary.asian') },
+    { id: 'spicy', label: t('recipeSummary.spicy') },
+    { id: 'mexican', label: t('recipeSummary.mexican') },
+    { id: 'indian', label: t('recipeSummary.indian') },
   ], []);
 
   const GOALS = useMemo(() => [
-    { id: 'neutral', label: I18n.t('recipeSummary.neutral') },
-    { id: 'weight_loss', label: I18n.t('recipeSummary.weight_loss') },
-    { id: 'mass_gain', label: I18n.t('recipeSummary.mass_gain') },
+    { id: 'neutral', label: t('recipeSummary.neutral') },
+    { id: 'weight_loss', label: t('recipeSummary.weight_loss') },
+    { id: 'mass_gain', label: t('recipeSummary.mass_gain') },
   ], []);
 
   const EQUIPMENTS = useMemo(() => [
-    { id: 'oven', label: I18n.t('recipeSummary.equipment_oven') },
-    { id: 'airfryer', label: I18n.t('recipeSummary.equipment_airfryer') },
-    { id: 'microwave', label: I18n.t('recipeSummary.equipment_microwave') },
-    { id: 'blender', label: I18n.t('recipeSummary.equipment_blender') },
-    { id: 'robot', label: I18n.t('recipeSummary.equipment_robot') },
+    { id: 'oven', label: t('recipeSummary.equipment_oven') },
+    { id: 'airfryer', label: t('recipeSummary.equipment_airfryer') },
+    { id: 'microwave', label: t('recipeSummary.equipment_microwave') },
+    { id: 'blender', label: t('recipeSummary.equipment_blender') },
+    { id: 'robot', label: t('recipeSummary.equipment_robot') },
   ], []);
 
   const ALLERGIES = useMemo(() => [
-    { id: 'gluten', label: I18n.t('recipeSummary.avoid_gluten') },
-    { id: 'dairy', label: I18n.t('recipeSummary.avoid_dairy') },
-    { id: 'egg', label: I18n.t('recipeSummary.avoid_egg') },
-    { id: 'fish', label: I18n.t('recipeSummary.avoid_fish') },
-    { id: 'peanut', label: I18n.t('recipeSummary.avoid_peanut') },
+    { id: 'gluten', label: t('recipeSummary.avoid_gluten') },
+    { id: 'dairy', label: t('recipeSummary.avoid_dairy') },
+    { id: 'egg', label: t('recipeSummary.avoid_egg') },
+    { id: 'fish', label: t('recipeSummary.avoid_fish') },
+    { id: 'peanut', label: t('recipeSummary.avoid_peanut') },
   ], []);
 
   const colors = Colors.light;
@@ -246,9 +246,6 @@ export default function RecipeSummaryScreen() {
   const [liveText, setLiveText] = useState('');
   const liveTextRef = useRef('');
   const isProcessingVoiceRef = useRef(false);
-  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
-  const carouselRef = useRef<FlatList>(null);
-
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
   const [isFirstGeneration, setIsFirstGeneration] = useState(false);
   const [manualInput, setManualInput] = useState('');
@@ -513,7 +510,7 @@ export default function RecipeSummaryScreen() {
           }
         } catch (error) {
           console.error('Erreur lors du traitement des ingrédients vocaux:', error);
-          Alert.alert(I18n.t('common.error'), I18n.t('home.voice.errorTitle'));
+          Alert.alert(t('common.error'), t('home.voice.errorTitle'));
         } finally {
           setIsAddingIngredient(false);
           setLiveText('');
@@ -770,14 +767,6 @@ export default function RecipeSummaryScreen() {
     </Pressable>
   );
 
-  const scrollToCategory = (index: number) => {
-    setCurrentCategoryIndex(index);
-    carouselRef.current?.scrollToIndex({
-      index,
-      animated: true,
-    });
-  };
-
   const handleIngredientToggle = (ingredientName: string, categoryId?: string) => {
     const normalizedTarget = normalizeIngredientName(ingredientName);
     const existingIndex = ingredients.findIndex(i => normalizeIngredientName(i.name) === normalizedTarget);
@@ -800,7 +789,7 @@ export default function RecipeSummaryScreen() {
 
   const handleGenerateRecipe = async () => {
     if (ingredients.length < MIN_INGREDIENTS) {
-      Alert.alert(I18n.t('recipeSummary.error'), I18n.t('recipeSummary.pleaseAddAtLeastFiveIngredients'));
+      Alert.alert(t('recipeSummary.error'), t('recipeSummary.pleaseAddAtLeastFiveIngredients'));
       return;
     }
 
@@ -808,17 +797,7 @@ export default function RecipeSummaryScreen() {
     if (!subscriptionStatus.isSubscribed) {
       const canGenerate = await revenueCatService.useDailyQuota();
       if (!canGenerate) {
-        Alert.alert(
-          I18n.t('recipeSummary.dailyQuotaReached'),
-          I18n.t('recipeSummary.dailyQuotaReachedDescription'),
-          [
-            { text: I18n.t('recipeSummary.later'), style: 'cancel' },
-            {
-              text: I18n.t('recipeSummary.seeOffers'),
-              onPress: () => router.push({ pathname: '/paywall', params: { source: 'quota_reached_summary' } })
-            }
-          ]
-        );
+        router.push({ pathname: '/paywall', params: { source: 'quota_reached_summary' } });
         return;
       }
     }
@@ -845,36 +824,10 @@ export default function RecipeSummaryScreen() {
     });
   };
 
-  const renderCategoryPage = ({ item: category }: { item: any }) => (
-    <View style={styles.categoryPage}>
-      <View style={styles.categoryHeader}>
-        <Text style={styles.categoryIcon}>{category.icon}</Text>
-        <Text style={styles.categoryTitle}>{category.title}</Text>
-      </View>
-      <View style={styles.ingredientsGrid}>
-        {category.ingredients.map((ingredient: any) => {
-          const isSelected = ingredients.some(i => normalizeIngredientName(i.name) === normalizeIngredientName(ingredient.name));
-          return (
-            <TouchableOpacity
-              key={ingredient.id}
-              style={[styles.manualIngredientItem, isSelected && styles.ingredientItemSelected]}
-              onPress={() => handleIngredientToggle(ingredient.name, category.id)}
-            >
-              <Text style={styles.ingredientIcon}>{ingredient.icon}</Text>
-              <Text style={isSelected ? styles.ingredientNameSelected : styles.manualIngredientName}>
-                {ingredient.name}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-    </View>
-  );
-
   const CATEGORY_META: Record<string, { title: string; icon: string }> = useMemo(() => {
     const meta: Record<string, { title: string; icon: string }> = {
-      epices: { title: I18n.t('home.categories.spices.title', { defaultValue: 'Épices & Condiments' }), icon: '🌶️' },
-      other: { title: I18n.t('recipeSummary.other', { defaultValue: 'Autres' }), icon: '📦' },
+      epices: { title: t('home.categories.spices.title', { defaultValue: 'Épices & Condiments' }), icon: '🌶️' },
+      other: { title: t('recipeSummary.other', { defaultValue: 'Autres' }), icon: '📦' },
     };
     for (const cat of ingredientCategories) {
       meta[cat.id] = { title: cat.title, icon: cat.icon };
@@ -964,7 +917,7 @@ export default function RecipeSummaryScreen() {
         {/* Section ingrédients */}
         <View style={styles.section}>
           <View style={styles.ingredientsHeader}>
-            <Text style={styles.sectionTitle}>{I18n.t('recipeSummary.ingredients')}</Text>
+            <Text style={styles.sectionTitle}>{t('recipeSummary.ingredients')}</Text>
             <TouchableOpacity
               style={styles.roundAddButton}
               onPress={() => {
@@ -982,7 +935,7 @@ export default function RecipeSummaryScreen() {
           <View style={styles.searchBarContainer}>
             <TextInput
               style={styles.manualTextInput}
-              placeholder={I18n.t('recipeSummary.ingredientName')}
+              placeholder={t('recipeSummary.ingredientName')}
               value={manualInput}
               onChangeText={setManualInput}
               onSubmitEditing={addManualIngredient}
@@ -1006,7 +959,7 @@ export default function RecipeSummaryScreen() {
               {isAddingIngredient ? (
                 <ActivityIndicator size="small" color="white" />
               ) : (
-                <Text style={styles.manualAddButtonText}>{I18n.t('recipeSummary.add')}</Text>
+                <Text style={styles.manualAddButtonText}>{t('recipeSummary.add')}</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -1040,7 +993,7 @@ export default function RecipeSummaryScreen() {
                   ) : null}
                 </View>
                 {group.items.length === 0 ? (
-                  <Text style={styles.categoryEmptyText}>{I18n.t('recipeSummary.none')}</Text>
+                  <Text style={styles.categoryEmptyText}>{t('recipeSummary.none')}</Text>
                 ) : (
                   group.items.map(ingredient => (
                     <View style={styles.ingredientItem} key={ingredient.id}>
@@ -1145,7 +1098,7 @@ export default function RecipeSummaryScreen() {
                 onPress={confirmCategoryAddModal}
                 disabled={selectedIngredientsForCategoryModal.length === 0}
               >
-                <Text style={styles.categoryAddModalButtonText}>{I18n.t('recipeSummary.add')}</Text>
+                <Text style={styles.categoryAddModalButtonText}>{t('recipeSummary.add')}</Text>
               </TouchableOpacity>
             </View>
           </Animated.View>
@@ -1177,7 +1130,7 @@ export default function RecipeSummaryScreen() {
             ]}
           >
             <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{I18n.t('recipeSummary.recipePreferences')}</Text>
+              <Text style={styles.modalTitle}>{t('recipeSummary.recipePreferences')}</Text>
               <TouchableOpacity onPress={closeFilterModal} style={styles.modalCloseButton}>
                 <IconSymbol name="close" size={24} color="#000" />
               </TouchableOpacity>
@@ -1190,56 +1143,56 @@ export default function RecipeSummaryScreen() {
               keyboardShouldPersistTaps="always"
             >
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>{I18n.t('recipeSummary.dishType')}</Text>
+                <Text style={styles.filterSectionTitle}>{t('recipeSummary.dishType')}</Text>
                 <View style={styles.chipsContainer}>
                   {DISH_TYPES.map(dt => renderChip(dt.label, preferences.dishType === dt.id, () => updatePreference('dishType', dt.id), dt.id))}
                 </View>
               </View>
 
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>{I18n.t('recipeSummary.time')}</Text>
+                <Text style={styles.filterSectionTitle}>{t('recipeSummary.time')}</Text>
                 <View style={styles.chipsContainer}>
                   {DURATIONS.map(d => renderChip(d.label, preferences.duration === d.id, () => updatePreference('duration', d.id), d.id))}
                 </View>
               </View>
 
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>{I18n.t('recipeSummary.goal')}</Text>
+                <Text style={styles.filterSectionTitle}>{t('recipeSummary.goal')}</Text>
                 <View style={styles.chipsContainer}>
                   {GOALS.map(g => renderChip(g.label, preferences.goal === g.id, () => updatePreference('goal', g.id), g.id, g.id !== 'neutral'))}
                 </View>
               </View>
 
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>{I18n.t('recipeSummary.equipments')}</Text>
+                <Text style={styles.filterSectionTitle}>{t('recipeSummary.equipments')}</Text>
                 <View style={styles.chipsContainer}>
                   {EQUIPMENTS.map(e => renderChip(e.label, preferences.equipments.includes(e.id), () => toggleEquipment(e.id), e.id, false))}
                 </View>
               </View>
 
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>{I18n.t('recipeSummary.cuisine')}</Text>
+                <Text style={styles.filterSectionTitle}>{t('recipeSummary.cuisine')}</Text>
                 <View style={styles.chipsContainer}>
                   {CUISINE_STYLES.map(c => renderChip(c.label, preferences.cuisineStyle.includes(c.id), () => toggleCuisineStyle(c.id), c.id, false))}
                 </View>
               </View>
 
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>{I18n.t('recipeSummary.servings')}</Text>
+                <Text style={styles.filterSectionTitle}>{t('recipeSummary.servings')}</Text>
                 <View style={styles.chipsContainer}>
                   {[1, 2, 3, 4, 5, 6].map(s => renderChip(s.toString(), preferences.servings === s, () => updatePreference('servings', s), s.toString(), false))}
                 </View>
               </View>
 
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>{I18n.t('recipeSummary.avoidIngredients')}</Text>
+                <Text style={styles.filterSectionTitle}>{t('recipeSummary.avoidIngredients')}</Text>
                 <View style={styles.chipsContainer}>
                   {ALLERGIES.map(a => renderChip(a.label, preferences.allergies.includes(a.id), () => toggleAllergy(a.id), a.id, false))}
                 </View>
               </View>
 
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>{I18n.t('recipeSummary.diet')}</Text>
+                <Text style={styles.filterSectionTitle}>{t('recipeSummary.diet')}</Text>
                 <View style={styles.chipsContainer}>
                   {DIETS.map(d => renderChip(d.label, preferences.diet === d.id, () => toggleDiet(d.id), d.id, false))}
                 </View>
@@ -1257,13 +1210,13 @@ export default function RecipeSummaryScreen() {
                 >
                   <View style={styles.switchTextContainer}>
                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                      <Text style={styles.switchLabel}>{I18n.t('recipeSummary.allowOtherIngredients')}</Text>
+                      <Text style={styles.switchLabel}>{t('recipeSummary.allowOtherIngredients')}</Text>
                       {!subscriptionStatus.isSubscribed && !isFirstGeneration && params.isOnboarding !== 'true' && (
                         <Ionicons name="lock-closed" size={16} color={Colors.light.button} />
                       )}
                     </View>
                     <Text style={styles.switchDescription}>
-                      {I18n.t('recipeSummary.allowOtherIngredientsDescription')}
+                      {t('recipeSummary.allowOtherIngredientsDescription')}
                     </Text>
                   </View>
                   <Switch
@@ -1293,7 +1246,7 @@ export default function RecipeSummaryScreen() {
       <View style={[styles.generateButtonContainer, { bottom: Math.max(insets.bottom, 45) + 15 }]}>
         {ingredients.length < MIN_INGREDIENTS && (
           <Text style={styles.minIngredientsText}>
-            {I18n.t('recipeSummary.pleaseAddAtLeastFiveIngredients')} ({ingredients.length}/{MIN_INGREDIENTS})
+            {t('recipeSummary.pleaseAddAtLeastFiveIngredients')} ({ingredients.length}/{MIN_INGREDIENTS})
           </Text>
         )}
         <TouchableOpacity
@@ -1315,7 +1268,7 @@ export default function RecipeSummaryScreen() {
                 weight="bold"
               />
               <Text style={styles.generateButtonText}>
-                {I18n.t('recipeSummary.generate')}
+                {t('recipeSummary.generate')}
               </Text>
             </>
           )}
@@ -1691,10 +1644,6 @@ const styles = StyleSheet.create({
   categoryIndicatorIcon: {
     fontSize: 20,
   },
-  categoryPage: {
-    width: width - 40 - 48,
-    paddingHorizontal: 5,
-  },
   inputSection: {
     marginBottom: 0,
   },
@@ -1859,27 +1808,6 @@ const styles = StyleSheet.create({
   },
   tagRemoveButton: {
     padding: 2,
-  },
-  categoryHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-    paddingHorizontal: 10,
-  },
-  categoryIcon: {
-    fontSize: 24,
-    marginRight: 10,
-  },
-  categoryTitle: {
-    fontSize: 20,
-    color: Colors.light.text,
-    fontFamily: 'Degular'
-  },
-  ingredientsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    paddingBottom: 20,
   },
   categoryAddModalContent: {
     width: '100%',

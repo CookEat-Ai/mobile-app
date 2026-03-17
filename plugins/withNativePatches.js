@@ -8,22 +8,7 @@ const path = require('path');
 module.exports = function withNativePatches(config) {
   const projectRoot = process.cwd();
 
-  // 1. Correction de jcenter() dans @react-native-voice/voice
-  const voiceGradlePath = path.resolve(
-    projectRoot,
-    'node_modules/@react-native-voice/voice/android/build.gradle'
-  );
-
-  if (fs.existsSync(voiceGradlePath)) {
-    let content = fs.readFileSync(voiceGradlePath, 'utf8');
-    if (content.includes('jcenter()')) {
-      console.log('✅ [withNativePatches] Correction jcenter() -> mavenCentral() dans @react-native-voice/voice');
-      content = content.replace(/jcenter\(\)/g, 'mavenCentral()');
-      fs.writeFileSync(voiceGradlePath, content);
-    }
-  }
-
-  // 2. Correction de currentActivity dans react-native-purchases-ui (incompatible avec RN 0.81+)
+  // 1. Correction de currentActivity dans react-native-purchases-ui (incompatible avec RN 0.81+)
   const purchasesUiPath = path.resolve(
     projectRoot,
     'node_modules/react-native-purchases-ui/android/src/main/java/com/revenuecat/purchases/react/ui'

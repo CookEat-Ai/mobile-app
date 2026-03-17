@@ -13,12 +13,12 @@
     "ingredients": "ingrédients",
     "ingredient": "ingrédient",
     "streak": {
-      "day": "jour",
-      "days": "jours"
+      "day": "j",
+      "days": "j"
     },
     "deleteRecipe": {
       "title": "Supprimer la recette",
-      "message": "Tu es sûr de vouloir supprimer « %{title} » ?"
+      "message": "Tu es sûr de vouloir supprimer « {{title}} » ?"
     },
     "extractingIngredients": "Extraction des ingrédients en cours...",
     "generatingRecipes": "Génération des recettes en cours...",
@@ -216,6 +216,10 @@
     "cancel": "Annuler",
     "confirm": "Confirmer",
     "unexpectedError": "Une erreur inattendue est survenue",
+    "requestError": "Erreur de requête",
+    "unknownError": "Erreur inconnue",
+    "networkError": "Erreur réseau. Vérifie ta connexion internet.",
+    "maintenanceMode": "Serveur indisponible (maintenance)",
     "save": "Enregistrer",
     "delete": "Supprimer",
     "edit": "Modifier",
@@ -227,6 +231,16 @@
   "promoCode": {
     "activated": "Code promo activé avec succès !",
     "invalid": "Code promo invalide"
+  },
+  "onboardingPromoCode": {
+    "title": "Tu as un code promo ?",
+    "subtitle": "Si un créateur t'a partagé un code promo, entre-le ici pour bénéficier d'une réduction exclusive.",
+    "placeholder": "TON CODE PROMO",
+    "validate": "Valider",
+    "skip": "Je n'ai pas de code",
+    "invalid": "Ce code promo n'est pas valide",
+    "error": "Impossible de vérifier le code promo",
+    "success": "-{{discount}}% de réduction activée !"
   },
   "profile": {
     "guest": "Invité",
@@ -313,7 +327,13 @@
     "deleteAccountConfirmTitle": "Dernière confirmation",
     "deleteAccountConfirmMessage": "Toutes tes recettes favorites, ton garde-manger et tes préférences seront effacés à jamais. Es-tu certain ?",
     "deleteAccountButton": "Oui, supprimer tout",
-    "deleteError": "Une erreur est survenue lors de la suppression."
+    "deleteError": "Une erreur est survenue lors de la suppression.",
+    "promoCode": "Code promo",
+    "promoCodeDescription": "Entre un code promo pour obtenir une réduction",
+    "promoCodeTitle": "Code promo",
+    "promoCodePlaceholder": "TON CODE PROMO",
+    "promoCodeValidate": "Valider le code",
+    "onboardingResetError": "Impossible de réinitialiser l’onboarding."
   },
   "offers": {
     "title": "Choisis ton plan",
@@ -422,7 +442,7 @@
     "restoreTitle": "Restaurer les achats",
     "restoreDescription": "Fonctionnalité de restauration en cours de développement.",
     "promoCodeTitle": "Code promo",
-    "promoCodeDescription": "Fonctionnalité de code promo en cours de développement.",
+    "promoCodeDescription": "Entre ton code promo pour obtenir une réduction",
     "promoCodePlaceholder": "Ton code promo",
     "promoCodeRequired": "Saisis un code promo",
     "promoCodeInvalidTitle": "Code promo invalide",
@@ -500,7 +520,7 @@
     "subtitle_B": "Débloque jusqu'à 33% de réduction immédiate sur toutes nos fonctionnalités Premium. Une seule chance, fais le bon choix !",
     "subtitle": "Tourne la roue pour débloquer une réduction exclusive sur ton abonnement.",
     "spin": "C'est parti !",
-    "congrats": "Félicitations !",
+    "congrats": "Ton cadeau t'attend ! 🎁",
     "result": "Tu as débloqué {{discount}}% de réduction !",
     "claim": "J'en profite !"
   },
@@ -907,7 +927,10 @@
       "On ajuste les quantités...",
       "On finalise les étapes...",
       "C'est prêt !"
-    ]
+    ],
+    "generationError": "Erreur de génération",
+    "connectionError": "Erreur de connexion WebSocket",
+    "internalError": "Erreur interne"
   },
   "camera": {
     "loadingMessagesPhoto": [
@@ -950,7 +973,8 @@
         "message": "Prends en photo tes ingrédients ou ton ticket de caisse. L'IA extraira automatiquement tous les articles pour les ajouter à ta liste.",
         "button": "Compris !"
       }
-    }
+    },
+    "extractionError": "Erreur lors de l'extraction"
   },
   "onboarding_loading": {
     "messages": [
@@ -988,5 +1012,10 @@
     "step3": "3. Choisissez CookEat",
     "button": "Compris !",
     "skip": "Plus tard"
+  },
+  "update": {
+    "title": "Mise à jour requise",
+    "message": "Une nouvelle version de CookEat est disponible avec des fonctionnalités essentielles. Merci de mettre à jour l'application pour continuer.",
+    "button": "Mettre à jour"
   }
 }

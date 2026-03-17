@@ -9,9 +9,10 @@ import {
   View,
   Platform,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/Colors';
-import I18n from '../../i18n';
+import { useTranslation } from 'react-i18next';
 import analytics from '../../services/analytics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import IphoneVideoDemo from '../../components/IphoneVideoDemo';
@@ -22,6 +23,7 @@ export default function AppDemoScreen() {
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
+  const { t } = useTranslation();
 
   useEffect(() => {
     analytics.track('onboarding_app_demo_viewed');
@@ -46,7 +48,15 @@ export default function AppDemoScreen() {
     if (variant === 'D') {
       router.replace('/onboarding/personalizedRecipes');
     } else {
-      router.push({ pathname: '/paywall', params: { source: 'onboarding_variant_c' } });
+      const pendingDiscount = await AsyncStorage.getItem('pending_promo_discount');
+      if (pendingDiscount) {
+        router.push({
+          pathname: '/paywall',
+          params: { source: 'onboarding_variant_c', initialState: 'PROMO_DISCOUNTED', promoDiscount: pendingDiscount },
+        });
+      } else {
+        router.push({ pathname: '/paywall', params: { source: 'onboarding_variant_c' } });
+      }
     }
   };
 
@@ -59,7 +69,7 @@ export default function AppDemoScreen() {
 
       <View style={styles.content}>
         <Animated.View style={[styles.header, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
-          <Text style={styles.title}>{I18n.t('onboarding.videoDemo.title')}</Text>
+          <Text style={styles.title}>{t('onboarding.videoDemo.title')}</Text>
         </Animated.View>
 
         {/* Mockup iPhone avec Vidéo */}
@@ -72,7 +82,7 @@ export default function AppDemoScreen() {
         {/* Reassurance CookEat Style */}
         <View style={styles.reassuranceRow}>
           <Ionicons name="checkmark-circle" size={22} color={Colors.light.button} />
-          <Text style={styles.reassuranceText}>{I18n.t('onboarding.offerTrial.noPayment')}</Text>
+          <Text style={styles.reassuranceText}>{t('onboarding.offerTrial.noPayment')}</Text>
         </View>
 
         <TouchableOpacity
@@ -80,11 +90,11 @@ export default function AppDemoScreen() {
           style={styles.continueButton}
           onPress={handleContinue}
         >
-          <Text style={styles.buttonText}>{I18n.t('onboarding.continue')}</Text>
+          <Text style={styles.buttonText}>{t('onboarding.continue')}</Text>
         </TouchableOpacity>
 
         {/* <Text style={styles.pricingText}>
-          {I18n.locale.startsWith('fr') ? 'Seulement 5,99€ / mois' : 'Just $5.99 / month'}
+          {i18n.language.startsWith('fr') ? 'Seulement 5,99€ / mois' : 'Just $5.99 / month'}
         </Text> */}
       </Animated.View>
     </View>

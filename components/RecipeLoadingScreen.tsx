@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Dimensions, Easing, StyleSheet, Text, View, Image, Platform } from 'react-native';
+import { Animated, Dimensions, Easing, StyleSheet, Text, View, Image } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../constants/Colors';
-import I18n from '../i18n';
+import { useTranslation } from 'react-i18next';
 import recipeStreamManager from '../services/recipeStreamManager';
 
 const { width } = Dimensions.get('window');
@@ -17,6 +17,7 @@ type LoadingParams = {
 };
 
 export default function RecipeLoadingScreen({ modalDefault = false }: { modalDefault?: boolean }) {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const params = useLocalSearchParams<LoadingParams>();
@@ -33,9 +34,9 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const loadingMessages = useMemo(() => {
-    const msgs = I18n.t('recipe_loading.messages');
+    const msgs = t('recipe_loading.messages', { returnObjects: true });
     return Array.isArray(msgs) ? msgs : ['Veuillez patienter...'];
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     const listenerId = loadingProgress.addListener(({ value }) => {

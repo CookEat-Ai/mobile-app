@@ -3,13 +3,12 @@ import {
   Animated,
   Dimensions,
   Easing,
-  Platform,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import I18n from '../i18n';
+import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -25,6 +24,7 @@ import { getUniqueDeviceId } from '../services/deviceStorage';
 const { width } = Dimensions.get('window');
 
 export default function ShareIntentScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const params = useLocalSearchParams<{ url?: string }>();
@@ -135,7 +135,7 @@ export default function ShareIntentScreen() {
     if (hasStarted.current) return;
     if (!params.url) {
       console.log('[ShareIntent] no url param, aborting');
-      setErrorMessage(I18n.t('shareIntent.genericError'));
+      setErrorMessage(t('shareIntent.genericError'));
       setStatus('error');
       return;
     }
@@ -176,7 +176,7 @@ export default function ShareIntentScreen() {
           if (quotaReached) {
             setIsQuotaError(true);
           }
-          setErrorMessage(response.error || I18n.t('shareIntent.genericError'));
+          setErrorMessage(response.error || t('shareIntent.genericError'));
           setStatus('error');
           return;
         }
@@ -197,7 +197,7 @@ export default function ShareIntentScreen() {
         });
       } catch (error) {
         console.error('[ShareIntent] catch error:', error);
-        setErrorMessage(I18n.t('shareIntent.genericError'));
+        setErrorMessage(t('shareIntent.genericError'));
         setStatus('error');
         analytics.track('share_intent_error', { url: params.url, error: String(error) });
       }
@@ -242,7 +242,7 @@ export default function ShareIntentScreen() {
             },
           });
           if (response.error || !response.data?.recipe) {
-            setErrorMessage(response.error || I18n.t('shareIntent.genericError'));
+            setErrorMessage(response.error || t('shareIntent.genericError'));
             setStatus('error');
             return;
           }
@@ -256,7 +256,7 @@ export default function ShareIntentScreen() {
           setIsDataReady(true);
           recipeStorageService.saveGeneratedRecipe(response.data.recipe, []);
         } catch {
-          setErrorMessage(I18n.t('shareIntent.genericError'));
+          setErrorMessage(t('shareIntent.genericError'));
           setStatus('error');
         }
       })();
@@ -282,7 +282,7 @@ export default function ShareIntentScreen() {
 
             <View style={styles.loadingTextWrapper}>
               <Text style={styles.loadingText}>
-                {I18n.t(`shareIntent.progressStep.${progressStep}`, { defaultValue: I18n.t('shareIntent.importingDescription') })}
+                {t(`shareIntent.progressStep.${progressStep}`, { defaultValue: t('shareIntent.importingDescription') })}
               </Text>
             </View>
 
@@ -307,7 +307,7 @@ export default function ShareIntentScreen() {
             <View style={styles.successIcon}>
               <Ionicons name="checkmark-circle" size={80} color={Colors.light.button} />
             </View>
-            <Text style={styles.title}>{I18n.t('shareIntent.success')}</Text>
+            <Text style={styles.title}>{t('shareIntent.success')}</Text>
             <Text style={styles.recipeTitle}>{recipe.title}</Text>
           </>
         )}
@@ -317,7 +317,7 @@ export default function ShareIntentScreen() {
             <View style={styles.errorIcon}>
               <Ionicons name="alert-circle" size={80} color="#FF4444" />
             </View>
-            <Text style={styles.title}>{I18n.t('shareIntent.errorTitle')}</Text>
+            <Text style={styles.title}>{t('shareIntent.errorTitle')}</Text>
             <Text style={styles.subtitle}>{errorMessage}</Text>
 
             <View style={styles.buttonContainer}>
@@ -328,18 +328,18 @@ export default function ShareIntentScreen() {
                   activeOpacity={0.8}
                 >
                   <Ionicons name="sparkles" size={20} color="white" />
-                  <Text style={styles.retryButtonText}>{I18n.t('shareIntent.upgrade')}</Text>
+                  <Text style={styles.retryButtonText}>{t('shareIntent.upgrade')}</Text>
                 </TouchableOpacity>
               ) : (
                 <TouchableOpacity style={styles.retryButton} onPress={handleRetry} activeOpacity={0.8}>
                   <Ionicons name="refresh" size={20} color="white" />
-                  <Text style={styles.retryButtonText}>{I18n.t('shareIntent.retry')}</Text>
+                  <Text style={styles.retryButtonText}>{t('shareIntent.retry')}</Text>
                 </TouchableOpacity>
               )}
 
               <TouchableOpacity style={styles.homeButton} onPress={handleGoHome} activeOpacity={0.8}>
                 <Ionicons name="home-outline" size={20} color={Colors.light.text} />
-                <Text style={styles.homeButtonText}>{I18n.t('shareIntent.goHome')}</Text>
+                <Text style={styles.homeButtonText}>{t('shareIntent.goHome')}</Text>
               </TouchableOpacity>
             </View>
           </>

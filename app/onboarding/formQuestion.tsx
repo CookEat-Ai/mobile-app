@@ -20,7 +20,7 @@ import * as StoreReview from 'expo-store-review';
 import { FontAwesome6, Ionicons } from '@expo/vector-icons';
 import { getUniqueDeviceId } from '../../services/deviceStorage';
 import { Colors } from '../../constants/Colors';
-import I18n from "../../i18n";
+import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
 import analytics from '../../services/analytics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -50,19 +50,20 @@ type Option = {
 }
 
 const SocialProofContent = ({ onRate }: { onRate?: () => void }) => {
-  const count = I18n.locale.startsWith('fr') ? '10 000' : '10,000';
-  const fullText = I18n.t('onboarding.socialProof.title', { count });
+  const { t, i18n } = useTranslation();
+  const count = i18n.language.startsWith('fr') ? '10 000' : '10,000';
+  const fullText = t('onboarding.socialProof.title', { count });
   const parts = fullText.split(new RegExp(`(${count})`));
 
   const reviews = [
-    { id: 1, name: 'Marie L.', rating: 5, text: I18n.t('onboarding.socialProof.review1') },
-    { id: 2, name: 'Thomas D.', rating: 5, text: I18n.t('onboarding.socialProof.review2') },
+    { id: 1, name: 'Marie L.', rating: 5, text: t('onboarding.socialProof.review1') },
+    { id: 2, name: 'Thomas D.', rating: 5, text: t('onboarding.socialProof.review2') },
   ];
 
   return (
     <View style={styles.specialStepContainer}>
       <View style={styles.topBadge}>
-        <Text style={styles.topBadgeText}>{I18n.t('onboarding.socialProof.topBadge')}</Text>
+        <Text style={styles.topBadgeText}>{t('onboarding.socialProof.topBadge')}</Text>
       </View>
 
       <Text style={styles.title}>
@@ -81,7 +82,7 @@ const SocialProofContent = ({ onRate }: { onRate?: () => void }) => {
           adjustsFontSizeToFit={true}
           minimumFontScale={0.7}
         >
-          {I18n.t('onboarding.socialProof.subtitle')}
+          {t('onboarding.socialProof.subtitle')}
         </Text>
         <View style={styles.starsContainer}>
           {[1, 2, 3, 4, 5].map((star) => (
@@ -116,6 +117,7 @@ const SocialProofContent = ({ onRate }: { onRate?: () => void }) => {
 };
 
 const NotificationsContent = ({ onNext }: { onNext?: () => void }) => {
+  const { t } = useTranslation();
   const fingerAnim = useRef(new Animated.Value(0)).current;
 
   React.useEffect(() => {
@@ -140,25 +142,25 @@ const NotificationsContent = ({ onNext }: { onNext?: () => void }) => {
   return (
     <View style={styles.specialStepContainer}>
       <View style={{ position: 'absolute', top: 40, width: '100%' }}>
-        <Text style={styles.title}>{I18n.t('notifications.title')}</Text>
+        <Text style={styles.title}>{t('notifications.title')}</Text>
       </View>
 
       <View style={[styles.mockDialogContainer, { marginTop: 180 }]}>
         <View style={styles.mockDialog}>
           <Text style={styles.mockDialogTitle}>
-            {I18n.t('notifications.permissionTitle')}
+            {t('notifications.permissionTitle')}
           </Text>
 
           <View style={styles.mockButtons}>
             <View style={styles.mockButtonLeft}>
               <Text style={[styles.mockButtonText, { color: '#8E8E93' }]}>
-                {I18n.t('notifications.dontAllow')}
+                {t('notifications.dontAllow')}
               </Text>
             </View>
 
             <View style={styles.mockButtonRight}>
               <Text style={[styles.mockButtonText, { fontWeight: 'bold', color: '#FFF' }]}>
-                {I18n.t('notifications.allow')}
+                {t('notifications.allow')}
               </Text>
             </View>
           </View>
@@ -177,14 +179,15 @@ const NotificationsContent = ({ onNext }: { onNext?: () => void }) => {
 };
 
 const OnboardingReadyContent = () => {
+  const { t } = useTranslation();
   return (
     <View style={[styles.specialStepContainer, { paddingTop: height * 0.3 }]}>
       <View style={styles.badge}>
         <Ionicons name="checkmark-circle" size={20} color="#E67E22" />
-        <Text style={styles.badgeText}>{I18n.t('onboardingReady.badge')}</Text>
+        <Text style={styles.badgeText}>{t('onboardingReady.badge')}</Text>
       </View>
 
-      <Text style={styles.title}>{I18n.t('onboardingReady.title')}</Text>
+      <Text style={styles.title}>{t('onboardingReady.title')}</Text>
     </View>
   );
 };
@@ -214,194 +217,195 @@ const RatingBadge = ({ style }: { style?: any }) => {
 
 export default function FormQuestionScreen() {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   const questions: Question[] = useMemo(() => [
     {
       fieldName: 'sex',
-      question: I18n.t('onboarding.sex'),
+      question: t('onboarding.sex'),
       options: [
-        { label: I18n.t('onboarding.formQuestions.man'), value: 'man', emoji: '👨' },
-        { label: I18n.t('onboarding.formQuestions.woman'), value: 'woman', emoji: '👩' },
-        { label: I18n.t('onboarding.formQuestions.other'), value: 'other', iconName: 'ellipsis', iconColor: '#94A3B8' }
+        { label: t('onboarding.formQuestions.man'), value: 'man', emoji: '👨' },
+        { label: t('onboarding.formQuestions.woman'), value: 'woman', emoji: '👩' },
+        { label: t('onboarding.formQuestions.other'), value: 'other', iconName: 'ellipsis', iconColor: '#94A3B8' }
       ]
     },
     {
       fieldName: 'age',
-      question: I18n.t('onboarding.age'),
+      question: t('onboarding.age'),
       options: [
-        { label: I18n.t('onboarding.formQuestions.less_than_20'), value: 'less_than_20', emoji: '🎓' },
-        { label: I18n.t('onboarding.formQuestions.20_30'), value: '20_30', emoji: '🚀' },
-        { label: I18n.t('onboarding.formQuestions.30_45'), value: '30_45', emoji: '💼' },
-        { label: I18n.t('onboarding.formQuestions.more_than_45'), value: 'more_than_45', emoji: '🏡' }
+        { label: t('onboarding.formQuestions.less_than_20'), value: 'less_than_20', emoji: '🎓' },
+        { label: t('onboarding.formQuestions.20_30'), value: '20_30', emoji: '🚀' },
+        { label: t('onboarding.formQuestions.30_45'), value: '30_45', emoji: '💼' },
+        { label: t('onboarding.formQuestions.more_than_45'), value: 'more_than_45', emoji: '🏡' }
       ]
     },
     {
       fieldName: 'howDidHeKnowCookEatAI',
-      question: I18n.t('onboarding.howDidHeKnowCookEatAI'),
+      question: t('onboarding.howDidHeKnowCookEatAI'),
       options: [
         {
-          label: Platform.OS === 'ios' ? I18n.t('onboarding.formQuestions.app_store') : I18n.t('onboarding.formQuestions.google_play'),
+          label: Platform.OS === 'ios' ? t('onboarding.formQuestions.app_store') : t('onboarding.formQuestions.google_play'),
           value: 'store',
           iconName: Platform.OS === 'ios' ? 'apple' : 'google-play',
           iconColor: Platform.OS === 'ios' ? '#000000' : '#3DDC84'
         },
-        { label: I18n.t('onboarding.formQuestions.tiktok'), value: 'tiktok', iconName: 'tiktok', iconColor: '#000000' },
-        { label: I18n.t('onboarding.formQuestions.instagram'), value: 'instagram', iconName: 'instagram', iconColor: '#E4405F' },
-        { label: I18n.t('onboarding.formQuestions.facebook'), value: 'facebook', iconName: 'facebook', iconColor: '#1877F2' },
-        { label: I18n.t('onboarding.formQuestions.youtube'), value: 'youtube', iconName: 'youtube', iconColor: '#FF0000' },
-        { label: I18n.t('onboarding.formQuestions.google'), value: 'google', iconName: 'google', iconColor: '#4285F4' },
-        { label: I18n.t('onboarding.formQuestions.friend'), value: 'friend', iconName: 'user', iconColor: '#6366F1' },
-        { label: I18n.t('onboarding.formQuestions.other'), value: 'other', iconName: 'ellipsis', iconColor: '#94A3B8' },
+        { label: t('onboarding.formQuestions.tiktok'), value: 'tiktok', iconName: 'tiktok', iconColor: '#000000' },
+        { label: t('onboarding.formQuestions.instagram'), value: 'instagram', iconName: 'instagram', iconColor: '#E4405F' },
+        { label: t('onboarding.formQuestions.facebook'), value: 'facebook', iconName: 'facebook', iconColor: '#1877F2' },
+        { label: t('onboarding.formQuestions.youtube'), value: 'youtube', iconName: 'youtube', iconColor: '#FF0000' },
+        { label: t('onboarding.formQuestions.google'), value: 'google', iconName: 'google', iconColor: '#4285F4' },
+        { label: t('onboarding.formQuestions.friend'), value: 'friend', iconName: 'user', iconColor: '#6366F1' },
+        { label: t('onboarding.formQuestions.other'), value: 'other', iconName: 'ellipsis', iconColor: '#94A3B8' },
       ]
     },
     {
-      question: I18n.t('onboarding.habitsIntroInterstitial'),
+      question: t('onboarding.habitsIntroInterstitial'),
       options: [],
       interstitial: true,
       hideProgress: true,
     },
     {
       fieldName: 'cookingLevel',
-      question: I18n.t('onboarding.cookingLevel'),
+      question: t('onboarding.cookingLevel'),
       options: [
-        { label: I18n.t('onboarding.formQuestions.beginner'), value: 'beginner', emoji: '🌱' },
-        { label: I18n.t('onboarding.formQuestions.medium'), value: 'medium', emoji: '🔥' },
-        { label: I18n.t('onboarding.formQuestions.advanced'), value: 'advanced', emoji: '👨‍🍳' }
+        { label: t('onboarding.formQuestions.beginner'), value: 'beginner', emoji: '🌱' },
+        { label: t('onboarding.formQuestions.medium'), value: 'medium', emoji: '🔥' },
+        { label: t('onboarding.formQuestions.advanced'), value: 'advanced', emoji: '👨‍🍳' }
       ]
     },
     {
       fieldName: 'cookingFrequency',
-      question: I18n.t('onboarding.cookingFrequency'),
+      question: t('onboarding.cookingFrequency'),
       options: [
-        { label: I18n.t('onboarding.formQuestions.rarely'), value: 'rarely', emoji: '🕐' },
-        { label: I18n.t('onboarding.formQuestions.occasionally'), value: 'occasionally', emoji: '📅' },
-        { label: I18n.t('onboarding.formQuestions.frequently'), value: 'frequently', emoji: '⚡️' }
+        { label: t('onboarding.formQuestions.rarely'), value: 'rarely', emoji: '🕐' },
+        { label: t('onboarding.formQuestions.occasionally'), value: 'occasionally', emoji: '📅' },
+        { label: t('onboarding.formQuestions.frequently'), value: 'frequently', emoji: '⚡️' }
       ]
     },
     {
       fieldName: 'eatOutFrequency',
-      question: I18n.t('onboarding.eatOutFrequency'),
+      question: t('onboarding.eatOutFrequency'),
       options: [
-        { label: I18n.t('onboarding.formQuestions.almost_never'), value: 'almost_never', emoji: '🥗' },
-        { label: I18n.t('onboarding.formQuestions.1_2_times'), value: '1_2_times', emoji: '🍕' },
-        { label: I18n.t('onboarding.formQuestions.3_4_times'), value: '3_4_times', emoji: '🥡' },
-        { label: I18n.t('onboarding.formQuestions.more_than_4_times'), value: 'more_than_4_times', emoji: '🍔' }
+        { label: t('onboarding.formQuestions.almost_never'), value: 'almost_never', emoji: '🥗' },
+        { label: t('onboarding.formQuestions.1_2_times'), value: '1_2_times', emoji: '🍕' },
+        { label: t('onboarding.formQuestions.3_4_times'), value: '3_4_times', emoji: '🥡' },
+        { label: t('onboarding.formQuestions.more_than_4_times'), value: 'more_than_4_times', emoji: '🍔' }
       ]
     },
     {
       key: 'cookingForWho',
       fieldName: 'cookingForWho',
-      question: I18n.t('onboarding.cookingForWho'),
+      question: t('onboarding.cookingForWho'),
       options: [
-        { label: I18n.t('onboarding.formQuestions.myself'), value: 'myself', emoji: '🙋‍♂️' },
-        { label: I18n.t('onboarding.formQuestions.myself_and_another_person'), value: 'myself_and_another_person', emoji: '👫' },
-        { label: I18n.t('onboarding.formQuestions.my_family'), value: 'my_family', emoji: '👨‍👩‍👧‍👦' }
+        { label: t('onboarding.formQuestions.myself'), value: 'myself', emoji: '🙋‍♂️' },
+        { label: t('onboarding.formQuestions.myself_and_another_person'), value: 'myself_and_another_person', emoji: '👫' },
+        { label: t('onboarding.formQuestions.my_family'), value: 'my_family', emoji: '👨‍👩‍👧‍👦' }
       ]
     },
     {
       fieldName: 'cookingTime',
-      question: I18n.t('onboarding.cookingTime'),
+      question: t('onboarding.cookingTime'),
       options: [
-        { label: I18n.t('onboarding.formQuestions.less_than_30_minutes'), value: 'less_than_30_minutes', emoji: '⏱️' },
-        { label: I18n.t('onboarding.formQuestions.between_30_minutes_and_1_hour'), value: 'between_30_minutes_and_1_hour', emoji: '⏲️' },
-        { label: I18n.t('onboarding.formQuestions.more_than_1_hour'), value: 'more_than_1_hour', emoji: '⌛️' }
+        { label: t('onboarding.formQuestions.less_than_30_minutes'), value: 'less_than_30_minutes', emoji: '⏱️' },
+        { label: t('onboarding.formQuestions.between_30_minutes_and_1_hour'), value: 'between_30_minutes_and_1_hour', emoji: '⏲️' },
+        { label: t('onboarding.formQuestions.more_than_1_hour'), value: 'more_than_1_hour', emoji: '⌛️' }
       ]
     },
     {
-      question: I18n.t('onboarding.preferencesIntro'),
+      question: t('onboarding.preferencesIntro'),
       options: [],
       interstitial: true,
       hideProgress: true,
     },
     {
       fieldName: 'equipments',
-      question: I18n.t('onboarding.equipmentQuestion'),
+      question: t('onboarding.equipmentQuestion'),
       multi: true,
       optional: true,
       options: [
-        { label: I18n.t('onboarding.formQuestions.equipment_oven'), value: 'equipment_oven', emoji: '🔥' },
-        { label: I18n.t('onboarding.formQuestions.equipment_airfryer'), value: 'equipment_airfryer', emoji: '🍟' },
-        { label: I18n.t('onboarding.formQuestions.equipment_microwave'), value: 'equipment_microwave', emoji: '📡' },
-        { label: I18n.t('onboarding.formQuestions.equipment_blender'), value: 'equipment_blender', emoji: '🥤' },
-        { label: I18n.t('onboarding.formQuestions.equipment_robot'), value: 'equipment_robot', emoji: '🤖' },
+        { label: t('onboarding.formQuestions.equipment_oven'), value: 'equipment_oven', emoji: '🔥' },
+        { label: t('onboarding.formQuestions.equipment_airfryer'), value: 'equipment_airfryer', emoji: '🍟' },
+        { label: t('onboarding.formQuestions.equipment_microwave'), value: 'equipment_microwave', emoji: '📡' },
+        { label: t('onboarding.formQuestions.equipment_blender'), value: 'equipment_blender', emoji: '🥤' },
+        { label: t('onboarding.formQuestions.equipment_robot'), value: 'equipment_robot', emoji: '🤖' },
       ]
     },
     {
       key: 'mealBudget',
       fieldName: 'mealBudget',
-      question: I18n.t('onboarding.mealBudget'),
+      question: t('onboarding.mealBudget'),
       options: [
-        { label: I18n.t('onboarding.formQuestions.budget_small'), value: 'budget_small', emoji: '💡' },
-        { label: I18n.t('onboarding.formQuestions.budget_medium'), value: 'budget_medium', emoji: '💰' },
-        { label: I18n.t('onboarding.formQuestions.budget_large'), value: 'budget_large', emoji: '💎' },
+        { label: t('onboarding.formQuestions.budget_small'), value: 'budget_small', emoji: '💡' },
+        { label: t('onboarding.formQuestions.budget_medium'), value: 'budget_medium', emoji: '💰' },
+        { label: t('onboarding.formQuestions.budget_large'), value: 'budget_large', emoji: '💎' },
       ]
     },
     {
       fieldName: 'favoriteDishType',
-      question: I18n.t('onboarding.favoriteDishType'),
+      question: t('onboarding.favoriteDishType'),
       optional: true,
       options: [
-        { label: I18n.t('onboarding.formQuestions.dish_soup'), value: 'dish_soup', emoji: '🥣' },
-        { label: I18n.t('onboarding.formQuestions.dish_gratin'), value: 'dish_gratin', emoji: '🧀' },
-        { label: I18n.t('onboarding.formQuestions.dish_salad'), value: 'dish_salad', emoji: '🥗' },
-        { label: I18n.t('onboarding.formQuestions.dish_oven'), value: 'dish_oven', emoji: '🔥' },
-        { label: I18n.t('onboarding.formQuestions.dish_street'), value: 'dish_street', emoji: '🌯' },
+        { label: t('onboarding.formQuestions.dish_soup'), value: 'dish_soup', emoji: '🥣' },
+        { label: t('onboarding.formQuestions.dish_gratin'), value: 'dish_gratin', emoji: '🧀' },
+        { label: t('onboarding.formQuestions.dish_salad'), value: 'dish_salad', emoji: '🥗' },
+        { label: t('onboarding.formQuestions.dish_oven'), value: 'dish_oven', emoji: '🔥' },
+        { label: t('onboarding.formQuestions.dish_street'), value: 'dish_street', emoji: '🌯' },
       ]
     },
     {
       fieldName: 'favoriteCuisineStyle',
-      question: I18n.t('onboarding.favoriteCuisineStyle'),
+      question: t('onboarding.favoriteCuisineStyle'),
       multi: true,
       optional: true,
       options: [
-        { label: I18n.t('onboarding.formQuestions.cuisine_mediterranean'), value: 'cuisine_mediterranean', emoji: '🫒' },
-        { label: I18n.t('onboarding.formQuestions.cuisine_french'), value: 'cuisine_french', emoji: '🥖' },
-        { label: I18n.t('onboarding.formQuestions.cuisine_italian'), value: 'cuisine_italian', emoji: '🍝' },
-        { label: I18n.t('onboarding.formQuestions.cuisine_middle_eastern'), value: 'cuisine_middle_eastern', emoji: '🧆' },
-        { label: I18n.t('onboarding.formQuestions.cuisine_indian'), value: 'cuisine_indian', emoji: '🍛' },
-        { label: I18n.t('onboarding.formQuestions.cuisine_asian'), value: 'cuisine_asian', emoji: '🥢' },
-        { label: I18n.t('onboarding.formQuestions.cuisine_american'), value: 'cuisine_american', emoji: '🍔' },
-        { label: I18n.t('onboarding.formQuestions.cuisine_spicy'), value: 'cuisine_spicy', emoji: '🌶️' },
+        { label: t('onboarding.formQuestions.cuisine_mediterranean'), value: 'cuisine_mediterranean', emoji: '🫒' },
+        { label: t('onboarding.formQuestions.cuisine_french'), value: 'cuisine_french', emoji: '🥖' },
+        { label: t('onboarding.formQuestions.cuisine_italian'), value: 'cuisine_italian', emoji: '🍝' },
+        { label: t('onboarding.formQuestions.cuisine_middle_eastern'), value: 'cuisine_middle_eastern', emoji: '🧆' },
+        { label: t('onboarding.formQuestions.cuisine_indian'), value: 'cuisine_indian', emoji: '🍛' },
+        { label: t('onboarding.formQuestions.cuisine_asian'), value: 'cuisine_asian', emoji: '🥢' },
+        { label: t('onboarding.formQuestions.cuisine_american'), value: 'cuisine_american', emoji: '🍔' },
+        { label: t('onboarding.formQuestions.cuisine_spicy'), value: 'cuisine_spicy', emoji: '🌶️' },
       ]
     },
     {
-      question: I18n.t('onboarding.habitsIntro'),
+      question: t('onboarding.habitsIntro'),
       options: [],
       interstitial: true,
       hideProgress: true,
     },
     {
       fieldName: 'diet',
-      question: I18n.t('onboarding.diet'),
+      question: t('onboarding.diet'),
       optional: true,
       options: [
-        { label: I18n.t('onboarding.formQuestions.halal'), value: 'halal', emoji: '🥙' },
-        { label: I18n.t('onboarding.formQuestions.vegetarian'), value: 'vegetarian', emoji: '🥦' },
-        { label: I18n.t('onboarding.formQuestions.vegan'), value: 'vegan', emoji: '🌿' }
+        { label: t('onboarding.formQuestions.halal'), value: 'halal', emoji: '🥙' },
+        { label: t('onboarding.formQuestions.vegetarian'), value: 'vegetarian', emoji: '🥦' },
+        { label: t('onboarding.formQuestions.vegan'), value: 'vegan', emoji: '🌿' }
       ]
     },
     {
       fieldName: 'avoidIngredients',
-      question: I18n.t('onboarding.avoidIngredients'),
+      question: t('onboarding.avoidIngredients'),
       multi: true,
       optional: true,
       options: [
-        { label: I18n.t('onboarding.formQuestions.avoid_pork'), value: 'avoid_pork', emoji: '🐷' },
-        { label: I18n.t('onboarding.formQuestions.avoid_alcohol'), value: 'avoid_alcohol', emoji: '🍷' },
-        { label: I18n.t('onboarding.formQuestions.avoid_beef'), value: 'avoid_beef', emoji: '🥩' },
-        { label: I18n.t('onboarding.formQuestions.avoid_fish'), value: 'avoid_fish', emoji: '🐟' },
-        { label: I18n.t('onboarding.formQuestions.avoid_dairy'), value: 'avoid_dairy', emoji: '🥛' },
-        { label: I18n.t('onboarding.formQuestions.avoid_gluten'), value: 'avoid_gluten', emoji: '🌾' },
+        { label: t('onboarding.formQuestions.avoid_pork'), value: 'avoid_pork', emoji: '🐷' },
+        { label: t('onboarding.formQuestions.avoid_alcohol'), value: 'avoid_alcohol', emoji: '🍷' },
+        { label: t('onboarding.formQuestions.avoid_beef'), value: 'avoid_beef', emoji: '🥩' },
+        { label: t('onboarding.formQuestions.avoid_fish'), value: 'avoid_fish', emoji: '🐟' },
+        { label: t('onboarding.formQuestions.avoid_dairy'), value: 'avoid_dairy', emoji: '🥛' },
+        { label: t('onboarding.formQuestions.avoid_gluten'), value: 'avoid_gluten', emoji: '🌾' },
       ]
     },
     {
       fieldName: 'useCase',
-      question: I18n.t('onboarding.useCase'),
+      question: t('onboarding.useCase'),
       options: [
-        { label: I18n.t('onboarding.formQuestions.usecase_ideas'), value: 'usecase_ideas', emoji: '💡' },
-        { label: I18n.t('onboarding.formQuestions.usecase_leftovers'), value: 'usecase_leftovers', emoji: '🧊' },
-        { label: I18n.t('onboarding.formQuestions.usecase_healthy'), value: 'usecase_healthy', emoji: '🥗' },
-        { label: I18n.t('onboarding.formQuestions.usecase_time'), value: 'usecase_time', emoji: '⏱️' },
+        { label: t('onboarding.formQuestions.usecase_ideas'), value: 'usecase_ideas', emoji: '💡' },
+        { label: t('onboarding.formQuestions.usecase_leftovers'), value: 'usecase_leftovers', emoji: '🧊' },
+        { label: t('onboarding.formQuestions.usecase_healthy'), value: 'usecase_healthy', emoji: '🥗' },
+        { label: t('onboarding.formQuestions.usecase_time'), value: 'usecase_time', emoji: '⏱️' },
       ]
     },
     {
@@ -898,47 +902,49 @@ export default function FormQuestionScreen() {
         await AsyncStorage.setItem(QUESTIONS_ANSWERED_KEY, 'true');
 
         // Sauvegarder les réponses dans la base de données pour un utilisateur anonyme
-        try {
-          const allAnswers: Record<string, string> = {};
+        // On ne met pas de "await" ici pour ne pas bloquer l'UI si le réseau est lent
+        (async () => {
+          try {
+            const allAnswers: Record<string, string> = {};
 
-          // Récupérer toutes les réponses en parallèle pour être plus rapide
-          const actualQuestions = questions.filter(q => !q.specialType);
-          const answerPromises = actualQuestions.map(async (q, i) => {
-            const questionKey = q.fieldName || q.key || `question_${i}`;
-            const savedAnswer = await AsyncStorage.getItem(questionKey);
-            return { key: questionKey, value: savedAnswer };
-          });
-
-          const results = await Promise.all(answerPromises);
-          results.forEach(result => {
-            if (result.value) {
-              allAnswers[result.key] = result.value;
-            }
-          });
-
-          // Ajouter la réponse actuelle si elle n'est pas déjà dans allAnswers
-          const currentQuestionKey = questions[index].fieldName || questions[index].key || `question_${index}`;
-          allAnswers[currentQuestionKey] = answer;
-
-          // Récupérer le mobileId unique de l'appareil
-          const mobileId = await getUniqueDeviceId();
-          const timezone = Localization.getCalendars()[0].timeZone || undefined;
-
-          // Envoyer les réponses à l'API
-          const response = await api.saveOnboardingAnswers(allAnswers, mobileId, timezone);
-          if (response.error) {
-            console.error('❌ Erreur lors de la sauvegarde des réponses:', response.error);
-          } else {
-            await AsyncStorage.setItem('userId', response.data?.userId as string);
-            analytics.identify(response.data?.userId as string);
-            analytics.setUserProperties({
-              ...allAnswers
+            // Récupérer toutes les réponses en parallèle pour être plus rapide
+            const actualQuestions = questions.filter(q => !q.specialType);
+            const answerPromises = actualQuestions.map(async (q, i) => {
+              const questionKey = q.fieldName || q.key || `question_${i}`;
+              const savedAnswer = await AsyncStorage.getItem(questionKey);
+              return { key: questionKey, value: savedAnswer };
             });
-            console.log('✅ Réponses d\'onboarding sauvegardées avec succès');
+
+            const results = await Promise.all(answerPromises);
+            results.forEach(result => {
+              if (result.value) {
+                allAnswers[result.key] = result.value;
+              }
+            });
+
+            // Ajouter la réponse actuelle si elle n'est pas déjà dans allAnswers
+            const currentQuestionKey = questions[index].fieldName || questions[index].key || `question_${index}`;
+            allAnswers[currentQuestionKey] = answer;
+
+            // Récupérer le mobileId unique de l'appareil
+            const mobileId = await getUniqueDeviceId();
+            const timezone = Localization.getCalendars()[0].timeZone || undefined;
+
+            // Envoyer les réponses à l'API
+            const response = await api.saveOnboardingAnswers(allAnswers, mobileId, timezone);
+            if (response.error) {
+              console.error('❌ Erreur lors de la sauvegarde des réponses:', response.error);
+            } else if (response.data?.userId) {
+              await AsyncStorage.setItem('userId', response.data.userId);
+              analytics.identify(response.data.userId);
+              analytics.setUserProperties({
+                ...allAnswers
+              });
+            }
+          } catch (error) {
+            console.error('Erreur lors de la sauvegarde des réponses:', error);
           }
-        } catch (error) {
-          console.error('❌ Erreur lors de la sauvegarde des réponses:', error);
-        }
+        })();
       }
 
       if (index === questions.length - 1) {
@@ -1197,10 +1203,10 @@ export default function FormQuestionScreen() {
         >
           <Text style={styles.buttonText}>
             {questions[index].specialType === 'socialProof' || questions[index].specialType === 'notifications'
-              ? I18n.t('onboarding.socialProof.button')
+              ? t('onboarding.socialProof.button')
               : questions[index].specialType === 'onboardingReady'
-                ? I18n.t('onboardingReady.button')
-                : I18n.t('onboarding.next')}
+                ? t('onboardingReady.button')
+                : t('onboarding.next')}
           </Text>
         </TouchableOpacity>
       )}

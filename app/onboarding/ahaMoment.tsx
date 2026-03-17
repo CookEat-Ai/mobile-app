@@ -9,9 +9,8 @@ import {
   View,
   Platform,
 } from 'react-native';
-import { FontAwesome6 } from '@expo/vector-icons';
 import { Colors } from '../../constants/Colors';
-import I18n from '../../i18n';
+import { useTranslation } from 'react-i18next';
 import analytics from '../../services/analytics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../../components/ui/IconSymbol';
@@ -22,7 +21,7 @@ export default function AhaMomentScreen() {
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
-  const progressAnim = useRef(new Animated.Value(1)).current; // 100% progress finale
+  const { t } = useTranslation();
 
   useEffect(() => {
     analytics.track('onboarding_aha_moment_viewed');
@@ -63,8 +62,8 @@ export default function AhaMomentScreen() {
             renderToHardwareTextureAndroid={Platform.OS === 'android'}
           >
             <Text style={styles.emoji}>✨</Text>
-            <Text style={styles.title}>{I18n.t('onboarding.ahaMoment.title')}</Text>
-            <Text style={styles.subtitle}>{I18n.t('onboarding.ahaMoment.subtitle')}</Text>
+            <Text style={styles.title}>{t('onboarding.ahaMoment.title')}</Text>
+            <Text style={styles.subtitle}>{t('onboarding.ahaMoment.subtitle')}</Text>
           </Animated.View>
         </View>
       </View>
@@ -80,7 +79,7 @@ export default function AhaMomentScreen() {
           onPress={handleCameraPress}
         >
           <IconSymbol name="camera.fill" size={24} color="white" />
-          <Text style={styles.buttonText}>{I18n.t('onboarding.ahaMoment.cameraButton')}</Text>
+          <Text style={styles.buttonText}>{t('onboarding.ahaMoment.cameraButton')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -88,7 +87,7 @@ export default function AhaMomentScreen() {
           style={styles.skipButton}
           onPress={handleSkip}
         >
-          <Text style={styles.skipButtonText}>{I18n.t('onboarding.ahaMoment.skip')}</Text>
+          <Text style={styles.skipButtonText}>{t('onboarding.ahaMoment.skip')}</Text>
         </TouchableOpacity>
       </Animated.View>
     </View>

@@ -1,7 +1,8 @@
 import { router, useFocusEffect } from "expo-router";
 import React, { useState, useCallback, useRef } from 'react';
-import I18n from '../../i18n';
-import { FlatList, StyleSheet, Text, View, RefreshControl, TouchableOpacity, Alert, Animated, Platform, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { FlatList, StyleSheet, Text, View, RefreshControl, TouchableOpacity, Alert, Animated, ActivityIndicator } from 'react-native';
+import Reanimated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../constants/Colors';
@@ -27,6 +28,7 @@ interface ImportedRecipe {
 const BATCH_SIZE = 30;
 
 export default function ImportedScreen() {
+  const { t } = useTranslation();
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [recipes, setRecipes] = useState<ImportedRecipe[]>([]);
@@ -164,15 +166,15 @@ export default function ImportedScreen() {
 
   const handleDeleteRecipe = async (recipe: ImportedRecipe) => {
     Alert.alert(
-      I18n.t('home.deleteRecipe.title'),
-      I18n.t('home.deleteRecipe.message', { title: recipe.title }),
+      t('home.deleteRecipe.title'),
+      t('home.deleteRecipe.message', { title: recipe.title }),
       [
         {
-          text: I18n.t('common.cancel'),
+          text: t('common.cancel'),
           style: 'cancel',
         },
         {
-          text: I18n.t('common.delete'),
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -191,11 +193,11 @@ export default function ImportedScreen() {
                   animatedValues.current.delete(recipe.id);
                 });
               } else {
-                Alert.alert(I18n.t('common.error'), I18n.t('recipeDetail.error'));
+                Alert.alert(t('common.error'), t('recipeDetail.error'));
               }
             } catch (error) {
               console.error('Error deleting recipe:', error);
-              Alert.alert(I18n.t('common.error'), I18n.t('recipeDetail.error'));
+              Alert.alert(t('common.error'), t('recipeDetail.error'));
             }
           },
         },
@@ -220,9 +222,9 @@ export default function ImportedScreen() {
             <View style={styles.proBadge}>
               <Text style={styles.proBadgeText}>PREMIUM</Text>
             </View>
-            <Text style={styles.premiumTitle}>{I18n.t('imported.premiumTitle')}</Text>
+            <Text style={styles.premiumTitle}>{t('imported.premiumTitle')}</Text>
             <Text style={styles.premiumDescription}>
-              {I18n.t('imported.premiumDescription')}
+              {t('imported.premiumDescription')}
             </Text>
           </View>
           <View style={styles.premiumIconContainer}>
@@ -238,8 +240,8 @@ export default function ImportedScreen() {
       <View style={styles.emptyIconWrapper}>
         <IconSymbol name="square.and.arrow.down" size={48} color={colors.textSecondary} />
       </View>
-      <Text style={styles.emptyTitle}>{I18n.t('imported.noImported')}</Text>
-      <Text style={styles.emptyDescription}>{I18n.t('imported.noImportedDescription')}</Text>
+      <Text style={styles.emptyTitle}>{t('imported.noImported')}</Text>
+      <Text style={styles.emptyDescription}>{t('imported.noImportedDescription')}</Text>
     </View>
   );
 
@@ -251,8 +253,11 @@ export default function ImportedScreen() {
       locations={[0, 0.3]}
       style={[styles.container, { paddingTop: insets.top + 40 }]}
     >
-      <View style={styles.titleContainer}>
-        <Text style={styles.mainTitle} numberOfLines={1} adjustsFontSizeToFit>{I18n.t('imported.title')}</Text>
+      <Reanimated.View
+        entering={FadeInDown.duration(400).delay(50)}
+        style={styles.titleContainer}
+      >
+        <Text style={styles.mainTitle} numberOfLines={1} adjustsFontSizeToFit>{t('imported.title')}</Text>
         <TouchableOpacity
           style={styles.helpButton}
           onPress={() => router.push({
@@ -263,7 +268,7 @@ export default function ImportedScreen() {
         >
           <IconSymbol name="help" size={24} color={Colors.light.textSecondary} />
         </TouchableOpacity>
-      </View>
+      </Reanimated.View>
 
       {loading ? (
         <View style={styles.loadingContainer}>
@@ -273,32 +278,40 @@ export default function ImportedScreen() {
         <FlatList
           data={recipes}
           keyExtractor={(item) => item.id}
-          ListHeaderComponent={!isSubscribed ? renderPremiumCard : null}
-          renderItem={({ item }) => {
+          ListHeaderComponent={!isSubscribed ? (
+            <Reanimated.View entering={FadeInDown.duration(400).delay(100)}>
+              {renderPremiumCard()}
+            </Reanimated.View>
+          ) : null}
+          renderItem={({ item, index }) => {
             const anim = getAnimatedValue(item.id);
             return (
-              <Animated.View
-                style={{
-                  opacity: anim,
-                  transform: [{
-                    scale: anim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0.8, 1],
-                    }),
-                  }],
-                  maxHeight: anim.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 500], // Une valeur assez grande pour ne pas couper la carte
-                  }),
-                  overflow: 'hidden',
-                }}
+              <Reanimated.View
+                entering={FadeInDown.duration(400).delay(150 + index * 50)}
               >
-                <RecipeCard
-                  item={item as any}
-                  onPress={() => handleRecipePress(item)}
-                  onLongPress={() => handleDeleteRecipe(item)}
-                />
-              </Animated.View>
+                <Animated.View
+                  style={{
+                    opacity: anim,
+                    transform: [{
+                      scale: anim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0.8, 1],
+                      }),
+                    }],
+                    maxHeight: anim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, 500], // Une valeur assez grande pour ne pas couper la carte
+                    }),
+                    overflow: 'hidden',
+                  }}
+                >
+                  <RecipeCard
+                    item={item as any}
+                    onPress={() => handleRecipePress(item)}
+                    onLongPress={() => handleDeleteRecipe(item)}
+                  />
+                </Animated.View>
+              </Reanimated.View>
             );
           }}
           showsVerticalScrollIndicator={false}

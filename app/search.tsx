@@ -1,7 +1,7 @@
 import { router } from "expo-router";
 import React, { useState } from 'react';
-import I18n from '../i18n';
-import { FlatList, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CategoryButton from '../components/CategoryButton';
 import { RecipeCard } from '../components/RecipeCard';
@@ -228,11 +228,11 @@ const categories = [
 ];
 
 export default function SearchScreen({ navigation }: { navigation: any }) {
-
+  const { t } = useTranslation();
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState('');
-  const [likedRecipes, setLikedRecipes] = useState<Set<string>>(new Set(['2']));
+
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   // Fonction pour filtrer les recettes par texte de recherche
@@ -263,18 +263,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
     return Object.entries(filteredRecipes);
   };
 
-  const handleLikePress = (recipeId: string) => {
-    const newLikedRecipes = new Set(likedRecipes);
-    if (newLikedRecipes.has(recipeId)) {
-      newLikedRecipes.delete(recipeId);
-    } else {
-      newLikedRecipes.add(recipeId);
-    }
-    setLikedRecipes(newLikedRecipes);
-  };
-
   const handleCategoryPress = (category: any) => {
-    console.log('Category pressed:', category.title);
     if (category.title === 'All') {
       setSelectedCategory(null);
     } else {
@@ -283,7 +272,6 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
   };
 
   const handleRecipePress = (recipe: any) => {
-    console.log('Recipe pressed:', recipe.title);
     router.push({
       pathname: '/recipe-detail',
       params: { id: recipe.id }
@@ -291,16 +279,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
   };
 
   const handleSearch = () => {
-    console.log('Searching for:', searchText);
     // La recherche se fait automatiquement via le state searchText
-  };
-
-  const handleNotificationPress = () => {
-    console.log('Notifications pressed');
-  };
-
-  const handleProfilePress = () => {
-    console.log('Profile pressed');
   };
 
   return (
@@ -312,7 +291,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
         {/* Titre principal */}
         <View style={styles.titleContainer}>
           <Text style={[styles.mainTitle, { color: colors.text }]}>
-            {I18n.t('search.title')}
+            {t('search.title')}
           </Text>
         </View>
 
@@ -329,7 +308,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
             {categories.map((category) => (
               <CategoryButton
                 key={category.id}
-                title={I18n.t(`search.categories.${category.title}`)}
+                title={t(`search.categories.${category.title}`)}
                 icon={category.icon}
                 colorIcon={category.colorIcon}
                 isMore={category.isMore}
@@ -348,7 +327,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
         {getFilteredRecipes().map(([categoryKey, recipes]) => (
           <View key={categoryKey} style={styles.categorySection}>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>
-              {I18n.t(`search.categories.${categoryKey}`)}
+              {t(`search.categories.${categoryKey}`)}
             </Text>
             <FlatList
               data={recipes}

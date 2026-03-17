@@ -14,6 +14,7 @@ export default function OnboardingLayout() {
         <Stack.Screen name="personalizedRecipes" options={{ headerShown: false }} />
         <Stack.Screen name="videoDemo" options={{ headerShown: false }} />
         <Stack.Screen name="videoImportTutorial" options={{ headerShown: false }} />
+        <Stack.Screen name="promoCode" options={{ headerShown: false }} />
         <Stack.Screen name="reminder" options={{ headerShown: false }} />
         <Stack.Screen name="onboardingProfileReady" options={{ headerShown: false }} />
       </Stack>

@@ -1,7 +1,8 @@
 import { router, useFocusEffect } from "expo-router";
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import I18n from '../../i18n';
-import { ScrollView, StyleSheet, Text, View, TouchableOpacity, Platform, Image, ActivityIndicator, Alert, RefreshControl, Animated } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { ScrollView, StyleSheet, Text, View, TouchableOpacity, Platform, Image, ActivityIndicator, Alert, RefreshControl, Animated, Easing } from 'react-native';
+import Reanimated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../constants/Colors';
@@ -15,6 +16,7 @@ import { getUniqueDeviceId } from '../../services/deviceStorage';
 import { RecipeCard } from "../../components/RecipeCard";
 import recipeStorage from "../../services/recipeStorage";
 import { hasShownWheelInSession, markWheelShownInSession } from '../../services/sessionFlags';
+import { LuckyWheelIcon } from "../../components/LuckyWheelIcon";
 
 const STORAGE_KEY = 'pantry_ingredients';
 const HISTORY_BATCH_SIZE = 30;
@@ -30,6 +32,7 @@ interface HistoryItem {
 }
 
 export default function HomeScreen() {
+  const { t, i18n } = useTranslation();
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [pantryCount, setPantryCount] = useState(0);
@@ -41,6 +44,24 @@ export default function HomeScreen() {
   const [streakCount, setStreakCount] = useState(0);
   const [weekActivity, setWeekActivity] = useState<boolean[]>(Array(7).fill(false));
   const [refreshing, setRefreshing] = useState(false);
+  const wheelRotate = useRef(new Animated.Value(0)).current;
+
+  // Animation de la roue
+  useEffect(() => {
+    Animated.loop(
+      Animated.timing(wheelRotate, {
+        toValue: 1,
+        duration: 2000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
+    ).start();
+  }, [wheelRotate]);
+
+  const rotation = wheelRotate.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
 
   const animatedValues = useRef<Map<string, Animated.Value>>(new Map());
 
@@ -107,7 +128,6 @@ export default function HomeScreen() {
       checkSubscription();
       loadHistory(1, false); // On ne reset plus pour préserver la position du scroll
       applyCachedImages();
-      maybeShowLaunchWheel();
     }, [])
   );
 
@@ -260,6 +280,14 @@ export default function HomeScreen() {
 
   const checkSubscription = async () => {
     try {
+      // 1. Tenter de charger le dernier statut caché pour un affichage immédiat
+      const lastStatusRaw = await AsyncStorage.getItem('rc_last_subscription_status');
+      if (lastStatusRaw) {
+        const lastStatus = JSON.parse(lastStatusRaw);
+        setIsSubscribed(lastStatus.isSubscribed);
+      }
+
+      // 2. Vérifier le statut réel via le service (réseau/SDK)
       const status = await revenueCatService.getSubscriptionStatus();
       setIsSubscribed(status.isSubscribed);
     } catch (e) {
@@ -315,12 +343,12 @@ export default function HomeScreen() {
 
   const handleDeleteRecipe = (item: HistoryItem) => {
     Alert.alert(
-      I18n.t('home.deleteRecipe.title'),
-      I18n.t('home.deleteRecipe.message', { title: item.title }),
+      t('home.deleteRecipe.title'),
+      t('home.deleteRecipe.message', { title: item.title }),
       [
-        { text: I18n.t('common.cancel'), style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: I18n.t('common.delete'),
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -350,7 +378,7 @@ export default function HomeScreen() {
   };
 
   const handleHistoryPress = async (item: HistoryItem) => {
-    if (item.id.startsWith('mock-')) {
+    if (item.id?.startsWith('mock-')) {
       // Données de test : naviguer avec les données fictives
       const mockRecipe = {
         id: item.id,
@@ -409,7 +437,7 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
         style={{ overflow: 'visible' }}
         contentContainerStyle={{
-          paddingTop: insets.top + 20,
+          paddingTop: insets.top,
           paddingBottom: 100,
           paddingHorizontal: 20
         }}
@@ -424,7 +452,10 @@ export default function HomeScreen() {
           />
         }
       >
-        <View style={styles.titleContainer}>
+        <Reanimated.View
+          entering={FadeInDown.duration(400).delay(50)}
+          style={styles.titleContainer}
+        >
           <View style={styles.mainTitleRow}>
             <Text style={styles.mainTitle}>CookEat Ai</Text>
             <Image
@@ -432,14 +463,26 @@ export default function HomeScreen() {
               style={styles.mainTitleMascot}
             />
           </View>
-          <View style={styles.streakCard}>
+          <Reanimated.View
+            entering={FadeInDown.duration(400).delay(100)}
+            style={styles.streakCard}
+          >
             <View style={styles.streakLeft}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={[styles.streakNumber, { color: colors.button }]}>{streakCount}</Text>
-                <Text style={{ fontSize: Platform.OS === 'android' ? 24 : 32, marginLeft: 5 }}>🔥</Text>
-              </View>
-              <Text style={[styles.streakLabel, { color: colors.button }]}>
-                {streakCount > 1 ? I18n.t('home.streak.days') : I18n.t('home.streak.day')}
+              <Text
+                style={[
+                  styles.streakNumber,
+                  {
+                    color: colors.button,
+                    textAlign: 'right',
+                    maxWidth: Platform.OS === 'android' ? 50 : 60,
+                    lineHeight: Platform.OS === 'android' ? 38 : 46
+                  }
+                ]}
+              >
+                {String(streakCount).match(/.{1,2}/g)?.join('\n')}
+              </Text>
+              <Text style={[styles.streakLabel, { color: colors.button, marginLeft: 4, alignSelf: 'flex-end' }]}>
+                {streakCount > 1 ? t('home.streak.days') : t('home.streak.day')}
               </Text>
             </View>
             <View style={styles.streakRight}>
@@ -453,7 +496,7 @@ export default function HomeScreen() {
                   monday.setDate(today.getDate() - diffToMonday);
                   const date = new Date(monday);
                   date.setDate(monday.getDate() + i);
-                  const dayName = date.toLocaleDateString(I18n.locale.startsWith('fr') ? 'fr-FR' : 'en-US', { weekday: 'short' }).slice(0, 2);
+                  const dayName = date.toLocaleDateString(i18n.language.startsWith('fr') ? 'fr-FR' : 'en-US', { weekday: 'short' }).slice(0, 2);
                   const isToday = date.getTime() === today.getTime();
                   const isActive = weekActivity[i];
 
@@ -471,101 +514,155 @@ export default function HomeScreen() {
                 })}
               </View>
             </View>
-          </View>
-        </View>
+          </Reanimated.View>
+        </Reanimated.View>
+
+        {/* Bandeau Offre de Bienvenue - Affiché uniquement si non abonné */}
+        {(!isSubscribed) && (
+          <Reanimated.View entering={FadeInDown.duration(400).delay(150)}>
+            <TouchableOpacity
+              style={[styles.welcomeOfferCard, { marginBottom: 20 }]}
+              onPress={() => router.push({ pathname: '/paywall', params: { source: 'home_welcome_offer', initialState: 'WHEEL' } })}
+              activeOpacity={0.9}
+            >
+              <LinearGradient
+                colors={['#FF5C00', '#FF8E53']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.premiumGradient}
+              >
+                <View style={styles.premiumContent}>
+                  <View style={{ flex: 1 }}>
+                    {/* <View style={styles.welcomeBadge}>
+                    <Text style={styles.proBadgeText} numberOfLines={2} adjustsFontSizeToFit={true}>{t('luckyWheel.title_A').toUpperCase()}</Text>
+                  </View> */}
+                    <Text style={styles.premiumTitle} numberOfLines={1} adjustsFontSizeToFit={true}>{t('luckyWheel.congrats')}</Text>
+                  </View>
+                  <View style={styles.premiumIconContainer}>
+                    {/* Flèche de la roue */}
+                    <View style={{
+                      position: 'absolute',
+                      top: -1,
+                      left: '50%',
+                      marginLeft: -6,
+                      zIndex: 2,
+                      transform: [{ rotate: '180deg' }]
+                    }}>
+                      <Ionicons name="triangle" size={12} color={Colors.light.button} />
+                    </View>
+                    <Animated.View style={{ transform: [{ rotate: rotation }] }}>
+                      <LuckyWheelIcon size={56} />
+                    </Animated.View>
+                  </View>
+                </View>
+              </LinearGradient>
+            </TouchableOpacity>
+          </Reanimated.View>
+        )}
 
         {/* Upsell Premium - Affiché uniquement si non abonné, ou toujours en mode dev */}
         {(!isSubscribed) && (
-          <TouchableOpacity
-            style={[styles.premiumCard, { marginBottom: 20 }]}
-            onPress={() => router.push({ pathname: '/paywall', params: { source: 'home_banner' } })}
-            activeOpacity={0.9}
-          >
-            <LinearGradient
-              colors={['#FFD700', '#FDB931']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.premiumGradient}
+          <Reanimated.View entering={FadeInDown.duration(400).delay(200)}>
+            <TouchableOpacity
+              style={[styles.premiumCard, { marginBottom: 20 }]}
+              onPress={() => router.push({ pathname: '/paywall', params: { source: 'home_banner' } })}
+              activeOpacity={0.9}
             >
-              <View style={styles.premiumContent}>
-                <View style={{ flex: 1 }}>
-                  <View style={styles.proBadge}>
-                    <Text style={styles.proBadgeText}>PREMIUM</Text>
+              <LinearGradient
+                colors={['#FFD700', '#FDB931']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.premiumGradient}
+              >
+                <View style={styles.premiumContent}>
+                  <View style={{ flex: 1 }}>
+                    <View style={styles.proBadge}>
+                      <Text style={styles.proBadgeText}>PREMIUM</Text>
+                    </View>
+                    <Text style={styles.premiumTitle}>{t('profile.premiumTitle')}</Text>
+                    <Text style={styles.premiumDescription}>
+                      {t('profile.premiumPrice')}
+                    </Text>
                   </View>
-                  <Text style={styles.premiumTitle}>{I18n.t('profile.premiumTitle')}</Text>
-                  <Text style={styles.premiumDescription}>
-                    {I18n.t('profile.premiumPrice')}
-                  </Text>
+                  <View style={styles.premiumIconContainer}>
+                    <IconSymbol name="crown.fill" size={40} color="white" />
+                  </View>
                 </View>
-                <View style={styles.premiumIconContainer}>
-                  <IconSymbol name="crown.fill" size={40} color="white" />
-                </View>
-              </View>
-            </LinearGradient>
-          </TouchableOpacity>
+              </LinearGradient>
+            </TouchableOpacity>
+          </Reanimated.View>
         )}
 
         {/* Garde-manger */}
-        <TouchableOpacity
-          style={styles.pantryCard}
-          onPress={handlePantryPress}
-          activeOpacity={0.9}
-        >
-          <View style={styles.pantryCardHeader}>
-            <View style={styles.pantryCardTitleContainer}>
-              <IconSymbol name="archivebox" size={24} color={colors.button} />
-              <Text style={styles.pantryCardTitle}>{I18n.t('pantry.title')}</Text>
+        <Reanimated.View entering={FadeInDown.duration(400).delay(250)}>
+          <TouchableOpacity
+            style={styles.pantryCard}
+            onPress={handlePantryPress}
+            activeOpacity={0.9}
+          >
+            <View style={styles.pantryCardHeader}>
+              <View style={styles.pantryCardTitleContainer}>
+                <IconSymbol name="archivebox" size={24} color={colors.button} />
+                <Text style={styles.pantryCardTitle}>{t('pantry.title')}</Text>
+              </View>
+              <Text style={[styles.pantryCardLink, { color: colors.button }]}>{t('common.seeAll')}</Text>
             </View>
-            <Text style={[styles.pantryCardLink, { color: colors.button }]}>{I18n.t('common.seeAll')}</Text>
-          </View>
 
-          <View style={styles.pantryCardContent}>
-            <View style={styles.pantryStatItem}>
-              <View style={[styles.dot, { backgroundColor: '#4CAF50' }]} />
-              <Text style={styles.pantryStatText}>
-                {pantryCount} {pantryCount <= 1 ? I18n.t('home.ingredient') : I18n.t('home.ingredients')}
-              </Text>
+            <View style={styles.pantryCardContent}>
+              <View style={styles.pantryStatItem}>
+                <View style={[styles.dot, { backgroundColor: '#4CAF50' }]} />
+                <Text style={styles.pantryStatText}>
+                  {pantryCount} {pantryCount <= 1 ? t('home.ingredient') : t('home.ingredients')}
+                </Text>
+              </View>
             </View>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </Reanimated.View>
 
         {/* Historique */}
         {history.length > 0 && (
           <View style={styles.historyContainer}>
-            <View style={styles.historyHeader}>
-              <Text style={styles.sectionTitle}>{I18n.t('home.generatedRecipes')}</Text>
+            <Reanimated.View
+              entering={FadeInDown.duration(400).delay(300)}
+              style={styles.historyHeader}
+            >
+              <Text style={styles.sectionTitle}>{t('home.generatedRecipes')}</Text>
               <TouchableOpacity onPress={() => router.push('/favorites-list')} activeOpacity={0.7}>
                 <Ionicons name="heart-outline" size={24} color="#FFD700" />
               </TouchableOpacity>
-            </View>
-            {history.map((item) => {
+            </Reanimated.View>
+            {history.map((item, index) => {
               const anim = getAnimatedValue(item.id);
               return (
-                <Animated.View
+                <Reanimated.View
                   key={item.id}
-                  style={{
-                    opacity: anim,
-                    transform: [{
-                      scale: anim.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [0.8, 1],
-                      }),
-                    }],
-                    maxHeight: anim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, 250],
-                    }),
-                    overflow: 'hidden',
-                    marginHorizontal: -12,
-                    paddingHorizontal: 12,
-                  }}
+                  entering={FadeInDown.duration(400).delay(350 + index * 50)}
                 >
-                  <RecipeCard
-                    item={item as any}
-                    onPress={() => handleHistoryPress(item)}
-                    onLongPress={() => handleDeleteRecipe(item)}
-                  />
-                </Animated.View>
+                  <Animated.View
+                    style={{
+                      opacity: anim,
+                      transform: [{
+                        scale: anim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.8, 1],
+                        }),
+                      }],
+                      maxHeight: anim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 250],
+                      }),
+                      overflow: 'hidden',
+                      marginHorizontal: -12,
+                      paddingHorizontal: 12,
+                    }}
+                  >
+                    <RecipeCard
+                      item={item as any}
+                      onPress={() => handleHistoryPress(item)}
+                      onLongPress={() => handleDeleteRecipe(item)}
+                    />
+                  </Animated.View>
+                </Reanimated.View>
               );
             })}
             {isLoadingMoreHistory && (
@@ -629,10 +726,14 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   streakLeft: {
-    alignItems: 'center',
-    paddingRight: Platform.OS === 'android' ? 12 : 20,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    paddingRight: 12,
     borderRightWidth: 1,
     borderRightColor: '#F0F0F0',
+  },
+  streakNumberContainer: {
+    alignItems: 'flex-end',
   },
   streakNumber: {
     fontSize: Platform.OS === 'android' ? 40 : 48,
@@ -640,12 +741,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Degular'
   },
   streakLabel: {
-    fontSize: Platform.OS === 'android' ? 14 : 18,
+    paddingLeft: 1,
+    paddingBottom: 4,
+    fontSize: 32,
     fontFamily: 'CronosProBold'
   },
   streakRight: {
     flex: 1,
-    paddingLeft: Platform.OS === 'android' ? 10 : 15,
+    paddingLeft: 12,
   },
   weekDaysRow: {
     flexDirection: 'row',
@@ -747,6 +850,30 @@ const styles = StyleSheet.create({
     fontSize: 12,
     letterSpacing: 1,
     fontFamily: 'Degular'
+  },
+  welcomeBadge: {
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    marginBottom: 8,
+    marginRight: 8,
+  },
+  welcomeOfferCard: {
+    borderRadius: 24,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#FF5C00',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 8,
+        backgroundColor: '#FF5C00',
+      },
+    }),
   },
   premiumTitle: {
     fontSize: 22,

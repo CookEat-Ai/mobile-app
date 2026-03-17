@@ -4,6 +4,8 @@ import { Platform } from 'react-native';
 
 // Mapping pour MaterialIcons (Android/Web) et SF Symbols (iOS)
 const MAPPING = {
+  'wheel.fill': { ios: 'wheel.fill', android: 'wheel' },
+  'gift.fill': { ios: 'gift.fill', android: 'gift' },
   'house': { ios: 'house', android: 'home' },
   'house.fill': { ios: 'house.fill', android: 'home' },
   'paperplane.fill': { ios: 'paperplane.fill', android: 'send' },
@@ -20,7 +22,7 @@ const MAPPING = {
   'camera': { ios: 'camera', android: 'camera-alt' },
   'camera.fill': { ios: 'camera.fill', android: 'camera-alt' },
   'archivebox': { ios: 'archivebox.fill', android: 'inventory' },
-    'crown.fill': { ios: 'crown.fill', android: 'workspace-premium' },
+  'crown.fill': { ios: 'crown.fill', android: 'workspace-premium' },
   'sparkles': { ios: 'sparkles', android: 'auto-fix-high' },
   'clock': { ios: 'clock', android: 'access-time' },
   'list.bullet': { ios: 'list.bullet', android: 'list' },
@@ -33,6 +35,7 @@ const MAPPING = {
   'slider.horizontal.3': { ios: 'slider.horizontal.3', android: 'tune' },
   'trash': { ios: 'trash', android: 'delete' },
   'arrow.right': { ios: 'arrow.right', android: 'arrow-forward' },
+  'wheel': { ios: 'slowmo', android: 'cached' },
   'arrow_forward': { ios: 'arrow.right', android: 'arrow-forward' },
   'help': { ios: 'questionmark.circle', android: 'help-outline' },
   'square.and.arrow.down': { ios: 'square.and.arrow.down', android: 'file-download' },

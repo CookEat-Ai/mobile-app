@@ -2,7 +2,7 @@ import * as Localization from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EventSource from 'react-native-sse';
 import { API_BASE_URL, WS_URL } from '../config/api';
-import I18n from '../i18n';
+import i18n from '../i18n';
 
 function parsePartialJSON(text: string): any {
   if (!text || !text.trim()) return null;
@@ -59,7 +59,72 @@ interface ApiResponse<T> {
 }
 
 class ApiService {
+  private healthWs: WebSocket | null = null;
+  private onHealthChange: ((isAvailable: boolean) => void) | null = null;
+  private reconnectTimer: NodeJS.Timeout | null = null;
+
   constructor() {
+  }
+
+  // Initialiser le monitoring de l'API via WebSocket
+  monitorApiHealth(callback: (isAvailable: boolean) => void) {
+    this.onHealthChange = callback;
+    // Si on a déjà un WS ouvert, on prévient tout de suite
+    if (this.healthWs && this.healthWs.readyState === WebSocket.OPEN) {
+      callback(true);
+    } else {
+      this.connectHealthWs();
+    }
+  }
+
+  private connectHealthWs() {
+    if (this.healthWs) return;
+
+    try {
+      this.healthWs = new WebSocket(WS_URL);
+
+      // Sécurité : Si après 3s on n'est toujours pas OPEN, on considère que c'est DOWN
+      const connectionTimeout = setTimeout(() => {
+        if (this.healthWs && this.healthWs.readyState !== WebSocket.OPEN) {
+          console.log('WS Connection timeout - API considered unavailable');
+          this.handleWsDisconnection();
+        }
+      }, 3000);
+
+      this.healthWs.onopen = () => {
+        clearTimeout(connectionTimeout);
+        this.onHealthChange?.(true);
+        if (this.reconnectTimer) {
+          clearTimeout(this.reconnectTimer);
+          this.reconnectTimer = null;
+        }
+      };
+
+      this.healthWs.onclose = () => {
+        clearTimeout(connectionTimeout);
+        this.handleWsDisconnection();
+      };
+
+      this.healthWs.onerror = () => {
+        clearTimeout(connectionTimeout);
+        this.handleWsDisconnection();
+      };
+    } catch (e) {
+      this.handleWsDisconnection();
+    }
+  }
+
+  private handleWsDisconnection() {
+    this.healthWs = null;
+    this.onHealthChange?.(false);
+
+    // Tenter de se reconnecter toutes les 5 secondes
+    if (!this.reconnectTimer) {
+      this.reconnectTimer = setTimeout(() => {
+        this.reconnectTimer = null;
+        this.connectHealthWs();
+      }, 5000);
+    }
   }
 
   private getHeaders(): HeadersInit {
@@ -72,20 +137,23 @@ class ApiService {
 
   private getCurrentLanguage(): string {
     // On s'assure de n'envoyer que le code de langue (ex: 'fr' au lieu de 'fr-FR')
-    const locale = I18n.locale || 'fr';
+    const locale = i18n.language || 'fr';
     return locale.split('-')[0].split('_')[0].toLowerCase();
   }
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    timeoutMs: number = 60000 // Repasser à un timeout plus long (30s) par défaut
   ): Promise<ApiResponse<T>> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
     try {
       const url = `${API_BASE_URL}${endpoint}`;
-      
+
       const headers: HeadersInit = { ...this.getHeaders() };
-      
-      // Si on envoie du FormData, on laisse le navigateur/fetch gérer le Content-Type
+
       if (options.body instanceof FormData) {
         if ('Content-Type' in headers) {
           delete (headers as any)['Content-Type'];
@@ -95,18 +163,31 @@ class ApiService {
       const response = await fetch(url, {
         ...options,
         headers,
+        signal: controller.signal,
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Erreur de requête');
+        throw new Error(data.message || i18n.t('common.requestError'));
       }
 
       return { data };
-    } catch (error) {
+    } catch (error: any) {
+      if (error.name === 'AbortError') {
+        return { error: i18n.t('common.networkError') };
+      }
+
       console.error('Erreur API:', error);
-      return { error: error instanceof Error ? error.message : 'Erreur inconnue' };
+      let errorMessage = error instanceof Error ? error.message : String(error);
+
+      if (errorMessage === 'Network request failed' || errorMessage.includes('connection') || errorMessage.includes('timeout')) {
+        errorMessage = i18n.t('common.networkError');
+      }
+
+      return { error: errorMessage };
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 
@@ -180,7 +261,7 @@ class ApiService {
               ws?.close();
               break;
             case 'error':
-              callbacks.onError(msg.data.message || 'Erreur de génération');
+              callbacks.onError(msg.data.message || i18n.t('recipe_loading.generationError'));
               ws?.close();
               break;
           }
@@ -191,14 +272,14 @@ class ApiService {
 
       ws.onerror = (e) => {
         console.error('WS error:', e);
-        callbacks.onError('Erreur de connexion WebSocket');
+        callbacks.onError(i18n.t('recipe_loading.connectionError'));
       };
 
       ws.onclose = () => {
         ws = null;
       };
     }).catch(() => {
-      callbacks.onError('Erreur interne');
+      callbacks.onError(i18n.t('recipe_loading.internalError'));
     });
 
     return {
@@ -240,12 +321,12 @@ class ApiService {
   async processImageIngredients(imageUris: string[]) {
     const formData = new FormData();
     formData.append('language', this.getCurrentLanguage());
-    
+
     imageUris.forEach((uri, index) => {
       const filename = uri.split('/').pop() || `image_${index}.jpg`;
       const match = /\.(\w+)$/.exec(filename);
       const type = match ? `image/${match[1]}` : `image/jpeg`;
-      
+
       formData.append('images', {
         uri,
         name: filename,
@@ -337,14 +418,25 @@ class ApiService {
     });
   }
 
-  async getAppConfig() {
-    return this.request<{ dailySearchLimit: number }>('/config');
+  async getAppConfig(timeoutMs?: number) {
+    return this.request<{ dailySearchLimit: number; minAppVersion: string }>('/config', {}, timeoutMs);
   }
 
-  async validatePromoCode(code: string) {
-    return this.request<{ isValid: boolean; message?: string }>('/promo-code/validate', {
+  async checkHealth(timeoutMs?: number) {
+    return this.request<{ status: string }>('/health', { method: 'GET' }, timeoutMs);
+  }
+
+  async validatePromoCode(code: string, mobileId?: string) {
+    return this.request<{ isValid: boolean; discountPercentage?: number; message?: string }>('/promo-code/validate', {
       method: 'POST',
-      body: JSON.stringify({ code, language: this.getCurrentLanguage() }),
+      body: JSON.stringify({ code, mobileId, language: this.getCurrentLanguage() }),
+    });
+  }
+
+  async markPromoCodeUsed(code: string, mobileId: string) {
+    return this.request<{ success: boolean }>('/promo-code/mark-used', {
+      method: 'POST',
+      body: JSON.stringify({ code, mobileId, language: this.getCurrentLanguage() }),
     });
   }
 
@@ -364,7 +456,7 @@ class ApiService {
   ): Promise<ApiResponse<{ success: boolean; recipe: any }>> {
     const userId = await AsyncStorage.getItem('userId');
     const url = `${API_BASE_URL}/recipe/import-from-video`;
-    
+
     return new Promise((resolve) => {
       const es = new EventSource(url, {
         method: 'POST',
@@ -441,7 +533,7 @@ class ApiService {
       const filename = imageUri.split('/').pop() || 'recipe.jpg';
       const match = /\.(\w+)$/.exec(filename);
       const type = match ? `image/${match[1]}` : `image/jpeg`;
-      
+
       formData.append('image', {
         uri: imageUri,
         name: filename,

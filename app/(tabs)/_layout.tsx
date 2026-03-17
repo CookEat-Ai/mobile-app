@@ -4,14 +4,13 @@ import { Platform, TouchableOpacity, View, StyleSheet, Modal, TextInput, Text, P
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HapticTab } from '../../components/HapticTab';
-import I18n from '../../i18n';
-import { useLanguage } from '../../contexts/LanguageContext';
+import { useTranslation } from 'react-i18next';
 import { Colors } from '../../constants/Colors';
 import revenueCatService from '../../config/revenuecat';
 
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
-  const { locale } = useLanguage();
+  const { t } = useTranslation();
   const [tapCount, setTapCount] = useState(0);
   const [showSecretModal, setShowSecretModal] = useState(false);
   const [secretCode, setSecretCode] = useState('');
@@ -44,16 +43,16 @@ export default function TabLayout() {
     try {
       const success = await revenueCatService.activatePromoCode(secretCode);
       if (success) {
-        Alert.alert(I18n.t('common.success'), I18n.t('promoCode.activated'));
+        Alert.alert(t('common.success'), t('promoCode.activated'));
         setShowSecretModal(false);
         setSecretCode('');
         // Forcer un rafraîchissement global si nécessaire
         router.replace('/(tabs)');
       } else {
-        Alert.alert(I18n.t('common.error'), I18n.t('promoCode.invalid'));
+        Alert.alert(t('common.error'), t('promoCode.invalid'));
       }
-    } catch (error) {
-      Alert.alert(I18n.t('common.error'), I18n.t('common.unexpectedError'));
+    } catch {
+      Alert.alert(t('common.error'), t('common.unexpectedError'));
     } finally {
       setIsValidating(false);
     }
@@ -85,21 +84,21 @@ export default function TabLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: I18n.t('tabs.home'),
+            title: t('tabs.home'),
             tabBarIcon: ({ color, focused }) => <IconSymbol size={32} name={focused ? "house.fill" : "house"} color={color} />,
           }}
         />
         <Tabs.Screen
           name="imported"
           options={{
-            title: I18n.t('tabs.imported'),
+            title: t('tabs.imported'),
             tabBarIcon: ({ color, focused }) => <IconSymbol size={32} name={focused ? "square.and.arrow.down.fill" : "square.and.arrow.down"} color={color} />,
           }}
         />
         <Tabs.Screen
           name="profile"
           options={{
-            title: I18n.t('tabs.profile'),
+            title: t('tabs.profile'),
             tabBarIcon: ({ color, focused }) => <IconSymbol size={28} name={focused ? "settings.fill" : "settings"} color={color} />,
             tabBarButton: (props) => (
               <HapticTab
@@ -154,7 +153,7 @@ export default function TabLayout() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>{I18n.t('profile.settings')}</Text>
+            <Text style={styles.modalTitle}>{t('profile.settings')}</Text>
             <TextInput
               style={styles.input}
               placeholder="Code"
@@ -168,7 +167,7 @@ export default function TabLayout() {
                 style={[styles.button, styles.cancelButton]} 
                 onPress={() => setShowSecretModal(false)}
               >
-                <Text style={styles.cancelButtonText}>{I18n.t('common.cancel')}</Text>
+                <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
               </Pressable>
               <Pressable 
                 style={[styles.button, styles.confirmButton]} 
@@ -178,7 +177,7 @@ export default function TabLayout() {
                 {isValidating ? (
                   <ActivityIndicator color="white" size="small" />
                 ) : (
-                  <Text style={styles.confirmButtonText}>{I18n.t('common.confirm')}</Text>
+                  <Text style={styles.confirmButtonText}>{t('common.confirm')}</Text>
                 )}
               </Pressable>
             </View>

@@ -13,12 +13,12 @@
     "ingredients": "ingredients",
     "ingredient": "ingredient",
     "streak": {
-      "day": "day",
-      "days": "days"
+      "day": "d",
+      "days": "d"
     },
     "deleteRecipe": {
       "title": "Delete recipe",
-      "message": "Are you sure you want to delete \"%{title}\"?"
+      "message": "Are you sure you want to delete \"{{title}}\"?"
     },
     "extractingIngredients": "Extracting ingredients...",
     "generatingRecipes": "Generating recipes...",
@@ -224,6 +224,10 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "unexpectedError": "An unexpected error occurred",
+    "requestError": "Request error",
+    "unknownError": "Unknown error",
+    "networkError": "Network error. Please check your internet connection.",
+    "maintenanceMode": "Server unavailable (maintenance)",
     "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
@@ -235,6 +239,16 @@
   "promoCode": {
     "activated": "Promo code successfully activated!",
     "invalid": "Invalid promo code"
+  },
+  "onboardingPromoCode": {
+    "title": "Got a promo code?",
+    "subtitle": "If a creator shared a promo code with you, enter it here to get an exclusive discount.",
+    "placeholder": "YOUR PROMO CODE",
+    "validate": "Validate",
+    "skip": "I don't have a code",
+    "invalid": "This promo code is not valid",
+    "error": "Unable to verify the promo code",
+    "success": "-{{discount}}% discount activated!"
   },
   "profile": {
     "guest": "Guest",
@@ -319,7 +333,13 @@
     "deleteAccountConfirmTitle": "Final confirmation",
     "deleteAccountConfirmMessage": "All your favorite recipes, pantry, and preferences will be erased forever. Are you certain?",
     "deleteAccountButton": "Yes, delete everything",
-    "deleteError": "An error occurred during deletion."
+    "deleteError": "An error occurred during deletion.",
+    "promoCode": "Promo code",
+    "promoCodeDescription": "Enter a promo code to get a discount",
+    "promoCodeTitle": "Promo code",
+    "promoCodePlaceholder": "YOUR PROMO CODE",
+    "promoCodeValidate": "Validate code",
+    "onboardingResetError": "Unable to reset onboarding."
   },
   "offers": {
     "title": "Choose your plan",
@@ -427,7 +447,7 @@
     "restoreTitle": "Restore purchases",
     "restoreDescription": "Feature in development.",
     "promoCodeTitle": "Promo code",
-    "promoCodeDescription": "Feature in development.",
+    "promoCodeDescription": "Enter your promo code to get a discount",
     "promoCodePlaceholder": "Your promo code",
     "promoCodeRequired": "Please enter a promo code",
     "promoCodeInvalidTitle": "Invalid promo code",
@@ -505,8 +525,8 @@
     "subtitle_B": "Unlock up to 33% immediate discount on all our Premium features. Only one chance, make the right choice!",
     "subtitle": "Spin the wheel to unlock an exclusive discount on your subscription.",
     "spin": "Let's go!",
-    "congrats": "Congratulations!",
-    "result": "You unlocked {{discount}}% discount!",
+    "congrats": "Your gift is waiting! 🎁",
+    "result": "You've unlocked {{discount}}% off!",
     "claim": "Claim offer!"
   },
   "onboarding": {
@@ -912,7 +932,10 @@
       "Adjusting ingredient amounts...",
       "Finalizing the steps...",
       "Ready!"
-    ]
+    ],
+    "generationError": "Generation error",
+    "connectionError": "WebSocket connection error",
+    "internalError": "Internal error"
   },
   "camera": {
     "loadingMessagesPhoto": [
@@ -955,7 +978,8 @@
         "message": "Take a photo of your ingredients or your grocery receipt. The AI will automatically extract all items to add to your list.",
         "button": "Got it!"
       }
-    }
+    },
+    "extractionError": "Extraction error"
   },
   "onboarding_loading": {
     "messages": [
@@ -993,5 +1017,10 @@
     "step3": "3. Choose CookEat",
     "button": "Got it!",
     "skip": "Later"
+  },
+  "update": {
+    "title": "Update required",
+    "message": "A new version of CookEat is available with essential features. Please update the app to continue.",
+    "button": "Update now"
   }
 }

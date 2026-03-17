@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Colors } from '../../constants/Colors';
-import I18n from '../../i18n';
+import { useTranslation } from 'react-i18next';
 import analytics from '../../services/analytics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
@@ -23,6 +23,7 @@ const { width } = Dimensions.get('window');
 
 export default function WelcomeScreen() {
   const insets = useSafeAreaInsets();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     analytics.track('onboarding_started');
@@ -191,16 +192,16 @@ export default function WelcomeScreen() {
       <View style={styles.bottomSection}>
         <View style={{ flex: 1, justifyContent: 'center', gap: 20 }}>
           <Animated.View style={{ opacity: titleOpacity }}>
-            <Text style={styles.title}>{I18n.t('onboarding.title')}</Text>
+            <Text style={styles.title}>{t('onboarding.title')}</Text>
           </Animated.View>
           <Animated.View style={{ opacity: descriptionOpacity }}>
-            <Text style={styles.description}>{I18n.t('onboarding.description')}</Text>
+            <Text style={styles.description}>{t('onboarding.description')}</Text>
           </Animated.View>
 
           <Animated.View style={{ opacity: socialOpacity }}>
             <View style={styles.socialProof}>
               <View style={styles.laurel} />
-              <Text style={styles.socialProofText}>{I18n.t('onboarding.socialProof.title', { count: I18n.locale.startsWith('fr') ? '10 000' : '10,000' })}</Text>
+              <Text style={styles.socialProofText}>{t('onboarding.socialProof.title', { count: i18n.language.startsWith('fr') ? '10 000' : '10,000' })}</Text>
               <View style={styles.laurel} />
             </View>
           </Animated.View>
@@ -215,7 +216,7 @@ export default function WelcomeScreen() {
               router.replace('/onboarding/formQuestion');
             }}
           >
-            <Text style={styles.buttonText}>{I18n.t('onboarding.continue')}</Text>
+            <Text style={styles.buttonText}>{t('onboarding.continue')}</Text>
             {/* <IconSymbol
               style={styles.buttonIcon}
               name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}

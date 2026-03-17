@@ -1,24 +1,25 @@
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, ActivityIndicator, Text, TouchableOpacity, Animated, Easing, Alert, Dimensions, Image, Platform, BackHandler } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Wave } from "react-native-animated-spinkit";
 import RevenueCatUI from 'react-native-purchases-ui';
 import Purchases, { PurchasesOffering } from 'react-native-purchases';
 import * as Notifications from 'expo-notifications';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { G, Path } from 'react-native-svg';
 import analytics from '../services/analytics';
+import apiService from '../services/api';
+import { getUniqueDeviceId } from '../services/deviceStorage';
 import { Colors } from '../constants/Colors';
-import I18n from '../i18n';
+import { useTranslation } from 'react-i18next';
 import { ENTITLEMENT_ID } from '../config/revenuecat';
 import { hasShownWheelInSession, markWheelShownInSession } from '../services/sessionFlags';
 
 const { width } = Dimensions.get('window');
 
-type PaywallState = 'STANDARD' | 'WHEEL' | 'DISCOUNTED';
+type PaywallState = 'STANDARD' | 'WHEEL' | 'DISCOUNTED' | 'PROMO_DISCOUNTED';
 const TRIAL_REMINDER_TYPE = 'trial_ending_reminder';
 
 export default function PaywallScreen() {
@@ -61,8 +62,8 @@ export default function PaywallScreen() {
 
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: I18n.t('notifications.trialEndingTitle'),
-          body: I18n.t('notifications.trialEndingBody'),
+          title: t('notifications.trialEndingTitle'),
+          body: t('notifications.trialEndingBody'),
           data: { type: TRIAL_REMINDER_TYPE },
         },
         trigger: reminderDate as any,
@@ -79,14 +80,24 @@ export default function PaywallScreen() {
     return Boolean(active[ENTITLEMENT_ID]) || Object.keys(active).length > 0;
   };
 
+  const { t } = useTranslation();
   const params = useLocalSearchParams();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
-  const [viewState, setViewState] = useState<PaywallState>(
-    params.initialState === 'WHEEL' ? 'WHEEL' :
-      params.initialState === 'DISCOUNTED' ? 'DISCOUNTED' : 'STANDARD'
-  );
+  const getInitialState = useCallback((): PaywallState => {
+    const s = Array.isArray(params.initialState) ? params.initialState[0] : params.initialState;
+    if (s === 'WHEEL') return 'WHEEL';
+    if (s === 'DISCOUNTED') return 'DISCOUNTED';
+    if (s === 'PROMO_DISCOUNTED') return 'PROMO_DISCOUNTED';
+    return 'STANDARD';
+  }, [params.initialState]);
+
+  const [viewState, setViewState] = useState<PaywallState>(getInitialState());
+
+  useEffect(() => {
+    setViewState(getInitialState());
+  }, [getInitialState]);
 
   useEffect(() => {
     // En mode dev sur Android, on ferme le paywall automatiquement
@@ -119,7 +130,7 @@ export default function PaywallScreen() {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const lastHapticAngle = useRef(0);
 
-  const discounts = [15, 25, 33, 15, 25, 33];
+  const discounts = [33, 20, 15, 25, 33, 20, 15, 25];
 
   // Bloquer l'accès à la roue dès l'ouverture si l'utilisateur est déjà abonné
   useEffect(() => {
@@ -187,14 +198,26 @@ export default function PaywallScreen() {
           source: params.source || 'direct',
         });
 
-        if (viewState === 'DISCOUNTED') {
+        if (viewState === 'PROMO_DISCOUNTED') {
+          let promoDiscountRaw = params.promoDiscount?.toString();
+
+          // Fallback sur AsyncStorage si le paramètre est absent
+          if (!promoDiscountRaw)
+            promoDiscountRaw = await AsyncStorage.getItem('pending_promo_discount') || '15';
+
+          const promoDiscount = promoDiscountRaw.replace('%', '').trim();
+
           const offerings = await Purchases.getOfferings();
-          const discountedOffering = offerings.all['discount_33'];
-          console.log('[RC][Paywall] discounted offerings', {
-            current: offerings.current?.identifier || null,
-            all: Object.keys(offerings.all || {}),
-            selected: discountedOffering?.identifier || offerings.current?.identifier || null,
-          });
+          const promoOfferingKey = `discount_${promoDiscount}`;
+          const promoOffering = offerings.all[promoOfferingKey];
+
+          setOffering(promoOffering || offerings.current);
+        } else if (viewState === 'DISCOUNTED') {
+          const offerings = await Purchases.getOfferings();
+          // Utiliser spinResult s'il existe, sinon fallback sur 33
+          const discountValue = spinResult || 33;
+          const discountedOffering = offerings.all[`discount_${discountValue}`];
+
           setOffering(discountedOffering || offerings.current);
         } else {
           const targetPlacement = params.source?.toString().includes('onboarding')
@@ -239,7 +262,7 @@ export default function PaywallScreen() {
     };
 
     loadOfferings();
-  }, [params.source, viewState]);
+  }, [params.source, params.promoDiscount, viewState, spinResult]);
 
   const handleSpin = () => {
     if (isSpinning) return;
@@ -247,9 +270,8 @@ export default function PaywallScreen() {
     setIsSpinning(true);
     analytics.track('lucky_wheel_spun');
 
-    // Forcer le résultat à 33% (indices 2 ou 5 dans notre tableau de 6 segments)
-    const possibleIndices = [2, 5];
-    const randomIndex = possibleIndices[Math.floor(Math.random() * possibleIndices.length)];
+    // Choisir un résultat au hasard parmi nos segments
+    const randomIndex = Math.floor(Math.random() * discounts.length);
     const result = discounts[randomIndex];
 
     // Calculer l'angle final (plusieurs tours + l'angle du segment inversé pour la rotation)
@@ -283,80 +305,54 @@ export default function PaywallScreen() {
   };
 
   const handleDismiss = async () => {
-    if (viewState === 'STANDARD') {
-      try {
-        const customerInfo = await Purchases.getCustomerInfo();
-        const isSubscribed = hasActiveSubscription(customerInfo);
+    try {
+      const customerInfo = await Purchases.getCustomerInfo();
+      const isSubscribed = hasActiveSubscription(customerInfo);
 
-        if (isSubscribed) {
-          analytics.track('paywall_dismissed_subscribed', { source: params.source || 'direct' });
+      if (isSubscribed) {
+        analytics.track('paywall_dismissed_subscribed', { source: params.source || 'direct' });
 
-          if (params.source?.toString().includes('onboarding')) {
-            await exitPaywall();
-          } else if (router.canGoBack()) {
-            router.back();
-          } else {
-            router.replace('/(tabs)');
-          }
-          return;
-        }
-      } catch (error) {
-        console.error('Erreur lors de la vérification d’abonnement avant la roue:', error);
-      }
-
-      if (hasShownWheelInSession()) {
-        if (router.canGoBack()) {
+        if (params.source?.toString().includes('onboarding')) {
+          await exitPaywall();
+        } else if (router.canGoBack()) {
           router.back();
         } else {
-          await exitPaywall();
+          router.replace('/(tabs)');
         }
         return;
       }
-
-      markWheelShownInSession();
-
-      // On ferme d'abord le paywall initial (effet "disparaît")
-      if (router.canGoBack()) {
-        router.back();
-      }
-
-      // On affiche tout de suite après une nouvelle modale avec la roue (effet "vient d'en bas")
-      setTimeout(() => {
-        router.push({
-          pathname: '/paywall',
-          params: { ...params, initialState: 'WHEEL' }
-        });
-      }, 500);
-
-      analytics.track('lucky_wheel_viewed', { source: params.source });
-      return;
+    } catch (error) {
+      console.error('Erreur lors de la vérification d’abonnement avant la fermeture:', error);
     }
 
     if (params.source?.toString().includes('onboarding')) {
-      // Si on est dans l'onboarding et qu'on veut fermer le paywall promo
+      // Si on est dans l'onboarding, on affiche l'alerte de perte de données
       Alert.alert(
-        I18n.t('onboarding.reminder.lossPersonalizationTitle'),
-        I18n.t('onboarding.reminder.lossPersonalizationDescription'),
+        t('onboarding.reminder.lossPersonalizationTitle'),
+        t('onboarding.reminder.lossPersonalizationDescription'),
         [
           {
-            text: I18n.t('onboarding.reminder.continueAnyway'),
+            text: t('onboarding.reminder.continueAnyway'),
             style: 'destructive',
             onPress: () => {
               exitPaywall();
             }
           },
           {
-            text: I18n.t('onboarding.reminder.goBack'),
+            text: t('onboarding.reminder.goBack'),
             style: 'cancel',
             onPress: () => {
-              // On reste sur le paywall promotionnel
               analytics.track('onboarding_retention_alert_stay');
             }
           }
         ]
       );
     } else {
-      exitPaywall();
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        exitPaywall();
+      }
     }
   };
 
@@ -394,9 +390,23 @@ export default function PaywallScreen() {
     analytics.track('subscription_started', {
       entitlements: info.entitlements.active,
       source: params.source,
-      is_discounted: viewState === 'DISCOUNTED',
-      discount_amount: spinResult
+      is_discounted: viewState === 'DISCOUNTED' || viewState === 'PROMO_DISCOUNTED',
+      discount_amount: viewState === 'PROMO_DISCOUNTED' ? params.promoDiscount : spinResult,
     });
+
+    if (viewState === 'PROMO_DISCOUNTED') {
+      try {
+        const promoCode = await AsyncStorage.getItem('pending_promo_code');
+        const mobileId = await getUniqueDeviceId();
+        if (promoCode && mobileId) {
+          await apiService.markPromoCodeUsed(promoCode, mobileId);
+          await AsyncStorage.removeItem('pending_promo_code');
+          await AsyncStorage.removeItem('pending_promo_discount');
+        }
+      } catch (e) {
+        console.error('Erreur marquage code promo utilisé:', e);
+      }
+    }
 
     await scheduleTrialReminderIfNeeded(info);
     await closePaywallAfterAccess();
@@ -431,10 +441,10 @@ export default function PaywallScreen() {
 
           <View style={styles.wheelHeader}>
             <Text style={styles.wheelTitle}>
-              {I18n.t(`luckyWheel.title_${wheelVariant}`)}
+              {t(`luckyWheel.title_${wheelVariant}`)}
             </Text>
             <Text style={styles.wheelSubtitle}>
-              {I18n.t(`luckyWheel.subtitle_${wheelVariant}`)}
+              {t(`luckyWheel.subtitle_${wheelVariant}`)}
             </Text>
           </View>
 
@@ -446,39 +456,49 @@ export default function PaywallScreen() {
             <Animated.View style={[styles.wheelFrame, { transform: [{ rotate: rotation }] }]}>
               <Svg width="100%" height="100%" viewBox="0 0 100 100">
                 <G rotation="-90" origin="50, 50">
-                  {/* Segment 1 (0-60°) - 15% - Blanc */}
-                  <Path d="M50,50 L100,50 A50,50 0 0,1 75,93.3 Z" fill="#FFFFFF" />
-                  {/* Segment 2 (60-120°) - 25% - Couleur bouton */}
-                  <Path d="M50,50 L75,93.3 A50,50 0 0,1 25,93.3 Z" fill={Colors.light.button} />
-                  {/* Segment 3 (120-180°) - 33% - Noir */}
-                  <Path d="M50,50 L25,93.3 A50,50 0 0,1 0,50 Z" fill="#000000" />
-                  {/* Segment 4 (180-240°) - 15% - Blanc */}
-                  <Path d="M50,50 L0,50 A50,50 0 0,1 25,6.7 Z" fill="#FFFFFF" />
-                  {/* Segment 5 (240-300°) - 25% - Couleur bouton */}
-                  <Path d="M50,50 L25,6.7 A50,50 0 0,1 75,6.7 Z" fill={Colors.light.button} />
-                  {/* Segment 6 (300-360°) - 33% - Noir */}
-                  <Path d="M50,50 L75,6.7 A50,50 0 0,1 100,50 Z" fill="#000000" />
+                  {/* Segment 1 (0-45°) - 33% - Noir */}
+                  <Path d="M50,50 L100,50 A50,50 0 0,1 85.35,85.35 Z" fill="#000000" />
+                  {/* Segment 2 (45-90°) - 20% - Couleur bouton */}
+                  <Path d="M50,50 L85.35,85.35 A50,50 0 0,1 50,100 Z" fill={Colors.light.button} />
+                  {/* Segment 3 (90-135°) - 15% - Blanc */}
+                  <Path d="M50,50 L50,100 A50,50 0 0,1 14.65,85.35 Z" fill="#FFFFFF" />
+                  {/* Segment 4 (135-180°) - 25% - Couleur bouton */}
+                  <Path d="M50,50 L14.65,85.35 A50,50 0 0,1 0,50 Z" fill={Colors.light.button} />
+                  {/* Segment 5 (180-225°) - 33% - Noir */}
+                  <Path d="M50,50 L0,50 A50,50 0 0,1 14.65,14.65 Z" fill="#000000" />
+                  {/* Segment 6 (225-270°) - 20% - Couleur bouton */}
+                  <Path d="M50,50 L14.65,14.65 A50,50 0 0,1 50,0 Z" fill={Colors.light.button} />
+                  {/* Segment 7 (270-315°) - 15% - Blanc */}
+                  <Path d="M50,50 L50,0 A50,50 0 0,1 85.35,14.65 Z" fill="#FFFFFF" />
+                  {/* Segment 8 (315-360°) - 25% - Couleur bouton */}
+                  <Path d="M50,50 L85.35,14.65 A50,50 0 0,1 100,50 Z" fill={Colors.light.button} />
                 </G>
               </Svg>
 
-              {/* Textes positionnés par-dessus (tous les 60°) */}
-              <View style={[styles.segment, { transform: [{ rotate: '30deg' }] }]}>
-                <Text style={[styles.segmentText, { color: '#000' }]}>15%</Text>
+              {/* Textes positionnés par-dessus (tous les 45°) */}
+              <View style={[styles.segment, { transform: [{ rotate: '22.5deg' }] }]}>
+                <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>33%</Text>
               </View>
-              <View style={[styles.segment, { transform: [{ rotate: '90deg' }] }]}>
-                <Text style={[styles.segmentText, { color: '#fff' }]}>25%</Text>
+              <View style={[styles.segment, { transform: [{ rotate: '67.5deg' }] }]}>
+                <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>20%</Text>
               </View>
-              <View style={[styles.segment, { transform: [{ rotate: '150deg' }] }]}>
-                <Text style={[styles.segmentText, { color: '#fff' }]}>33%</Text>
+              <View style={[styles.segment, { transform: [{ rotate: '112.5deg' }] }]}>
+                <Text style={[styles.segmentText, { color: '#000', fontSize: 18 }]}>15%</Text>
               </View>
-              <View style={[styles.segment, { transform: [{ rotate: '210deg' }] }]}>
-                <Text style={[styles.segmentText, { color: '#000' }]}>15%</Text>
+              <View style={[styles.segment, { transform: [{ rotate: '157.5deg' }] }]}>
+                <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>25%</Text>
               </View>
-              <View style={[styles.segment, { transform: [{ rotate: '270deg' }] }]}>
-                <Text style={[styles.segmentText, { color: '#fff' }]}>25%</Text>
+              <View style={[styles.segment, { transform: [{ rotate: '202.5deg' }] }]}>
+                <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>33%</Text>
               </View>
-              <View style={[styles.segment, { transform: [{ rotate: '330deg' }] }]}>
-                <Text style={[styles.segmentText, { color: '#fff' }]}>33%</Text>
+              <View style={[styles.segment, { transform: [{ rotate: '247.5deg' }] }]}>
+                <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>20%</Text>
+              </View>
+              <View style={[styles.segment, { transform: [{ rotate: '292.5deg' }] }]}>
+                <Text style={[styles.segmentText, { color: '#000', fontSize: 18 }]}>15%</Text>
+              </View>
+              <View style={[styles.segment, { transform: [{ rotate: '337.5deg' }] }]}>
+                <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>25%</Text>
               </View>
 
               {/* Centre de la roue avec mascotte */}
@@ -492,12 +512,12 @@ export default function PaywallScreen() {
             </Animated.View>
           </View>
 
-          <View style={[styles.wheelFooter, { bottom: Platform.OS === 'android' ? insets.bottom + 20 : 0 }]}>
+          <View style={[styles.wheelFooter, { bottom: Platform.OS === 'android' ? insets.bottom + 20 : insets.bottom }]}>
             {spinResult ? (
               <Animated.View style={styles.resultContainer}>
-                <Text style={styles.congratsText}>{I18n.t('luckyWheel.congrats')}</Text>
+                <Text style={styles.congratsText}>{t('luckyWheel.congrats')}</Text>
                 <Text style={styles.resultText}>
-                  {I18n.t('luckyWheel.result', { discount: spinResult })}
+                  {t('luckyWheel.result', { discount: spinResult })}
                 </Text>
               </Animated.View>
             ) : (
@@ -507,7 +527,7 @@ export default function PaywallScreen() {
                 disabled={isSpinning}
               >
                 <Text style={styles.spinButtonText}>
-                  {I18n.t('luckyWheel.spin')}
+                  {t('luckyWheel.spin')}
                 </Text>
               </TouchableOpacity>
             )}
@@ -519,7 +539,7 @@ export default function PaywallScreen() {
             <View style={styles.loadingModalOverlay}>
               <ActivityIndicator size="large" color={Colors.light.button} />
               <Text style={styles.loadingText}>
-                {I18n.t('paywall.loading')}
+                {t('paywall.loading')}
               </Text>
             </View>
           ) : (

@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  FlatList,
   Alert,
   KeyboardAvoidingView,
   Platform,
@@ -16,10 +15,9 @@ import { router } from 'expo-router'
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from '../components/ui/IconSymbol';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Wave } from 'react-native-animated-spinkit';
 import { useVoice, resetVoiceCompletely } from '../hooks/useVoice';
 import apiService from '../services/api';
-import I18n from '../i18n';
+import { useTranslation } from 'react-i18next';
 
 interface PantryItem {
   id: string;
@@ -32,10 +30,10 @@ interface PantryItem {
 const STORAGE_KEY = 'pantry_ingredients';
 
 export default function PantryScreen() {
+  const { t } = useTranslation();
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   // Utiliser le hook useVoice
   const { isRecording, liveText, startRecording, stopRecording, clearLiveText } = useVoice({
@@ -82,8 +80,8 @@ export default function PantryScreen() {
     } catch (error) {
       console.error('Erreur lors du traitement vocal:', error);
       Alert.alert(
-        I18n.t('common.error'),
-        I18n.t('pantry.voiceError')
+        t('common.error'),
+        t('pantry.voiceError')
       );
     }
     clearLiveText();
@@ -120,7 +118,7 @@ export default function PantryScreen() {
 
   const addItem = async (ingredientName: string) => {
     if (!ingredientName.trim()) {
-      Alert.alert(I18n.t('pantry.error'), I18n.t('pantry.nameRequired'));
+      Alert.alert(t('pantry.error'), t('pantry.nameRequired'));
       return;
     }
 
@@ -142,12 +140,12 @@ export default function PantryScreen() {
 
   const showAddIngredientAlert = () => {
     Alert.prompt(
-      I18n.t('pantry.addIngredient'),
-      I18n.t('pantry.ingredientNamePlaceholder'),
+      t('pantry.addIngredient'),
+      t('pantry.ingredientNamePlaceholder'),
       [
-        { text: I18n.t('common.cancel'), style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: I18n.t('pantry.add'),
+          text: t('pantry.add'),
           onPress: (ingredientName) => {
             if (ingredientName) {
               addItem(ingredientName);
@@ -161,12 +159,12 @@ export default function PantryScreen() {
 
   const removeItem = async (itemId: string) => {
     Alert.alert(
-      I18n.t('pantry.deleteTitle'),
-      I18n.t('pantry.deleteMessage'),
+      t('pantry.deleteTitle'),
+      t('pantry.deleteMessage'),
       [
-        { text: I18n.t('common.cancel'), style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: I18n.t('pantry.delete'),
+          text: t('pantry.delete'),
           style: 'destructive',
           onPress: async () => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -204,7 +202,7 @@ export default function PantryScreen() {
         >
           <IconSymbol name="chevron.left" size={24} color={colors.text} weight="bold" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{I18n.t('pantry.title')}</Text>
+        <Text style={styles.headerTitle}>{t('pantry.title')}</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -213,14 +211,14 @@ export default function PantryScreen() {
         {/* <View style={styles.statsContainer}>
           <View style={styles.statCard}>
             <Text style={styles.statNumber}>{pantryItems.length}</Text>
-            <Text style={styles.statLabel}>{I18n.t('pantry.ingredients')}</Text>
+            <Text style={styles.statLabel}>{t('pantry.ingredients')}</Text>
           </View>
         </View> */}
 
         {/* Liste des ingrédients */}
         <View style={{ ...styles.section, marginBottom: 0 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 15 }}>
-            <Text style={styles.sectionTitle}>{I18n.t('pantry.myIngredients')}</Text>
+            <Text style={styles.sectionTitle}>{t('pantry.myIngredients')}</Text>
 
             {/* Bouton d'ajout */}
             <View style={{ ...styles.section, marginBottom: 0 }}>
@@ -235,7 +233,7 @@ export default function PantryScreen() {
                   weight="bold"
                 />
                 <Text style={{ ...styles.addButtonText, color: Colors.light.button }}>
-                  {I18n.t('pantry.add')}
+                  {t('pantry.add')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -244,9 +242,9 @@ export default function PantryScreen() {
           {pantryItems.length === 0 ? (
             <View style={styles.emptyState}>
               <Text style={styles.emptyStateIcon}>🥘</Text>
-              <Text style={styles.emptyStateTitle}>{I18n.t('pantry.emptyTitle')}</Text>
+              <Text style={styles.emptyStateTitle}>{t('pantry.emptyTitle')}</Text>
               <Text style={styles.emptyStateDescription}>
-                {I18n.t('pantry.emptyDescription')}
+                {t('pantry.emptyDescription')}
               </Text>
             </View>
           ) : (
@@ -282,7 +280,7 @@ export default function PantryScreen() {
               weight="bold"
             />
             <Text style={{ ...styles.addButtonText, color: !isRecording ? Colors.light.button : "white" }}>
-              {isRecording ? I18n.t('pantry.stopRecording') : I18n.t('pantry.voice')}
+              {isRecording ? t('pantry.stopRecording') : t('pantry.voice')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -296,7 +294,7 @@ export default function PantryScreen() {
         onPress={handleContinue}
       >
         <Text style={{ ...styles.addButtonText, fontSize: 18, marginRight: 10, marginLeft: 0 }}>
-          {I18n.t('pantry.continue')}
+          {t('pantry.continue')}
         </Text>
         <IconSymbol
           name={'arrow.right'}

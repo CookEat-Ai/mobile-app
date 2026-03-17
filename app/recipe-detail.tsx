@@ -15,7 +15,6 @@ import {
   TouchableOpacity,
   View,
   Share,
-  Platform
 } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -26,7 +25,6 @@ import {
   Skeleton,
   RecipeImageSkeleton,
   RecipeTitleSkeleton,
-  RecipeIngredientsSkeleton,
   RecipeStepsSkeleton,
   IngredientItemSkeleton,
   StepItemSkeleton,
@@ -35,7 +33,7 @@ import revenueCatService from '../config/revenuecat';
 import recipeStorageService from "../services/recipeStorage";
 import favoritesStorageService from "../services/favoritesStorage";
 import * as StoreReview from 'expo-store-review';
-import I18n from '../i18n';
+import { useTranslation } from 'react-i18next';
 import analytics from "../services/analytics";
 import recipeStreamManager from '../services/recipeStreamManager';
 
@@ -103,6 +101,7 @@ interface Recipe {
 }
 
 export default function RecipeDetailScreen() {
+  const { t } = useTranslation();
   const colors = Colors.light;
   const params = useLocalSearchParams();
   const router = useRouter();
@@ -115,20 +114,20 @@ export default function RecipeDetailScreen() {
   const [variant, setVariant] = useState<'A' | 'B' | 'C' | 'D'>('A');
 
   const getVideoPlatformInfo = (url: string) => {
-    if (!url) return { icon: 'logo-tiktok' as any, label: I18n.t('recipeDetail.viewOriginalVideo') };
+    if (!url) return { icon: 'logo-tiktok' as any, label: t('recipeDetail.viewOriginalVideo') };
 
     const lowercaseUrl = url.toLowerCase();
     if (lowercaseUrl.includes('tiktok.com')) {
-      return { icon: 'logo-tiktok' as any, label: I18n.t('recipeDetail.viewOnTikTok') };
+      return { icon: 'logo-tiktok' as any, label: t('recipeDetail.viewOnTikTok') };
     }
     if (lowercaseUrl.includes('instagram.com')) {
-      return { icon: 'logo-instagram' as any, label: I18n.t('recipeDetail.viewOnInstagram') };
+      return { icon: 'logo-instagram' as any, label: t('recipeDetail.viewOnInstagram') };
     }
     if (lowercaseUrl.includes('youtube.com') || lowercaseUrl.includes('youtu.be')) {
-      return { icon: 'logo-youtube' as any, label: I18n.t('recipeDetail.viewOnYouTube') };
+      return { icon: 'logo-youtube' as any, label: t('recipeDetail.viewOnYouTube') };
     }
 
-    return { icon: 'link-outline' as any, label: I18n.t('recipeDetail.viewOriginalVideo') };
+    return { icon: 'link-outline' as any, label: t('recipeDetail.viewOriginalVideo') };
   };
 
   useEffect(() => {
@@ -355,7 +354,7 @@ export default function RecipeDetailScreen() {
           setStreamingSteps(false);
           setLoadingRecipe(false);
           setLoadingSteps(false);
-          Alert.alert(I18n.t('recipeDetail.error'), snapshot.error);
+          Alert.alert(t('recipeDetail.error'), snapshot.error);
           return;
         }
         applyStreamSnapshotRef.current(snapshot, prefetchSessionId);
@@ -379,7 +378,7 @@ export default function RecipeDetailScreen() {
 
     const ingredientsParam = params.ingredients as string;
     if (!ingredientsParam) {
-      Alert.alert(I18n.t('recipeDetail.error'), I18n.t('recipeDetail.unableToGetIngredients'));
+      Alert.alert(t('recipeDetail.error'), t('recipeDetail.unableToGetIngredients'));
       goToIngredientListSafely();
       return;
     }
@@ -459,7 +458,7 @@ export default function RecipeDetailScreen() {
         },
         onError: (message) => {
           if (streamSessionIdRef.current !== streamSessionId) return;
-          Alert.alert(I18n.t('recipeDetail.error'), message);
+          Alert.alert(t('recipeDetail.error'), message);
           setStreamingTitleAndIngredients(false);
           setStreamingSteps(false);
           setLoadingRecipe(false);
@@ -503,7 +502,7 @@ export default function RecipeDetailScreen() {
       .catch((error) => {
         console.error('Erreur lors du chargement de la recette:', error);
         setLoadingRecipe(false);
-        Alert.alert(I18n.t('recipeDetail.error'), I18n.t('recipeDetail.unableToGenerateRecipe'));
+        Alert.alert(t('recipeDetail.error'), t('recipeDetail.unableToGenerateRecipe'));
       });
   }, [recipeIdParam, isStreaming]);
 
@@ -531,8 +530,8 @@ export default function RecipeDetailScreen() {
       if (!firstTime.current) return;
       firstTime.current = false;
       Alert.alert(
-        I18n.t('recipeDetail.error'),
-        I18n.t('recipeDetail.unableToGenerateRecipe'),
+        t('recipeDetail.error'),
+        t('recipeDetail.unableToGenerateRecipe'),
         [{ text: 'OK', onPress: goToIngredientListSafely }]
       );
       return;
@@ -562,7 +561,7 @@ export default function RecipeDetailScreen() {
         console.error('Erreur lors du chargement des étapes:', error);
         setStreamingSteps(false);
         setLoadingSteps(false);
-        Alert.alert(I18n.t('recipeDetail.error'), I18n.t('recipeDetail.unableToGenerateRecipe'));
+        Alert.alert(t('recipeDetail.error'), t('recipeDetail.unableToGenerateRecipe'));
       });
     }
     // Charger l'image si nécessaire
@@ -642,7 +641,7 @@ export default function RecipeDetailScreen() {
     if (recipe.videoUrl) {
       Linking.openURL(recipe.videoUrl).catch((err) => {
         console.error("Impossible d'ouvrir l'URL:", err);
-        Alert.alert(I18n.t('common.error'), I18n.t('recipeDetail.unableToOpenVideo'));
+        Alert.alert(t('common.error'), t('recipeDetail.unableToOpenVideo'));
       });
     }
   };
@@ -670,7 +669,7 @@ export default function RecipeDetailScreen() {
             // Mettre à jour aussi dans le storage local
             recipeStorageService.saveGeneratedRecipe({ ...recipe, image: serverImageUrl }, params.ingredients as string[]);
           } else {
-            Alert.alert(I18n.t('common.error'), I18n.t('recipeDetail.imageUpdateError'));
+            Alert.alert(t('common.error'), t('recipeDetail.imageUpdateError'));
           }
         } else {
           // Si la recette n'est pas encore sauvegardée, on met juste à jour l'état local avec l'URI temporaire
@@ -679,7 +678,7 @@ export default function RecipeDetailScreen() {
       }
     } catch (error) {
       console.error('Erreur lors du choix de l\'image:', error);
-      Alert.alert(I18n.t('common.error'), I18n.t('recipeDetail.imagePickError'));
+      Alert.alert(t('common.error'), t('recipeDetail.imagePickError'));
     } finally {
       setIsUpdatingImage(false);
     }
@@ -697,7 +696,7 @@ export default function RecipeDetailScreen() {
 
   const handleLikeRecipe = () => {
     if (!recipe._id) {
-      Alert.alert(I18n.t('common.error'), I18n.t('recipeDetail.likeError'));
+      Alert.alert(t('common.error'), t('recipeDetail.likeError'));
       return;
     }
     else {
@@ -725,11 +724,11 @@ export default function RecipeDetailScreen() {
           recipe_title: recipe.title,
           recipe_id: recipe.id
         });
-        Alert.alert(I18n.t('recipeDetail.success'), I18n.t('recipeDetail.recipeAddedToFavorites'));
+        Alert.alert(t('recipeDetail.success'), t('recipeDetail.recipeAddedToFavorites'));
       }
     } catch (error) {
       console.error('❌ Erreur lors de l\'ajout aux favoris:', error);
-      Alert.alert(I18n.t('recipeDetail.error'), I18n.t('recipeDetail.unableToAddToFavorites'));
+      Alert.alert(t('recipeDetail.error'), t('recipeDetail.unableToAddToFavorites'));
     }
   };
 
@@ -750,15 +749,15 @@ export default function RecipeDetailScreen() {
       const details = [
         recipe.cooking_time ? `⏱️ ${recipe.cooking_time}` : null,
         recipe.difficulty ? `💪 ${translateDifficulty(recipe.difficulty)}` : null,
-        recipe.servings ? `🍽️ ${recipe.servings} ${I18n.t('recipeDetail.servings').toLowerCase()}` : null,
+        recipe.servings ? `🍽️ ${recipe.servings} ${t('recipeDetail.servings').toLowerCase()}` : null,
       ].filter(Boolean);
 
       const messageSections = [
         `🍽️ ${recipe.title}`,
         details.length ? details.join(' • ') : null,
-        ingredientLines.length ? `${I18n.t('recipeDetail.ingredients')}:\n${ingredientLines.join('\n')}` : null,
-        stepLines.length ? `${I18n.t('recipeDetail.steps')}:\n${stepLines.join('\n')}` : null,
-        recipe.chef_tip ? `${I18n.t('recipeDetail.chef_tip')}:\n${recipe.chef_tip}` : null,
+        ingredientLines.length ? `${t('recipeDetail.ingredients')}:\n${ingredientLines.join('\n')}` : null,
+        stepLines.length ? `${t('recipeDetail.steps')}:\n${stepLines.join('\n')}` : null,
+        recipe.chef_tip ? `${t('recipeDetail.chef_tip')}:\n${recipe.chef_tip}` : null,
         // `\n${recipeUrl}`
       ].filter(Boolean);
 
@@ -790,17 +789,7 @@ export default function RecipeDetailScreen() {
     if (!(await revenueCatService.getSubscriptionStatus()).isSubscribed) {
       const canGenerate = await revenueCatService.useDailyQuota();
       if (!canGenerate) {
-        Alert.alert(
-          I18n.t('recipeDetail.dailyQuotaReached'),
-          I18n.t('recipeDetail.dailyQuotaReachedDescription'),
-          [
-            { text: I18n.t('recipeDetail.later'), style: 'cancel' },
-            {
-              text: I18n.t('recipeDetail.seeOffers'),
-              onPress: () => router.push({ pathname: '/paywall', params: { source: 'quota_reached_detail' } })
-            }
-          ]
-        );
+        router.push({ pathname: '/paywall', params: { source: 'quota_reached_detail' } });
         return;
       }
     }
@@ -840,7 +829,7 @@ export default function RecipeDetailScreen() {
 
       const ingredientsParam = params.ingredients as string;
       if (!ingredientsParam) {
-        Alert.alert(I18n.t('recipeDetail.error'), I18n.t('recipeDetail.unableToGetIngredients'));
+        Alert.alert(t('recipeDetail.error'), t('recipeDetail.unableToGetIngredients'));
         setIsGeneratingNewRecipe(false);
         return;
       }
@@ -949,7 +938,7 @@ export default function RecipeDetailScreen() {
           },
           onError: (message) => {
             if (streamSessionIdRef.current !== streamSessionId) return;
-            Alert.alert(I18n.t('recipeDetail.error'), message);
+            Alert.alert(t('recipeDetail.error'), message);
             setIsGeneratingNewRecipe(false);
             setLoadingRecipe(false);
             setLoadingSteps(false);
@@ -962,7 +951,7 @@ export default function RecipeDetailScreen() {
       sseCloseRef.current = close;
     } catch (error) {
       console.error('Erreur lors de la génération de la nouvelle recette:', error);
-      Alert.alert(I18n.t('recipeDetail.error'), I18n.t('recipeDetail.unableToGenerateRecipe'));
+      Alert.alert(t('recipeDetail.error'), t('recipeDetail.unableToGenerateRecipe'));
       setIsGeneratingNewRecipe(false);
       setLoadingRecipe(false);
     }
@@ -994,7 +983,7 @@ export default function RecipeDetailScreen() {
     const normalizedDifficulty = difficulty.toUpperCase().trim();
 
     // Essayer de traduire avec la clé exacte
-    const translation = I18n.t(`recipe.difficultyLevels.${normalizedDifficulty}`);
+    const translation = t(`recipe.difficultyLevels.${normalizedDifficulty}`);
 
     // Si la traduction retourne la même clé, c'est qu'elle n'existe pas
     if (translation === `recipe.difficultyLevels.${normalizedDifficulty}`) {
@@ -1008,7 +997,7 @@ export default function RecipeDetailScreen() {
   // Fonction pour traduire les tags
   const translateTag = (tag: string) => {
     if (!tag) return '-';
-    const translation = I18n.t(`recipe.tags.${tag}`);
+    const translation = t(`recipe.tags.${tag}`);
     if (translation === `recipe.tags.${tag}`) {
       return tag;
     }
@@ -1056,7 +1045,7 @@ export default function RecipeDetailScreen() {
 
           <View style={{ position: 'absolute', left: 10, bottom: 10, zIndex: 1000, backgroundColor: 'rgba(0, 0, 0, 0.5)', padding: 10, borderRadius: 10 }}>
             <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'white' }}>
-              {I18n.t('recipeDetail.illustration')}
+              {t('recipeDetail.illustration')}
             </Text>
           </View>
 
@@ -1094,7 +1083,7 @@ export default function RecipeDetailScreen() {
             <Ionicons
               name={isFavorite ? "heart" : "heart-outline"}
               size={24}
-              color={isFavorite ? "#FF0000" : "#000"}
+              color={isFavorite ? Colors.light.button : "#000"}
             />
           </TouchableOpacity>
 
@@ -1132,7 +1121,7 @@ export default function RecipeDetailScreen() {
               <FadeInView style={styles.metricCard}>
                 <View style={{ alignItems: 'center' }}>
                   <Ionicons name="time-outline" size={24} color="#666" />
-                  <Text style={styles.metricLabel}>{I18n.t('recipeDetail.cookingTime')}</Text>
+                  <Text style={styles.metricLabel}>{t('recipeDetail.cookingTime')}</Text>
                 </View>
                 <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{recipe.cooking_time}</Text>
               </FadeInView>
@@ -1144,7 +1133,7 @@ export default function RecipeDetailScreen() {
               <FadeInView style={styles.metricCard} delay={100}>
                 <View style={{ alignItems: 'center' }}>
                   <Ionicons name="star-outline" size={24} color="#666" />
-                  <Text style={styles.metricLabel}>{I18n.t('recipeDetail.difficulty')}</Text>
+                  <Text style={styles.metricLabel}>{t('recipeDetail.difficulty')}</Text>
                 </View>
                 <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{translateDifficulty(recipe.difficulty)}</Text>
               </FadeInView>
@@ -1156,7 +1145,7 @@ export default function RecipeDetailScreen() {
               <FadeInView style={styles.metricCard} delay={200}>
                 <View style={{ alignItems: 'center' }}>
                   <Ionicons name="people-outline" size={24} color="#666" />
-                  <Text style={styles.metricLabel}>{I18n.t('recipeDetail.servings')}</Text>
+                  <Text style={styles.metricLabel}>{t('recipeDetail.servings')}</Text>
                 </View>
                 <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{recipe.servings}</Text>
               </FadeInView>
@@ -1176,11 +1165,11 @@ export default function RecipeDetailScreen() {
                 >
                   <View style={{ alignItems: 'center' }}>
                     <Ionicons name="flame-outline" size={24} color="#666" />
-                    <Text style={styles.metricLabel}>{I18n.t('recipeDetail.calories')}</Text>
+                    <Text style={styles.metricLabel}>{t('recipeDetail.calories')}</Text>
                   </View>
                   {isSubscribed || isFirstGeneration || params.isOnboarding === 'true' || params.showGenerateButton === 'false'
                     ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>
-                      {recipe.calories.toString().replace(/\s*(per serving|par portion|par personne|per person|\/p|\/portion|\/serving)\s*/gi, '').trim() + I18n.t('recipeDetail.perServing')}
+                      {recipe.calories.toString().replace(/\s*(per serving|par portion|par personne|per person|\/p|\/portion|\/serving)\s*/gi, '').trim() + t('recipeDetail.perServing')}
                     </Text>
                     : <Ionicons name="lock-closed-outline" size={24} color="black" />
                   }
@@ -1199,7 +1188,7 @@ export default function RecipeDetailScreen() {
                 >
                   <View style={{ alignItems: 'center' }}>
                     <Ionicons name="fitness-outline" size={24} color="#666" />
-                    <Text style={styles.metricLabel}>{I18n.t('recipeDetail.proteins')}</Text>
+                    <Text style={styles.metricLabel}>{t('recipeDetail.proteins')}</Text>
                   </View>
                   {isSubscribed || isFirstGeneration || params.isOnboarding === 'true' || params.showGenerateButton === 'false'
                     ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{recipe.proteins}</Text>
@@ -1220,7 +1209,7 @@ export default function RecipeDetailScreen() {
                 >
                   <View style={{ alignItems: 'center' }}>
                     <Ionicons name="water-outline" size={24} color="#666" />
-                    <Text style={styles.metricLabel}>{I18n.t('recipeDetail.lipids')}</Text>
+                    <Text style={styles.metricLabel}>{t('recipeDetail.lipids')}</Text>
                   </View>
                   {isSubscribed || isFirstGeneration || params.isOnboarding === 'true' || params.showGenerateButton === 'false'
                     ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{recipe.lipids}</Text>
@@ -1255,7 +1244,7 @@ export default function RecipeDetailScreen() {
           {/* Section Ingrédients */}
           <View style={styles.ingredientsSection}>
             <View style={styles.sectionTitleRow}>
-              <Text style={styles.ingredientsTitle}>{I18n.t('recipeDetail.ingredients')} {!streamingTitleAndIngredients && recipe.ingredients?.length ? `(${recipe.ingredients.length})` : ''}</Text>
+              <Text style={styles.ingredientsTitle}>{t('recipeDetail.ingredients')} {!streamingTitleAndIngredients && recipe.ingredients?.length ? `(${recipe.ingredients.length})` : ''}</Text>
               {streamingTitleAndIngredients && <ActivityIndicator size="small" color={Colors.light.button} />}
             </View>
 
@@ -1295,7 +1284,7 @@ export default function RecipeDetailScreen() {
           {/* Section Étapes de préparation */}
           <View>
             <View style={styles.sectionTitleRow}>
-              <Text style={styles.stepsTitle}>{I18n.t('recipeDetail.steps')} {!streamingSteps && !loadingSteps && `(${recipe.steps?.length})`}</Text>
+              <Text style={styles.stepsTitle}>{t('recipeDetail.steps')} {!streamingSteps && !loadingSteps && `(${recipe.steps?.length})`}</Text>
               {(streamingSteps || loadingSteps) && <ActivityIndicator size="small" color={Colors.light.button} />}
             </View>
 
@@ -1325,7 +1314,7 @@ export default function RecipeDetailScreen() {
               <View style={styles.chefTipContainer}>
                 <View style={styles.chefTipHeader}>
                   <Ionicons name="bulb-outline" size={20} color={Colors.light.button} />
-                  <Text style={styles.chefTipTitle}>{I18n.t('recipeDetail.chef_tip')}</Text>
+                  <Text style={styles.chefTipTitle}>{t('recipeDetail.chef_tip')}</Text>
                 </View>
                 <Text style={styles.chefTipText}>{recipe.chef_tip}</Text>
               </View>
@@ -1336,7 +1325,7 @@ export default function RecipeDetailScreen() {
           <View style={styles.bonAppetitSection}>
             <View style={styles.bonAppetitRow}>
               <View style={styles.divider} />
-              <Text style={styles.bonAppetitText}>{I18n.t('recipeDetail.enjoy')}</Text>
+              <Text style={styles.bonAppetitText}>{t('recipeDetail.enjoy')}</Text>
               <View style={styles.divider} />
             </View>
 
@@ -1349,10 +1338,10 @@ export default function RecipeDetailScreen() {
                 <Ionicons
                   name={isFavorite ? "heart" : "heart-outline"}
                   size={24}
-                  color={isFavorite ? "#FF0000" : "#666"}
+                  color={isFavorite ? Colors.light.button : "#666"}
                 />
-                <Text style={[styles.likeRecipeText, { color: isFavorite ? "#FF0000" : "#666" }]}>
-                  {I18n.t('recipeDetail.addToFavorites')}
+                <Text style={[styles.likeRecipeText, { color: isFavorite ? Colors.light.button : "#666" }]}>
+                  {t('recipeDetail.addToFavorites')}
                 </Text>
               </TouchableOpacity>
 
@@ -1367,7 +1356,7 @@ export default function RecipeDetailScreen() {
                   color={isLiked ? Colors.light.button : "#666"}
                 />
                 <Text style={[styles.likeRecipeText, { color: isLiked ? Colors.light.button : "#666" }]}>
-                  {I18n.t('recipeDetail.iLikedThisRecipe')}
+                  {t('recipeDetail.iLikedThisRecipe')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -1386,8 +1375,8 @@ export default function RecipeDetailScreen() {
           >
             <Text style={styles.onboardingButtonText}>
               {variant === 'B'
-                ? I18n.t('recipeDetail.onboardingContinuePremium')
-                : I18n.t('recipeDetail.onboardingContinue')}
+                ? t('recipeDetail.onboardingContinuePremium')
+                : t('recipeDetail.onboardingContinue')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -1401,7 +1390,7 @@ export default function RecipeDetailScreen() {
           >
             <Ionicons name={isGeneratingNewRecipe ? "time" : "sparkles"} size={20} color="white" />
             <Text style={styles.rateButtonText}>
-              {isGeneratingNewRecipe ? I18n.t('recipeDetail.generatingRecipe') : I18n.t('recipeDetail.generateAnotherRecipe')}
+              {isGeneratingNewRecipe ? t('recipeDetail.generatingRecipe') : t('recipeDetail.generateAnotherRecipe')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -1479,7 +1468,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     fontSize: 16,
     color: '#000',
-    fontFamily: 'CronosProBold'
+    fontFamily: 'Degular'
   },
   backButton: {
     position: 'absolute',

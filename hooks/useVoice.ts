@@ -1,7 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
-import Voice from '@react-native-voice/voice';
-import I18n from '../i18n';
-import { Alert, Linking, Platform } from "react-native";
+import {
+  ExpoSpeechRecognitionModule,
+  useSpeechRecognitionEvent,
+} from 'expo-speech-recognition';
+import { useTranslation } from 'react-i18next';
 
 interface UseVoiceOptions {
   onTextReceived?: (text: string) => void;
@@ -9,265 +11,89 @@ interface UseVoiceOptions {
   onLiveTextChange?: (text: string) => void;
 }
 
-// Variable globale pour suivre l'état d'enregistrement
-let globalIsRecording = false;
-let voiceInstance: any = null;
-
-// Fonction pour créer une nouvelle instance de Voice
-const createVoiceInstance = () => {
-  try {
-    if (!Voice) {
-      console.warn('Voice n\'est pas disponible');
-      return false;
-    }
-
-    // Détruire l'ancienne instance si elle existe
-    if (voiceInstance) {
-      try {
-        if (typeof Voice.removeAllListeners === 'function') {
-          Voice.removeAllListeners();
-        }
-      } catch (e) {}
-      
-      Voice.destroy().catch(() => {});
-    }
-
-    // Créer une nouvelle instance
-    voiceInstance = Voice;
-    return true;
-  } catch (error) {
-    console.error('Erreur lors de la création de l\'instance Voice:', error);
-    return false;
-  }
-};
-
-// Fonction globale pour forcer l'arrêt de Voice
 export const forceStopVoiceGlobally = async () => {
   try {
-    if (globalIsRecording && Voice) {
-      await Voice.stop();
-      globalIsRecording = false;
-      console.log('Voice arrêté globalement');
-    }
+    ExpoSpeechRecognitionModule.abort();
   } catch (error) {
     console.error('Erreur lors de l\'arrêt global de Voice:', error);
-    globalIsRecording = false;
   }
 };
 
-// Fonction pour nettoyer Voice complètement
 export const cleanupVoiceGlobally = async () => {
-  try {
-    await forceStopVoiceGlobally();
-    if (Voice) {
-      try {
-        if (typeof Voice.removeAllListeners === 'function') {
-          Voice.removeAllListeners();
-        }
-      } catch (e) {}
-      
-      try {
-        if (typeof Voice.destroy === 'function') {
-          await Voice.destroy();
-        }
-      } catch (e) {}
-    }
-    voiceInstance = null;
-  } catch (error) {
-    console.error('Erreur lors du nettoyage global de Voice:', error);
-    voiceInstance = null;
-  }
+  await forceStopVoiceGlobally();
 };
 
-// Fonction pour réinitialiser complètement Voice
 export const resetVoiceCompletely = async () => {
-  try {
-    // Arrêter l'enregistrement en cours
-    await forceStopVoiceGlobally();
-
-    // Détruire complètement Voice
-    if (Voice) {
-      try {
-        if (typeof Voice.removeAllListeners === 'function') {
-          Voice.removeAllListeners();
-        }
-      } catch (e) {}
-
-      try {
-        if (typeof Voice.destroy === 'function') {
-          await Voice.destroy();
-        }
-      } catch (e) {}
-    }
-
-    // Réinitialiser les variables globales
-    globalIsRecording = false;
-    voiceInstance = null;
-
-    // Attendre un peu pour s'assurer que tout est nettoyé
-    await new Promise(resolve => setTimeout(resolve, 300));
-  } catch (error) {
-    console.error('Erreur lors de la réinitialisation de Voice:', error);
-    globalIsRecording = false;
-    voiceInstance = null;
-  }
+  await forceStopVoiceGlobally();
 };
 
 export const useVoice = (options: UseVoiceOptions = {}) => {
+  const { i18n } = useTranslation();
   const [isRecording, setIsRecording] = useState(false);
   const [liveText, setLiveText] = useState('');
-  const isInitialized = useRef(false);
-  const recordingTimeoutRef = useRef<any>(null);
+  const recordingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const optionsRef = useRef(options);
+  optionsRef.current = options;
 
-  // Initialiser Voice une seule fois globalement
-  useEffect(() => {
-    if (isInitialized.current) return;
+  useSpeechRecognitionEvent('start', () => {
+    setIsRecording(true);
+    optionsRef.current.onRecordingStateChange?.(true);
 
-    try {
-      // Créer une nouvelle instance de Voice
-      if (!createVoiceInstance() || !Voice) {
-        return;
-      }
-
-      Voice.onSpeechStart = onSpeechStart;
-      Voice.onSpeechEnd = onSpeechEnd;
-      Voice.onSpeechResults = onSpeechResults;
-      Voice.onSpeechError = onSpeechError;
-      isInitialized.current = true;
-    } catch (error) {
-      console.error('Erreur lors de l\'initialisation de Voice:', error);
+    if (recordingTimeoutRef.current) {
+      clearTimeout(recordingTimeoutRef.current);
     }
+    recordingTimeoutRef.current = setTimeout(() => {
+      ExpoSpeechRecognitionModule.stop();
+    }, 40000);
+  });
 
+  useSpeechRecognitionEvent('end', () => {
+    setIsRecording(false);
+    optionsRef.current.onRecordingStateChange?.(false);
+    if (recordingTimeoutRef.current) {
+      clearTimeout(recordingTimeoutRef.current);
+      recordingTimeoutRef.current = null;
+    }
+  });
+
+  useSpeechRecognitionEvent('result', (event) => {
+    const transcript = event.results[0]?.transcript;
+    if (transcript) {
+      setLiveText(transcript);
+      optionsRef.current.onTextReceived?.(transcript);
+      optionsRef.current.onLiveTextChange?.(transcript);
+    }
+  });
+
+  useSpeechRecognitionEvent('error', (event) => {
+    console.error('Erreur de reconnaissance vocale:', event.error, event.message);
+    setIsRecording(false);
+    optionsRef.current.onRecordingStateChange?.(false);
+    if (recordingTimeoutRef.current) {
+      clearTimeout(recordingTimeoutRef.current);
+      recordingTimeoutRef.current = null;
+    }
+  });
+
+  useEffect(() => {
     return () => {
-      // Ne pas détruire Voice ici, car il peut être utilisé par d'autres composants
       if (recordingTimeoutRef.current) {
         clearTimeout(recordingTimeoutRef.current);
       }
     };
   }, []);
 
-  // Nettoyer quand le composant se démonte
-  useEffect(() => {
-    return () => {
-      try {
-        // S'assurer que l'enregistrement est arrêté pour ce composant
-        if (isRecording) {
-          forceStopRecording();
-        }
-        if (recordingTimeoutRef.current) {
-          clearTimeout(recordingTimeoutRef.current);
-        }
-      } catch (error) {
-        console.error('Erreur lors du nettoyage de Voice:', error);
-      }
-    };
-  }, [isRecording]);
-
-  const onSpeechStart = () => {
-    globalIsRecording = true;
-    setIsRecording(true);
-    options.onRecordingStateChange?.(true);
-
-    // Auto-stop après 40 secondes
-    if (recordingTimeoutRef.current) {
-      clearTimeout(recordingTimeoutRef.current);
-    }
-    recordingTimeoutRef.current = setTimeout(() => {
-      console.log('Voice stop auto après 40s');
-      stopRecording();
-    }, 40000);
-  };
-
-  const onSpeechEnd = () => {
-    globalIsRecording = false;
-    setIsRecording(false);
-    options.onRecordingStateChange?.(false);
-    if (recordingTimeoutRef.current) {
-      clearTimeout(recordingTimeoutRef.current);
-      recordingTimeoutRef.current = null;
-    }
-  };
-
-  const onSpeechResults = (event: any) => {
-    if (event.value && event.value.length > 0) {
-      const newText = event.value[0];
-      setLiveText(newText);
-      options.onTextReceived?.(newText);
-      options.onLiveTextChange?.(newText);
-    }
-  };
-
-  const onSpeechError = (error: any) => {
-    console.error('Erreur de reconnaissance vocale:', error);
-    globalIsRecording = false;
-    setIsRecording(false);
-    options.onRecordingStateChange?.(false);
-    if (recordingTimeoutRef.current) {
-      clearTimeout(recordingTimeoutRef.current);
-      recordingTimeoutRef.current = null;
-    }
-  };
-
-  const forceStopRecording = async () => {
-    try {
-      if (recordingTimeoutRef.current) {
-        clearTimeout(recordingTimeoutRef.current);
-        recordingTimeoutRef.current = null;
-      }
-      if (Voice) {
-        await Voice.stop();
-      }
-      globalIsRecording = false;
-      setIsRecording(false);
-      setLiveText('');
-      options.onRecordingStateChange?.(false);
-    } catch (error) {
-      console.error('Erreur lors de l\'arrêt forcé de l\'enregistrement:', error);
-      globalIsRecording = false;
-      setIsRecording(false);
-      options.onRecordingStateChange?.(false);
-    }
-  };
-
   const startRecording = async () => {
     try {
-      // Vérifier si un enregistrement est déjà en cours globalement
-      if (globalIsRecording) {
-        console.log('Un enregistrement est déjà en cours globalement');
-        // Forcer l'arrêt de l'enregistrement précédent
-        await forceStopRecording();
-        // Attendre un peu avant de redémarrer
-        await new Promise(resolve => setTimeout(resolve, 200));
-      }
-
-      // Recréer l'instance Voice pour éviter les conflits
-      if (!createVoiceInstance() || !Voice) {
-        console.error('Impossible de créer une instance Voice');
-        return;
-      }
-
-      // Réinitialiser les listeners
-      Voice.onSpeechStart = onSpeechStart;
-      Voice.onSpeechEnd = onSpeechEnd;
-      Voice.onSpeechResults = onSpeechResults;
-      Voice.onSpeechError = onSpeechError;
-
-      const isAvailable = await Voice.isAvailable();
-      if (!isAvailable) {
-        console.error('La reconnaissance vocale n\'est pas disponible');
-        return;
-      }
-
-      await Voice.start(I18n.locale === 'fr' ? 'fr-FR' : 'en-US');
+      ExpoSpeechRecognitionModule.start({
+        lang: i18n.language === 'fr' ? 'fr-FR' : 'en-US',
+        interimResults: true,
+        continuous: false,
+      });
     } catch (error) {
       console.error('Erreur lors du démarrage de l\'enregistrement:', error);
-      globalIsRecording = false;
       setIsRecording(false);
-      options.onRecordingStateChange?.(false);
-      if (recordingTimeoutRef.current) {
-        clearTimeout(recordingTimeoutRef.current);
-        recordingTimeoutRef.current = null;
-      }
+      optionsRef.current.onRecordingStateChange?.(false);
     }
   };
 
@@ -277,18 +103,28 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
         clearTimeout(recordingTimeoutRef.current);
         recordingTimeoutRef.current = null;
       }
-      if (Voice) {
-        await Voice.stop();
-      }
-      globalIsRecording = false;
-      setIsRecording(false);
-      options.onRecordingStateChange?.(false);
+      ExpoSpeechRecognitionModule.stop();
     } catch (error) {
       console.error('Erreur lors de l\'arrêt de l\'enregistrement:', error);
-      // Forcer la mise à jour de l'état même en cas d'erreur
-      globalIsRecording = false;
       setIsRecording(false);
-      options.onRecordingStateChange?.(false);
+      optionsRef.current.onRecordingStateChange?.(false);
+    }
+  };
+
+  const forceStopRecording = async () => {
+    try {
+      if (recordingTimeoutRef.current) {
+        clearTimeout(recordingTimeoutRef.current);
+        recordingTimeoutRef.current = null;
+      }
+      ExpoSpeechRecognitionModule.abort();
+      setIsRecording(false);
+      setLiveText('');
+      optionsRef.current.onRecordingStateChange?.(false);
+    } catch (error) {
+      console.error('Erreur lors de l\'arrêt forcé:', error);
+      setIsRecording(false);
+      optionsRef.current.onRecordingStateChange?.(false);
     }
   };
 
@@ -304,4 +140,4 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
     clearLiveText,
     forceStopRecording,
   };
-}; 
+};

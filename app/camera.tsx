@@ -2,10 +2,8 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import {
   Dimensions,
   Platform,
-  StyleProp,
   StyleSheet,
   View,
-  ViewStyle,
   TouchableOpacity,
   Text,
   Animated,
@@ -23,11 +21,11 @@ import Svg, { Circle } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../components/ui/IconSymbol';
-import { router, useLocalSearchParams, useGlobalSearchParams } from 'expo-router';
+import { router, useGlobalSearchParams } from 'expo-router';
 import { Colors } from '../constants/Colors';
 import * as Haptics from 'expo-haptics';
 import apiService from '../services/api';
-import I18n from '../i18n';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
@@ -35,6 +33,7 @@ const MAX_PHOTOS = 30;
 const MAX_VIDEO_DURATION = 40; // seconds
 
 export default function CameraScreen() {
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const params = useGlobalSearchParams();
   const [permission, requestPermission] = useCameraPermissions();
@@ -157,10 +156,11 @@ export default function CameraScreen() {
   ).current;
 
   const loadingMessages = useMemo(() => {
-    return mode === 'photo'
-      ? I18n.t('camera.loadingMessagesPhoto')
-      : I18n.t('camera.loadingMessagesVideo');
-  }, [mode]);
+    const msgs = mode === 'photo'
+      ? t('camera.loadingMessagesPhoto', { returnObjects: true })
+      : t('camera.loadingMessagesVideo', { returnObjects: true });
+    return Array.isArray(msgs) ? msgs : [];
+  }, [mode, t]);
 
   useEffect(() => {
     if (!permission) {
@@ -171,15 +171,15 @@ export default function CameraScreen() {
   const showOnboarding = useCallback(async () => {
     if (mode === 'video') {
       Alert.alert(
-        I18n.t('camera.onboarding.video.title'),
-        I18n.t('camera.onboarding.video.message'),
-        [{ text: I18n.t('camera.onboarding.video.button'), onPress: () => AsyncStorage.setItem('hasSeenCameraOnboarding_video', 'true') }]
+        t('camera.onboarding.video.title'),
+        t('camera.onboarding.video.message'),
+        [{ text: t('camera.onboarding.video.button'), onPress: () => AsyncStorage.setItem('hasSeenCameraOnboarding_video', 'true') }]
       );
     } else {
       Alert.alert(
-        I18n.t('camera.onboarding.photo.title'),
-        I18n.t('camera.onboarding.photo.message'),
-        [{ text: I18n.t('camera.onboarding.photo.button'), onPress: () => AsyncStorage.setItem('hasSeenCameraOnboarding_photo', 'true') }]
+        t('camera.onboarding.photo.title'),
+        t('camera.onboarding.photo.message'),
+        [{ text: t('camera.onboarding.photo.button'), onPress: () => AsyncStorage.setItem('hasSeenCameraOnboarding_photo', 'true') }]
       );
     }
   }, [mode]);
@@ -258,12 +258,12 @@ export default function CameraScreen() {
     return (
       <View style={styles.container}>
         <View style={styles.permissionContainer}>
-          <Text style={styles.message}>{I18n.t('camera.permissionMessage')}</Text>
+          <Text style={styles.message}>{t('camera.permissionMessage')}</Text>
           <TouchableOpacity onPress={requestPermission} style={styles.permissionButton}>
-            <Text style={styles.permissionButtonText}>{I18n.t('camera.grantPermission')}</Text>
+            <Text style={styles.permissionButtonText}>{t('camera.grantPermission')}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-            <Text style={styles.backButtonText}>{I18n.t('camera.back')}</Text>
+            <Text style={styles.backButtonText}>{t('camera.back')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -475,14 +475,14 @@ export default function CameraScreen() {
           }, 500);
         });
       } else {
-        throw new Error(response.error || 'Erreur lors de l\'extraction');
+        throw new Error(response.error || t('camera.extractionError'));
       }
     } catch (error) {
       console.error('Erreur extraction ingrédients:', error);
       Alert.alert(
-        I18n.t('camera.errorTitle'),
-        I18n.t('camera.errorDescription'),
-        [{ text: I18n.t('common.ok'), onPress: () => setIsLoading(false) }]
+        t('camera.errorTitle'),
+        t('camera.errorDescription'),
+        [{ text: t('common.ok'), onPress: () => setIsLoading(false) }]
       );
     }
   };
@@ -601,7 +601,7 @@ export default function CameraScreen() {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 }}
               >
-                <Text style={[styles.modeText, mode === 'photo' && styles.modeTextActive]}>{I18n.t('camera.modes.photo')}</Text>
+                <Text style={[styles.modeText, mode === 'photo' && styles.modeTextActive]}>{t('camera.modes.photo')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.modeButton, mode === 'video' && styles.modeButtonActive]}
@@ -610,7 +610,7 @@ export default function CameraScreen() {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 }}
               >
-                <Text style={[styles.modeText, mode === 'video' && styles.modeTextActive]}>{I18n.t('camera.modes.video')}</Text>
+                <Text style={[styles.modeText, mode === 'video' && styles.modeTextActive]}>{t('camera.modes.video')}</Text>
               </TouchableOpacity>
             </View>
           )} */}
@@ -670,7 +670,7 @@ export default function CameraScreen() {
                 </Animated.View>
               )}
               {mode === 'photo' && capturedImages.length >= MAX_PHOTOS && (
-                <Text style={styles.limitText}>{I18n.t('camera.maxPhotosReached')}</Text>
+                <Text style={styles.limitText}>{t('camera.maxPhotosReached')}</Text>
               )}
             </View>
 
@@ -693,7 +693,7 @@ export default function CameraScreen() {
 
           {((mode === 'photo' && capturedImages.length > 0) || (mode === 'video' && recordedVideoUri)) && (
             <TouchableOpacity style={styles.finishButton} onPress={finishCapture}>
-              <Text style={styles.finishButtonText}>{I18n.t('camera.finishButton')}</Text>
+              <Text style={styles.finishButtonText}>{t('camera.finishButton')}</Text>
               <IconSymbol name="chevron-forward" size={20} color="white" weight="bold" />
             </TouchableOpacity>
           )}

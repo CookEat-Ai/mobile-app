@@ -9,18 +9,19 @@ import {
   View,
   Platform,
   FlatList,
-  Image,
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from 'react-native';
+import { Image } from 'expo-image';
+import { Asset } from 'expo-asset';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { Colors } from '../../constants/Colors';
-import I18n from '../../i18n';
+import { useTranslation } from 'react-i18next';
 import analytics from '../../services/analytics';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const TUTORIAL_IMAGES_IOS = [
   require('../../assets/images/tuto/ios/tuto-import-tiktok-1.png'),
@@ -52,8 +53,12 @@ export default function VideoImportTutorialScreen() {
   const scaleAnim = useRef(new Animated.Value(0.9)).current;
 
   const [activeIndex, setActiveIndex] = useState(0);
+  const { t } = useTranslation();
 
   useEffect(() => {
+    // Preload images for better responsiveness
+    Asset.loadAsync([...TUTORIAL_IMAGES, require('../../assets/images/iphone.png'), require('../../assets/images/android.png')]);
+
     if (!isExternalCall) {
       analytics.track('onboarding_video_import_tutorial_viewed');
     } else {
@@ -94,11 +99,7 @@ export default function VideoImportTutorialScreen() {
 
     analytics.track('onboarding_video_import_tutorial_continue', { variant });
 
-    if (variant === 'C' || variant === 'D') {
-      router.replace('/onboarding/videoDemo');
-    } else {
-      router.replace('/onboarding/ahaMoment');
-    }
+    router.replace('/onboarding/promoCode');
   };
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -111,13 +112,18 @@ export default function VideoImportTutorialScreen() {
     }
   };
 
-  const renderItem = ({ item }: { item: any }) => (
+  const renderItem = ({ item, index }: { item: any, index: number }) => (
     <View style={styles.carouselItem}>
       <View style={styles.iphoneWrapper}>
-        <Image source={item} style={styles.tutorialImage} />
+        <Image 
+          source={item} 
+          style={styles.tutorialImage} 
+          priority={index === 0 ? "high" : "normal"}
+        />
         <Image
           source={Platform.OS === 'ios' ? require('../../assets/images/iphone.png') : require('../../assets/images/android.png')}
           style={styles.iphoneFrame}
+          priority="high"
         />
       </View>
     </View>
@@ -132,16 +138,16 @@ export default function VideoImportTutorialScreen() {
     >
       <View style={styles.topSection}>
         <Animated.View style={[styles.header, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
-          <Text style={styles.title}>{I18n.t('onboardingVideoImport.title')}</Text>
+          <Text style={styles.title}>{t('onboardingVideoImport.title')}</Text>
           <Text
             style={styles.subtitle}
             numberOfLines={1}
             adjustsFontSizeToFit={true}
             minimumFontScale={0.7}
           >
-            {I18n.t('onboardingVideoImport.subtitle')}
+            {t('onboardingVideoImport.subtitle')}
           </Text>
-          <Text style={styles.howToText}>{I18n.t('onboardingVideoImport.howTo')}</Text>
+          <Text style={styles.howToText}>{t('onboardingVideoImport.howTo')}</Text>
         </Animated.View>
 
         <Animated.View style={[styles.carouselContainer, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
@@ -155,6 +161,10 @@ export default function VideoImportTutorialScreen() {
             onScroll={onScroll}
             scrollEventThrottle={16}
             style={styles.flatList}
+            initialNumToRender={1}
+            maxToRenderPerBatch={2}
+            windowSize={3}
+            removeClippedSubviews={false}
           />
 
           <View style={styles.pagination}>
@@ -176,7 +186,7 @@ export default function VideoImportTutorialScreen() {
         style={styles.continueButton}
         onPress={handleContinue}
       >
-        <Text style={styles.buttonText}>{I18n.t('onboardingVideoImport.button')}</Text>
+        <Text style={styles.buttonText}>{t('onboardingVideoImport.button')}</Text>
       </TouchableOpacity>
     </View>
   );

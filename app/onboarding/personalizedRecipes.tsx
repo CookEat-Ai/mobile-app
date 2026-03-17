@@ -12,8 +12,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../constants/Colors';
-import I18n from '../../i18n';
-import analytics from '../../services/analytics';
+import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
@@ -23,6 +22,7 @@ export default function PersonalizedRecipesScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const loadAnswers = async () => {
@@ -61,7 +61,7 @@ export default function PersonalizedRecipesScreen() {
         try {
           const parsed = JSON.parse(val);
           return Array.isArray(parsed) ? parsed : [val];
-        } catch (e) {
+        } catch {
           return [val];
         }
       }
@@ -70,22 +70,22 @@ export default function PersonalizedRecipesScreen() {
 
     // Temps (cookingTime)
     const timeValues = parseValue(userAnswers['cookingTime']);
-    const timeLabel = timeValues ? I18n.t(`onboarding.formQuestions.${timeValues[0]}`) : null;
+    const timeLabel = timeValues ? t(`onboarding.formQuestions.${timeValues[0]}`) : null;
 
     // Style de cuisine (Index 13 - Multi)
     const cuisineValues = parseValue(userAnswers['question_13']);
-    const cuisineLabel = cuisineValues ? I18n.t(`onboarding.formQuestions.${cuisineValues[0]}`) : null;
+    const cuisineLabel = cuisineValues ? t(`onboarding.formQuestions.${cuisineValues[0]}`) : null;
 
     // Régime (diet)
     const dietValues = parseValue(userAnswers['diet']);
-    const dietLabel = dietValues ? I18n.t(`onboarding.formQuestions.${dietValues[0]}`) : null;
+    const dietLabel = dietValues ? t(`onboarding.formQuestions.${dietValues[0]}`) : null;
 
     // Ingrédients à éviter (Index 17 - Multi)
     const avoidValues = parseValue(userAnswers['question_17']);
     const avoidLabels = avoidValues
       ? avoidValues
         .filter(v => v !== 'avoid_none')
-        .map(v => I18n.t(`onboarding.formQuestions.${v}`).toLowerCase())
+        .map(v => t(`onboarding.formQuestions.${v}`).toLowerCase())
       : [];
     const avoidText = avoidLabels.length > 0 ? avoidLabels.join(', ') : null;
 
@@ -93,39 +93,39 @@ export default function PersonalizedRecipesScreen() {
       {
         id: '1',
         emoji: '🕒',
-        title: I18n.t('onboarding.personalizedCategories.quick.title'),
+        title: t('onboarding.personalizedCategories.quick.title'),
         description: timeLabel
-          ? I18n.t('onboarding.personalizedCategories.quick.descPersonalized', { time: timeLabel.toLowerCase() })
-          : I18n.t('onboarding.personalizedCategories.quick.description'),
+          ? t('onboarding.personalizedCategories.quick.descPersonalized', { time: timeLabel.toLowerCase() })
+          : t('onboarding.personalizedCategories.quick.description'),
         rotation: '-2deg',
       },
       {
         id: '2',
         emoji: '🌍',
-        title: cuisineLabel ? cuisineLabel : I18n.t('onboarding.personalizedCategories.chef.title'),
+        title: cuisineLabel ? cuisineLabel : t('onboarding.personalizedCategories.chef.title'),
         description: cuisineLabel
-          ? I18n.t('onboarding.personalizedCategories.chef.descPersonalized', { style: cuisineLabel.toLowerCase() })
-          : I18n.t('onboarding.personalizedCategories.chef.description'),
+          ? t('onboarding.personalizedCategories.chef.descPersonalized', { style: cuisineLabel.toLowerCase() })
+          : t('onboarding.personalizedCategories.chef.description'),
         rotation: '1.5deg',
       },
       {
         id: '3',
         emoji: dietLabel || avoidText ? '🥦' : '🥗',
-        title: dietLabel ? dietLabel : I18n.t('onboarding.personalizedCategories.balanced.title'),
+        title: dietLabel ? dietLabel : t('onboarding.personalizedCategories.balanced.title'),
         description: (dietLabel || avoidText)
-          ? `${dietLabel ? I18n.t('onboarding.personalizedCategories.balanced.descPersonalized', { diet: dietLabel.toLowerCase() }) : ''}${dietLabel && avoidText ? ' ' : ''}${avoidText ? I18n.t('onboarding.personalizedCategories.balanced.without', { ingredients: avoidText }) : ''}`
-          : I18n.t('onboarding.personalizedCategories.balanced.description'),
+          ? `${dietLabel ? t('onboarding.personalizedCategories.balanced.descPersonalized', { diet: dietLabel.toLowerCase() }) : ''}${dietLabel && avoidText ? ' ' : ''}${avoidText ? t('onboarding.personalizedCategories.balanced.without', { ingredients: avoidText }) : ''}`
+          : t('onboarding.personalizedCategories.balanced.description'),
         rotation: '-1deg',
       },
       {
         id: '4',
         emoji: '🔥',
-        title: I18n.t('onboarding.personalizedCategories.gourmet.title'),
-        description: I18n.t('onboarding.personalizedCategories.gourmet.description'),
+        title: t('onboarding.personalizedCategories.gourmet.title'),
+        description: t('onboarding.personalizedCategories.gourmet.description'),
         rotation: '2deg',
       },
     ];
-  }, [userAnswers, I18n.locale]);
+  }, [userAnswers, i18n.language]);
 
   const handleContinue = () => {
     router.replace('/onboarding/reminder');
@@ -155,7 +155,7 @@ export default function PersonalizedRecipesScreen() {
 
         <Animated.View style={[styles.bottomSection, { opacity: fadeAnim }]}>
           <View style={{ flex: 1, justifyContent: 'center' }}>
-            <Text style={styles.mainTitle}>{I18n.t('onboarding.personalizedTitle')}</Text>
+            <Text style={styles.mainTitle}>{t('onboarding.personalizedTitle')}</Text>
           </View>
 
           <TouchableOpacity
@@ -163,7 +163,7 @@ export default function PersonalizedRecipesScreen() {
             style={styles.continueButton}
             onPress={handleContinue}
           >
-            <Text style={styles.buttonText}>{I18n.t('onboarding.go')}</Text>
+            <Text style={styles.buttonText}>{t('onboarding.go')}</Text>
           </TouchableOpacity>
         </Animated.View>
       </View >

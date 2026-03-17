@@ -26,6 +26,7 @@
       "appleTeamId": "P48MLLHB99"
     },
     "android": {
+      "playStoreUrl": "https://play.google.com/store/apps/details?id=com.gokugen.cookeat",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon-android.png",
         "backgroundColor": "#ffffff"
@@ -100,7 +101,13 @@
           "cameraPermission": "CookEat AI would like to access your camera to take photos of your ingredients."
         }
       ],
-      "@react-native-voice/voice",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "This app uses the microphone for voice recognition to understand your available ingredients.",
+          "speechRecognitionPermission": "CookEat uses voice recognition to understand your ingredients and suggest recipes tailored to what you have at home."
+        }
+      ],
       [
         "expo-notifications",
         {
@@ -118,7 +125,13 @@
         }
       ],
       "expo-secure-store",
-      "expo-video",
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": false,
+          "supportsPictureInPicture": false
+        }
+      ],
       [
         "expo-share-intent",
         {
@@ -132,8 +145,7 @@
           "androidMultiIntentFilters": []
         }
       ],
-      "expo-image",
-      "expo-audio"
+      "expo-image"
     ],
     "experiments": {
       "typedRoutes": true
@@ -144,9 +156,13 @@
         "projectId": "014735a5-662a-4ab0-84a8-d1e8653c94d6"
       }
     },
-    "runtimeVersion": "1.0.0",
+    "runtimeVersion": {
+      "policy": "fingerprint"
+    },
     "updates": {
-      "url": "https://u.expo.dev/014735a5-662a-4ab0-84a8-d1e8653c94d6"
+      "url": "https://u.expo.dev/014735a5-662a-4ab0-84a8-d1e8653c94d6",
+      "fallbackToCacheTimeout": 0,
+      "checkAutomatically": "ON_LOAD"
     }
   }
 }
