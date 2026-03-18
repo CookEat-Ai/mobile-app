@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import appsFlyerService from './appsflyer';
 import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 import { Platform } from 'react-native';
+import * as Localization from 'expo-localization';
 
 class AnalyticsService {
   private posthog: PostHog | null = null;
@@ -17,16 +18,19 @@ class AnalyticsService {
 
     try {
       let uniqueId = await getUniqueDeviceId();
+      console.log('🆔 [Analytics] Mobile ID:', uniqueId);
 
-      if (!__DEV__ && POSTHOG_API_KEY && !POSTHOG_API_KEY.includes('YOUR_POSTHOG')) {
+      if (POSTHOG_API_KEY && !POSTHOG_API_KEY.includes('YOUR_POSTHOG')) {
         this.posthog = new PostHog(POSTHOG_API_KEY, {
           host: POSTHOG_HOST,
         });
 
         this.posthog.identify(uniqueId);
+
+        const languageCode = Localization.getLocales()?.[0]?.languageCode || 'en';
+        this.posthog.setPersonProperties({ user_language: languageCode });
+
         console.log('✅ PostHog initialisé');
-      } else if (__DEV__) {
-        console.log('⚠️ PostHog désactivé en mode développement');
       }
 
       appsFlyerService.init();
@@ -121,13 +125,23 @@ class AnalyticsService {
     return undefined;
   }
 
-  async getOnboardingVariant(): Promise<'A' | 'B' | 'C' | 'D'> {
-    // if (__DEV__) return 'A';
+  async getOnboardingVariant(): Promise<'A' | 'B' | 'C' | 'D' | 'E' | 'F'> {
+    if (__DEV__) return 'F';
+
+    if (this.posthog && this.isInitialized) {
+      // On s'assure que les propriétés (comme user_language) sont envoyées 
+      // avant de demander le flag pour garantir le ciblage correct
+      await this.posthog.flush().catch(() => { });
+    }
+
     const variant = await this.getFeatureFlag('onboarding-variant');
+    console.log('🔍 [Analytics] Onboarding Variant:', variant);
     if (variant === 'control' || variant === 'A') return 'A';
     if (variant === 'B') return 'B';
     if (variant === 'D') return 'D';
-    return 'C'; // Par défaut sur C si variant est 'C' ou indéfini
+    if (variant === 'E') return 'E';
+    if (variant === 'F') return 'F';
+    return 'C';
   }
 
   async getLuckyWheelVariant(): Promise<'A' | 'B'> {

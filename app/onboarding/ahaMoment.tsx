@@ -47,9 +47,14 @@ export default function AhaMomentScreen() {
     });
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     analytics.track('Onboarding - Aha Moment Skip');
-    router.push('/onboarding/ingredientSelection');
+    const variant = await analytics.getOnboardingVariant();
+    if (variant === 'E' || variant === 'F') {
+      router.replace('/onboarding/videoImportTutorial');
+    } else {
+      router.push('/onboarding/ingredientSelection');
+    }
   };
 
   return (
@@ -61,7 +66,7 @@ export default function AhaMomentScreen() {
             needsOffscreenAlphaCompositing={true}
             renderToHardwareTextureAndroid={Platform.OS === 'android'}
           >
-            <Text style={styles.emoji}>✨</Text>
+            <Text style={styles.emoji}>📷</Text>
             <Text style={styles.title}>{t('onboarding.ahaMoment.title')}</Text>
             <Text style={styles.subtitle}>{t('onboarding.ahaMoment.subtitle')}</Text>
           </Animated.View>

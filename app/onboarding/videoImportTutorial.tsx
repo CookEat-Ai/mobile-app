@@ -99,7 +99,11 @@ export default function VideoImportTutorialScreen() {
 
     analytics.track('onboarding_video_import_tutorial_continue', { variant });
 
-    router.replace('/onboarding/promoCode');
+    if (variant === 'E' || variant === 'F') {
+      router.replace('/onboarding/reviewRequest');
+    } else {
+      router.replace('/onboarding/promoCode');
+    }
   };
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {

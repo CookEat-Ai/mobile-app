@@ -111,7 +111,7 @@ export default function RecipeDetailScreen() {
   const [isLiked, setIsLiked] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [statusBarStyle, setStatusBarStyle] = useState<'light' | 'dark'>('light');
-  const [variant, setVariant] = useState<'A' | 'B' | 'C' | 'D'>('A');
+  const [variant, setVariant] = useState<'A' | 'B' | 'C' | 'D' | 'E' | 'F'>('A');
 
   const getVideoPlatformInfo = (url: string) => {
     if (!url) return { icon: 'logo-tiktok' as any, label: t('recipeDetail.viewOriginalVideo') };
@@ -139,6 +139,7 @@ export default function RecipeDetailScreen() {
   }, []);
 
   const isStreaming = params.streaming === 'true';
+  const isOnboarding = params.isOnboarding === 'true';
   const prefetchStreamId = typeof params.prefetchStreamId === 'string' ? params.prefetchStreamId : null;
   const shouldSearchImage = params.showGenerateButton !== 'false' || params.isHistory === 'true';
   const recipeIdParam = (params.recipeId as string) || (params.id as string);
@@ -395,7 +396,7 @@ export default function RecipeDetailScreen() {
       preferences.equipments || [],
       preferences.allergies || [],
       preferences.allowOtherIngredients,
-      false,
+      isSubscribed,
       {
         onRecipeChunk: (partial) => {
           if (streamSessionIdRef.current !== streamSessionId) return;
@@ -624,6 +625,8 @@ export default function RecipeDetailScreen() {
     const variant = await analytics.getOnboardingVariant();
     if (variant === 'B') {
       router.push({ pathname: '/paywall', params: { source: 'onboarding_variant_b' } });
+    } else if (variant === 'E' || variant === 'F') {
+      router.replace('/onboarding/videoImportTutorial');
     } else {
       router.replace('/onboarding/personalizedRecipes');
     }
@@ -1058,7 +1061,7 @@ export default function RecipeDetailScreen() {
           </View>
 
           {/* Bouton retour */}
-          {(params.showGenerateButton !== 'false' || params.isHistory === 'true') &&
+          {!isOnboarding && (params.showGenerateButton !== 'false' || params.isHistory === 'true') &&
             <TouchableOpacity
               style={[styles.backButton, { top: insets.top }]}
               onPress={handleBackPress}

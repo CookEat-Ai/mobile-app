@@ -99,12 +99,14 @@ class RevenueCatService {
 
       if (isPromoCodeActivated) {
         console.log('✅ Code promo actif - accès premium accordé');
-        return {
+        const status = {
           isSubscribed: true,
           currentPlan: 'promo_code',
           expirationDate: null, // Pas d'expiration pour les codes promo
           dailyQuotaRemaining: 999 // Quota illimité
         };
+        await this.persistLastSubscriptionStatus(status);
+        return status;
       }
 
       let customerInfo = await Purchases.getCustomerInfo();
@@ -408,6 +410,15 @@ class RevenueCatService {
 
       if (response.data?.isValid) {
         await AsyncStorage.setItem(PROMO_CODE_STORAGE_KEY, 'true');
+        
+        // Mettre à jour le cache immédiatement
+        await this.persistLastSubscriptionStatus({
+          isSubscribed: true,
+          currentPlan: 'promo_code',
+          expirationDate: null,
+          dailyQuotaRemaining: 999
+        });
+
         console.log('✅ Code promo activé avec succès');
         return true;
       } else {

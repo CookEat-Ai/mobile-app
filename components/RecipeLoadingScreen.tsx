@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../constants/Colors';
 import { useTranslation } from 'react-i18next';
 import recipeStreamManager from '../services/recipeStreamManager';
+import revenueCatService from '../config/revenuecat';
 
 const { width } = Dimensions.get('window');
 
@@ -149,11 +150,17 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
       if (!parsed.ingredients || !parsed.preferences) return;
 
       const preferences = JSON.parse(parsed.preferences);
-      prefetchStreamIdRef.current = recipeStreamManager.start({
-        ingredients: parsed.ingredients,
-        preferences,
-        isSubscribed: false,
-      });
+      
+      const startStream = async () => {
+        const { isSubscribed } = await revenueCatService.getSubscriptionStatus();
+        prefetchStreamIdRef.current = recipeStreamManager.start({
+          ingredients: parsed.ingredients!,
+          preferences,
+          isSubscribed,
+        });
+      };
+      
+      startStream();
     } catch {
       // Ignore parsing errors: fallback to existing generation behavior.
     }

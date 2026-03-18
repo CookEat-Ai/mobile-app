@@ -13,14 +13,16 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useCallback } from 'react';
 import { Colors } from '../../constants/Colors';
 import { useTranslation } from 'react-i18next';
 import analytics from '../../services/analytics';
 import apiService from '../../services/api';
+import revenueCatService from '../../config/revenuecat';
 import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
@@ -35,10 +37,27 @@ export default function PromoCodeScreen() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [discountPercentage, setDiscountPercentage] = useState<number | null>(null);
+  const [hasShownPaywall, setHasShownPaywall] = useState(false);
   const { t } = useTranslation();
+
+  useFocusEffect(
+    useCallback(() => {
+      if (hasShownPaywall) {
+        setHasShownPaywall(false);
+        (async () => {
+          const status = await revenueCatService.getSubscriptionStatus();
+          if (status.isSubscribed) {
+            await AsyncStorage.setItem('onboarding_completed', 'true');
+            router.replace('/(tabs)');
+          }
+        })();
+      }
+    }, [hasShownPaywall])
+  );
 
   useEffect(() => {
     analytics.track('onboarding_promo_code_viewed');
+    analytics.requestTrackingPermission();
 
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -70,8 +89,14 @@ export default function PromoCodeScreen() {
         setSuccess(true);
         setDiscountPercentage(response.data.discountPercentage);
 
-        await AsyncStorage.setItem('pending_promo_code', code.trim().toUpperCase());
-        await AsyncStorage.setItem('pending_promo_discount', String(response.data.discountPercentage));
+        // Si c'est un code premium (100% de réduction), on l'active directement
+        if (response.data.discountPercentage === 100) {
+          await revenueCatService.activatePromoCode(code.trim());
+          analytics.track('onboarding_promo_premium_activated');
+        } else {
+          await AsyncStorage.setItem('pending_promo_code', code.trim().toUpperCase());
+          await AsyncStorage.setItem('pending_promo_discount', String(response.data.discountPercentage));
+        }
 
         analytics.track('onboarding_promo_code_valid', {
           discount: response.data.discountPercentage,
@@ -93,7 +118,28 @@ export default function PromoCodeScreen() {
   const navigateNext = async () => {
     const variant = await analytics.getOnboardingVariant();
 
-    if (variant === 'C' || variant === 'D') {
+    // Vérifier si un code promo premium a déjà été activé
+    const isPremium = await revenueCatService.isPromoCodeActivated();
+    if (isPremium) {
+      await AsyncStorage.setItem('onboarding_completed', 'true');
+      router.replace('/(tabs)');
+      return;
+    }
+
+    if (variant === 'E') {
+      setHasShownPaywall(true);
+      const pendingDiscount = await AsyncStorage.getItem('pending_promo_discount');
+      if (pendingDiscount) {
+        router.push({
+          pathname: '/paywall',
+          params: { source: 'onboarding_variant_e', initialState: 'PROMO_DISCOUNTED', promoDiscount: pendingDiscount },
+        });
+      } else {
+        router.push({ pathname: '/paywall', params: { source: 'onboarding_variant_e' } });
+      }
+    } else if (variant === 'F') {
+      router.replace('/onboarding/personalizedRecipes');
+    } else if (variant === 'C' || variant === 'D') {
       router.replace('/onboarding/videoDemo');
     } else {
       router.replace('/onboarding/ahaMoment');

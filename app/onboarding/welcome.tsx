@@ -3,9 +3,14 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View, Easing } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
+import * as Localization from 'expo-localization';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../constants/Colors';
 import { useTranslation } from 'react-i18next';
 import IphoneVideoDemo from '../../components/IphoneVideoDemo';
+import analytics from '../../services/analytics';
+import apiService from '../../services/api';
+import { getUniqueDeviceId } from '../../services/deviceStorage';
 
 const { width } = Dimensions.get('window');
 
@@ -34,7 +39,6 @@ export default function WelcomeVideoScreen() {
         <Animated.View style={{ transform: [{ translateX: mascotTranslateX }, { rotate: '20deg' }] }}>
           <Image
             source={require('../../assets/images/mascot.png')}
-            contentFit="contain"
             transition={0}
             cachePolicy="memory-disk"
             style={styles.brandMascot}
@@ -54,7 +58,26 @@ export default function WelcomeVideoScreen() {
       <TouchableOpacity
         activeOpacity={0.85}
         style={styles.continueButton}
-        onPress={() => router.replace('/onboarding/formQuestion')}
+        onPress={async () => {
+          (async () => {
+            try {
+              const mobileId = await getUniqueDeviceId();
+              const timezone = Localization.getCalendars()[0].timeZone || undefined;
+              const response = await apiService.initUser(mobileId, timezone);
+              if (response.data?.userId) {
+                await AsyncStorage.setItem('userId', response.data.userId);
+                analytics.identify(response.data.userId);
+              }
+            } catch { }
+          })();
+
+          const variant = await analytics.getOnboardingVariant();
+          if (variant === 'E' || variant === 'F') {
+            router.replace('/onboarding/fastOnboarding');
+          } else {
+            router.replace('/onboarding/formQuestion');
+          }
+        }}
       >
         <Text style={styles.buttonText}>{t('onboarding.continue')}</Text>
       </TouchableOpacity>

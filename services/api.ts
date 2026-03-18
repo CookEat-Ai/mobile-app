@@ -410,6 +410,14 @@ class ApiService {
     });
   }
 
+  async initUser(mobileId: string, timezone?: string) {
+    const country = Localization.region || undefined;
+    return this.request<{ success: boolean; userId?: string }>('/user/init', {
+      method: 'POST',
+      body: JSON.stringify({ mobileId, timezone, country, language: this.getCurrentLanguage() }),
+    });
+  }
+
   async saveOnboardingAnswers(answers: Record<string, string>, mobileId: string, timezone?: string) {
     const country = Localization.region || undefined;
     return this.request<{ success: boolean; message: string; userId?: string }>('/user/onboarding', {

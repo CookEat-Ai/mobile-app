@@ -1,50 +1,55 @@
-# Welcome to your Expo app 👋
+# CookEat AI - Mobile App 🍳🥗
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Bienvenue dans le dépôt de l'application mobile **CookEat AI**. Cette application multi-plateforme est développée avec [Expo](https://expo.dev) et React Native.
 
-## Get started
+Elle permet aux utilisateurs de trouver des recettes intelligemment en fonction de ce qu'ils ont dans leur cuisine grâce à l'IA.
 
-1. Install dependencies
+## ✨ Fonctionnalités Mobile
 
-   ```bash
-   npm install
-   ```
+- **Reconnaissance Photo** : Utilise l'IA pour identifier les ingrédients via la caméra.
+- **Saisie Vocale** : Reconnaissance vocale intégrée pour énumérer vos ingrédients.
+- **Abonnements** : Gestion des abonnements Premium via RevenueCat.
+- **Notifications** : Rappels personnalisés et suggestions quotidiennes.
 
-2. Start the app
+## 🛠️ Pour commencer
 
-   ```bash
-   npx expo start
-   ```
+1.  **Installer les dépendances** :
 
-In the output, you'll find options to open the app in a
+    ```bash
+    npm install
+    ```
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+2.  **Lancer l'application localement** :
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+    ```bash
+    npx expo start
+    ```
 
-## Get a fresh project
+    Options disponibles dans l'interface de lancement :
+    - [Build de développement](https://docs.expo.dev/develop/development-builds/introduction/)
+    - [Émulateur Android](https://docs.expo.dev/workflow/android-studio-emulator/)
+    - [Simulateur iOS](https://docs.expo.dev/workflow/ios-simulator/)
+    - [Expo Go](https://expo.dev/go)
 
-When you're ready, run:
+3.  **Tests unitaires et lints** :
 
-```bash
-npm run reset-project
-```
+    ```bash
+    npm test
+    npm run lint
+    ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 📱 Plateformes Supportées
 
-## Learn more
+- **iOS** : [Télécharger sur l'App Store](https://apps.apple.com/fr/app/cookeat-ai/id6748924011)
+- **Android** : [Télécharger sur le Play Store](https://play.google.com/store/apps/details?id=com.gokugen.cookeat)
 
-To learn more about developing your project with Expo, look at the following resources:
+## 📁 Structure du Dossier App
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Le projet utilise le [routage basé sur les fichiers](https://docs.expo.dev/router/introduction) (Expo Router) dans le dossier `app/`.
 
-## Join the community
+- `app/(tabs)/` : Pages principales de l'application (navigation par onglets).
+- `services/` : Intégrations API et services tiers (Sentry, Appsflyer, RevenueCat).
+- `assets/` : Ressources graphiques (icônes, images, polices personnalisées).
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+---
+*Plus d'informations sur [Expo Documentation](https://docs.expo.dev/).*

@@ -199,6 +199,12 @@ export default function CameraScreen() {
 
   useEffect(() => {
     if (isLoading) {
+      // Réinitialiser les états de chargement
+      loadingProgress.setValue(0);
+      setLoadingTextIndex(0);
+      loadingTextIndexRef.current = 0;
+      loadingTextOpacity.setValue(1);
+
       // Animation de la barre de progression sur 15 secondes
       Animated.timing(loadingProgress, {
         toValue: 1,

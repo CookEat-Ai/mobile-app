@@ -2,7 +2,7 @@ import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, View, ActivityIndicator, Text, TouchableOpacity, Animated, Easing, Alert, Dimensions, Image, Platform, BackHandler } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, Text, TouchableOpacity, Animated, Easing, Dimensions, Image, Platform, BackHandler } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import RevenueCatUI from 'react-native-purchases-ui';
 import Purchases, { PurchasesOffering } from 'react-native-purchases';
@@ -327,6 +327,7 @@ export default function PaywallScreen() {
 
     if (params.source?.toString().includes('onboarding')) {
       // Si on est dans l'onboarding, on affiche l'alerte de perte de données
+      /*
       Alert.alert(
         t('onboarding.reminder.lossPersonalizationTitle'),
         t('onboarding.reminder.lossPersonalizationDescription'),
@@ -347,6 +348,8 @@ export default function PaywallScreen() {
           }
         ]
       );
+      */
+      await exitPaywall();
     } else {
       if (router.canGoBack()) {
         router.back();
