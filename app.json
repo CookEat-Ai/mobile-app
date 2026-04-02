@@ -2,7 +2,7 @@
   "expo": {
     "name": "CookEat Ai",
     "slug": "cookeat",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "cookeat",
@@ -51,21 +51,16 @@
       [
         "expo-build-properties",
         {
-          "android": {
-            "lintOptions": {
-              "disable": [
-                "ExtraTranslation"
-              ]
-            }
-          },
           "ios": {
             "buildReactNativeFromSource": true
           }
         }
       ],
       "./plugins/withGradleProperties",
+      "./plugins/withAndroidDefaultLocaleStrings",
       "./plugins/withManifestFix",
       "./plugins/withSentryXcodeEnv",
+      "./plugins/withFmtPodfileFix",
       "./plugins/withNativePatches",
       "expo-router",
       [
@@ -161,7 +156,7 @@
     },
     "updates": {
       "url": "https://u.expo.dev/014735a5-662a-4ab0-84a8-d1e8653c94d6",
-      "fallbackToCacheTimeout": 0,
+      "fallbackToCacheTimeout": 3000,
       "checkAutomatically": "ON_LOAD"
     }
   }

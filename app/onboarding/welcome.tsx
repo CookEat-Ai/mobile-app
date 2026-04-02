@@ -20,6 +20,7 @@ export default function WelcomeVideoScreen() {
   const { t } = useTranslation();
 
   useEffect(() => {
+    analytics.track('onboarding_welcome_viewed');
     Animated.timing(mascotTranslateX, {
       toValue: 0,
       duration: 750,

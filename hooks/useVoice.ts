@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { Alert, Linking } from 'react-native';
 import {
   ExpoSpeechRecognitionModule,
   useSpeechRecognitionEvent,
@@ -27,8 +28,20 @@ export const resetVoiceCompletely = async () => {
   await forceStopVoiceGlobally();
 };
 
+async function ensureMicrophonePermissionForSpeech(): Promise<boolean> {
+  try {
+    let { granted } = await ExpoSpeechRecognitionModule.getPermissionsAsync();
+    if (!granted) {
+      ({ granted } = await ExpoSpeechRecognitionModule.requestPermissionsAsync());
+    }
+    return granted;
+  } catch {
+    return false;
+  }
+}
+
 export const useVoice = (options: UseVoiceOptions = {}) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [isRecording, setIsRecording] = useState(false);
   const [liveText, setLiveText] = useState('');
   const recordingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -85,6 +98,21 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
 
   const startRecording = async () => {
     try {
+      const permitted = await ensureMicrophonePermissionForSpeech();
+      if (!permitted) {
+        Alert.alert(
+          t('micro.requiredTitle'),
+          t('micro.requiredMessage'),
+          [
+            { text: t('home.voice.errorButtonCancel'), style: 'cancel' },
+            {
+              text: t('home.voice.errorButtonSettings'),
+              onPress: () => Linking.openSettings(),
+            },
+          ],
+        );
+        return;
+      }
       ExpoSpeechRecognitionModule.start({
         lang: i18n.language === 'fr' ? 'fr-FR' : 'en-US',
         interimResults: true,

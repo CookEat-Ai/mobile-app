@@ -77,21 +77,43 @@ class ApiService {
     }
   }
 
+  /** Au retour au premier plan : reconnecte tout de suite au lieu d'attendre le délai de retry. */
+  onAppForeground() {
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+    this.connectHealthWs();
+  }
+
   private connectHealthWs() {
-    if (this.healthWs) return;
+    if (this.healthWs?.readyState === WebSocket.OPEN) {
+      this.onHealthChange?.(true);
+      return;
+    }
+    if (this.healthWs) {
+      try {
+        this.healthWs.close();
+      } catch {
+        /* ignore */
+      }
+      this.healthWs = null;
+    }
 
     try {
-      this.healthWs = new WebSocket(WS_URL);
+      const socket = new WebSocket(WS_URL);
+      this.healthWs = socket;
 
-      // Sécurité : Si après 3s on n'est toujours pas OPEN, on considère que c'est DOWN
+      // Sécurité : Si après 5s on n'est toujours pas OPEN, on considère que c'est DOWN
       const connectionTimeout = setTimeout(() => {
-        if (this.healthWs && this.healthWs.readyState !== WebSocket.OPEN) {
+        if (this.healthWs === socket && socket.readyState !== WebSocket.OPEN) {
           console.log('WS Connection timeout - API considered unavailable');
           this.handleWsDisconnection();
         }
-      }, 3000);
+      }, 5000);
 
-      this.healthWs.onopen = () => {
+      socket.onopen = () => {
+        if (this.healthWs !== socket) return;
         clearTimeout(connectionTimeout);
         this.onHealthChange?.(true);
         if (this.reconnectTimer) {
@@ -100,13 +122,15 @@ class ApiService {
         }
       };
 
-      this.healthWs.onclose = () => {
+      socket.onclose = () => {
         clearTimeout(connectionTimeout);
+        if (this.healthWs !== socket) return;
         this.handleWsDisconnection();
       };
 
-      this.healthWs.onerror = () => {
+      socket.onerror = () => {
         clearTimeout(connectionTimeout);
+        if (this.healthWs !== socket) return;
         this.handleWsDisconnection();
       };
     } catch (e) {

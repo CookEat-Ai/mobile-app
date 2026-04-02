@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Alert,
   Animated,
+  AppState,
   Dimensions,
   ScrollView,
   StyleSheet,
@@ -15,6 +16,7 @@ import {
   TouchableOpacity,
   View,
   Share,
+  Platform,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -514,8 +516,14 @@ export default function RecipeDetailScreen() {
 
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if (await StoreReview.hasAction())
-        StoreReview.requestReview();
+      try {
+        if (AppState.currentState !== 'active') return;
+        if (await StoreReview.hasAction()) {
+          await StoreReview.requestReview();
+        }
+      } catch (e) {
+        console.warn('Store review request skipped:', e);
+      }
     }, 15000);
     return () => clearTimeout(timer);
   }, []);
@@ -1056,14 +1064,14 @@ export default function RecipeDetailScreen() {
           <View style={styles.imageOverlay} />
 
           {/* Marque */}
-          <View style={[styles.brandContainer, { top: insets.top }]}>
+          <View style={[styles.brandContainer, { top: Platform.OS === 'android' ? insets.top + 10 : insets.top }]}>
             <Text style={styles.brandText}>CookEat Ai</Text>
           </View>
 
           {/* Bouton retour */}
           {!isOnboarding && (params.showGenerateButton !== 'false' || params.isHistory === 'true') &&
             <TouchableOpacity
-              style={[styles.backButton, { top: insets.top }]}
+              style={[styles.backButton, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top }]}
               onPress={handleBackPress}
             >
               <Ionicons name="arrow-back" size={24} color="#000" />
@@ -1071,7 +1079,7 @@ export default function RecipeDetailScreen() {
 
           {/* Bouton Partage */}
           <TouchableOpacity
-            style={[styles.shareButton, { top: insets.top }]}
+            style={[styles.shareButton, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top }]}
             onPress={handleShare}
           >
             <Ionicons name="share-outline" size={24} color="#000" />
@@ -1080,7 +1088,7 @@ export default function RecipeDetailScreen() {
           {/* Bouton favorite */}
           <TouchableOpacity
             activeOpacity={0.8}
-            style={[styles.likeButton, { top: insets.top }]}
+            style={[styles.likeButton, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top }]}
             onPress={handleAddToFavorites}
           >
             <Ionicons
@@ -1170,7 +1178,7 @@ export default function RecipeDetailScreen() {
                     <Ionicons name="flame-outline" size={24} color="#666" />
                     <Text style={styles.metricLabel}>{t('recipeDetail.calories')}</Text>
                   </View>
-                  {isSubscribed || isFirstGeneration || params.isOnboarding === 'true' || params.showGenerateButton === 'false'
+                  {isSubscribed || isFirstGeneration || params.isOnboarding === 'true'
                     ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>
                       {recipe.calories.toString().replace(/\s*(per serving|par portion|par personne|per person|\/p|\/portion|\/serving)\s*/gi, '').trim() + t('recipeDetail.perServing')}
                     </Text>
@@ -1193,7 +1201,7 @@ export default function RecipeDetailScreen() {
                     <Ionicons name="fitness-outline" size={24} color="#666" />
                     <Text style={styles.metricLabel}>{t('recipeDetail.proteins')}</Text>
                   </View>
-                  {isSubscribed || isFirstGeneration || params.isOnboarding === 'true' || params.showGenerateButton === 'false'
+                  {isSubscribed || isFirstGeneration || params.isOnboarding === 'true'
                     ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{recipe.proteins}</Text>
                     : <Ionicons name="lock-closed-outline" size={24} color="black" />
                   }
@@ -1214,7 +1222,7 @@ export default function RecipeDetailScreen() {
                     <Ionicons name="water-outline" size={24} color="#666" />
                     <Text style={styles.metricLabel}>{t('recipeDetail.lipids')}</Text>
                   </View>
-                  {isSubscribed || isFirstGeneration || params.isOnboarding === 'true' || params.showGenerateButton === 'false'
+                  {isSubscribed || isFirstGeneration || params.isOnboarding === 'true'
                     ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{recipe.lipids}</Text>
                     : <Ionicons name="lock-closed-outline" size={24} color="black" />
                   }

@@ -3,6 +3,7 @@ import { router } from "expo-router";
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   Animated,
+  AppState,
   Dimensions,
   Easing,
   Platform,
@@ -623,11 +624,12 @@ export default function FormQuestionScreen() {
       setIsReviewDelayActive(true);
       setTimeout(async () => {
         try {
+          if (AppState.currentState !== 'active') return;
           if (await StoreReview.hasAction()) {
             await StoreReview.requestReview();
           }
         } catch (e) {
-          console.error('Error requesting review:', e);
+          console.warn('Store review request skipped:', e);
         }
       }, 2000);
 

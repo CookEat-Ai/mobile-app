@@ -16,7 +16,7 @@ const getApiBaseUrl = () => {
     }
 
     // Fallback si on ne trouve pas l'IP
-    return 'http://192.168.1.88:8083/api';
+    return 'http://192.168.1.94:8083/api';
   }
 
   // En production (remplacez par votre vraie URL)

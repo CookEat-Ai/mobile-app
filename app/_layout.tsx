@@ -116,25 +116,22 @@ function RootLayout() {
 
   useEffect(() => {
     const initAnalytics = async () => {
-      const uniqueId = await analytics.init();
+      await analytics.init();
       analytics.track('app_opened');
 
-      // Initialiser RevenueCat avec le même ID que PostHog
-      if (uniqueId) {
-        revenueCatService.initialize(uniqueId);
+      // Initialiser RevenueCat de manière anonyme au premier lancement pour permettre
+      // la fusion (merge) ultérieure avec l'identité serveur stable.
+      const storedUserId = await AsyncStorage.getItem('userId');
+      if (storedUserId) {
+        await revenueCatService.initialize(storedUserId);
+        analytics.identify(storedUserId);
       } else {
-        revenueCatService.initialize();
+        await revenueCatService.initialize();
       }
 
       // Récupérer le pays de l'utilisateur
       const countryCode = Localization.getLocales()?.[0]?.regionCode || 'Unknown';
       analytics.setCountry(countryCode);
-
-      const userId = await AsyncStorage.getItem('userId');
-      if (userId) {
-        analytics.identify(userId);
-      }
-
     };
 
     const syncUserIdentity = async () => {

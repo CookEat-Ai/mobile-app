@@ -11,7 +11,8 @@ import {
   PanResponder,
   GestureResponderEvent,
   StatusBar,
-  Alert
+  Alert,
+  Linking
 } from 'react-native';
 import { Image } from 'expo-image';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -184,6 +185,14 @@ export default function CameraScreen() {
     }
   }, [mode]);
 
+  const handleRequestPermission = async () => {
+    if (permission && !permission.granted) {
+      Linking.openSettings();
+      return;
+    }
+    await requestPermission();
+  };
+
   useEffect(() => {
     const checkOnboarding = async () => {
       const hasSeenOnboarding = await AsyncStorage.getItem(`hasSeenCameraOnboarding_${mode}`);
@@ -265,7 +274,7 @@ export default function CameraScreen() {
       <View style={styles.container}>
         <View style={styles.permissionContainer}>
           <Text style={styles.message}>{t('camera.permissionMessage')}</Text>
-          <TouchableOpacity onPress={requestPermission} style={styles.permissionButton}>
+          <TouchableOpacity onPress={handleRequestPermission} style={styles.permissionButton}>
             <Text style={styles.permissionButtonText}>{t('camera.grantPermission')}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>

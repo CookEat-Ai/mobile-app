@@ -216,11 +216,13 @@ export default function ProfileScreen() {
 
   const handleTermsOfServicePress = async () => {
     try {
-      const url = i18n.language?.startsWith('fr')
-        ? 'https://cookeat.info/legal/fr'
-        : 'https://cookeat.info/legal/en';
+      const url = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula';
 
-      WebBrowser.openBrowserAsync(url);
+      if (Platform.OS === 'android') {
+        Linking.openURL(url);
+      } else {
+        WebBrowser.openBrowserAsync(url);
+      }
     } catch (error) {
       console.error('Erreur lors de l\'ouverture des conditions d\'utilisation:', error);
       Alert.alert(

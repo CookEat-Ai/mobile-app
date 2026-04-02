@@ -6,6 +6,7 @@ import appsFlyerService from './appsflyer';
 import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 import { Platform } from 'react-native';
 import * as Localization from 'expo-localization';
+import * as Sentry from '@sentry/react-native';
 
 class AnalyticsService {
   private posthog: PostHog | null = null;
@@ -17,15 +18,18 @@ class AnalyticsService {
     if (this.isInitialized) return this.userId;
 
     try {
-      let uniqueId = await getUniqueDeviceId();
-      console.log('🆔 [Analytics] Mobile ID:', uniqueId);
+      const storedUserId = await AsyncStorage.getItem('userId');
+      const uniqueId = await getUniqueDeviceId();
+      const finalUserId = storedUserId || uniqueId;
+
+      console.log('🆔 [Analytics] User ID:', finalUserId, storedUserId ? '(Stored)' : '(Mobile ID)');
 
       if (POSTHOG_API_KEY && !POSTHOG_API_KEY.includes('YOUR_POSTHOG')) {
         this.posthog = new PostHog(POSTHOG_API_KEY, {
           host: POSTHOG_HOST,
         });
 
-        this.posthog.identify(uniqueId);
+        this.posthog.identify(finalUserId);
 
         const languageCode = Localization.getLocales()?.[0]?.languageCode || 'en';
         this.posthog.setPersonProperties({ user_language: languageCode });
@@ -34,13 +38,16 @@ class AnalyticsService {
       }
 
       appsFlyerService.init();
+      appsFlyerService.setCustomerUserId(finalUserId);
+      Sentry.setUser({ id: finalUserId });
 
       this.isInitialized = true;
-      this.userId = uniqueId;
+      this.userId = finalUserId;
 
       const hasRunBefore = await AsyncStorage.getItem(this.FIRST_RUN_KEY);
       if (!hasRunBefore) {
         await AsyncStorage.setItem(this.FIRST_RUN_KEY, 'true');
+        await this.track('first_open');
       }
 
       return uniqueId;
@@ -92,6 +99,8 @@ class AnalyticsService {
   private mapToAppsFlyerEvent(eventName: string): string {
     const mapping: Record<string, string> = {
       'app_opened': 'af_opened_app',
+      'first_open': 'af_first_open',
+      'onboarding_welcome_viewed': 'af_onboarding_welcome',
       'subscription_started': 'af_subscribe',
       'recipe_generated': 'af_content_view',
       'paywall_viewed': 'af_initiated_checkout'
@@ -105,6 +114,7 @@ class AnalyticsService {
       this.posthog.identify(userId);
     }
     appsFlyerService.setCustomerUserId(userId);
+    Sentry.setUser({ id: userId });
   }
 
   setUserProperties(properties: Record<string, any>) {

@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Text } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import 'react-native-reanimated';
-import { useTranslation } from 'react-i18next';
+import { Colors } from '../constants/Colors';
 import { resetVoiceCompletely } from '../hooks/useVoice';
 import analytics from '../services/analytics';
 
@@ -11,7 +11,6 @@ const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 const QUESTIONS_ANSWERED_KEY = 'questions_answered';
 
 export default function RootLayout() {
-  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(true);
   const [onboardingCompleted, setOnboardingCompleted] = useState(false);
   const [questionsAnswered, setQuestionsAnswered] = useState(false);
@@ -66,7 +65,11 @@ export default function RootLayout() {
   };
 
   if (isLoading)
-    return <Text>{t('common.loading')}</Text>
+    return (
+      <View style={styles.splash}>
+        <ActivityIndicator size="large" color={Colors.light.button} />
+      </View>
+    )
 
   if (!onboardingCompleted) {
     if (questionsAnswered)
@@ -81,3 +84,12 @@ export default function RootLayout() {
     <Redirect href="/(tabs)" />
   );
 }
+
+const styles = StyleSheet.create({
+  splash: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.light.background,
+  },
+});

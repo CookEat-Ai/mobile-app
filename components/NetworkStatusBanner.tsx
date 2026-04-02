@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, Text, View, Animated } from 'react-native';
+import { StyleSheet, Text, View, Animated, AppState } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { useTranslation } from 'react-i18next';
 import { apiService } from '../services/api';
@@ -8,6 +8,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const MESSAGE_HEIGHT = 30;
 const GAP = 6;
+/** Évite un flash du bandeau quand le WS se ferme au passage en arrière-plan puis se rouvre vite. */
+const API_UNAVAILABLE_BANNER_DELAY_MS = 2800;
 
 export default function NetworkStatusBanner() {
   const insets = useSafeAreaInsets();
@@ -15,6 +17,7 @@ export default function NetworkStatusBanner() {
   const pathname = usePathname();
   const [isConnected, setIsConnected] = useState<boolean | null>(true);
   const [isApiAvailable, setIsApiAvailable] = useState(true);
+  const apiDownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const totalBannerHeight = MESSAGE_HEIGHT + insets.top;
   const translateY = useRef(new Animated.Value(-totalBannerHeight)).current;
@@ -23,6 +26,23 @@ export default function NetworkStatusBanner() {
   const isInOnboarding = pathname.includes('/onboarding/');
 
   useEffect(() => {
+    const appSub = AppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') {
+        apiService.onAppForeground();
+      }
+    });
+
+    return () => appSub.remove();
+  }, []);
+
+  useEffect(() => {
+    const clearApiDownTimer = () => {
+      if (apiDownTimerRef.current) {
+        clearTimeout(apiDownTimerRef.current);
+        apiDownTimerRef.current = null;
+      }
+    };
+
     // Écouter les changements de connexion Internet native
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected);
@@ -30,11 +50,21 @@ export default function NetworkStatusBanner() {
 
     // Lancer le monitoring API via WebSocket
     apiService.monitorApiHealth((isAvailable) => {
-      setIsApiAvailable(isAvailable);
+      if (isAvailable) {
+        clearApiDownTimer();
+        setIsApiAvailable(true);
+      } else {
+        clearApiDownTimer();
+        apiDownTimerRef.current = setTimeout(() => {
+          apiDownTimerRef.current = null;
+          setIsApiAvailable(false);
+        }, API_UNAVAILABLE_BANNER_DELAY_MS);
+      }
     });
 
     return () => {
       unsubscribe();
+      clearApiDownTimer();
       // On ne ferme pas le monitoring global car il sert à toute l'app
     };
   }, []);
