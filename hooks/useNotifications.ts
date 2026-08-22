@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as Notifications from 'expo-notifications';
 import { notificationService } from '../services/notificationService';
 import { router } from 'expo-router';
+import analytics from '../services/analytics';
 
 export function useNotifications() {
   const notificationListener = useRef<Notifications.Subscription | undefined>(undefined);
@@ -38,7 +39,13 @@ export function useNotifications() {
 
   const initializeNotifications = async () => {
     try {
-      await notificationService.registerForPushNotificationsAsync();
+      // Ne jamais déclencher la permission au démarrage. L'utilisateur choisit
+      // explicitement le rappel dans l'onboarding ; ici on ne fait qu'enregistrer
+      // le token si iOS/Android a déjà accordé l'autorisation.
+      const isEnabled = await notificationService.areNotificationsEnabled();
+      if (isEnabled) {
+        await notificationService.registerForPushNotificationsAsync();
+      }
     } catch (error) {
       console.error('❌ Erreur lors de l\'initialisation des notifications:', error);
     }
@@ -52,6 +59,12 @@ export function useNotifications() {
     switch (data?.type) {
       case 'activity_reminder':
         // Rediriger vers l'écran principal pour encourager l'activité
+        router.push('/(tabs)');
+        break;
+      case 'trial_ending_reminder':
+        analytics.track('trial_reminder_opened', {
+          entry_feature: data?.entry_feature ?? null,
+        });
         router.push('/(tabs)');
         break;
       default:

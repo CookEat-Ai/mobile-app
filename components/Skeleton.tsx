@@ -1,47 +1,51 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Dimensions, StyleSheet, View, ViewStyle } from 'react-native';
+import { Animated, StyleSheet, useWindowDimensions, View } from 'react-native';
+import type { DimensionValue, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
 
 interface SkeletonProps {
-  width: number | string;
-  height: number | string;
+  width: DimensionValue;
+  height: DimensionValue;
   borderRadius?: number;
   style?: ViewStyle;
 }
 
 export function Skeleton({ width, height, borderRadius = 8, style }: SkeletonProps) {
-  const translateX = useRef(new Animated.Value(-SCREEN_WIDTH)).current;
+  // Le balayage doit traverser la largeur courante : une constante lue à l'import
+  // laissait le shimmer hors cadre après une rotation ou en Split View.
+  const { width: screenWidth } = useWindowDimensions();
+  const translateX = useRef(new Animated.Value(-screenWidth)).current;
 
   useEffect(() => {
     const animation = Animated.loop(
       Animated.timing(translateX, {
-        toValue: SCREEN_WIDTH,
+        toValue: screenWidth,
         duration: 1200,
         useNativeDriver: true,
       })
     );
+    translateX.setValue(-screenWidth);
     animation.start();
     return () => animation.stop();
-  }, [translateX]);
+  }, [screenWidth, translateX]);
 
   return (
     <View
       style={[
         styles.skeleton,
-        { width: width as any, height, borderRadius, overflow: 'hidden' },
+        { width, height, borderRadius, overflow: 'hidden' },
         style,
       ]}
     >
       <Animated.View
-        style={{ ...StyleSheet.absoluteFillObject, transform: [{ translateX }] }}
+        style={{ ...StyleSheet.absoluteFill, transform: [{ translateX }] }}
       >
         <LinearGradient
           colors={['transparent', 'rgba(255,255,255,0.5)', 'transparent']}
           start={{ x: 0, y: 0.5 }}
           end={{ x: 1, y: 0.5 }}
-          style={StyleSheet.absoluteFillObject}
+          style={StyleSheet.absoluteFill}
         />
       </Animated.View>
     </View>

@@ -2,7 +2,7 @@
   "expo": {
     "name": "CookEat Ai",
     "slug": "cookeat",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "cookeat",
@@ -17,11 +17,12 @@
       "bundleIdentifier": "com.gokugen.cookeat",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "NSPhotoLibraryUsageDescription": "CookEat AI would like to access your photo library to recognize the ingredients you show us.",
+        "NSPhotoLibraryUsageDescription": "CookEat Ai would like to access your photo library to recognize the ingredients you show us.",
         "NSMicrophoneUsageDescription": "This app uses the microphone for voice recognition to understand your available ingredients.",
-        "NSSpeechRecognitionUsageDescription": "CookEat uses voice recognition to understand your ingredients and suggest recipes tailored to what you have at home.",
+        "NSSpeechRecognitionUsageDescription": "CookEat Ai uses voice recognition to understand your ingredients and suggest recipes tailored to what you have at home.",
         "NSUserNotificationsUsageDescription": "Recevez des rappels et des suggestions de recettes personnalisées.",
-        "NSUserTrackingUsageDescription": "Your data allows us to offer you recipes and advertisements that truly match your tastes."
+        "NSUserTrackingUsageDescription": "Your data allows us to offer you recipes and advertisements that truly match your tastes.",
+        "NSMotionUsageDescription": "CookEat Ai detects device motion so you can shake your phone to enter a promo code."
       },
       "appleTeamId": "P48MLLHB99"
     },
@@ -59,6 +60,7 @@
       "./plugins/withGradleProperties",
       "./plugins/withAndroidDefaultLocaleStrings",
       "./plugins/withManifestFix",
+      "./plugins/withAndroidLaunchMode",
       "./plugins/withSentryXcodeEnv",
       "./plugins/withFmtPodfileFix",
       "./plugins/withNativePatches",
@@ -78,7 +80,7 @@
         "react-native-appsflyer",
         {
           "shouldUseStrictMode": false,
-          "shouldUsePurchaseConnector": true,
+          "shouldUsePurchaseConnector": false,
           "preferAppsFlyerBackupRules": false
         }
       ],
@@ -93,14 +95,14 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "CookEat AI would like to access your camera to take photos of your ingredients."
+          "cameraPermission": "CookEat Ai would like to access your camera to take photos of your ingredients."
         }
       ],
       [
         "expo-speech-recognition",
         {
           "microphonePermission": "This app uses the microphone for voice recognition to understand your available ingredients.",
-          "speechRecognitionPermission": "CookEat uses voice recognition to understand your ingredients and suggest recipes tailored to what you have at home."
+          "speechRecognitionPermission": "CookEat Ai uses voice recognition to understand your ingredients and suggest recipes tailored to what you have at home."
         }
       ],
       [
@@ -140,7 +142,12 @@
           "androidMultiIntentFilters": []
         }
       ],
-      "expo-image"
+      "expo-image",
+      "expo-asset",
+      "expo-localization",
+      "expo-status-bar",
+      "expo-tracking-transparency",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

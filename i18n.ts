@@ -12,7 +12,10 @@ const resources = {
 
 // Initialisation immédiate avec une configuration de base
 i18n.use(initReactI18next).init({
-  compatibilityJSON: 'v3',
+  // Pas de `compatibilityJSON: 'v3'` : l'option a été retirée d'i18next en v23
+  // et la 25 l'ignore silencieusement. Elle laissait croire que les pluriels
+  // s'écrivaient `clé_plural` alors que c'est bien le format v4 qui s'applique
+  // (`clé_one` / `clé_other`), et elle produisait une erreur de typage.
   resources,
   lng: 'en', // langue par défaut immédiate
   fallbackLng: 'en',

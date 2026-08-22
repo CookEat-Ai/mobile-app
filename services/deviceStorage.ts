@@ -5,6 +5,13 @@ import uuid from 'react-native-uuid';
 const SECURE_KEY = 'cookeat_device_id';
 const ASYNC_BACKUP_KEY = 'cookeat_device_id_backup';
 
+async function persistDeviceId(deviceId: string): Promise<void> {
+  await Promise.all([
+    SecureStore.setItemAsync(SECURE_KEY, deviceId).catch(() => { }),
+    AsyncStorage.setItem(ASYNC_BACKUP_KEY, deviceId).catch(() => { }),
+  ]);
+}
+
 /**
  * Récupère un identifiant unique pour l'appareil via une cascade de stockage :
  * SecureStore (Keychain/Keystore) → AsyncStorage (backup) → génération UUID.
@@ -32,10 +39,7 @@ export const getUniqueDeviceId = async (): Promise<string> => {
     // 3. Aucun ID trouvé : générer et persister dans les deux
     deviceId = uuid.v4() as string;
 
-    await Promise.all([
-      SecureStore.setItemAsync(SECURE_KEY, deviceId).catch(() => { }),
-      AsyncStorage.setItem(ASYNC_BACKUP_KEY, deviceId).catch(() => { }),
-    ]);
+    await persistDeviceId(deviceId);
 
     return deviceId;
   } catch (error) {
@@ -52,4 +56,15 @@ export const getUniqueDeviceId = async (): Promise<string> => {
       return uuid.v4() as string;
     }
   }
+};
+
+/**
+ * Crée une nouvelle identité d'installation après une suppression de compte.
+ * Sans cette rotation, SecureStore survivrait à `AsyncStorage.clear()` et le
+ * compte suivant serait recollé au profil analytics supprimé.
+ */
+export const rotateUniqueDeviceId = async (): Promise<string> => {
+  const deviceId = uuid.v4() as string;
+  await persistDeviceId(deviceId);
+  return deviceId;
 };

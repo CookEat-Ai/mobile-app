@@ -7,6 +7,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../constants/Colors';
+import { font } from '../constants/Layout';
+import { contentColumn } from '../hooks/useResponsive';
 import { RecipeCard } from "../components/RecipeCard";
 import { Wave } from "react-native-animated-spinkit";
 import favoritesStorageService from '../services/favoritesStorage';
@@ -112,7 +114,7 @@ export default function FavoritesListScreen() {
             </Reanimated.View>
           )}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 40 }]}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -136,6 +138,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
+    // Barre de navigation : ancrée aux bords de l'écran, pas à la colonne.
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -156,13 +159,13 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   mainTitle: {
-    fontSize: 24,
+    fontSize: font(24),
     color: Colors.light.text,
     fontFamily: 'Degular'
   },
   scrollContent: {
+    ...contentColumn(),
     paddingHorizontal: 20,
-    paddingBottom: 100,
   },
   loadingContainer: {
     flex: 1,

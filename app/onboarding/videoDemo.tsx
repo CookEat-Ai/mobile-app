@@ -1,26 +1,34 @@
 import { router } from 'expo-router';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
-  Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Platform,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/Colors';
+import { ONBOARDING_CTA_BOTTOM_GAP, rh, rw } from '../../constants/Layout';
+import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { useTranslation } from 'react-i18next';
 import analytics from '../../services/analytics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import IphoneVideoDemo from '../../components/IphoneVideoDemo';
 
-const { height, width } = Dimensions.get('window');
+
+// La maquette de téléphone fait le double de sa largeur en hauteur : la borner
+// seulement par la largeur la faisait passer sous le bouton sur petit écran.
+const PHONE_ASPECT = 538 / 1076;
+const PHONE_CLEARANCE = 24;
 
 export default function AppDemoScreen() {
   const insets = useSafeAreaInsets();
+  const { layoutWidth } = useResponsive();
+  const [mockupAreaHeight, setMockupAreaHeight] = useState(0);
+  const phoneWidth = mockupAreaHeight > 0
+    ? Math.min(layoutWidth * 0.6, Math.max(mockupAreaHeight - PHONE_CLEARANCE, 0) * PHONE_ASPECT)
+    : layoutWidth * 0.6;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
   const { t } = useTranslation();
@@ -39,7 +47,7 @@ export default function AppDemoScreen() {
         useNativeDriver: true,
       }),
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim]);
 
   const handleContinue = async () => {
     analytics.track('onboarding_app_demo_continue');
@@ -48,20 +56,18 @@ export default function AppDemoScreen() {
     if (variant === 'D') {
       router.replace('/onboarding/personalizedRecipes');
     } else {
-      const pendingDiscount = await AsyncStorage.getItem('pending_promo_discount');
-      if (pendingDiscount) {
-        router.push({
-          pathname: '/paywall',
-          params: { source: 'onboarding_variant_c', initialState: 'PROMO_DISCOUNTED', promoDiscount: pendingDiscount },
-        });
-      } else {
-        router.push({ pathname: '/paywall', params: { source: 'onboarding_variant_c' } });
-      }
+      // Le paywall n'est plus atteint directement : la fin de tunnel commence
+      // par `offerTrial` (vente de l'essai), puis `reminder`. C'est aussi le
+      // point de retour du paywall quand l'utilisateur refuse.
+      router.replace({
+        pathname: '/onboarding/offerTrial',
+        params: { source: 'onboarding_variant_c' },
+      });
     }
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       {/* Bouton Restore discret */}
       {/* <TouchableOpacity onPress={handleRestore} style={styles.restoreButton}>
         <Text style={styles.restoreText}>Restore</Text>
@@ -73,8 +79,11 @@ export default function AppDemoScreen() {
         </Animated.View>
 
         {/* Mockup iPhone avec Vidéo */}
-        <Animated.View style={[styles.mockupContainer, { opacity: fadeAnim }]}>
-          <IphoneVideoDemo style={styles.phoneWrapper} />
+        <Animated.View
+          style={[styles.mockupContainer, { opacity: fadeAnim }]}
+          onLayout={(e) => setMockupAreaHeight(e.nativeEvent.layout.height)}
+        >
+          <IphoneVideoDemo style={{ width: phoneWidth }} />
         </Animated.View>
       </View>
 
@@ -82,7 +91,7 @@ export default function AppDemoScreen() {
         {/* Reassurance CookEat Style */}
         <View style={styles.reassuranceRow}>
           <Ionicons name="checkmark-circle" size={22} color={Colors.light.button} />
-          <Text style={styles.reassuranceText}>{t('onboarding.offerTrial.noPayment')}</Text>
+          <Text style={styles.reassuranceText}>{t('onboarding.offerTrial.reviewOffer')}</Text>
         </View>
 
         <TouchableOpacity
@@ -153,6 +162,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    minHeight: 0,
+    ...contentColumn(),
     paddingHorizontal: 24,
     alignItems: 'center',
   },
@@ -161,25 +172,25 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   title: {
-    fontSize: width * 0.05,
+    fontSize: rw(0.05),
     fontFamily: 'Degular',
     color: Colors.light.text,
     textAlign: 'center',
   },
   mockupContainer: {
     flex: 1,
-    marginTop: height * 0.02,
-    alignItems: 'center'
-  },
-  phoneWrapper: {
-    width: width * 0.6,
+    minHeight: 0,
+    marginTop: rh(0.02),
+    alignItems: 'center',
     justifyContent: 'center',
   },
   bottomSection: {
-    position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 40 : 70,
-    left: 24,
-    right: 24,
+    // Remise dans le flux : en absolu avec un `bottom` en dur, la maquette
+    // passait dessous au lieu d'être contrainte par la place restante.
+    ...contentColumn(),
+    paddingHorizontal: 24,
+    paddingTop: 12,
+    paddingBottom: ONBOARDING_CTA_BOTTOM_GAP,
     alignItems: 'center',
     gap: 12,
   },

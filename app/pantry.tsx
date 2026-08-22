@@ -13,11 +13,14 @@ import * as Haptics from 'expo-haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router'
 import { Colors } from '../constants/Colors';
+import { CONTENT_MAX_WIDTH, font } from '../constants/Layout';
+import { contentColumn } from '../hooks/useResponsive';
 import { IconSymbol } from '../components/ui/IconSymbol';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useVoice, resetVoiceCompletely } from '../hooks/useVoice';
 import apiService from '../services/api';
 import { useTranslation } from 'react-i18next';
+import { loadOrCreateStarterPantry } from '../services/pantryDefaults';
 
 interface PantryItem {
   id: string;
@@ -34,6 +37,7 @@ export default function PantryScreen() {
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Utiliser le hook useVoice
   const { isRecording, liveText, startRecording, stopRecording, clearLiveText } = useVoice({
@@ -89,6 +93,7 @@ export default function PantryScreen() {
   };
 
   const handleMicroButtonPress = () => {
+    if (isLoading) return;
     if (isRecording) {
       stopRecording();
       handleVoiceProcessing();
@@ -99,10 +104,11 @@ export default function PantryScreen() {
 
   const loadPantryItems = async () => {
     try {
-      const storedItems = await AsyncStorage.getItem(STORAGE_KEY);
-      if (storedItems) {
-        setPantryItems(JSON.parse(storedItems));
-      }
+      const { ingredients } = await loadOrCreateStarterPantry(t);
+      setPantryItems(ingredients.map((item) => ({
+        ...item,
+        addedAt: item.addedAt ?? new Date().toISOString(),
+      })));
     } catch (error) {
       console.error('Erreur lors du chargement des ingrédients:', error);
     }
@@ -146,7 +152,7 @@ export default function PantryScreen() {
         { text: t('common.cancel'), style: 'cancel' },
         {
           text: t('pantry.add'),
-          onPress: (ingredientName) => {
+          onPress: (ingredientName?: string) => {
             if (ingredientName) {
               addItem(ingredientName);
             }
@@ -206,7 +212,11 @@ export default function PantryScreen() {
         <View style={styles.headerSpacer} />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={{ paddingHorizontal: 20, ...contentColumn() }}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Statistiques */}
         {/* <View style={styles.statsContainer}>
           <View style={styles.statCard}>
@@ -290,7 +300,9 @@ export default function PantryScreen() {
 
       {/* Bouton generation */}
       {pantryItems.length > 0 && <TouchableOpacity
-        style={styles.continueButton}
+        // Le bas était fixé à 40pt : sur les Android à navigation gestuelle le
+        // bouton passait sous la barre système.
+        style={[styles.continueButton, { bottom: Math.max(insets.bottom, 24) + 16 }]}
         onPress={handleContinue}
       >
         <Text style={{ ...styles.addButtonText, fontSize: 18, marginRight: 10, marginLeft: 0 }}>
@@ -315,6 +327,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    // Pleine largeur : le séparateur doit filer d'un bord à l'autre, et le
+    // bouton retour rester au bord de l'écran comme dans une barre de nav iOS.
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderBottomWidth: 1,
@@ -325,7 +339,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    fontSize: 20,
+    fontSize: font(20),
     textAlign: 'center',
     color: Colors.light.text,
     fontFamily: 'Degular'
@@ -335,7 +349,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20,
   },
   statsContainer: {
     marginTop: 20,
@@ -453,10 +466,11 @@ const styles = StyleSheet.create({
   },
   continueButton: {
     position: 'absolute',
-    bottom: 40,
     left: 0,
     right: 0,
     marginHorizontal: 20,
+    maxWidth: CONTENT_MAX_WIDTH,
+    alignSelf: 'center',
     backgroundColor: Colors.light.button,
     flexDirection: 'row',
     alignItems: 'center',
@@ -505,4 +519,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-}); 
+});

@@ -11,7 +11,6 @@ import {
   Switch,
   Animated,
   Platform,
-  Dimensions,
   Modal,
   TextInput,
   Pressable,
@@ -25,6 +24,7 @@ import { Colors } from '../constants/Colors';
 import { IconSymbol } from '../components/ui/IconSymbol';
 import { LinearGradient } from 'expo-linear-gradient';
 import apiService from '../services/api';
+import analytics from '../services/analytics';
 import recipeStorageService from '../services/recipeStorage';
 import revenueCatService from '../config/revenuecat';
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -32,8 +32,17 @@ import { useSubscription } from '../hooks/useSubscription';
 
 import { useVoice } from '../hooks/useVoice';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-
-const { width } = Dimensions.get('window');
+import { font } from '../constants/Layout';
+import { contentColumn, useResponsive } from '../hooks/useResponsive';
+import {
+  loadRecipePreferences,
+  saveRecipePreferences,
+} from '../services/recipePreferences';
+import {
+  DEFAULT_RECIPE_PREFERENCES,
+  type RecipePreferences,
+} from '../services/recipePreferencesMapping';
+import { loadOrCreateStarterPantry } from '../services/pantryDefaults';
 
 interface Ingredient {
   id: string;
@@ -41,20 +50,7 @@ interface Ingredient {
   category?: string;
 }
 
-interface RecipePreferences {
-  dishType: string;
-  duration: string;
-  servings: number;
-  cuisineStyle: string[];
-  diet: string;
-  allowOtherIngredients: boolean;
-  allergies: string[];
-  goal: string;
-  equipments: string[];
-}
-
 const STORAGE_KEY = 'pantry_ingredients';
-const PREFERENCES_STORAGE_KEY = 'recipe_preferences';
 const MIN_INGREDIENTS = 5;
 
 export default function RecipeSummaryScreen() {
@@ -77,6 +73,28 @@ export default function RecipeSummaryScreen() {
         { id: 'champignon', name: t('home.categories.vegetables.mushroom'), icon: '🍄' },
         { id: 'concombre', name: t('home.categories.vegetables.cucumber'), icon: '🥒' },
         { id: 'chou-fleur', name: t('home.categories.vegetables.cauliflower'), icon: '🥬' },
+        { id: 'pomme-de-terre', name: t('home.categories.vegetables.potato'), icon: '🥔' },
+        { id: 'patate-douce', name: t('home.categories.vegetables.sweetPotato'), icon: '🍠' },
+        { id: 'aubergine', name: t('home.categories.vegetables.eggplant'), icon: '🍆' },
+        { id: 'salade', name: t('home.categories.vegetables.lettuce'), icon: '🥗' },
+        { id: 'haricot-vert', name: t('home.categories.vegetables.greenBeans'), icon: '🫛' },
+        { id: 'petits-pois', name: t('home.categories.vegetables.peas'), icon: '🫛' },
+        { id: 'mais', name: t('home.categories.vegetables.corn'), icon: '🌽' },
+        { id: 'potiron', name: t('home.categories.vegetables.pumpkin'), icon: '🎃' },
+        { id: 'butternut', name: t('home.categories.vegetables.butternut'), icon: '🎃' },
+        { id: 'chou', name: t('home.categories.vegetables.cabbage'), icon: '🥬' },
+        { id: 'chou-de-bruxelles', name: t('home.categories.vegetables.brusselsSprouts'), icon: '🥬' },
+        { id: 'radis', name: t('home.categories.vegetables.radish'), icon: '🥬' },
+        { id: 'betterave', name: t('home.categories.vegetables.beetroot'), icon: '🥬' },
+        { id: 'navet', name: t('home.categories.vegetables.turnip'), icon: '🥬' },
+        { id: 'celeri', name: t('home.categories.vegetables.celery'), icon: '🥬' },
+        { id: 'fenouil', name: t('home.categories.vegetables.fennel'), icon: '🥬' },
+        { id: 'asperge', name: t('home.categories.vegetables.asparagus'), icon: '🥬' },
+        { id: 'artichaut', name: t('home.categories.vegetables.artichoke'), icon: '🥬' },
+        { id: 'avocat', name: t('home.categories.vegetables.avocado'), icon: '🥑' },
+        { id: 'echalote', name: t('home.categories.vegetables.shallot'), icon: '🧅' },
+        { id: 'endive', name: t('home.categories.vegetables.endive'), icon: '🥬' },
+        { id: 'olive', name: t('home.categories.vegetables.olive'), icon: '🫒' },
       ]
     },
     {
@@ -90,6 +108,18 @@ export default function RecipeSummaryScreen() {
         { id: 'agneau', name: t('home.categories.meats.lamb'), icon: '🐑' },
         { id: 'dinde', name: t('home.categories.meats.turkey'), icon: '🦃' },
         { id: 'veau', name: t('home.categories.meats.veal'), icon: '🐄' },
+        { id: 'canard', name: t('home.categories.meats.duck'), icon: '🦆' },
+        { id: 'lapin', name: t('home.categories.meats.rabbit'), icon: '🐇' },
+        { id: 'jambon', name: t('home.categories.meats.ham'), icon: '🍖' },
+        { id: 'lardon', name: t('home.categories.meats.bacon'), icon: '🥓' },
+        { id: 'saucisse', name: t('home.categories.meats.sausage'), icon: '🌭' },
+        { id: 'chorizo', name: t('home.categories.meats.chorizo'), icon: '🌭' },
+        { id: 'merguez', name: t('home.categories.meats.merguez'), icon: '🌭' },
+        { id: 'steak-hache', name: t('home.categories.meats.mincedBeef'), icon: '🥩' },
+        { id: 'blanc-de-poulet', name: t('home.categories.meats.chickenBreast'), icon: '🍗' },
+        { id: 'cuisse-de-poulet', name: t('home.categories.meats.chickenThigh'), icon: '🍗' },
+        { id: 'cote-de-porc', name: t('home.categories.meats.porkChop'), icon: '🍖' },
+        { id: 'boulette', name: t('home.categories.meats.meatballs'), icon: '🍖' },
       ]
     },
     {
@@ -103,6 +133,19 @@ export default function RecipeSummaryScreen() {
         { id: 'sardine', name: t('home.categories.fish.sardine'), icon: '🐟' },
         { id: 'maquereau', name: t('home.categories.fish.maquereau'), icon: '🐠' },
         { id: 'bar', name: t('home.categories.fish.bar'), icon: '🐡' },
+        { id: 'truite', name: t('home.categories.fish.trout'), icon: '🐟' },
+        { id: 'colin', name: t('home.categories.fish.hake'), icon: '🐟' },
+        { id: 'sole', name: t('home.categories.fish.sole'), icon: '🐟' },
+        { id: 'dorade', name: t('home.categories.fish.seabream'), icon: '🐠' },
+        { id: 'haddock', name: t('home.categories.fish.haddock'), icon: '🐟' },
+        { id: 'anchois', name: t('home.categories.fish.anchovy'), icon: '🐟' },
+        { id: 'crevette', name: t('home.categories.fish.shrimp'), icon: '🍤' },
+        { id: 'moule', name: t('home.categories.fish.mussels'), icon: '🦪' },
+        { id: 'calamar', name: t('home.categories.fish.squid'), icon: '🦑' },
+        { id: 'crabe', name: t('home.categories.fish.crab'), icon: '🦀' },
+        { id: 'homard', name: t('home.categories.fish.lobster'), icon: '🦞' },
+        { id: 'saint-jacques', name: t('home.categories.fish.scallop'), icon: '🦪' },
+        { id: 'surimi', name: t('home.categories.fish.surimi'), icon: '🍥' },
       ]
     },
     {
@@ -119,6 +162,30 @@ export default function RecipeSummaryScreen() {
         { id: 'beurre', name: t('home.categories.essentials.butter'), icon: '🧈' },
         { id: 'oeufs', name: t('home.categories.essentials.eggs'), icon: '🥚' },
         { id: 'farine', name: t('home.categories.essentials.flour'), icon: '🌾' },
+        { id: 'pain', name: t('home.categories.essentials.bread'), icon: '🍞' },
+        { id: 'chapelure', name: t('home.categories.essentials.breadcrumbs'), icon: '🍞' },
+        { id: 'quinoa', name: t('home.categories.essentials.quinoa'), icon: '🌾' },
+        { id: 'boulgour', name: t('home.categories.essentials.bulgur'), icon: '🌾' },
+        { id: 'avoine', name: t('home.categories.essentials.oats'), icon: '🌾' },
+        { id: 'lentille', name: t('home.categories.essentials.lentils'), icon: '🫘' },
+        { id: 'pois-chiche', name: t('home.categories.essentials.chickpeas'), icon: '🫛' },
+        { id: 'haricot-rouge', name: t('home.categories.essentials.redBeans'), icon: '🫘' },
+        { id: 'haricot-blanc', name: t('home.categories.essentials.whiteBeans'), icon: '🫘' },
+        { id: 'sucre', name: t('home.categories.essentials.sugar'), icon: '🍬' },
+        { id: 'levure', name: t('home.categories.essentials.yeast'), icon: '🫙' },
+        { id: 'yaourt', name: t('home.categories.essentials.yogurt'), icon: '🥛' },
+        { id: 'lait-de-coco', name: t('home.categories.essentials.coconutMilk'), icon: '🥥' },
+        { id: 'sauce-tomate', name: t('home.categories.essentials.tomatoSauce'), icon: '🥫' },
+        { id: 'tomate-concassee', name: t('home.categories.essentials.cannedTomatoes'), icon: '🥫' },
+        { id: 'pate-feuilletee', name: t('home.categories.essentials.puffPastry'), icon: '🥐' },
+        { id: 'pate-brisee', name: t('home.categories.essentials.shortcrustPastry'), icon: '🥧' },
+        { id: 'bouillon', name: t('home.categories.essentials.stock'), icon: '🫙' },
+        { id: 'huile-tournesol', name: t('home.categories.essentials.sunflowerOil'), icon: '🌻' },
+        { id: 'tofu', name: t('home.categories.essentials.tofu'), icon: '🍢' },
+        { id: 'noix', name: t('home.categories.essentials.walnut'), icon: '🌰' },
+        { id: 'amande', name: t('home.categories.essentials.almond'), icon: '🌰' },
+        { id: 'noisette', name: t('home.categories.essentials.hazelnut'), icon: '🌰' },
+        { id: 'pignon', name: t('home.categories.essentials.pineNuts'), icon: '🌰' },
       ]
     },
     {
@@ -134,6 +201,18 @@ export default function RecipeSummaryScreen() {
         { id: 'camembert', name: t('home.categories.cheeses.camembert'), icon: '🧀' },
         { id: 'roquefort', name: t('home.categories.cheeses.roquefort'), icon: '🧀' },
         { id: 'feta', name: t('home.categories.cheeses.feta'), icon: '🧀' },
+        { id: 'chevre', name: t('home.categories.cheeses.goat'), icon: '🧀' },
+        { id: 'gruyere', name: t('home.categories.cheeses.gruyere'), icon: '🧀' },
+        { id: 'comte', name: t('home.categories.cheeses.comte'), icon: '🧀' },
+        { id: 'raclette', name: t('home.categories.cheeses.raclette'), icon: '🧀' },
+        { id: 'reblochon', name: t('home.categories.cheeses.reblochon'), icon: '🧀' },
+        { id: 'ricotta', name: t('home.categories.cheeses.ricotta'), icon: '🧀' },
+        { id: 'mascarpone', name: t('home.categories.cheeses.mascarpone'), icon: '🧀' },
+        { id: 'burrata', name: t('home.categories.cheeses.burrata'), icon: '🧀' },
+        { id: 'bleu', name: t('home.categories.cheeses.blueCheese'), icon: '🧀' },
+        { id: 'gorgonzola', name: t('home.categories.cheeses.gorgonzola'), icon: '🧀' },
+        { id: 'fromage-frais', name: t('home.categories.cheeses.creamCheese'), icon: '🧀' },
+        { id: 'halloumi', name: t('home.categories.cheeses.halloumi'), icon: '🧀' },
       ]
     },
     {
@@ -159,6 +238,27 @@ export default function RecipeSummaryScreen() {
         { id: 'origan', name: t('home.categories.spices.oregano'), icon: '🌿' },
         { id: 'thym', name: t('home.categories.spices.thyme'), icon: '🌿' },
         { id: 'piment', name: t('home.categories.spices.chili'), icon: '🌶️' },
+        { id: 'curcuma', name: t('home.categories.spices.turmeric'), icon: '🌿' },
+        { id: 'muscade', name: t('home.categories.spices.nutmeg'), icon: '🫙' },
+        { id: 'romarin', name: t('home.categories.spices.rosemary'), icon: '🌿' },
+        { id: 'laurier', name: t('home.categories.spices.bayLeaf'), icon: '🌿' },
+        { id: 'menthe', name: t('home.categories.spices.mint'), icon: '🌿' },
+        { id: 'ciboulette', name: t('home.categories.spices.chives'), icon: '🌿' },
+        { id: 'aneth', name: t('home.categories.spices.dill'), icon: '🌿' },
+        { id: 'estragon', name: t('home.categories.spices.tarragon'), icon: '🌿' },
+        { id: 'sesame', name: t('home.categories.spices.sesame'), icon: '🌰' },
+        { id: 'sauce-soja', name: t('home.categories.spices.soySauce'), icon: '🫙' },
+        { id: 'ketchup', name: t('home.categories.spices.ketchup'), icon: '🍅' },
+        { id: 'mayonnaise', name: t('home.categories.spices.mayonnaise'), icon: '🥫' },
+        { id: 'harissa', name: t('home.categories.spices.harissa'), icon: '🌶️' },
+        { id: 'ras-el-hanout', name: t('home.categories.spices.rasElHanout'), icon: '🫙' },
+        { id: 'garam-masala', name: t('home.categories.spices.garamMasala'), icon: '🫙' },
+        { id: 'cayenne', name: t('home.categories.spices.cayenne'), icon: '🌶️' },
+        { id: 'vanille', name: t('home.categories.spices.vanilla'), icon: '🫙' },
+        { id: 'cacao', name: t('home.categories.spices.cocoa'), icon: '🍫' },
+        { id: 'capre', name: t('home.categories.spices.capers'), icon: '🫒' },
+        { id: 'cornichon', name: t('home.categories.spices.pickles'), icon: '🥒' },
+        { id: 'balsamique', name: t('home.categories.spices.balsamic'), icon: '🫙' },
       ]
     },
     {
@@ -174,6 +274,22 @@ export default function RecipeSummaryScreen() {
         { id: 'kiwi', name: t('home.categories.fruits.kiwi'), icon: '🥝' },
         { id: 'ananas', name: t('home.categories.fruits.pineapple'), icon: '🍍' },
         { id: 'mangue', name: t('home.categories.fruits.mango'), icon: '🥭' },
+        { id: 'poire', name: t('home.categories.fruits.pear'), icon: '🍐' },
+        { id: 'peche', name: t('home.categories.fruits.peach'), icon: '🍑' },
+        { id: 'abricot', name: t('home.categories.fruits.apricot'), icon: '🍑' },
+        { id: 'prune', name: t('home.categories.fruits.plum'), icon: '🍑' },
+        { id: 'cerise', name: t('home.categories.fruits.cherry'), icon: '🍒' },
+        { id: 'framboise', name: t('home.categories.fruits.raspberry'), icon: '🫐' },
+        { id: 'myrtille', name: t('home.categories.fruits.blueberry'), icon: '🫐' },
+        { id: 'mure', name: t('home.categories.fruits.blackberry'), icon: '🫐' },
+        { id: 'pasteque', name: t('home.categories.fruits.watermelon'), icon: '🍉' },
+        { id: 'melon', name: t('home.categories.fruits.melon'), icon: '🍈' },
+        { id: 'citron-vert', name: t('home.categories.fruits.lime'), icon: '🍋' },
+        { id: 'pamplemousse', name: t('home.categories.fruits.grapefruit'), icon: '🍊' },
+        { id: 'noix-de-coco', name: t('home.categories.fruits.coconut'), icon: '🥥' },
+        { id: 'figue', name: t('home.categories.fruits.fig'), icon: '🍈' },
+        { id: 'datte', name: t('home.categories.fruits.date'), icon: '🌴' },
+        { id: 'clementine', name: t('home.categories.fruits.clementine'), icon: '🍊' },
       ]
     }
   ], []);
@@ -185,6 +301,8 @@ export default function RecipeSummaryScreen() {
     { id: 'soup', label: t('recipeSummary.soup') },
     { id: 'brunch', label: t('recipeSummary.brunch') },
     { id: 'salad', label: t('recipeSummary.salad') },
+    { id: 'oven', label: t('onboarding.formQuestions.dish_oven') },
+    { id: 'street_food', label: t('onboarding.formQuestions.dish_street') },
     { id: 'dessert', label: t('search.categories.dessert') },
   ], []);
 
@@ -204,13 +322,16 @@ export default function RecipeSummaryScreen() {
   ], []);
 
   const CUISINE_STYLES = useMemo(() => [
+    { id: 'all', label: t('recipeSummary.allCuisines') },
     { id: 'french', label: t('recipeSummary.french') },
     { id: 'italian', label: t('recipeSummary.italian') },
     { id: 'mediterranean', label: t('recipeSummary.mediterranean') },
+    { id: 'middle_eastern', label: t('onboarding.formQuestions.cuisine_middle_eastern') },
     { id: 'asian', label: t('recipeSummary.asian') },
     { id: 'spicy', label: t('recipeSummary.spicy') },
     { id: 'mexican', label: t('recipeSummary.mexican') },
     { id: 'indian', label: t('recipeSummary.indian') },
+    { id: 'american', label: t('onboarding.formQuestions.cuisine_american') },
   ], []);
 
   const GOALS = useMemo(() => [
@@ -228,6 +349,9 @@ export default function RecipeSummaryScreen() {
   ], []);
 
   const ALLERGIES = useMemo(() => [
+    { id: 'pork', label: t('onboarding.formQuestions.avoid_pork') },
+    { id: 'alcohol', label: t('onboarding.formQuestions.avoid_alcohol') },
+    { id: 'beef', label: t('onboarding.formQuestions.avoid_beef') },
     { id: 'gluten', label: t('recipeSummary.avoid_gluten') },
     { id: 'dairy', label: t('recipeSummary.avoid_dairy') },
     { id: 'egg', label: t('recipeSummary.avoid_egg') },
@@ -238,7 +362,13 @@ export default function RecipeSummaryScreen() {
   const colors = Colors.light;
 
   const insets = useSafeAreaInsets();
-  const params = useLocalSearchParams<{ ingredients?: string, isOnboarding?: string, mode?: string }>();
+  const params = useLocalSearchParams<{
+    ingredients?: string;
+    isOnboarding?: string;
+    mode?: string;
+    onboardingDemoRole?: 'primary' | 'secondary';
+    onboardingNext?: string;
+  }>();
   const { subscriptionStatus } = useSubscription();
 
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -253,20 +383,19 @@ export default function RecipeSummaryScreen() {
   const [categoryAddModalCategoryId, setCategoryAddModalCategoryId] = useState<string | null>(null);
   const [isCategoryAddModalVisible, setIsCategoryAddModalVisible] = useState(false);
   const [selectedIngredientsForCategoryModal, setSelectedIngredientsForCategoryModal] = useState<string[]>([]);
-  const screenHeight = Dimensions.get('window').height;
+  const [categoryAddModalSearch, setCategoryAddModalSearch] = useState('');
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  // `useResponsive` suit la rotation et le Split View, contrairement à l'ancien
+  // `Dimensions.get('window')` figé à l'import.
+  const { width: windowWidth, height: screenHeight } = useResponsive();
+  // La grille garde exactement 3 colonnes sur téléphone ; au-delà de 480pt la
+  // pastille cesse de grandir et la grille passe simplement à plus de colonnes.
+  const chipWidth = (Math.min(windowWidth, 480) - 125) / 3;
   const filterSlideAnim = useRef(new Animated.Value(screenHeight)).current;
   const categoryAddSlideAnim = useRef(new Animated.Value(screenHeight)).current;
 
   const [preferences, setPreferences] = useState<RecipePreferences>({
-    dishType: 'dinner',   // Repas par défaut
-    duration: 'all',      // Peu importe par défaut
-    servings: 2,
-    cuisineStyle: ['all'], // Tout par défaut
-    diet: 'none',
-    allowOtherIngredients: false,
-    allergies: [],
-    goal: 'neutral',
-    equipments: [],
+    ...DEFAULT_RECIPE_PREFERENCES,
   });
 
   useEffect(() => {
@@ -311,22 +440,20 @@ export default function RecipeSummaryScreen() {
           saveIngredientsToPantry(ingredientsList);
         }
       } else {
-        const stored = await AsyncStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          try {
-            setIngredients(JSON.parse(stored));
-          } catch (e) {
-            console.error('Erreur lors du chargement des ingrédients stockés:', e);
-          }
-        }
+        const { ingredients: storedIngredients } = await loadOrCreateStarterPantry(t);
+        setIngredients(storedIngredients);
       }
 
-      // 3. Load preferences (diet always, others if first generation)
-      await loadOnboardingPreferences(isFirst);
+      // 3. Les réponses d'onboarding initialisent les vrais filtres de recette.
+      // Les modifications ultérieures faites ici restent ensuite prioritaires.
+      const resolvedPreferences = await loadRecipePreferences({
+        preferCurrentOnboarding: params.isOnboarding === 'true',
+      });
+      setPreferences(resolvedPreferences);
     };
 
     initData();
-  }, [params.ingredients]);
+  }, [params.ingredients, params.isOnboarding, params.mode]);
 
   useFocusEffect(
     useCallback(() => {
@@ -382,14 +509,27 @@ export default function RecipeSummaryScreen() {
     });
   };
 
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showSub = Keyboard.addListener(showEvent, (e) => setKeyboardHeight(e.endCoordinates.height));
+    const hideSub = Keyboard.addListener(hideEvent, () => setKeyboardHeight(0));
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
   const openCategoryAddModal = (categoryId: string) => {
     Keyboard.dismiss();
     setCategoryAddModalCategoryId(categoryId);
     setSelectedIngredientsForCategoryModal([]);
+    setCategoryAddModalSearch('');
     setIsCategoryAddModalVisible(true);
   };
 
   const closeCategoryAddModal = () => {
+    Keyboard.dismiss();
     Animated.timing(categoryAddSlideAnim, {
       toValue: screenHeight,
       duration: 300,
@@ -398,6 +538,7 @@ export default function RecipeSummaryScreen() {
       setIsCategoryAddModalVisible(false);
       setCategoryAddModalCategoryId(null);
       setSelectedIngredientsForCategoryModal([]);
+      setCategoryAddModalSearch('');
     });
   };
 
@@ -531,91 +672,9 @@ export default function RecipeSummaryScreen() {
 
   const savePreferencesToStorage = async (items: RecipePreferences) => {
     try {
-      await AsyncStorage.setItem(PREFERENCES_STORAGE_KEY, JSON.stringify(items));
+      await saveRecipePreferences(items);
     } catch (error) {
       console.error('Erreur lors de la sauvegarde des préférences:', error);
-    }
-  };
-
-  const loadOnboardingPreferences = async (isFirst: boolean) => {
-    try {
-      // 1. D'abord charger les préférences persistées de cet écran
-      const savedPrefsRaw = await AsyncStorage.getItem(PREFERENCES_STORAGE_KEY);
-      if (savedPrefsRaw) {
-        try {
-          const savedPrefs = JSON.parse(savedPrefsRaw);
-          setPreferences(savedPrefs);
-          return;
-        } catch (e) {
-          console.error('Erreur lors du parsing des préférences sauvegardées:', e);
-        }
-      }
-
-      const updates: Partial<RecipePreferences> = {};
-
-      // Diet is always synced if exists
-      const savedDiet = await AsyncStorage.getItem('diet') || await AsyncStorage.getItem('dietary_preference');
-      if (savedDiet) {
-        const dietMap: Record<string, string> = {
-          'none': 'none',
-          'halal': 'halal',
-          'vegetarian': 'vegetarian',
-          'vegan': 'vegan'
-        };
-        updates.diet = dietMap[savedDiet] || 'none';
-      }
-
-      // Other filters only for first generation
-      if (isFirst) {
-        // Servings
-        const cookingForWho = await AsyncStorage.getItem('cookingForWho');
-        if (cookingForWho) {
-          const servingsMap: Record<string, number> = {
-            'myself': 1,
-            'myself_and_another_person': 2,
-            'my_family': 4
-          };
-          if (servingsMap[cookingForWho]) updates.servings = servingsMap[cookingForWho];
-        }
-
-        // Equipments (Multi)
-        const equipmentRaw = await AsyncStorage.getItem('equipments');
-        if (equipmentRaw) {
-          try {
-            const equipments = JSON.parse(equipmentRaw) as string[];
-            const equipMap: Record<string, string> = {
-              'equipment_oven': 'oven',
-              'equipment_airfryer': 'airfryer',
-              'equipment_microwave': 'microwave',
-              'equipment_blender': 'blender',
-              'equipment_robot': 'robot'
-            };
-            updates.equipments = equipments.map(e => equipMap[e]).filter(Boolean);
-          } catch { /* ignore parse error */ }
-        }
-
-        // Allergies (Multi)
-        const avoidRaw = await AsyncStorage.getItem('avoidIngredients');
-        if (avoidRaw) {
-          try {
-            const avoid = JSON.parse(avoidRaw) as string[];
-            const allergyMap: Record<string, string> = {
-              'avoid_gluten': 'gluten',
-              'avoid_dairy': 'dairy',
-              'avoid_egg': 'egg',
-              'avoid_fish': 'fish',
-              'avoid_peanut': 'peanut'
-            };
-            updates.allergies = avoid.map(a => allergyMap[a]).filter(Boolean);
-          } catch { /* ignore parse error */ }
-        }
-      }
-
-      if (Object.keys(updates).length > 0) {
-        setPreferences(prev => ({ ...prev, ...updates }));
-      }
-    } catch (error) {
-      console.error('Erreur lors du chargement des préférences onboarding:', error);
     }
   };
 
@@ -631,6 +690,20 @@ export default function RecipeSummaryScreen() {
     );
     setIngredients(updatedIngredients);
     saveIngredientsToPantry(updatedIngredients);
+  };
+
+  // Recherche insensible à la casse et aux accents : "creme" doit trouver "Crème fraîche".
+  // Les ligatures sont dépliées car NFD ne les décompose pas et peu de claviers les
+  // proposent : "oeuf" doit trouver "Œufs", "boeuf" doit trouver "Bœuf".
+  // Repli silencieux sur une simple minuscule si normalize() n'est pas disponible.
+  const deburr = (value: string) => {
+    const decomposed = typeof value.normalize === 'function' ? value.normalize('NFD') : value;
+    return decomposed
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/œ/g, 'oe')
+      .replace(/æ/g, 'ae')
+      .trim();
   };
 
   const normalizeIngredientName = (name: string) => {
@@ -721,6 +794,13 @@ export default function RecipeSummaryScreen() {
   };
 
   const toggleCuisineStyle = (id: string) => {
+    // « Tout » est une absence de filtre et reste donc exclusif des cuisines
+    // précises. Cela évite d'envoyer simultanément « all, asian » à l'API.
+    if (id === 'all') {
+      updatePreference('cuisineStyle', ['all']);
+      return;
+    }
+
     let currentStyles = [...preferences.cuisineStyle];
 
     if (currentStyles.includes(id)) {
@@ -793,35 +873,110 @@ export default function RecipeSummaryScreen() {
       return;
     }
 
-    // Vérifier le quota quotidien pour les utilisateurs non abonnés
-    if (!subscriptionStatus.isSubscribed) {
-      const canGenerate = await revenueCatService.useDailyQuota();
-      if (!canGenerate) {
-        router.push({ pathname: '/paywall', params: { source: 'quota_reached_summary' } });
-        return;
-      }
-    }
-
     const ingredientsWithCategories = JSON.stringify(
       ingredients.map(i => ({ name: i.name, category: i.category || 'other' }))
     );
 
-    const nextParams = JSON.stringify({
-      streaming: 'true',
-      ingredients: ingredientsWithCategories,
-      preferences: JSON.stringify(preferences),
-      isOnboarding: params.isOnboarding,
-    });
+    setIsLoading(true);
+    try {
+      // Le pré-check précède le quota : une combinaison impossible ne consomme
+      // jamais la génération gratuite de l'utilisateur.
+      const feasibilityResponse = await apiService.checkRecipeFeasibility(
+        ingredientsWithCategories,
+        preferences,
+      );
+      const feasibility = feasibilityResponse.data;
 
-    router.push({
-      pathname: '/recipe-loading',
-      params: {
-        durationMs: '6000',
-        startGeneration: 'true',
-        nextPath: '/recipe-detail',
-        nextParams,
-      },
-    });
+      analytics.track('recipe_feasibility_checked', {
+        can_generate: feasibility?.canGenerate ?? true,
+        status: feasibility?.status || 'request_failed_open',
+        confidence: feasibility?.confidence ?? 0,
+        checked_by: feasibility?.checkedBy || 'client_fail_open',
+        dish_type: preferences.dishType,
+        ingredient_count: ingredients.length,
+        allow_other_ingredients: preferences.allowOtherIngredients,
+      });
+
+      if (feasibility && !feasibility.canGenerate) {
+        analytics.track('recipe_generation_blocked_impossible', {
+          dish_type: preferences.dishType,
+          ingredient_count: ingredients.length,
+          confidence: feasibility.confidence,
+        });
+
+        const suggestions = feasibility.suggestions
+          .filter(Boolean)
+          .map((suggestion) => `• ${suggestion}`)
+          .join('\n');
+        const message = [
+          feasibility.reason || t('recipeSummary.feasibilityFallback'),
+          suggestions,
+        ].filter(Boolean).join('\n\n');
+
+        Alert.alert(
+          t('recipeSummary.feasibilityTitle'),
+          message,
+          [
+            {
+              text: t('recipeSummary.changePreferences'),
+              onPress: () => setIsFilterModalVisible(true),
+            },
+            {
+              text: t('recipeSummary.editIngredients'),
+              style: 'cancel',
+            },
+          ],
+        );
+        return;
+      }
+
+      if (feasibilityResponse.error) {
+        analytics.track('recipe_feasibility_check_failed_open', {
+          dish_type: preferences.dishType,
+          ingredient_count: ingredients.length,
+        });
+      }
+
+      // Consommer la génération offerte à vie uniquement après validation.
+      if (!subscriptionStatus.isSubscribed && params.isOnboarding !== 'true') {
+        const canGenerate = await revenueCatService.useFreeGeneration();
+        if (!canGenerate) {
+          router.push({ pathname: '/paywall', params: { source: 'free_generation_used_summary' } });
+          return;
+        }
+      }
+
+      const nextParams = JSON.stringify({
+        streaming: 'true',
+        ingredients: ingredientsWithCategories,
+        preferences: JSON.stringify(preferences),
+        isOnboarding: params.isOnboarding,
+        onboardingNext: params.onboardingNext,
+        onboardingDemoRole: params.onboardingDemoRole,
+      });
+
+      if (params.isOnboarding === 'true') {
+        analytics.track('onboarding_generation_demo_generate_pressed', {
+          demo_role: params.onboardingDemoRole || 'primary',
+          ingredient_count: ingredients.length,
+        });
+      }
+
+      router.push({
+        pathname: '/recipe-loading',
+        params: {
+          durationMs: '10000',
+          startGeneration: 'true',
+          nextPath: '/recipe-detail',
+          nextParams,
+        },
+      });
+    } catch (error) {
+      console.error('Erreur avant génération:', error);
+      Alert.alert(t('recipeSummary.error'), t('recipeSummary.unableToGenerateRecipe'));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const CATEGORY_META: Record<string, { title: string; icon: string }> = useMemo(() => {
@@ -869,17 +1024,34 @@ export default function RecipeSummaryScreen() {
     return groups;
   }, [ingredients, ingredientCategories, CATEGORY_META, CATEGORY_ORDER]);
 
-  const handleBack = () => {
+  const handleBack = async () => {
+    if (params.isOnboarding === 'true' && params.onboardingDemoRole === 'secondary') {
+      router.replace('/onboarding/generationDemo');
+      return;
+    }
+    if (params.isOnboarding === 'true' && params.onboardingDemoRole === 'primary') {
+      router.replace('/onboarding/onboardingProfileReady');
+      return;
+    }
+
     if (router.canGoBack()) {
       router.back();
+      return;
+    }
+
+    // Sécurité : si on ne peut pas revenir en arrière (ex: après un replace),
+    // on redirige vers l'accueil ou l'onboarding selon le contexte
+    if (params.isOnboarding !== 'true') {
+      router.replace('/(tabs)');
+      return;
+    }
+
+    const variant = await analytics.getOnboardingVariant();
+    if (variant === 'E' || variant === 'F') {
+      // E/F n'ont pas d'écran ahaMoment dédié : on revient dans le flux mono-écran
+      router.replace({ pathname: '/onboarding/fastOnboarding', params: { initialStep: '0' } });
     } else {
-      // Sécurité : si on ne peut pas revenir en arrière (ex: après un replace),
-      // on redirige vers l'accueil ou l'onboarding selon le contexte
-      if (params.isOnboarding === 'true') {
-        router.replace('/onboarding/ahaMoment');
-      } else {
-        router.replace('/(tabs)');
-      }
+      router.replace('/onboarding/ahaMoment');
     }
   };
 
@@ -911,9 +1083,35 @@ export default function RecipeSummaryScreen() {
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={{ paddingBottom: 150, paddingTop: insets.top + 80 }}
+        contentContainerStyle={{
+          paddingBottom: 150,
+          paddingTop: insets.top + 80,
+          paddingHorizontal: 24,
+          ...contentColumn(),
+        }}
         showsVerticalScrollIndicator={false}
       >
+        {params.isOnboarding === 'true' && (
+          <View style={styles.onboardingDemoBanner}>
+            <View style={styles.onboardingDemoBadge}>
+              <Ionicons name="sparkles" size={14} color={Colors.light.button} />
+              <Text style={styles.onboardingDemoBadgeText}>
+                {t(
+                  params.onboardingDemoRole === 'secondary'
+                    ? 'onboarding.generationDemo.secondaryBanner'
+                    : 'onboarding.generationDemo.primaryBanner',
+                )}
+              </Text>
+            </View>
+            <Text style={styles.onboardingDemoTitle}>
+              {t('onboarding.generationDemo.readyTitle')}
+            </Text>
+            <Text style={styles.onboardingDemoSubtitle}>
+              {t('onboarding.generationDemo.readySubtitle')}
+            </Text>
+          </View>
+        )}
+
         {/* Section ingrédients */}
         <View style={styles.section}>
           <View style={styles.ingredientsHeader}>
@@ -1038,7 +1236,10 @@ export default function RecipeSummaryScreen() {
               styles.modalContent,
               styles.categoryAddModalContent,
               {
-                maxHeight: screenHeight * 0.85,
+                // Le clavier de la recherche recouvrirait le bouton "Ajouter" : on
+                // remonte la carte et on réduit sa hauteur max de la même quantité.
+                maxHeight: (screenHeight - keyboardHeight) * 0.85,
+                marginBottom: keyboardHeight,
                 transform: [{ translateY: categoryAddSlideAnim }],
                 paddingBottom: 0,
               },
@@ -1052,18 +1253,47 @@ export default function RecipeSummaryScreen() {
                 <IconSymbol name="close" size={24} color="#000" />
               </TouchableOpacity>
             </View>
+            <View style={styles.categoryAddModalSearchBar}>
+              <IconSymbol name="search" size={18} color="#9A9A9A" />
+              <TextInput
+                style={styles.categoryAddModalSearchInput}
+                placeholder={t('recipeSummary.searchIngredientPlaceholder')}
+                placeholderTextColor="#9A9A9A"
+                value={categoryAddModalSearch}
+                onChangeText={setCategoryAddModalSearch}
+                autoCorrect={false}
+                autoCapitalize="none"
+                returnKeyType="search"
+                onSubmitEditing={Keyboard.dismiss}
+              />
+              {categoryAddModalSearch.length > 0 && (
+                <TouchableOpacity onPress={() => setCategoryAddModalSearch('')} hitSlop={10}>
+                  <IconSymbol name="close" size={18} color="#9A9A9A" />
+                </TouchableOpacity>
+              )}
+            </View>
             <ScrollView
               style={styles.categoryAddModalBody}
               contentContainerStyle={styles.categoryAddModalBodyContent}
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="always"
+              keyboardDismissMode="on-drag"
             >
               {categoryAddModalCategoryId && (() => {
                 const category = ingredientCategories.find(c => c.id === categoryAddModalCategoryId);
                 if (!category) return null;
+                const search = deburr(categoryAddModalSearch);
                 const availableIngredients = category.ingredients.filter(
                   (ing: { name: string }) => !ingredients.some(i => normalizeIngredientName(i.name) === normalizeIngredientName(ing.name))
+                    && (!search || deburr(ing.name).includes(search))
                 );
+                if (availableIngredients.length === 0) {
+                  return (
+                    <Text style={styles.categoryAddModalEmptyText}>
+                      {search ? t('recipeSummary.noIngredientFound') : t('recipeSummary.allIngredientsAdded')}
+                    </Text>
+                  );
+                }
                 return (
                   <View style={styles.categoryAddModalGrid}>
                     {availableIngredients.map((ingredient: { id: string; name: string; icon: string }) => {
@@ -1075,6 +1305,7 @@ export default function RecipeSummaryScreen() {
                           key={ingredient.id}
                           style={({ pressed }) => [
                             styles.manualIngredientItem,
+                            { width: chipWidth },
                             isSelected && styles.ingredientItemSelected,
                             pressed && { opacity: 0.7 }
                           ]}
@@ -1092,7 +1323,7 @@ export default function RecipeSummaryScreen() {
                 );
               })()}
             </ScrollView>
-            <View style={[styles.categoryAddModalFooter, { paddingBottom: Platform.OS === 'ios' ? 40 : Math.max(insets.bottom, 60) }]}>
+            <View style={[styles.categoryAddModalFooter, { paddingBottom: keyboardHeight > 0 ? 16 : Math.max(insets.bottom, 16) + 8 }]}>
               <TouchableOpacity
                 style={[styles.categoryAddModalButton, selectedIngredientsForCategoryModal.length === 0 && styles.categoryAddModalButtonDisabled]}
                 onPress={confirmCategoryAddModal}
@@ -1125,7 +1356,7 @@ export default function RecipeSummaryScreen() {
               {
                 transform: [{ translateY: filterSlideAnim }],
                 maxHeight: screenHeight * 0.85,
-                paddingBottom: Platform.OS === 'ios' ? 40 : Math.max(insets.bottom, 60)
+                paddingBottom: Math.max(insets.bottom, 16) + 8
               }
             ]}
           >
@@ -1244,35 +1475,37 @@ export default function RecipeSummaryScreen() {
 
       {/* Bouton générer */}
       <View style={[styles.generateButtonContainer, { bottom: Math.max(insets.bottom, 45) + 15 }]}>
-        {ingredients.length < MIN_INGREDIENTS && (
-          <Text style={styles.minIngredientsText}>
-            {t('recipeSummary.pleaseAddAtLeastFiveIngredients')} ({ingredients.length}/{MIN_INGREDIENTS})
-          </Text>
-        )}
-        <TouchableOpacity
-          style={[
-            styles.generateButton,
-            (isLoading || ingredients.length < MIN_INGREDIENTS) && styles.generateButtonDisabled
-          ]}
-          onPress={handleGenerateRecipe}
-          disabled={isLoading || ingredients.length < MIN_INGREDIENTS}
-        >
-          {isLoading ? (
-            <ActivityIndicator size="small" color="white" />
-          ) : (
-            <>
-              <IconSymbol
-                name="sparkles"
-                size={20}
-                color="white"
-                weight="bold"
-              />
-              <Text style={styles.generateButtonText}>
-                {t('recipeSummary.generate')}
-              </Text>
-            </>
+        <View style={styles.generateButtonInner}>
+          {ingredients.length < MIN_INGREDIENTS && (
+            <Text style={styles.minIngredientsText}>
+              {t('recipeSummary.pleaseAddAtLeastFiveIngredients')} ({ingredients.length}/{MIN_INGREDIENTS})
+            </Text>
           )}
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.generateButton,
+              (isLoading || ingredients.length < MIN_INGREDIENTS) && styles.generateButtonDisabled
+            ]}
+            onPress={handleGenerateRecipe}
+            disabled={isLoading || ingredients.length < MIN_INGREDIENTS}
+          >
+            {isLoading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <>
+                <IconSymbol
+                  name="sparkles"
+                  size={20}
+                  color="white"
+                  weight="bold"
+                />
+                <Text style={styles.generateButtonText} numberOfLines={1}>
+                  {t('recipeSummary.generate')}
+                </Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -1282,6 +1515,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
+  },
+  onboardingDemoBanner: {
+    backgroundColor: '#FFF8E7',
+    borderRadius: 22,
+    padding: 17,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#F4D999',
+  },
+  onboardingDemoBadge: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'white',
+    borderRadius: 100,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    marginBottom: 10,
+  },
+  onboardingDemoBadgeText: {
+    fontFamily: 'CronosProBold',
+    fontSize: font(12),
+    color: Colors.light.button,
+  },
+  onboardingDemoTitle: {
+    fontFamily: 'Degular',
+    fontSize: font(24),
+    lineHeight: font(28),
+    color: Colors.light.text,
+  },
+  onboardingDemoSubtitle: {
+    fontFamily: 'CronosPro',
+    fontSize: font(14),
+    lineHeight: font(20),
+    color: Colors.light.textSecondary,
+    marginTop: 4,
   },
   floatingCircleButton: {
     position: 'absolute',
@@ -1332,9 +1602,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'flex-end',
+    // Sur tablette la feuille est recentrée au lieu de traverser tout l'écran.
+    alignItems: 'center',
   },
   modalContent: {
     backgroundColor: 'white',
+    width: '100%',
+    maxWidth: 640,
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     padding: 24,
@@ -1346,7 +1620,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: font(24),
     color: '#000',
     fontFamily: 'Degular'
   },
@@ -1417,7 +1691,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    paddingHorizontal: 24,
   },
   filtersContainer: {
     marginBottom: 30,
@@ -1582,16 +1855,28 @@ const styles = StyleSheet.create({
   },
   generateButtonContainer: {
     position: 'absolute',
-    left: 24,
-    right: 24,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+  },
+  generateButtonInner: {
+    ...contentColumn(),
     alignItems: 'center',
   },
   minIngredientsText: {
     color: Colors.light.textSecondary,
-    fontSize: 14,
+    fontSize: font(14),
     fontFamily: 'CronosPro',
     marginBottom: 8,
     textAlign: 'center',
+    // Ce texte flotte au-dessus de la liste qui défile dessous : sans fond opaque
+    // il se superposait aux noms de catégories et devenait illisible.
+    backgroundColor: 'rgba(255,255,255,0.94)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    overflow: 'hidden',
   },
   generateButton: {
     width: '100%',
@@ -1814,8 +2099,37 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
   },
+  categoryAddModalSearchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 15,
+    paddingHorizontal: 15,
+    minHeight: 48,
+    marginBottom: 16,
+  },
+  categoryAddModalSearchInput: {
+    flex: 1,
+    fontFamily: 'CronosPro',
+    fontSize: 16,
+    color: '#000',
+    minWidth: 0,
+    paddingVertical: 0,
+  },
+  categoryAddModalEmptyText: {
+    fontFamily: 'CronosPro',
+    fontSize: 15,
+    color: '#9A9A9A',
+    textAlign: 'center',
+    paddingVertical: 32,
+    paddingHorizontal: 16,
+  },
   categoryAddModalBody: {
     maxHeight: '70%',
+    // La barre de recherche prend de la hauteur : sans flexShrink, la liste pousse
+    // le footer (bouton Ajouter) hors de la modale sur les petits écrans.
+    flexShrink: 1,
   },
   categoryAddModalBodyContent: {
     flexGrow: 1,
@@ -1852,7 +2166,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Degular'
   },
   manualIngredientItem: {
-    width: (width - 125) / 3, // Réduit légèrement pour garantir 3 colonnes sur tous les écrans
+    // width fourni à l'usage (dérivé de la largeur de fenêtre courante).
     padding: 8,
     borderRadius: 12,
     backgroundColor: '#F8F8F8',

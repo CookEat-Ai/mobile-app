@@ -58,10 +58,36 @@ interface ApiResponse<T> {
   error?: string;
 }
 
+function isCanceledFetchError(error: unknown) {
+  const name = error && typeof error === 'object' && 'name' in error
+    ? String(error.name)
+    : '';
+  const message = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+
+  return name === 'AbortError'
+    || /FetchRequestCanceledException|fetch request has been cancel(?:ed|led)|operation (?:was )?aborted/i.test(message);
+}
+
+export type RecipeFeasibilityResponse = {
+  canGenerate: boolean;
+  status: 'possible' | 'confirmed_impossible' | 'unchecked';
+  confidence: number;
+  reason: string;
+  suggestions: string[];
+  checkedBy: 'llm_consensus' | 'llm_single' | 'fail_open';
+};
+
+export type RecipeIdentity = {
+  title: string;
+  dish_type?: string;
+  cuisine_style?: string;
+  main_ingredients?: string[];
+};
+
 class ApiService {
   private healthWs: WebSocket | null = null;
   private onHealthChange: ((isAvailable: boolean) => void) | null = null;
-  private reconnectTimer: NodeJS.Timeout | null = null;
+  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
   }
@@ -197,8 +223,10 @@ class ApiService {
       }
 
       return { data };
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
+    } catch (error: unknown) {
+      // Expo iOS enveloppe parfois AbortController dans une
+      // FetchRequestCanceledException au lieu d'exposer AbortError.
+      if (isCanceledFetchError(error)) {
         return { error: i18n.t('common.networkError') };
       }
 
@@ -221,6 +249,34 @@ class ApiService {
   }
 
   // Recettes
+  async checkRecipeFeasibility(
+    ingredients: string,
+    preferences: {
+      dishType: string;
+      cuisineStyle: string[];
+      diet: string;
+      allergies: string[];
+      equipments: string[];
+      allowOtherIngredients: boolean;
+    },
+  ) {
+    const userId = await AsyncStorage.getItem('userId');
+    return this.request<RecipeFeasibilityResponse>('/recipe/check-feasibility', {
+      method: 'POST',
+      body: JSON.stringify({
+        ingredients,
+        dishType: preferences.dishType,
+        cuisineStyle: preferences.cuisineStyle.join(', '),
+        diet: preferences.diet,
+        allergies: preferences.allergies,
+        equipments: preferences.equipments,
+        allowOtherIngredients: preferences.allowOtherIngredients,
+        language: this.getCurrentLanguage(),
+        userId,
+      }),
+    }, 20000);
+  }
+
   generateRecipeStream(
     ingredients: string,
     dishType: string,
@@ -234,6 +290,7 @@ class ApiService {
     allowOtherIngredients: boolean,
     isSubscribed: boolean,
     callbacks: {
+      onRecipeIdentity: (data: { identity: RecipeIdentity; locked: boolean }) => void;
       onRecipeChunk: (partial: any) => void;
       onRecipe: (data: { recipe: any; isFirstGeneration: boolean }) => void;
       onStepsChunk: (partial: any) => void;
@@ -245,6 +302,59 @@ class ApiService {
     const month = new Date().getMonth();
     const language = this.getCurrentLanguage();
     let ws: WebSocket | null = null;
+    // Les fournisseurs envoient parfois plusieurs dizaines de fragments par
+    // seconde. Reparser tout le JSON accumulé et rerendre l'écran pour chacun
+    // sature le thread JS, notamment quand la fiche reste montée sous le loader.
+    // Le flux réseau reste intégral ; seules les prévisualisations UI sont
+    // regroupées à une cadence fluide et suffisante pour l'utilisateur.
+    const CHUNK_UI_INTERVAL_MS = 100;
+    let lastRecipePreviewAt = 0;
+    let lastStepsPreviewAt = 0;
+    let pendingRecipeAccumulated: string | null = null;
+    let pendingStepsAccumulated: string | null = null;
+    let recipePreviewTimer: ReturnType<typeof setTimeout> | null = null;
+    let stepsPreviewTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const parseRecipePreview = (accumulated: string) => {
+      const partial = parsePartialJSON(accumulated);
+      if (partial) callbacks.onRecipeChunk(partial);
+      lastRecipePreviewAt = Date.now();
+    };
+    const parseStepsPreview = (accumulated: string) => {
+      const partial = parsePartialJSON(accumulated);
+      if (partial) callbacks.onStepsChunk(partial);
+      lastStepsPreviewAt = Date.now();
+    };
+    const scheduleRecipePreview = (accumulated: string) => {
+      pendingRecipeAccumulated = accumulated;
+      if (recipePreviewTimer) return;
+      const wait = Math.max(0, CHUNK_UI_INTERVAL_MS - (Date.now() - lastRecipePreviewAt));
+      recipePreviewTimer = setTimeout(() => {
+        recipePreviewTimer = null;
+        const pending = pendingRecipeAccumulated;
+        pendingRecipeAccumulated = null;
+        if (pending) parseRecipePreview(pending);
+      }, wait);
+    };
+    const scheduleStepsPreview = (accumulated: string) => {
+      pendingStepsAccumulated = accumulated;
+      if (stepsPreviewTimer) return;
+      const wait = Math.max(0, CHUNK_UI_INTERVAL_MS - (Date.now() - lastStepsPreviewAt));
+      stepsPreviewTimer = setTimeout(() => {
+        stepsPreviewTimer = null;
+        const pending = pendingStepsAccumulated;
+        pendingStepsAccumulated = null;
+        if (pending) parseStepsPreview(pending);
+      }, wait);
+    };
+    const clearPreviewTimers = () => {
+      if (recipePreviewTimer) clearTimeout(recipePreviewTimer);
+      if (stepsPreviewTimer) clearTimeout(stepsPreviewTimer);
+      recipePreviewTimer = null;
+      stepsPreviewTimer = null;
+      pendingRecipeAccumulated = null;
+      pendingStepsAccumulated = null;
+    };
 
     AsyncStorage.getItem('userId').then((userId) => {
       ws = new WebSocket(WS_URL);
@@ -264,27 +374,38 @@ class ApiService {
         try {
           const msg = JSON.parse(event.data as string);
           switch (msg.event) {
+            case 'recipe-identity':
+              callbacks.onRecipeIdentity(msg.data);
+              break;
             case 'recipe-chunk': {
-              const partial = parsePartialJSON(msg.data.accumulated);
-              if (partial) callbacks.onRecipeChunk(partial);
+              scheduleRecipePreview(msg.data.accumulated);
               break;
             }
             case 'recipe-complete':
+              // La réponse complète est autoritaire : une prévisualisation en
+              // attente ne doit pas arriver après elle et écraser l'état final.
+              if (recipePreviewTimer) clearTimeout(recipePreviewTimer);
+              recipePreviewTimer = null;
+              pendingRecipeAccumulated = null;
               callbacks.onRecipe(msg.data);
               break;
             case 'steps-chunk': {
-              const partial = parsePartialJSON(msg.data.accumulated);
-              if (partial) callbacks.onStepsChunk(partial);
+              scheduleStepsPreview(msg.data.accumulated);
               break;
             }
             case 'steps-complete':
+              if (stepsPreviewTimer) clearTimeout(stepsPreviewTimer);
+              stepsPreviewTimer = null;
+              pendingStepsAccumulated = null;
               callbacks.onSteps(msg.data);
               break;
             case 'done':
+              clearPreviewTimers();
               callbacks.onDone(msg.data);
               ws?.close();
               break;
             case 'error':
+              clearPreviewTimers();
               callbacks.onError(msg.data.message || i18n.t('recipe_loading.generationError'));
               ws?.close();
               break;
@@ -300,6 +421,7 @@ class ApiService {
       };
 
       ws.onclose = () => {
+        clearPreviewTimers();
         ws = null;
       };
     }).catch(() => {
@@ -307,7 +429,7 @@ class ApiService {
     });
 
     return {
-      close: () => { ws?.close(); ws = null; }
+      close: () => { clearPreviewTimers(); ws?.close(); ws = null; }
     };
   }
 
@@ -321,16 +443,6 @@ class ApiService {
     });
   }
 
-  async getRecipeSteps(recipe: any) {
-    return this.request<any>('/recipe/steps', {
-      method: 'POST',
-      body: JSON.stringify({
-        recipe,
-        userId: await AsyncStorage.getItem('userId'),
-        language: this.getCurrentLanguage()
-      }),
-    });
-  }
 
   async processVoiceIngredients(voiceText: string) {
     return this.request<{ ingredients: { name: string; category: string }[] }>('/recipe/process-voice-ingredients', {
@@ -435,7 +547,7 @@ class ApiService {
   }
 
   async initUser(mobileId: string, timezone?: string) {
-    const country = Localization.region || undefined;
+    const country = Localization.getLocales()?.[0]?.regionCode || undefined;
     return this.request<{ success: boolean; userId?: string }>('/user/init', {
       method: 'POST',
       body: JSON.stringify({ mobileId, timezone, country, language: this.getCurrentLanguage() }),
@@ -443,7 +555,7 @@ class ApiService {
   }
 
   async saveOnboardingAnswers(answers: Record<string, string>, mobileId: string, timezone?: string) {
-    const country = Localization.region || undefined;
+    const country = Localization.getLocales()?.[0]?.regionCode || undefined;
     return this.request<{ success: boolean; message: string; userId?: string }>('/user/onboarding', {
       method: 'POST',
       body: JSON.stringify({ answers, mobileId, timezone, country, language: this.getCurrentLanguage() }),
@@ -472,11 +584,43 @@ class ApiService {
     });
   }
 
-  async validateImage(imageUrl: string) {
+  async validateImage(imageUrl: string, timeoutMs: number = 4000) {
     return this.request<{ isValid: boolean; details: any }>('/recipe/validate-image', {
       method: 'POST',
       body: JSON.stringify({ imageUrl }),
-    });
+    }, timeoutMs);
+  }
+
+  async selectBestRecipeImage(
+    recipe: {
+      title: string;
+      dishType?: string;
+      cuisineStyle?: string;
+      mainIngredients?: string[];
+    },
+    imageUrls: string[],
+    timeoutMs: number = 9000,
+  ) {
+    const userId = await AsyncStorage.getItem('userId');
+    return this.request<{
+      imageUrl: string | null;
+      selectedIndex: number;
+      confidence: number;
+      reason: string;
+      rankings: {
+        index: number;
+        relevance_score: number;
+        is_suitable: boolean;
+        is_real_food_photo: boolean;
+        has_prominent_text: boolean;
+        is_graphic_or_collage: boolean;
+      }[];
+      candidatesEvaluated: number;
+      selectionAdjusted: boolean;
+    }>('/recipe/select-image', {
+      method: 'POST',
+      body: JSON.stringify({ recipe, imageUrls, ...(userId ? { userId } : {}) }),
+    }, timeoutMs);
   }
 
   async importRecipeFromVideo(
@@ -505,7 +649,7 @@ class ApiService {
 
       let hasResolved = false;
 
-      es.addEventListener('progress', (event: any) => {
+      (es as any).addEventListener('progress', (event: any) => {
         try {
           const data = JSON.parse(event.data);
           callbacks?.onProgress?.(data.progress ?? 0, data.step);
@@ -514,7 +658,7 @@ class ApiService {
         }
       });
 
-      es.addEventListener('done', (event: any) => {
+      (es as any).addEventListener('done', (event: any) => {
         try {
           const data = JSON.parse(event.data);
           es.close();
@@ -584,7 +728,7 @@ class ApiService {
 
   // Notifications
   async updateNotificationToken(mobileId: string, notificationToken: string, timezone?: string) {
-    const country = Localization.region || undefined;
+    const country = Localization.getLocales()?.[0]?.regionCode || undefined;
     return this.request<{ success: boolean; message: string }>('/user/notification-token', {
       method: 'POST',
       body: JSON.stringify({ mobileId, notificationToken, timezone, country }),
@@ -592,7 +736,7 @@ class ApiService {
   }
 
   async updateUserActivity(mobileId: string, timezone?: string) {
-    const country = Localization.region || undefined;
+    const country = Localization.getLocales()?.[0]?.regionCode || undefined;
     return this.request<{ success: boolean; message: string }>('/user/activity', {
       method: 'POST',
       body: JSON.stringify({ mobileId, timezone, country }),
@@ -633,4 +777,4 @@ class ApiService {
 }
 
 export const apiService = new ApiService();
-export default apiService; 
+export default apiService;

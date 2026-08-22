@@ -2,11 +2,8 @@ import { router } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import {
   Animated,
-  Dimensions,
   Easing,
-  Platform,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,22 +11,30 @@ import {
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { Colors } from '../../constants/Colors';
+import { font, rw } from '../../constants/Layout';
+import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { useTranslation } from 'react-i18next';
-import analytics from '../../services/analytics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
-
-const { width } = Dimensions.get('window');
 
 export default function WelcomeScreen() {
   const insets = useSafeAreaInsets();
   const { t, i18n } = useTranslation();
+  const { width, height, layoutWidth, isShortScreen } = useResponsive();
+  // La mascotte était dimensionnée à 100% de la largeur : 1024pt de haut sur iPad,
+  // et un débordement vertical sur les écrans courts (iPhone SE). On la borne par
+  // la hauteur disponible autant que par la largeur.
+  const mascotSize = Math.min(layoutWidth, height * (isShortScreen ? 0.3 : 0.36));
+  // Grand cercle crème qui déborde des deux côtés. Les valeurs d'origine (-300 /
+  // -550 / 1000) étaient calées sur un écran de 390pt ; on garde exactement les
+  // mêmes proportions mais dérivées de la largeur réelle.
+  const curveWidth = width * 2.5;
+  const curveHeight = curveWidth * 1.026;
+  const curveLeft = -(curveWidth - width) / 2;
+  const curveBottom = height * 0.53 - curveHeight;
 
-  useEffect(() => {
-    analytics.track('onboarding_started');
-  }, []);
-
-  const imageTranslate = useRef(new Animated.Value(Dimensions.get('window').height)).current;
+  // Point de départ de l'animation d'entrée : hors écran par le bas.
+  const imageTranslate = useRef(new Animated.Value(height)).current;
   const imageOpacity = useRef(new Animated.Value(0)).current;
   const imageScale = useRef(new Animated.Value(1)).current;
   const pressScale = useRef(new Animated.Value(1)).current;
@@ -152,7 +157,9 @@ export default function WelcomeScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
+    // Un `SafeAreaView` de react-native + `paddingTop: insets.top` cumulait deux
+    // fois la zone sûre haute sur iOS. On applique les insets une seule fois.
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <View style={styles.topSection}>
         <Text style={styles.brand}>CookEat Ai</Text>
         <View style={styles.illustrationWrapper}>
@@ -178,16 +185,37 @@ export default function WelcomeScreen() {
               cachePolicy="memory-disk"
               style={[
                 styles.illustration,
-                { transform: [{ rotate: '20deg' }] }
+                { width: mascotSize, height: mascotSize, transform: [{ rotate: '20deg' }] }
               ]}
             />
           </Animated.View>
-          <Pressable onPress={handleMascotPress} style={styles.mascotHitArea} />
+          {/* La zone tactile suit la mascotte : elle est centrée sur l'illustration
+              plutôt que positionnée à un offset calculé sur la largeur d'écran. */}
+          <Pressable
+            onPress={handleMascotPress}
+            accessibilityRole="button"
+            style={[
+              styles.mascotHitArea,
+              { width: mascotSize * 0.6, height: mascotSize * 0.6 },
+            ]}
+          />
         </View>
       </View>
 
       {/* curve */}
-      <View style={{ zIndex: 1, position: 'absolute', left: -300, bottom: -550, backgroundColor: "#FDF9E2", width: '250%', height: 1000, borderRadius: 1000 }} />
+      <View
+        pointerEvents="none"
+        style={{
+          zIndex: 1,
+          position: 'absolute',
+          left: curveLeft,
+          bottom: curveBottom,
+          backgroundColor: '#FDF9E2',
+          width: curveWidth,
+          height: curveHeight,
+          borderRadius: curveHeight,
+        }}
+      />
 
       <View style={styles.bottomSection}>
         <View style={{ flex: 1, justifyContent: 'center', gap: 20 }}>
@@ -201,7 +229,7 @@ export default function WelcomeScreen() {
           <Animated.View style={{ opacity: socialOpacity }}>
             <View style={styles.socialProof}>
               <View style={styles.laurel} />
-              <Text style={styles.socialProofText}>{t('onboarding.socialProof.title', { count: i18n.language.startsWith('fr') ? '10 000' : '10,000' })}</Text>
+              <Text style={styles.socialProofText}>{t('onboarding.socialProof.title', { total: i18n.language.startsWith('fr') ? '10 000' : '10,000' })}</Text>
               <View style={styles.laurel} />
             </View>
           </Animated.View>
@@ -217,16 +245,10 @@ export default function WelcomeScreen() {
             }}
           >
             <Text style={styles.buttonText}>{t('onboarding.continue')}</Text>
-            {/* <IconSymbol
-              style={styles.buttonIcon}
-              name={Platform.OS === 'ios' ? "arrow.right" : "arrow_forward"}
-              size={width * 0.06}
-              color="white"
-            /> */}
           </TouchableOpacity>
         </Animated.View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -246,7 +268,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   brand: {
-    fontSize: 26,
+    fontSize: font(26),
     fontFamily: 'Degular',
     color: Colors.light.text,
     alignSelf: 'flex-end',
@@ -260,35 +282,30 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    fontSize: width * 0.09,
+    fontSize: rw(0.09),
     fontFamily: 'Degular',
     color: Colors.light.text,
-    lineHeight: width * 0.1,
+    lineHeight: rw(0.1),
   },
   description: {
     textAlign: 'center',
-    fontSize: width * 0.046,
+    fontSize: rw(0.046),
     fontFamily: 'CronosProBold',
     color: Colors.light.textSecondary,
     marginTop: 10,
   },
   illustration: {
-    width: width,
-    height: width,
+    // width / height sont fournis à l'usage : bornés par la hauteur disponible.
     resizeMode: 'contain',
   },
   mascotHitArea: {
     position: 'absolute',
-    width: width * 0.55,
-    height: width * 0.6,
-    top: width * 0.05,
     alignSelf: 'center',
   },
   bottomSection: {
     zIndex: 10,
     flex: 1,
-    // justifyContent: 'space-between',
-    width: '100%',
+    ...contentColumn(),
     paddingHorizontal: 24,
     paddingTop: 32,
     paddingBottom: 36,
@@ -303,9 +320,11 @@ const styles = StyleSheet.create({
   },
   socialProofText: {
     fontFamily: 'Degular',
-    fontSize: width * 0.045,
+    fontSize: rw(0.045),
     color: Colors.light.text,
     marginHorizontal: 12,
+    flexShrink: 1,
+    textAlign: 'center',
   },
   laurel: {
     width: 28,
@@ -335,11 +354,11 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: width * 0.05,
+    fontSize: rw(0.05),
     fontFamily: 'Degular',
   },
   buttonIcon: {
     position: 'absolute',
     right: 20,
   },
-}); 
+});

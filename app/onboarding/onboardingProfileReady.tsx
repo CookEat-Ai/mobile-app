@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -15,6 +15,10 @@ import * as Haptics from 'expo-haptics';
 import { Colors } from '../../constants/Colors';
 import { useTranslation } from 'react-i18next';
 import analytics from '../../services/analytics';
+import {
+  buildGenerationDemoIngredients,
+  buildGenerationDemoParams,
+} from '../../services/onboardingDemo';
 
 const NutriCard = ({ icon, label, value, unit, color, delay, fadeAnim, slideAnim }: any) => (
   <Animated.View
@@ -75,17 +79,10 @@ export default function OnboardingProfileReadyScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
 
-  const [variant, setVariant] = useState<'A' | 'B' | 'C' | 'D' | null>(null);
   const { t } = useTranslation();
 
   useEffect(() => {
     analytics.track('onboarding_summary_dashboard_viewed');
-
-    const loadVariant = async () => {
-      const v = await analytics.getOnboardingVariant();
-      setVariant(v);
-    };
-    loadVariant();
 
     Animated.parallel([
       Animated.timing(fadeAnim, {
@@ -99,7 +96,7 @@ export default function OnboardingProfileReadyScreen() {
         useNativeDriver: true,
       })
     ]).start();
-  }, []);
+  }, [fadeAnim, slideAnim]);
 
   const handleContinue = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -107,7 +104,18 @@ export default function OnboardingProfileReadyScreen() {
 
     analytics.track('onboarding_summary_dashboard_continue', { variant });
 
-    router.replace('/onboarding/videoImportTutorial');
+    analytics.track('onboarding_generation_demo_started', {
+      demo_role: 'primary',
+      prefilled_ingredient_count: buildGenerationDemoIngredients(t).length,
+    });
+    router.replace({
+      pathname: '/ingredient-list',
+      params: buildGenerationDemoParams(
+        t,
+        'primary',
+        '/onboarding/videoImportTutorial',
+      ),
+    });
   };
 
   return (
@@ -205,7 +213,7 @@ export default function OnboardingProfileReadyScreen() {
       <View style={styles.footer}>
         <TouchableOpacity activeOpacity={0.8} style={styles.continueButton} onPress={handleContinue}>
           <Text style={styles.buttonText}>
-            {variant === 'C' ? t('onboardingProfileReady.button') : t('onboarding.continue')}
+            {t('onboardingProfileReady.button')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -303,11 +311,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 12,
+    // `gap: 12` s'ajoutait aux deux cartes à 48% : la ligne dépassait 100% et la
+    // seconde carte passait dessous, ce qui écrasait la grille en une colonne de
+    // cartes à demi-largeur sur les écrans étroits (iPhone SE). L'espacement
+    // horizontal vient de `space-between` (les 4% restants), le vertical de rowGap.
+    rowGap: 12,
     paddingHorizontal: Platform.OS === 'android' ? 2 : 0, // Espace pour les ombres sur Android
   },
   nutriCard: {
-    width: Platform.OS === 'android' ? '47%' : '48%',
+    width: '48%',
+    minWidth: 0,
     backgroundColor: '#F8F9FA',
     borderRadius: 16,
     padding: Platform.OS === 'android' ? 10 : 16,
@@ -356,7 +369,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
   },
   progressCircleFill: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     borderRadius: 12,
     borderWidth: 2,
     transform: [{ rotate: '45deg' }],

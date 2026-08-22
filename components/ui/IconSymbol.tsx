@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 
 // Mapping pour MaterialIcons (Android/Web) et SF Symbols (iOS)
 const MAPPING = {
-  'wheel.fill': { ios: 'wheel.fill', android: 'wheel' },
+  'wheel.fill': { ios: 'slowmo', android: 'wheel' },
   'gift.fill': { ios: 'gift.fill', android: 'gift' },
   'house': { ios: 'house', android: 'home' },
   'house.fill': { ios: 'house.fill', android: 'home' },
@@ -40,6 +40,27 @@ const MAPPING = {
   'help': { ios: 'questionmark.circle', android: 'help-outline' },
   'square.and.arrow.down': { ios: 'square.and.arrow.down', android: 'file-download' },
   'square.and.arrow.down.fill': { ios: 'square.and.arrow.down.fill', android: 'file-download' },
+  // Ces noms étaient utilisés dans les écrans mais absents du mapping : `MAPPING[name]`
+  // valait `undefined`, le composant retournait `null` et l'icône ne s'affichait tout
+  // simplement pas (chevrons et icônes de l'écran Profil, étoiles des favoris, micro).
+  // Les appelants font parfois `Platform.OS === 'ios' ? 'bell' : 'notifications'`, ce qui
+  // est redondant puisque le mapping gère déjà les deux plateformes : les deux clés sont
+  // donc déclarées pour que l'icône s'affiche quel que soit le nom passé.
+  'bell': { ios: 'bell', android: 'notifications' },
+  'notifications': { ios: 'bell', android: 'notifications' },
+  'chevron.right': { ios: 'chevron.right', android: 'chevron-right' },
+  'envelope': { ios: 'envelope', android: 'mail-outline' },
+  'globe': { ios: 'globe', android: 'language' },
+  'pricetag': { ios: 'tag', android: 'local-offer' },
+  'doc.text': { ios: 'doc.text', android: 'description' },
+  'star': { ios: 'star', android: 'star-border' },
+  'star.fill': { ios: 'star.fill', android: 'star' },
+  'time': { ios: 'clock', android: 'access-time' },
+  'timer': { ios: 'timer', android: 'timer' },
+  'xmark': { ios: 'xmark', android: 'close' },
+  'magnifyingglass': { ios: 'magnifyingglass', android: 'search' },
+  'microphone': { ios: 'mic', android: 'mic' },
+  'microphone.slash': { ios: 'mic.slash', android: 'mic-off' },
 } as const;
 
 export function IconSymbol({
@@ -61,7 +82,7 @@ export function IconSymbol({
   if (Platform.OS === 'ios') {
     return (
       <SymbolView
-        name={icon.ios}
+        name={icon.ios as any}
         size={size}
         tintColor={color}
         style={[{ width: size, height: size }, style]}

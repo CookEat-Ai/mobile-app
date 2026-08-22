@@ -64,7 +64,7 @@ class NotificationService {
         // Envoyer le token au serveur
         await this.sendTokenToServer(token);
 
-        console.log('✅ Token de notification obtenu:', token);
+        console.log('✅ Token de notification obtenu');
       } catch (error) {
         console.error('❌ Erreur lors de l\'obtention du token:', error);
         // Ne pas bloquer l'exécution si les notifications échouent

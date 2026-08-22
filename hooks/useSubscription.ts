@@ -7,7 +7,7 @@ export const useSubscription = () => {
     isSubscribed: false,
     currentPlan: null,
     expirationDate: null,
-    dailyQuotaRemaining: 0
+    freeGenerationsRemaining: 0
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -42,14 +42,14 @@ export const useSubscription = () => {
     router.push('/paywall');
   };
 
-  const useDailyQuota = async (): Promise<boolean> => {
+  const useFreeGeneration = async (): Promise<boolean> => {
     if (subscriptionStatus.isSubscribed) {
       return true; // Pas de limite pour les abonnés
     }
 
-    const canUse = await revenueCatService.useDailyQuota();
+    const canUse = await revenueCatService.useFreeGeneration();
     if (!canUse) {
-      showPaywallForFeature('daily_quota');
+      showPaywallForFeature('free_generation_used');
       return false;
     }
 
@@ -76,7 +76,7 @@ export const useSubscription = () => {
     subscriptionStatus,
     isLoading,
     checkPremiumAccess,
-    useDailyQuota,
+    useFreeGeneration,
     loadSubscriptionStatus,
     cancelSubscription
   };

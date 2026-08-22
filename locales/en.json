@@ -1,4 +1,14 @@
 {
+  "quickActions": {
+    "tryFree": {
+      "title": "TRY FOR FREE 🎁",
+      "subtitle": "7-day free trial with 80% off!"
+    },
+    "discount": {
+      "title": "GET 80% OFF 🎁",
+      "subtitle": "CookEat Ai's discounted annual offer"
+    }
+  },
   "home": {
     "hi": "Hi",
     "title": "What do you want to eat today?",
@@ -25,8 +35,8 @@
     "generatedRecipes": "Generated recipes",
     "notifications": {
       "enabled": "Notifications enabled",
-      "description": "You will now receive notifications from CookEat!",
-      "description2": "You will now receive notifications from CookEat!",
+      "description": "You will now receive notifications from CookEat Ai!",
+      "description2": "You will now receive notifications from CookEat Ai!",
       "error": "Error",
       "errorDescription": "An error occurred while managing notification permissions."
     },
@@ -53,7 +63,7 @@
         "carrot": "Carrot",
         "tomato": "Tomato",
         "onion": "Onion",
-        "pepper": "Pepper",
+        "pepper": "Bell pepper",
         "courgette": "Zucchini",
         "broccoli": "Broccoli",
         "spinach": "Spinach",
@@ -61,7 +71,29 @@
         "garlic": "Garlic",
         "mushroom": "Mushroom",
         "cucumber": "Cucumber",
-        "cauliflower": "Cauliflower"
+        "cauliflower": "Cauliflower",
+        "potato": "Potato",
+        "sweetPotato": "Sweet potato",
+        "eggplant": "Eggplant",
+        "lettuce": "Lettuce",
+        "greenBeans": "Green beans",
+        "peas": "Peas",
+        "corn": "Corn",
+        "pumpkin": "Pumpkin",
+        "butternut": "Butternut squash",
+        "cabbage": "Cabbage",
+        "brusselsSprouts": "Brussels sprouts",
+        "radish": "Radish",
+        "beetroot": "Beetroot",
+        "turnip": "Turnip",
+        "celery": "Celery",
+        "fennel": "Fennel",
+        "asparagus": "Asparagus",
+        "artichoke": "Artichoke",
+        "avocado": "Avocado",
+        "shallot": "Shallot",
+        "endive": "Endive",
+        "olive": "Olive"
       },
       "meats": {
         "title": "Meats",
@@ -70,16 +102,41 @@
         "pork": "Pork",
         "lamb": "Lamb",
         "turkey": "Turkey",
-        "veal": "Veal"
+        "veal": "Veal",
+        "duck": "Duck",
+        "rabbit": "Rabbit",
+        "ham": "Ham",
+        "bacon": "Bacon",
+        "sausage": "Sausage",
+        "chorizo": "Chorizo",
+        "merguez": "Merguez",
+        "mincedBeef": "Ground beef",
+        "chickenBreast": "Chicken breast",
+        "chickenThigh": "Chicken thigh",
+        "porkChop": "Pork chop",
+        "meatballs": "Meatballs"
       },
       "fish": {
-        "title": "Fish",
+        "title": "Fish & seafood",
         "salmon": "Salmon",
         "tuna": "Tuna",
         "cod": "Cod",
         "sardine": "Sardine",
         "maquereau": "Maquereau",
-        "bar": "Bar"
+        "bar": "Bar",
+        "trout": "Trout",
+        "hake": "Hake",
+        "sole": "Sole",
+        "seabream": "Sea bream",
+        "haddock": "Haddock",
+        "anchovy": "Anchovy",
+        "shrimp": "Shrimp",
+        "mussels": "Mussels",
+        "squid": "Squid",
+        "crab": "Crab",
+        "lobster": "Lobster",
+        "scallop": "Scallops",
+        "surimi": "Surimi"
       },
       "essentials": {
         "title": "Essentials",
@@ -91,7 +148,31 @@
         "oil": "Olive oil",
         "butter": "Butter",
         "eggs": "Eggs",
-        "flour": "Flour"
+        "flour": "Flour",
+        "bread": "Bread",
+        "breadcrumbs": "Breadcrumbs",
+        "quinoa": "Quinoa",
+        "bulgur": "Bulgur",
+        "oats": "Oats",
+        "lentils": "Lentils",
+        "chickpeas": "Chickpeas",
+        "redBeans": "Red beans",
+        "whiteBeans": "White beans",
+        "sugar": "Sugar",
+        "yeast": "Yeast",
+        "yogurt": "Yogurt",
+        "coconutMilk": "Coconut milk",
+        "tomatoSauce": "Tomato sauce",
+        "cannedTomatoes": "Canned tomatoes",
+        "puffPastry": "Puff pastry",
+        "shortcrustPastry": "Shortcrust pastry",
+        "stock": "Stock cube",
+        "sunflowerOil": "Sunflower oil",
+        "tofu": "Tofu",
+        "walnut": "Walnuts",
+        "almond": "Almonds",
+        "hazelnut": "Hazelnuts",
+        "pineNuts": "Pine nuts"
       },
       "cheeses": {
         "title": "Cheeses",
@@ -105,7 +186,19 @@
         "feta": "Feta",
         "butter": "Butter",
         "eggs": "Eggs",
-        "flour": "Flour"
+        "flour": "Flour",
+        "goat": "Goat cheese",
+        "gruyere": "Gruyère",
+        "comte": "Comté",
+        "raclette": "Raclette",
+        "reblochon": "Reblochon",
+        "ricotta": "Ricotta",
+        "mascarpone": "Mascarpone",
+        "burrata": "Burrata",
+        "blueCheese": "Blue cheese",
+        "gorgonzola": "Gorgonzola",
+        "creamCheese": "Cream cheese",
+        "halloumi": "Halloumi"
       },
       "fruits": {
         "title": "Fruits",
@@ -116,7 +209,23 @@
         "raisin": "Grapes",
         "kiwi": "Kiwi",
         "pineapple": "Pineapple",
-        "mango": "Mango"
+        "mango": "Mango",
+        "pear": "Pear",
+        "peach": "Peach",
+        "apricot": "Apricot",
+        "plum": "Plum",
+        "cherry": "Cherry",
+        "raspberry": "Raspberry",
+        "blueberry": "Blueberry",
+        "blackberry": "Blackberry",
+        "watermelon": "Watermelon",
+        "melon": "Melon",
+        "lime": "Lime",
+        "grapefruit": "Grapefruit",
+        "coconut": "Coconut",
+        "fig": "Fig",
+        "date": "Date",
+        "clementine": "Clementine"
       },
       "spices": {
         "title": "Spices & Condiments",
@@ -137,7 +246,49 @@
         "lemon": "Lemon",
         "oregano": "Oregano",
         "thyme": "Thyme",
-        "chili": "Chili"
+        "chili": "Chili",
+        "turmeric": "Turmeric",
+        "nutmeg": "Nutmeg",
+        "rosemary": "Rosemary",
+        "bayLeaf": "Bay leaf",
+        "mint": "Mint",
+        "chives": "Chives",
+        "dill": "Dill",
+        "tarragon": "Tarragon",
+        "sesame": "Sesame",
+        "soySauce": "Soy sauce",
+        "ketchup": "Ketchup",
+        "mayonnaise": "Mayonnaise",
+        "harissa": "Harissa",
+        "rasElHanout": "Ras el hanout",
+        "garamMasala": "Garam masala",
+        "cayenne": "Cayenne pepper",
+        "vanilla": "Vanilla",
+        "cocoa": "Cocoa",
+        "capers": "Capers",
+        "pickles": "Pickles",
+        "balsamic": "Balsamic vinegar"
+      }
+    },
+    "myRecipes": "My recipes",
+    "filters": {
+      "all": "All",
+      "generated": "Generated",
+      "imported": "Imported"
+    },
+    "filterEmpty": {
+      "all": "No recipes yet.",
+      "generated": "You haven't generated any recipe yet.",
+      "imported": "You haven't imported any recipe yet."
+    },
+    "crossSell": {
+      "import": {
+        "title": "Saw a recipe on TikTok?",
+        "description": "Paste the link, we turn it into a real recipe."
+      },
+      "generate": {
+        "title": "A fridge to empty?",
+        "description": "Snap your ingredients, we find the recipe."
       }
     }
   },
@@ -222,6 +373,7 @@
     "success": "Success",
     "error": "Error",
     "cancel": "Cancel",
+    "close": "Close",
     "confirm": "Confirm",
     "unexpectedError": "An unexpected error occurred",
     "requestError": "Request error",
@@ -234,7 +386,11 @@
     "ok": "OK",
     "seeAll": "See all",
     "seeMore": "See more",
-    "seeLess": "See less"
+    "seeLess": "See less",
+    "ingredientsShort": "ingr.",
+    "stepsShort": "steps",
+    "stepShort": "step",
+    "or": "OR"
   },
   "promoCode": {
     "activated": "Promo code successfully activated!",
@@ -248,7 +404,9 @@
     "skip": "I don't have a code",
     "invalid": "This promo code is not valid",
     "error": "Unable to verify the promo code",
-    "success": "-{{discount}}% discount activated!"
+    "success": "-{{discount}}% discount activated!",
+    "continueWithCode": "Continue with this code",
+    "dropCode": "Don't use this code"
   },
   "profile": {
     "guest": "Guest",
@@ -307,7 +465,7 @@
     "legal": "Legal",
     "feedback": "Feedback",
     "feedbackDescription": "Send us your suggestions and comments",
-    "feedbackSubject": "Feedback CookEat App",
+    "feedbackSubject": "Feedback CookEat Ai",
     "emailError": "Unable to open email application.",
     "emailNotAvailable": "Email not available",
     "settingsError": "Unable to open settings.",
@@ -322,17 +480,17 @@
     "premiumPrice": "For less than 1€ / week",
     "emailNotAvailableTitle": "Email not available",
     "emailNotAvailableMessage": "The address no-reply@cookeat.info has been copied to your clipboard.",
-    "feedbackBody": "Hello,\n\nI would like to share my feedback regarding the CookEat app:\n\n[Your message here]\n\nRegards,\n[Your name]",
+    "feedbackBody": "Hello,\n\nI would like to share my feedback regarding the CookEat Ai app:\n\n[Your message here]\n\nRegards,\n[Your name]",
     "languages": {
       "french": "Français",
       "english": "English"
     },
     "deleteAccount": "Delete my data",
     "deleteAccountTitle": "Delete permanently?",
-    "deleteAccountMessage": "Are you sure you want to delete your account and all your data? This action is irreversible.",
+    "deleteAccountMessage": "This removes your pseudonymous profile, preferences, and CookEat Ai history. It does not cancel your Apple or Google subscription.",
     "deleteAccountConfirmTitle": "Final confirmation",
-    "deleteAccountConfirmMessage": "All your favorite recipes, pantry, and preferences will be erased forever. Are you certain?",
-    "deleteAccountButton": "Yes, delete everything",
+    "deleteAccountConfirmMessage": "Your favourites, pantry, preferences, and history will be removed from CookEat Ai's server and this device. Continue?",
+    "deleteAccountButton": "Yes, delete my data",
     "deleteError": "An error occurred during deletion.",
     "promoCode": "Promo code",
     "promoCodeDescription": "Enter a promo code to get a discount",
@@ -410,8 +568,8 @@
   },
   "paywall": {
     "loadingOfferings": "Loading offerings...",
-    "title": "Less waste, More taste!",
-    "subtitle": "Choose your plan",
+    "title": "Unlock every feature",
+    "subtitle": "Create recipes from what you have, import the ones that inspire you, and find them all in one place — with no limits.",
     "purchaseErrorTitle": "Purchase error",
     "purchaseErrorDescription": "An error occurred while purchasing. Try again.",
     "features": {
@@ -424,7 +582,7 @@
       "pantry": "Pantry"
     },
     "plans": {
-      "\u0077eekly": "7-day",
+      "weekly": "7-day",
       "monthly": "Monthly",
       "yearly": "Yearly",
       "week": "week",
@@ -433,9 +591,9 @@
       "best": "Best",
       "perWeek": "/ week",
       "perMonth": "/ month",
-      "perYear": "/ year"
+      "perYear": "/ year",
+      "annual": "Yearly"
     },
-    "cta": "Try for free",
     "restore": "Restore",
     "promoCode": "Promo Code",
     "closeConfirm": {
@@ -459,7 +617,13 @@
     "selectPlanTitle": "Select a plan",
     "selectPlanDescription": "Select a plan before continuing.",
     "loading": "Loading...",
-    "tryFree": "Try for free",
+    "tryFree": "Start for FREE",
+    "noPaymentDueNow": "No payment due now",
+    "trialHeadline_one": "Unlock every feature",
+    "trialHeadline_other": "Unlock every feature",
+    "trialSubheadline": "Create recipes from what you have, import the ones that inspire you, and find them all in one place — with no limits.",
+    "startTrial_one": "Start for FREE",
+    "startTrial_other": "Start for FREE",
     "unlimitedRecipes": "Unlimited recipes",
     "saveRecipes": "Save your recipes",
     "customFilter": "Custom filter",
@@ -467,31 +631,123 @@
     "worldCuisine": "World cuisine",
     "customRecipe": "Custom recipe",
     "pantry": "Pantry",
-    "trialConditions": "Start your 3-day free trial. Then {{price}} / {{period}}. Cancel anytime in Settings."
+    "variants": {
+    "import": {
+      "headline": "Every recipe that inspires you, finally in one place",
+      "subheadline": "Import a video, get the complete recipe, and cook it whenever you want.",
+      "cta": "Import without limits"
+    },
+    "generate": {
+      "headline": "Never wonder what to cook again",
+      "subheadline": "Turn what you already have into recipes you’ll genuinely want to make.",
+      "cta": "Start cooking"
+    }
+  },
+  "personalization": {
+    "goals": {
+      "waste": {
+        "headline": "Cook everything you have, waste nothing",
+        "subheadline": "CookEat Ai turns your available ingredients into delicious recipes before they go to waste."
+      },
+      "money": {
+        "headline": "Make your groceries go further",
+        "subheadline": "Cook what you already have first and find meals that fit your budget better."
+      },
+      "ideas": {
+        "headline": "Never wonder what to cook again",
+        "subheadline": "CookEat Ai turns what you have into varied meal ideas you’ll genuinely want to make."
+      },
+      "organize": {
+        "headline": "Every recipe, finally in one place",
+        "subheadline": "Import your recipe videos, get the ingredients and cook them whenever you want."
+      },
+      "time": {
+        "headline": "Less time searching, more time cooking",
+        "subheadline": "Go straight from your ingredients to a clear recipe without searching for hours."
+      },
+      "healthy": {
+        "headline": "Eat better with what you already have",
+        "subheadline": "Discover home-cooked recipes tailored to your preferences without making meals complicated."
+      }
+    },
+    "focus": {
+      "quick": "With ideas tailored to meals under 30 minutes.",
+      "beginner": "Every recipe is explained simply, step by step."
+    }
+  },
+  "viewAllPlans": "See all plans",
+    "perMonthEquivalent": "that’s {{price}}/month",
+    "per": {
+      "weekly": "/ week",
+      "monthly": "/ month",
+      "annual": "/ year"
+    },
+    "periodLabel": {
+      "weekly": "week",
+      "monthly": "month",
+      "annual": "year"
+    },
+    "renewalNotice": "{{price}} per {{period}}, renews automatically. Cancel anytime in Settings.",
+    "renewalNoticeTrial_one": "1 day free, then {{price}} per {{period}}, renews automatically. Cancel anytime.",
+    "renewalNoticeTrial_other": "{{count}} days free, then {{price}} per {{period}}, renews automatically. Cancel anytime.",
+    "renewalNoticeTrialAnnual_one": "1 day free, then {{price}} per year ({{monthly}}/month), renews automatically. Cancel anytime.",
+    "renewalNoticeTrialAnnual_other": "{{count}} days free, then {{price}} per year ({{monthly}}/month), renews automatically. Cancel anytime.",
+    "discountApplied": "discount applied",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "restoreEmpty": "No purchases to restore on this account.",
+    "restoreError": "Could not restore your purchases. Please try again later.",
+    "discountHeadline": "Your special offer, right now",
+    "discountSubheadline": "{{percent}}% off, applied automatically. This offer won’t come back.",
+    "bestOffer": "Best Offer",
+    "offeringsUnavailable": "Offers are temporarily unavailable. Try again in a few seconds.",
+    "continueWithoutOffer": "Continue without subscribing",
+    "trialBadge_one": "{{count}} DAY FREE",
+    "trialBadge_other": "{{count}} DAYS FREE",
+    "savePercent": "save {{percent}}%",
+    "discountBadge": "{{percent}}% OFF",
+    "exitOffer": {
+      "title": "Your one-time offer",
+      "vsMonthly": "{{percent}}% less than our monthly rate!",
+      "noCommitment": "No commitment — cancel anytime",
+      "cta": "Claim my offer",
+      "duration": {
+        "annual": "12mo",
+        "monthly": "1mo",
+        "weekly": "7 days"
+      }
+    }
   },
   "notifications": {
-    "title": "Reach your goals with notifications",
-    "subtitle": "Receive personalized reminders to never miss a healthy meal.",
+    "title": "Save time and money! 💸",
     "permissionTitle": "Enable notifications",
+    "dontAllow": "Later",
     "allow": "Allow",
-    "dontAllow": "Don't Allow",
+    "subtitle": "",
     "enabled": "Notifications enabled",
-    "description": "You will now receive notifications from CookEat!",
+    "description": "You will now receive notifications from CookEat Ai!",
     "error": "Error",
     "errorDescription": "An error occurred while managing notification permissions.",
     "disabledTitle": "Notifications disabled",
-    "disabledMessage": "Enable notifications in Settings > CookEat to not miss our reminders!",
+    "disabledMessage": "Enable notifications in Settings > CookEat Ai to not miss our reminders!",
     "activateTitle": "Enable notifications",
     "activateMessage": "To receive our culinary reminders:",
-    "manualInstructionIOS": "Go to Settings > CookEat > Notifications and enable 'Allow Notifications'",
-    "manualInstructionAndroid": "Go to Settings > Apps > CookEat > Notifications and enable notifications",
-    "understood": "Got it!",
-    "permissionDeniedTitle": "Permissions denied",
-    "permissionDeniedMessage": "Notifications cannot be enabled without your permission. You can enable them later in your device settings.",
-    "errorTitle": "Error",
-    "errorMessage": "Unable to enable notifications. Please try again.",
-    "successTitle": "Notifications enabled",
-    "successMessage": "Notifications have been successfully enabled. You will receive a notification 1 day before the end of your free trial."
+    "manualInstructionIOS": "Go to Settings > CookEat Ai > Notifications and enable 'Allow Notifications'",
+    "manualInstructionAndroid": "Go to Settings > Apps > CookEat Ai > Notifications and enable notifications",
+    "understood": "Understood!",
+    "trialReminder": {
+      "channelName": "CookEat Ai trial reminders",
+      "generate": {
+        "title_one": "{{count}} day left in your trial 🍳",
+        "title_other": "{{count}} days left in your trial 🍳",
+        "body": "What's in your fridge tonight? Snap a photo and I'll handle the rest."
+      },
+      "import": {
+        "title_one": "{{count}} day left in your trial 📱",
+        "title_other": "{{count}} days left in your trial 📱",
+        "body": "Spotted a recipe on TikTok? Send it over and I'll turn it into a real recipe card."
+      }
+    }
   },
   "onboardingReady": {
     "badge": "All done!",
@@ -508,7 +764,7 @@
     "time": "Cooking",
     "budget": "Budget",
     "matchScore": "Match Score",
-    "button": "Discover my recipes",
+    "button": "Create my first recipe",
     "recipesValue": "500+",
     "recipesUnit": "matches",
     "personalizationValue": "100%",
@@ -535,11 +791,11 @@
     "eatOutFrequency": "How often do you eat out or order food?",
     "cookingForWho": "Who do you cook for?",
     "cookingTime": "How much time do you have to cook?",
-    "habitsIntro": "Did you know we waste 70kg of food per year on average? That's $250 down the drain! 💸\n\nCookEat helps you save money.",
+    "habitsIntro": "Did you know we waste 70kg of food per year on average? That's $250 down the drain! 💸\n\nCookEat Ai helps you save money.",
     "fridgeStatus": "Your fridge is mostly…",
     "equipmentQuestion": "What equipment do you have?",
     "mealBudget": "What's your budget per meal?",
-    "preferencesIntro": "Did you know the average person spends 1h a week deciding what to cook? 🤯\n\nCookEat gives you that time back.",
+    "preferencesIntro": "Did you know the average person spends 1h a week deciding what to cook? 🤯\n\nCookEat Ai gives you that time back.",
     "favoriteDishType": "What types of dishes do you prefer?",
     "favoriteCuisineStyle": "What cuisine styles do you like?",
     "recipeStyle": "You prefer recipes that are…",
@@ -547,7 +803,7 @@
     "avoidIngredients": "Are there ingredients you avoid?",
     "useCase": "What's your main goal?",
     "diet": "Do you follow a specific diet?",
-    "howDidHeKnowCookEatAI": "How did you hear about CookEat AI?",
+    "howDidHeKnowCookEatAI": "How did you hear about CookEat Ai?",
     "sex": "What's your gender?",
     "age": "What's your age?",
     "title": "Hey, I’m Cook!",
@@ -596,11 +852,11 @@
       "skip": "Skip"
     },
     "videoDemo": {
-      "title": "Unlock CookEat AI to save time and money"
+      "title": "Unlock CookEat Ai to save time and money"
     },
-    "welcomeTagline": "Snap your ingredients, and CookEat AI tells you what to cook in seconds.",
+    "welcomeTagline": "Snap your ingredients, and CookEat Ai tells you what to cook in seconds.",
     "socialProof": {
-      "title": "Over {{count}} recipes already generated!",
+      "title": "Over {{total}} recipes ready to cook!",
       "subtitle": "Join the community and start cooking smart today.",
       "button": "Continue",
       "review1": "Great for emptying my fridge without the hassle!",
@@ -612,13 +868,30 @@
     "skip": "Skip",
     "personalizedTitle": "100% personalized recipes",
     "reminder": {
-      "title": "We will send you a notification {{days}} day before the end of your trial",
-      "body": "Your free trial ends soon. Enjoy CookEat AI to cook without waste!",
+      "title": "We'll send you a notification before your free trial ends",
+      "eligibleTitle": "Make the most of your {{count}}-day trial",
+      "eligibleSubtitle": "Enjoy CookEat Ai with peace of mind: we'll notify you on day {{day}}. That will still leave you time to try every feature.",
+      "pendingTitle": "Your 7-day trial, with peace of mind",
+      "pendingSubtitle": "Enjoy CookEat Ai with peace of mind: we'll notify you halfway through. That will still leave you time to try every feature.",
+      "standardTitle": "Your free trial, with peace of mind",
+      "standardSubtitle": "We'll notify you halfway through. That will still leave you time to try every feature.",
+      "backButton": "Go back to the previous screen",
       "button": "Continue for FREE",
+      "permissionNote": "Subject to notifications being enabled.",
+      "todayLabel": "Today",
+      "todayText": "Your 7 free days start after you confirm.",
+      "pendingTodayText": "Your 7-day trial starts after you confirm.",
+      "midpointLabel": "Day {{day}}",
+      "genericMidpointLabel": "Halfway through",
+      "midpointText": "CookEat Ai sends you a notification several days before the end.",
+      "renewalLabel": "Day {{count}}",
+      "genericRenewalLabel": "At the end of the trial",
+      "renewalText": "The annual subscription starts after the trial unless you cancel beforehand.",
       "lossPersonalizationTitle": "Everything will be lost",
       "lossPersonalizationDescription": "All the personalized choices you have selected will be lost. Are you sure you want to continue?",
       "continueAnyway": "Continue anyway",
-      "goBack": "Go back"
+      "goBack": "Go back",
+      "subtitle": "As long as notifications are enabled"
     },
     "notifications": {
       "permissionDeniedTitle": "Permissions denied",
@@ -626,12 +899,39 @@
       "errorTitle": "Error",
       "errorMessage": "Unable to enable notifications. Please try again.",
       "successTitle": "Notifications enabled",
-      "successMessage": "Notifications have been enabled successfully. You will receive a notification 1 day before the end of your free trial."
+      "successMessage": "Notifications enabled. Once your trial starts, CookEat Ai will schedule one halfway through it."
     },
     "offerTrial": {
-      "title": "We offer {{days}} days of premium access, just for you",
-      "noPayment": "No Payment Due Now",
-      "button": "Try now for €0.00"
+      "title": "We want you to try CookEat Ai for free",
+      "subtitle": "Discover every CookEat Ai recipe with no limits for {{count}} days.",
+      "eligibleTitle": "Try CookEat Ai free for {{count}} days",
+      "eligibleSubtitle": "Every recipe, generated or imported, with no limits during your trial.",
+      "standardTitle": "We want you to try CookEat Ai for free",
+      "standardSubtitle": "Discover every CookEat Ai recipe with no limits for 7 days.",
+      "trialPill": "{{count}}-day trial",
+      "storePill": "7 days free",
+      "includedTitle": "Everything in CookEat Ai, in one offer",
+      "noPayment": "No payment due now",
+      "reviewOffer": "No payment due now",
+      "button": "Try for {{price}}",
+      "standardButton": "Try for $0.00",
+      "zeroPriceFallback": "$0.00",
+      "annualPriceLine": "Then just {{price}} per year ({{monthly}}/month)",
+      "annualPriceLineWithoutMonthly": "Then just {{price}} per year"
+    },
+    "generationDemo": {
+      "badge": "Extra feature",
+      "title": "You can also cook with what you already have",
+      "subtitle": "CookEat Ai turns a simple ingredient list into a complete recipe. This demo is optional.",
+      "listReady": "Demo list",
+      "resultTitle": "A complete recipe",
+      "resultSubtitle": "Ingredients, steps and servings",
+      "tryButton": "Try with this list",
+      "skipButton": "Not now",
+      "primaryBanner": "Main demo",
+      "secondaryBanner": "Bonus feature",
+      "readyTitle": "Your list is ready",
+      "readySubtitle": "Edit the list if you want, then generate your recipe."
     },
     "personalizedCategories": {
       "chef": {
@@ -659,7 +959,7 @@
     "next": "Next",
     "secondStep": {
       "title": "Tell us your ingredients and we'll take care of the rest!",
-      "description": "CookEat AI uses your ingredients, preferences, and cooking level.",
+      "description": "CookEat Ai uses your ingredients, preferences, and cooking level.",
       "continue": "Start"
     },
     "thirdStep": {
@@ -765,8 +1065,193 @@
       "youtube": "YouTube",
       "google": "Google",
       "friend": "Friend",
-      "other": "Other"
-    }
+      "usecase_money": "Spend less on groceries",
+      "usecase_organize": "Keep all my recipes in one place",
+      "source_tiktok": "TikTok",
+      "source_instagram": "Instagram",
+      "source_youtube": "YouTube",
+      "source_web": "Blogs and cooking websites",
+      "source_screenshots": "Screenshots",
+      "source_family": "Family and friends",
+      "import_volume_few": "A few, I can still find them",
+      "import_volume_some": "A dozen or so",
+      "import_volume_many": "Dozens, scattered everywhere",
+      "import_volume_chaos": "No idea, it's chaos",
+      "pain_find": "I can never find the video again",
+      "pain_pause": "Pausing fifteen times to follow along",
+      "pain_quantities": "The quantities are never clear",
+      "pain_never_cook": "I save them and never cook them",
+      "commit_all_in": "All in, I'm sticking to it",
+      "commit_serious": "Seriously, I'm starting now",
+      "commit_try": "I'll give it a try",
+      "commit_unsure": "I'm not sure yet"
+    },
+    "entryFeature": {
+      "question": "What brings you to CookEat Ai?",
+      "import": "Import recipes from TikTok/Insta",
+      "generate": "Generate recipes from my ingredients"
+    },
+    "importIntro": "Your recipes are scattered across TikTok, screenshots and bookmarks. Let's talk about that 👇",
+    "importSources": "Where do your recipes live today?",
+    "importVolume": "How many recipes have you saved without ever cooking them?",
+    "importPain": "What stops you from actually making them?",
+    "proof": {
+      "goal": {
+        "badge": "You're not alone",
+        "waste": {
+          "title": "{{percent}}% of CookEat Ai users share your goal: stop throwing food away.",
+          "titleNeutral": "Throwing nothing away: the most common goal on CookEat Ai.",
+          "subtitle": "The average household bins 70kg of food a year. Half of it was still edible.",
+          "review": "I look at what's left, the app gives me a recipe. I barely throw anything out now.",
+          "reviewAuthor": "Ines, 3 months in"
+        },
+        "money": {
+          "title": "{{percent}}% of CookEat Ai users come first and foremost to spend less.",
+          "titleNeutral": "Spending less on groceries: one of the top reasons people install CookEat Ai.",
+          "subtitle": "Cooking what you already have before buying more is where the savings actually happen.",
+          "review": "I shop around what the app suggests. My grocery budget really dropped.",
+          "reviewAuthor": "Karim, 2 months in"
+        },
+        "ideas": {
+          "title": "{{percent}}% of CookEat Ai users install the app for exactly your reason.",
+          "titleNeutral": "\"I don't know what to cook\" is the number one reason people install CookEat Ai.",
+          "subtitle": "We spend around 1h a week deciding what to eat. Might as well spend it eating.",
+          "review": "No more twenty minutes staring into the fridge. I snap, I pick, I cook.",
+          "reviewAuthor": "Lea, 4 months in"
+        },
+        "organize": {
+          "title": "{{percent}}% of CookEat Ai users want the same thing: every recipe in one place.",
+          "titleNeutral": "Getting every recipe in one place is a need that comes up constantly.",
+          "subtitle": "Saved videos, screenshots, browser bookmarks… it all ends up scattered.",
+          "review": "All my TikTok recipes are finally in one place, with the quantities.",
+          "reviewAuthor": "Sarah, 5 months in"
+        },
+        "time": {
+          "title": "{{percent}}% of CookEat Ai users are here to save time above all.",
+          "titleNeutral": "Saving time is the most common expectation among CookEat Ai users.",
+          "subtitle": "Deciding, hunting for a recipe, writing a list: most of the time goes before you cook.",
+          "review": "It saves me so much time in the evening. No searching, the app just suggests.",
+          "reviewAuthor": "Thomas, 2 months in"
+        },
+        "healthy": {
+          "title": "{{percent}}% of CookEat Ai users are here to eat better day to day.",
+          "titleNeutral": "Eating better day to day, without spending your evenings on it.",
+          "subtitle": "Home cooking doesn't take longer once you know what to do with what you have.",
+          "review": "I eat far more balanced meals now that I cook with what I already have.",
+          "reviewAuthor": "Nadia, 3 months in"
+        }
+      },
+      "habits": {
+        "badge": "What that means",
+        "eatOut": {
+          "title": "A delivered meal costs on average 4 times the price of the same dish made at home.",
+          "subtitle": "CookEat Ai tells you what to cook with what you already have, in seconds."
+        },
+        "home": {
+          "title": "The average household throws away 70kg of food a year, around $250.",
+          "subtitle": "Half of what ends up in the bin was still perfectly edible."
+        },
+        "review": "I stopped ordering in: the app always finds me something to make.",
+        "reviewAuthor": "Julien, 6 months in"
+      },
+      "budget": {
+        "badge": "Your potential",
+        "subtitle": "CookEat Ai starts from what you already have, so you don't buy it twice.",
+        "review": "I cook with what's there, not with what I'd have to buy. It changes everything.",
+        "reviewAuthor": "Camille, 4 months in",
+        "budget_small": {
+          "title": "On a tight budget, what goes in the bin hurts: around {{euros}}€ a month."
+        },
+        "budget_medium": {
+          "title": "At your budget, what goes in the bin is worth around {{euros}}€ a month."
+        },
+        "budget_large": {
+          "title": "The fuller the basket, the more waste costs: around {{euros}}€ a month."
+        }
+      },
+      "import": {
+        "badge": "You're not alone",
+        "title": "{{percent}}% of users never find a recipe again once they've saved it.",
+        "titleNeutral": "A recipe locked inside a video is a recipe you'll never make.",
+        "subtitle": "CookEat Ai pulls out the ingredients, quantities and steps, then files it with the rest.",
+        "review": "I had 200 videos saved. Now I have 200 recipes I can actually cook.",
+        "reviewAuthor": "Manon, 3 months in"
+      }
+    },
+    "commitment": {
+      "fallbackTitle": "Ready to get started?",
+      "subtitle": "Your goal is saved. We'll remind you about it.",
+      "goals": {
+        "waste": {
+          "titleGenerate": "Your goal: {{value}} less in the bin by {{date}}. Are you in?",
+          "titleImport": "Your goal: {{value}} less in the bin by {{date}}. Are you in?"
+        },
+        "money": {
+          "titleGenerate": "Your goal: {{value}} saved on groceries by {{date}}. Are you in?",
+          "titleImport": "Your goal: {{value}} saved on groceries by {{date}}. Are you in?"
+        },
+        "ideas": {
+          "titleGenerate": "Your goal: {{value}} cooked by {{date}}, without ever wondering what to make. Are you in?",
+          "titleImport": "Your goal: {{value}} pulled out of your videos and actually cooked by {{date}}. Are you in?"
+        },
+        "organize": {
+          "titleGenerate": "Your goal: {{value}} gathered in one place by {{date}}. Are you in?",
+          "titleImport": "Your goal: {{value}} imported and filed by {{date}}. Are you in?"
+        },
+        "time": {
+          "titleGenerate": "Your goal: {{value}} saved in the kitchen by {{date}}. Are you in?",
+          "titleImport": "Your goal: {{value}} saved in the kitchen by {{date}}. Are you in?"
+        },
+        "healthy": {
+          "titleGenerate": "Your goal: {{value}} made from scratch by {{date}}. Are you in?",
+          "titleImport": "Your goal: {{value}} made from scratch by {{date}}. Are you in?"
+        }
+      }
+    },
+    "projection": {
+      "badge": "Your {{days}}-day projection",
+      "today": "Today",
+      "button": "Let's start",
+      "disclaimer": "Estimate based on your answers. Nothing is guaranteed — it's up to you.",
+      "units": {
+        "eur": "${{value}}",
+        "kg": "{{value}} kg",
+        "recipes": "{{value}} recipes",
+        "hours": "{{value}} h",
+        "meals": "{{value}} meals"
+      },
+      "goals": {
+        "waste": {
+          "title": "Here's what you can stop throwing away",
+          "caption": "you won't be binning by {{date}}",
+          "secondary": "that's roughly {{value}} of food saved"
+        },
+        "money": {
+          "title": "Here's what you can save",
+          "caption": "on groceries by {{date}}"
+        },
+        "ideas": {
+          "title": "Here's what you can cook",
+          "caption": "cooked by {{date}}, without thinking about it"
+        },
+        "organize": {
+          "title": "Here's what you can bring together",
+          "caption": "filed in one place by {{date}}"
+        },
+        "time": {
+          "title": "Here's the time you can save",
+          "caption": "saved in the kitchen by {{date}}"
+        },
+        "healthy": {
+          "title": "Here's what you can make yourself",
+          "caption": "made from scratch by {{date}}"
+        }
+      }
+    },
+    "welcomeTitle": "Hey, I'm Cook 👋",
+    "welcomeSubtitle": "What brings you here?",
+    "importHandoff": "Perfect. Let's get your first imported recipe 👇",
+    "welcomeSocialProof": "Over {{total}} recipes cooked"
   },
   "recipeSummary": {
     "ingredients": "Ingredients",
@@ -775,11 +1260,12 @@
     "all": "All",
     "any": "No preference",
     "duration": "Duration",
-    "quick": "Quick",
+    "quick": "30 min max",
     "calories": "Calories",
     "lessThan500Cal": "< 500 cal",
     "servings": "Servings",
     "cuisine": "Cuisine",
+    "allCuisines": "All",
     "diet": "Diet",
     "add": "Add",
     "noIngredients": "No ingredients added",
@@ -800,8 +1286,8 @@
     "american": "American",
     "starter": "Starter",
     "brunch": "Brunch",
-    "medium": "Medium",
-    "long": "Long",
+    "medium": "Up to 1 hour",
+    "long": "No preference",
     "glutenFree": "Gluten free",
     "lessThan600Cal": "< 600 cal",
     "lessThan800Cal": "< 800 cal",
@@ -813,14 +1299,11 @@
     "vegan": "Vegan",
     "keto": "Keto",
     "paleo": "Paleo",
-    "french": "French",
-    "italian": "Italian",
-    "mediterranean": "Mediterranean",
     "asian": "Asian",
     "spicy": "Spicy",
     "mexican": "Mexican",
-    "indian": "Indian",
     "time": "Time",
+    "cookingLevel": "Cooking level",
     "goal": "Goal",
     "weight_loss": "Weight Loss",
     "mass_gain": "Muscle Gain",
@@ -853,42 +1336,31 @@
     "pleaseAddAtLeastFiveIngredients": "Add at least 5 ingredients to generate a recipe.",
     "pleaseSelectADishType": "Select a dish type",
     "unableToGenerateRecipe": "Unable to generate recipe. Try again.",
-    "generatingRecipe": "Generating recipe..."
-  },
-  "notifications": {
-    "title": "Save time and money! 💸",
-    "permissionTitle": "Enable notifications",
-    "dontAllow": "Later",
-    "allow": "Allow",
-    "subtitle": "",
-    "enabled": "Notifications enabled",
-    "description": "You will now receive notifications from CookEat!",
-    "error": "Error",
-    "errorDescription": "An error occurred while managing notification permissions.",
-    "disabledTitle": "Notifications disabled",
-    "disabledMessage": "Enable notifications in Settings > CookEat to not miss our reminders!",
-    "activateTitle": "Enable notifications",
-    "activateMessage": "To receive our culinary reminders:",
-    "manualInstructionIOS": "Go to Settings > CookEat > Notifications and enable 'Allow Notifications'",
-    "manualInstructionAndroid": "Go to Settings > Apps > CookEat > Notifications and enable notifications",
-    "understood": "Understood!",
-    "trialEndingTitle": "Your trial ends tomorrow",
-    "trialEndingBody": "Make the most of CookEat AI today to keep your cooking momentum going 🍳"
+    "feasibilityTitle": "This recipe isn't feasible",
+    "feasibilityFallback": "These ingredients and preferences cannot make a coherent dish. Change your list or preferences.",
+    "changePreferences": "Change my preferences",
+    "editIngredients": "Edit my ingredients",
+    "generatingRecipe": "Generating recipe...",
+    "searchIngredientPlaceholder": "Search an ingredient",
+    "noIngredientFound": "No ingredient matches your search",
+    "allIngredientsAdded": "Every ingredient in this category is already added"
   },
   "micro": {
     "permissionTitle": "Microphone Permission",
-    "permissionMessage": "CookEat needs access to the microphone for voice recognition",
+    "permissionMessage": "CookEat Ai needs access to the microphone for voice recognition",
     "later": "Later",
     "cancel": "Cancel",
     "allow": "Allow",
     "requiredTitle": "Permissions required",
-    "requiredMessage": "CookEat needs access to the microphone to record your voice and understand your ingredients. Please allow microphone access in settings."
+    "requiredMessage": "CookEat Ai needs access to the microphone to record your voice and understand your ingredients. Please allow microphone access in settings."
   },
   "recipeDetail": {
     "likeError": "Unable to like the recipe",
     "nutritionalInfoTitle": "Nutritional Information",
     "nutritionalInfoContent": "These values are estimates based on the provided ingredients and servings.",
     "illustration": "Illustration",
+    "reloadImage": "Search for another image",
+    "imageSearchNoResult": "No other relevant image was found.",
     "cookingTime": "Cooking time",
     "difficulty": "Difficulty",
     "servings": "Servings",
@@ -911,7 +1383,7 @@
     "unableToAddToFavorites": "Unable to add recipe to favorites",
     "unableToGetIngredients": "Unable to get ingredients list",
     "perServing": "/p",
-    "shareMessage": "Check out this delicious {title} recipe I found on CookEat AI! 🍳\n\n{url}",
+    "shareMessage": "Check out this delicious {title} recipe I found on CookEat Ai! 🍳\n\n{url}",
     "dailyQuotaReached": "Daily quota reached",
     "dailyQuotaReachedDescription": "You have reached your daily limit for recipe generation. Upgrade to premium for unlimited recipes!",
     "later": "Later",
@@ -932,7 +1404,7 @@
       "Balancing the flavors...",
       "Adjusting ingredient amounts...",
       "Finalizing the steps...",
-      "Ready!"
+      "Adding the finishing touches..."
     ],
     "generationError": "Generation error",
     "connectionError": "WebSocket connection error",
@@ -962,6 +1434,7 @@
     "permissionMessage": "We need your permission to use the camera",
     "grantPermission": "Grant Permission",
     "back": "Back",
+    "skip": "Skip this step",
     "maxPhotosReached": "Maximum 30 photos reached",
     "recording": "Recording...",
     "modes": {
@@ -975,8 +1448,8 @@
         "button": "Got it!"
       },
       "photo": {
-        "title": "Take a photo",
-        "message": "Take a photo of your ingredients or your grocery receipt. The AI will automatically extract all items to add to your list.",
+        "title": "What should you photograph?",
+        "message": "Your fridge, your cupboards, or even your receipt — you can take several photos. CookEat Ai spots the ingredients, you check the list, then you get recipes from what you already have.",
         "button": "Got it!"
       }
     },
@@ -1008,20 +1481,50 @@
     "goHome": "Go to home"
   },
   "onboardingVideoImport": {
-    "title": "Import your recipes!",
-    "subtitle": "Seen a recipe on TikTok or Instagram?",
-    "howTo": "Here's how it's done 👇🏼",
-    "description": "Simply share the video to CookEat and the AI takes care of everything: ingredients, steps, and nutritional values.",
-    "howItWorks": "How it works?",
+    "title": "Import a recipe",
+    "subtitle": "Saw a recipe on TikTok or Instagram?",
+    "howTo": "2 ways to do it 👇🏼",
+    "secondaryBadge": "Extra feature",
+    "secondaryTitle": "You can also import any recipe video with ease 😋",
+    "secondaryHowTo": "Here's how 👇🏼",
+    "secondaryStepLink": "Paste the video link",
+    "secondaryStepRecipe": "CookEat Ai creates the recipe",
+    "description": "Share the video to CookEat Ai and the AI handles everything: ingredients, steps and nutrition facts.",
+    "howItWorks": "How does it work?",
     "step1": "1. Open TikTok or Instagram",
-    "step2": "2. Click 'Share'",
-    "step3": "3. Choose CookEat",
+    "step2": "2. Tap \"Share\"",
+    "step3": "3. Choose CookEat Ai",
     "button": "Got it!",
-    "skip": "Later"
+    "skip": "Skip this step",
+    "pasteLink": "Paste a link",
+    "clipboardCta": "I have a link to import",
+    "tryImport": "Try with a link"
   },
   "update": {
     "title": "Update required",
-    "message": "A new version of CookEat is available with essential features. Please update the app to continue.",
+    "message": "A new version of CookEat Ai is available with essential features. Please update the app to continue.",
     "button": "Update now"
+  },
+  "importLink": {
+    "title": "Import a recipe",
+    "subtitle": "Paste a TikTok, Instagram or YouTube link and we'll take care of the rest.",
+    "placeholder": "https://...",
+    "paste": "Paste",
+    "submit": "Import recipe",
+    "invalid": "This link is not supported. Use a TikTok, Instagram or YouTube link.",
+    "clipboardFound": "✨ Link picked up from your clipboard",
+    "clipboardEmpty": "No recipe link found in your clipboard.",
+    "platforms": "TikTok, Instagram, YouTube, Facebook"
+  },
+  "createMenu": {
+    "title": "What do you want to do?",
+    "generate": {
+      "title": "Find a recipe",
+      "description": "Snap your ingredients"
+    },
+    "import": {
+      "title": "Import a recipe",
+      "description": "From TikTok, Instagram or YouTube"
+    }
   }
 }

@@ -7,6 +7,8 @@ import CategoryButton from '../components/CategoryButton';
 import { RecipeCard } from '../components/RecipeCard';
 import SearchBar from '../components/SearchBar';
 import { Colors } from '../constants/Colors';
+import { font } from '../constants/Layout';
+import { contentColumn } from '../hooks/useResponsive';
 
 // Données de recettes par catégorie
 const recipesByCategory = {
@@ -287,7 +289,10 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
       backgroundColor: colors.background,
       paddingTop: insets.top
     }]}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ ...contentColumn(), paddingBottom: insets.bottom }}
+      >
         {/* Titre principal */}
         <View style={styles.titleContainer}>
           <Text style={[styles.mainTitle, { color: colors.text }]}>
@@ -366,8 +371,8 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   mainTitle: {
-    fontSize: 28,
-    lineHeight: 34,
+    fontSize: font(28),
+    lineHeight: font(34),
     fontFamily: 'Degular'
   },
   categoriesContainer: {
@@ -384,7 +389,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: font(20),
     marginBottom: 16,
     paddingHorizontal: 20,
     fontFamily: 'Degular'

@@ -1,13 +1,23 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Dimensions, Easing, StyleSheet, Text, View, Image } from 'react-native';
+import { Animated, Easing, StyleSheet, TextInput, View, Image } from 'react-native';
+import Reanimated, {
+  cancelAnimation,
+  Easing as ReanimatedEasing,
+  useAnimatedProps,
+  useAnimatedStyle,
+  useSharedValue,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../constants/Colors';
+import { rw } from '../constants/Layout';
 import { useTranslation } from 'react-i18next';
 import recipeStreamManager from '../services/recipeStreamManager';
 import revenueCatService from '../config/revenuecat';
+import { subscribeGenerationLoading } from '../services/generationLoadingCoordinator';
 
-const { width } = Dimensions.get('window');
 
 type LoadingParams = {
   durationMs?: string;
@@ -15,7 +25,11 @@ type LoadingParams = {
   nextPath?: string;
   nextParams?: string;
   startGeneration?: string;
+  completionKey?: string;
+  maxWaitMs?: string;
 };
+
+const AnimatedPercentText = Reanimated.createAnimatedComponent(TextInput);
 
 export default function RecipeLoadingScreen({ modalDefault = false }: { modalDefault?: boolean }) {
   const { t } = useTranslation();
@@ -23,16 +37,39 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
   const router = useRouter();
   const params = useLocalSearchParams<LoadingParams>();
 
-  const duration = Number(params.durationMs ?? 5000);
+  const requestedDuration = Number(params.durationMs ?? 10000);
+  const duration = Number.isFinite(requestedDuration) && requestedDuration > 0
+    ? requestedDuration
+    : 10000;
   const dismissOnly = params.dismissOnly === 'true' || modalDefault;
+  const isDataDrivenGeneration = params.startGeneration === 'true'
+    || typeof params.completionKey === 'string';
   const prefetchStreamIdRef = useRef<string | null>(null);
+  // Un ref ne provoque pas de re-render : sans cet état, l'effet d'attente
+  // ne se relancerait jamais une fois le flux démarré.
+  const [streamId, setStreamId] = useState<string | null>(null);
 
   const [loadingTextIndex, setLoadingTextIndex] = useState(0);
-  const [percent, setPercent] = useState(0);
-  const loadingProgress = useRef(new Animated.Value(0)).current;
-  const progressValueRef = useRef(0);
+  const [progressTrackWidth, setProgressTrackWidth] = useState(0);
+  const loadingProgress = useSharedValue(0);
   const loadingTextOpacity = useRef(new Animated.Value(1)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const progressFillStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: -(progressTrackWidth / 2) * (1 - loadingProgress.value) },
+      { scaleX: loadingProgress.value },
+    ],
+  }), [progressTrackWidth]);
+
+  const percentAnimatedProps = useAnimatedProps(() => {
+    const maximum = isDataDrivenGeneration ? 99 : 100;
+    const percent = Math.min(maximum, Math.floor(loadingProgress.value * 100));
+    return {
+      text: `${percent}%`,
+      defaultValue: `${percent}%`,
+    } as any;
+  }, [isDataDrivenGeneration]);
 
   const loadingMessages = useMemo(() => {
     const msgs = t('recipe_loading.messages', { returnObjects: true });
@@ -40,23 +77,14 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
   }, [t]);
 
   useEffect(() => {
-    const listenerId = loadingProgress.addListener(({ value }) => {
-      progressValueRef.current = value;
-    });
+    loadingProgress.value = isDataDrivenGeneration
+      ? withSequence(
+          withTiming(0.9, { duration, easing: ReanimatedEasing.linear }),
+          withTiming(0.9995, { duration: 30000, easing: ReanimatedEasing.linear }),
+        )
+      : withTiming(1, { duration, easing: ReanimatedEasing.linear });
 
-    // Mettre à jour le pourcentage moins souvent évite les re-renders à chaque frame.
-    const percentInterval = setInterval(() => {
-      setPercent(Math.floor(progressValueRef.current * 100));
-    }, 100);
-
-    Animated.timing(loadingProgress, {
-      toValue: 1,
-      duration,
-      easing: Easing.linear,
-      useNativeDriver: false,
-    }).start();
-
-    Animated.loop(
+    const pulseAnimation = Animated.loop(
       Animated.sequence([
         Animated.timing(scaleAnim, {
           toValue: 1.15,
@@ -71,7 +99,8 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
           useNativeDriver: true,
         }),
       ])
-    ).start();
+    );
+    pulseAnimation.start();
 
     const transitionCount = Math.max(1, loadingMessages.length - 1);
     const stepDuration = Math.max(300, Math.floor(duration / transitionCount));
@@ -98,7 +127,31 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
       });
     }, stepDuration);
 
-    const doneTimer = setTimeout(() => {
+    // Pour une génération, la donnée pilote la navigation : un délai fixe peut
+    // ouvrir la fiche avant son titre/image ou, inversement, retenir une recette
+    // déjà prête. Les loaders purement décoratifs conservent leur minuterie.
+    const doneTimer = isDataDrivenGeneration
+      ? null
+      : setTimeout(() => navigateNextRef.current(), duration);
+
+    return () => {
+      cancelAnimation(loadingProgress);
+      pulseAnimation.stop();
+      clearInterval(messageInterval);
+      if (doneTimer) clearTimeout(doneTimer);
+    };
+  }, [duration, isDataDrivenGeneration, loadingMessages, loadingProgress, loadingTextOpacity, scaleAnim]);
+
+  const navigateNextRef = useRef<() => void>(() => { });
+  const hasNavigatedRef = useRef(false);
+
+  useEffect(() => {
+    navigateNextRef.current = () => {
+      if (hasNavigatedRef.current) return;
+      hasNavigatedRef.current = true;
+      // Sortie anticipée : on complète la barre plutôt que de la laisser figée.
+      loadingProgress.value = withTiming(1, { duration: 180, easing: ReanimatedEasing.linear });
+
       if (dismissOnly) {
         router.back();
         return;
@@ -127,15 +180,25 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
         pathname: nextPath as '/recipe-detail',
         params: nextRouteParams,
       });
-    }, duration);
-
-    return () => {
-      loadingProgress.removeListener(listenerId);
-      clearInterval(percentInterval);
-      clearInterval(messageInterval);
-      clearTimeout(doneTimer);
     };
-  }, [dismissOnly, duration, loadingMessages, loadingProgress, loadingTextOpacity, params.nextParams, params.nextPath, router, scaleAnim]);
+  }, [dismissOnly, loadingProgress, params.nextParams, params.nextPath, router]);
+
+  useEffect(() => {
+    if (typeof params.completionKey !== 'string') return;
+    const unsubscribe = subscribeGenerationLoading(
+      params.completionKey,
+      () => navigateNextRef.current(),
+    );
+    const requestedMaxWait = Number(params.maxWaitMs ?? 30000);
+    const maxWait = Number.isFinite(requestedMaxWait) && requestedMaxWait > 0
+      ? requestedMaxWait
+      : 30000;
+    const safetyTimer = setTimeout(() => navigateNextRef.current(), maxWait);
+    return () => {
+      unsubscribe();
+      clearTimeout(safetyTimer);
+    };
+  }, [params.completionKey, params.maxWaitMs]);
 
   useEffect(() => {
     if (params.startGeneration !== 'true') return;
@@ -153,11 +216,13 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
       
       const startStream = async () => {
         const { isSubscribed } = await revenueCatService.getSubscriptionStatus();
-        prefetchStreamIdRef.current = recipeStreamManager.start({
+        const id = recipeStreamManager.start({
           ingredients: parsed.ingredients!,
           preferences,
           isSubscribed,
         });
+        prefetchStreamIdRef.current = id;
+        setStreamId(id);
       };
       
       startStream();
@@ -165,6 +230,34 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
       // Ignore parsing errors: fallback to existing generation behavior.
     }
   }, [params.nextParams, params.startGeneration]);
+
+  // Termine le chargement dès que la recette est réellement affichable : titre
+  // ET image présents. Si aucune photo pertinente n'existe, on attend la fin du
+  // flux et la fin de la recherche, puis la fiche utilise son état sans image.
+  useEffect(() => {
+    if (!streamId || dismissOnly) return;
+
+    const check = (snapshot: {
+      recipe: Record<string, any>;
+      imageResolved?: boolean;
+      isDone?: boolean;
+      error?: string;
+    }) => {
+      if (snapshot.error) {
+        navigateNextRef.current();
+        return;
+      }
+      const hasTitleAndImage = Boolean(snapshot.recipe?.title && snapshot.recipe?.image);
+      const finishedWithoutImage = Boolean(
+        snapshot.recipe?.title && snapshot.isDone && snapshot.imageResolved,
+      );
+      if (hasTitleAndImage || finishedWithoutImage) navigateNextRef.current();
+    };
+
+    check(recipeStreamManager.getSnapshot(streamId) ?? { recipe: {} });
+    const unsubscribe = recipeStreamManager.subscribe(streamId, check);
+    return unsubscribe;
+  }, [dismissOnly, streamId]);
 
   return (
     <View style={[styles.container, styles.loadingContainer, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
@@ -178,7 +271,13 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
         </Animated.View>
 
         <View style={styles.percentContainer}>
-          <Text style={styles.percentText}>{percent}%</Text>
+          <AnimatedPercentText
+            animatedProps={percentAnimatedProps}
+            editable={false}
+            pointerEvents="none"
+            style={styles.percentText}
+            underlineColorAndroid="transparent"
+          />
         </View>
 
         <View style={styles.loadingTextWrapper}>
@@ -187,16 +286,14 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
           </Animated.Text>
         </View>
 
-        <View style={styles.loadingBarTrack}>
-          <Animated.View
+        <View
+          style={styles.loadingBarTrack}
+          onLayout={(event) => setProgressTrackWidth(event.nativeEvent.layout.width)}
+        >
+          <Reanimated.View
             style={[
               styles.loadingBarFill,
-              {
-                width: loadingProgress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ['0%', '100%'],
-                }),
-              },
+              progressFillStyle,
             ]}
           />
         </View>
@@ -221,8 +318,8 @@ const styles = StyleSheet.create({
     gap: 32,
   },
   loadingMascot: {
-    width: width * 0.5,
-    height: width * 0.5,
+    width: rw(0.5),
+    height: rw(0.5),
     transform: [{ rotate: '20deg' }],
   },
   percentContainer: {
@@ -232,9 +329,12 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   percentText: {
+    minWidth: 54,
+    padding: 0,
     fontSize: 24,
     color: Colors.light.button,
-    fontFamily: 'Degular'
+    fontFamily: 'Degular',
+    textAlign: 'center',
   },
   loadingTextWrapper: {
     height: 60,
@@ -243,10 +343,10 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontFamily: 'Degular',
-    fontSize: width * 0.06,
+    fontSize: rw(0.06),
     color: Colors.light.text,
     textAlign: 'center',
-    lineHeight: width * 0.07,
+    lineHeight: rw(0.07),
   },
   loadingBarTrack: {
     width: '100%',
@@ -256,6 +356,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   loadingBarFill: {
+    width: '100%',
     height: '100%',
     backgroundColor: Colors.light.button,
     borderRadius: 5,

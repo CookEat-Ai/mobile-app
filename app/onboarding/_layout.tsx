@@ -1,5 +1,4 @@
-import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from "expo-router";
+import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import 'react-native-reanimated';
 
 export default function OnboardingLayout() {
@@ -13,8 +12,10 @@ export default function OnboardingLayout() {
         <Stack.Screen name="ingredientSelection" options={{ headerShown: false }} />
         <Stack.Screen name="personalizedRecipes" options={{ headerShown: false }} />
         <Stack.Screen name="videoDemo" options={{ headerShown: false }} />
+        <Stack.Screen name="generationDemo" options={{ headerShown: false }} />
         <Stack.Screen name="videoImportTutorial" options={{ headerShown: false }} />
         <Stack.Screen name="promoCode" options={{ headerShown: false }} />
+        <Stack.Screen name="offerTrial" options={{ headerShown: false }} />
         <Stack.Screen name="reminder" options={{ headerShown: false }} />
         <Stack.Screen name="onboardingProfileReady" options={{ headerShown: false }} />
       </Stack>

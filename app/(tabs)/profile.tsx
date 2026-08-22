@@ -13,7 +13,6 @@ import {
   View,
   Modal,
   Animated,
-  Dimensions,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard
@@ -24,11 +23,15 @@ import { router, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { Colors } from '../../constants/Colors';
+import { font, getTabBarHeight } from '../../constants/Layout';
+import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { useSubscription } from '../../hooks/useSubscription';
 import * as WebBrowser from "expo-web-browser";
 import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
 import { getUniqueDeviceId } from '../../services/deviceStorage';
+import analytics from '../../services/analytics';
+import { getPrivacyPolicyUrl, getTermsUrl } from '../../config/legal';
 
 const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 const QUESTIONS_ANSWERED_KEY = 'questions_answered';
@@ -45,7 +48,9 @@ export default function ProfileScreen() {
   const [promoCode, setPromoCode] = useState('');
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoError, setPromoError] = useState('');
-  const screenHeight = Dimensions.get('window').height;
+  // `useResponsive` suit la rotation / le Split View ; l'ancienne lecture de
+  // `Dimensions` était figée au premier import du module.
+  const { width, height: screenHeight } = useResponsive();
   const slideAnim = useRef(new Animated.Value(screenHeight)).current;
   const promoSlideAnim = useRef(new Animated.Value(screenHeight)).current;
 
@@ -53,33 +58,33 @@ export default function ProfileScreen() {
     if (isSubscriptionModalVisible) {
       Animated.spring(slideAnim, {
         toValue: 0,
-        useNativeDriver: false,
+        useNativeDriver: true,
         tension: 50,
         friction: 8
       }).start();
     } else {
       slideAnim.setValue(screenHeight);
     }
-  }, [isSubscriptionModalVisible]);
+  }, [isSubscriptionModalVisible, screenHeight, slideAnim]);
 
   useEffect(() => {
     if (isPromoModalVisible) {
       Animated.spring(promoSlideAnim, {
         toValue: 0,
-        useNativeDriver: false,
+        useNativeDriver: true,
         tension: 50,
         friction: 8,
       }).start();
     } else {
       promoSlideAnim.setValue(screenHeight);
     }
-  }, [isPromoModalVisible]);
+  }, [isPromoModalVisible, promoSlideAnim, screenHeight]);
 
   const closePromoModal = () => {
     Animated.timing(promoSlideAnim, {
       toValue: screenHeight,
       duration: 300,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start(() => {
       setIsPromoModalVisible(false);
       setPromoCode('');
@@ -120,15 +125,18 @@ export default function ProfileScreen() {
     }
   };
 
-  const closeSubscriptionModal = () => {
+  const dismissSubscriptionModal = (afterClose?: () => void) => {
     Animated.timing(slideAnim, {
       toValue: screenHeight,
       duration: 300,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start(() => {
       setIsSubscriptionModalVisible(false);
+      afterClose?.();
     });
   };
+
+  const closeSubscriptionModal = () => dismissSubscriptionModal();
 
   useEffect(() => {
     const loadSavedLanguage = async () => {
@@ -195,9 +203,7 @@ export default function ProfileScreen() {
 
   const handlePrivacyPolicyPress = async () => {
     try {
-      const url = i18n.language?.startsWith('fr')
-        ? 'https://cookeat.info/legal/fr'
-        : 'https://cookeat.info/legal/en';
+      const url = getPrivacyPolicyUrl(i18n.language);
 
       if (Platform.OS === 'android') {
         Linking.openURL(url);
@@ -216,7 +222,7 @@ export default function ProfileScreen() {
 
   const handleTermsOfServicePress = async () => {
     try {
-      const url = 'https://www.apple.com/legal/internet-services/itunes/dev/stdeula';
+      const url = getTermsUrl(i18n.language);
 
       if (Platform.OS === 'android') {
         Linking.openURL(url);
@@ -332,6 +338,10 @@ export default function ProfileScreen() {
                       // Conserver la langue avant de tout effacer
                       const currentLang = await AsyncStorage.getItem('app_language');
                       await AsyncStorage.clear();
+                      await analytics.resetIdentity({
+                        rotateDeviceId: true,
+                        clearAttribution: true,
+                      });
                       if (currentLang) {
                         await AsyncStorage.setItem('app_language', currentLang);
                       }
@@ -388,7 +398,11 @@ export default function ProfileScreen() {
     >
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingTop: insets.top + 60 }}
+        contentContainerStyle={{
+          paddingTop: insets.top + 60,
+          paddingBottom: getTabBarHeight(width, screenHeight) + insets.bottom + 32,
+          ...contentColumn(),
+        }}
         showsVerticalScrollIndicator={false}
       >
 
@@ -593,6 +607,7 @@ export default function ProfileScreen() {
         visible={isSubscriptionModalVisible}
         transparent={true}
         animationType="fade"
+        presentationStyle="overFullScreen"
         statusBarTranslucent={true}
         onRequestClose={closeSubscriptionModal}
       >
@@ -605,54 +620,69 @@ export default function ProfileScreen() {
                     styles.modalContent,
                     {
                       transform: [{ translateY: slideAnim }],
-                      paddingBottom: Platform.OS === 'ios' ? 40 : Math.max(insets.bottom, 30)
+                      paddingBottom: Math.max(insets.bottom, 16) + 16,
+                      maxHeight: screenHeight - Math.max(insets.top, 16) - 16,
                     }
                   ]}
                 >
                   <View style={styles.modalHeader}>
                     <Text style={styles.modalTitle}>{t('profile.mySubscription')}</Text>
-                    <TouchableOpacity onPress={closeSubscriptionModal}>
+                    <TouchableOpacity
+                      style={styles.modalCloseButton}
+                      onPress={closeSubscriptionModal}
+                      accessibilityRole="button"
+                      accessibilityLabel={t('common.close')}
+                    >
                       <IconSymbol name="close" size={24} color="#000" />
                     </TouchableOpacity>
                   </View>
 
-                  <View style={styles.modalBody}>
-                    <View style={styles.modalPlanCard}>
-                      <View style={styles.planBadge}>
-                        <IconSymbol name="crown.fill" size={20} color={colors.button} />
-                        <Text style={[styles.planBadgeText, { color: colors.button, fontSize: 16 }]}>
-                          {t('profile.premium')}
+                  <ScrollView
+                    style={styles.modalScrollView}
+                    contentContainerStyle={styles.modalScrollContent}
+                    showsVerticalScrollIndicator={false}
+                    bounces={false}
+                  >
+                    <View style={styles.modalBody}>
+                      <View style={styles.modalPlanCard}>
+                        <View style={styles.planBadge}>
+                          <IconSymbol name="crown.fill" size={20} color={colors.button} />
+                          <Text style={[styles.planBadgeText, { color: colors.button, fontSize: 16 }]}>
+                            {t('profile.premium')}
+                          </Text>
+                        </View>
+                        <Text style={styles.modalPlanName}>{t('profile.premiumPlan')}</Text>
+                        <Text style={styles.modalPlanDescription}>
+                          {t('profile.premiumBenefits')}
                         </Text>
+                        {subscriptionStatus.expirationDate && (
+                          <Text style={styles.modalExpirationText}>
+                            {t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString(i18n.language === 'fr' ? 'fr-FR' : 'en-US')}
+                          </Text>
+                        )}
                       </View>
-                      <Text style={styles.modalPlanName}>{t('profile.premiumPlan')}</Text>
-                      <Text style={styles.modalPlanDescription}>
-                        {t('profile.premiumBenefits')}
-                      </Text>
-                      {subscriptionStatus.expirationDate && (
-                        <Text style={styles.modalExpirationText}>
-                          {t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString(i18n.language === 'fr' ? 'fr-FR' : 'en-US')}
-                        </Text>
-                      )}
+
+                      <TouchableOpacity
+                        style={[styles.closeModalButton, { backgroundColor: colors.button }]}
+                        onPress={closeSubscriptionModal}
+                        activeOpacity={0.8}
+                      >
+                        <Text style={styles.closeModalButtonText}>{t('profile.continueCooking')}</Text>
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={styles.hiddenCancelButton}
+                        onPress={() => {
+                          // La confirmation Store est une alerte native : on ne
+                          // la présente qu'après la disparition complète de la
+                          // feuille pour éviter deux couches natives superposées.
+                          dismissSubscriptionModal(handleCancelSubscription);
+                        }}
+                      >
+                        <Text style={styles.hiddenCancelButtonText}>{t('profile.cancelMySubscription')}</Text>
+                      </TouchableOpacity>
                     </View>
-
-                    <TouchableOpacity
-                      style={[styles.closeModalButton, { backgroundColor: colors.button }]}
-                      onPress={closeSubscriptionModal}
-                      activeOpacity={0.8}
-                    >
-                      <Text style={styles.closeModalButtonText}>{t('profile.continueCooking')}</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={styles.hiddenCancelButton}
-                      onPress={() => {
-                        setIsSubscriptionModalVisible(false);
-                        handleCancelSubscription();
-                      }}
-                    >
-                      <Text style={styles.hiddenCancelButtonText}>{t('profile.cancelMySubscription')}</Text>
-                    </TouchableOpacity>
-                  </View>
+                  </ScrollView>
                 </Animated.View>
               </TouchableWithoutFeedback>
             </View>
@@ -664,6 +694,7 @@ export default function ProfileScreen() {
         visible={isPromoModalVisible}
         transparent={true}
         animationType="fade"
+        presentationStyle="overFullScreen"
         statusBarTranslucent={true}
         onRequestClose={closePromoModal}
       >
@@ -679,7 +710,7 @@ export default function ProfileScreen() {
                     styles.modalContent,
                     {
                       transform: [{ translateY: promoSlideAnim }],
-                      paddingBottom: Platform.OS === 'ios' ? 40 : Math.max(insets.bottom, 30),
+                      paddingBottom: Math.max(insets.bottom, 16) + 16,
                     },
                   ]}
                 >
@@ -761,7 +792,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: font(24),
     marginBottom: 16,
     marginHorizontal: 20,
     marginTop: 8,
@@ -806,10 +837,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Degular'
   },
   premiumTitle: {
-    fontSize: 22,
+    fontSize: font(22),
     color: 'white',
     marginBottom: 4,
-    width: '90%',
     fontFamily: 'Degular'
   },
   premiumDescription: {
@@ -905,16 +935,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   modalOverlayInner: {
     flex: 1,
+    width: '100%',
     justifyContent: 'flex-end',
+    alignItems: 'center',
   },
   modalContent: {
     backgroundColor: 'white',
+    width: '100%',
+    maxWidth: 640,
+    alignSelf: 'center',
     borderTopLeftRadius: 32,
     borderTopRightRadius: 32,
     padding: 24,
+    overflow: 'hidden',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -923,8 +960,22 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: font(24),
     fontFamily: 'Degular'
+  },
+  modalCloseButton: {
+    width: 44,
+    height: 44,
+    marginRight: -10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 22,
+  },
+  modalScrollView: {
+    width: '100%',
+  },
+  modalScrollContent: {
+    paddingBottom: 2,
   },
   modalBody: {
     alignItems: 'center',
@@ -973,12 +1024,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Degular'
   },
   hiddenCancelButton: {
-    paddingVertical: 10,
+    minHeight: 44,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   hiddenCancelButtonText: {
     fontFamily: 'CronosPro',
-    fontSize: 14,
-    color: '#D1D1D6',
+    fontSize: 15,
+    color: '#6B7280',
     textDecorationLine: 'underline',
   },
   settingItem: {
@@ -1054,4 +1108,4 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     textAlign: 'center',
   },
-}); 
+});

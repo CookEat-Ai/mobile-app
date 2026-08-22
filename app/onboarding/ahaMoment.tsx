@@ -2,7 +2,6 @@ import { router } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import {
   Animated,
-  Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -10,18 +9,19 @@ import {
   Platform,
 } from 'react-native';
 import { Colors } from '../../constants/Colors';
+import { rw } from '../../constants/Layout';
+import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { useTranslation } from 'react-i18next';
 import analytics from '../../services/analytics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../../components/ui/IconSymbol';
-
-const { width } = Dimensions.get('window');
 
 export default function AhaMomentScreen() {
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
   const { t } = useTranslation();
+  const { isShortScreen } = useResponsive();
 
   useEffect(() => {
     analytics.track('onboarding_aha_moment_viewed');
@@ -40,7 +40,7 @@ export default function AhaMomentScreen() {
   }, []);
 
   const handleCameraPress = () => {
-    analytics.track('Onboarding - Aha Moment Camera Click');
+    analytics.track('onboarding_aha_moment_camera_click');
     router.push({
       pathname: '/camera',
       params: { isOnboarding: 'true' }
@@ -48,7 +48,7 @@ export default function AhaMomentScreen() {
   };
 
   const handleSkip = async () => {
-    analytics.track('Onboarding - Aha Moment Skip');
+    analytics.track('onboarding_aha_moment_skipped');
     const variant = await analytics.getOnboardingVariant();
     if (variant === 'E' || variant === 'F') {
       router.replace('/onboarding/videoImportTutorial');
@@ -58,9 +58,12 @@ export default function AhaMomentScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
+    // La zone sûre basse est appliquée quelle que soit la plateforme : l'ancien
+    // `Platform.OS === 'ios' ? 0 : insets.bottom` était compensé par un `bottom: 50`
+    // en dur, faux sur les iPhone sans home indicator.
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <View style={styles.content}>
-        <View style={styles.centerSection}>
+        <View style={[styles.centerSection, { paddingBottom: isShortScreen ? 90 : 150 }]}>
           <Animated.View
             style={{ opacity: fadeAnim, transform: [{ translateY: slideAnim }], alignItems: 'center' }}
             needsOffscreenAlphaCompositing={true}
@@ -78,22 +81,26 @@ export default function AhaMomentScreen() {
         needsOffscreenAlphaCompositing={true}
         renderToHardwareTextureAndroid={Platform.OS === 'android'}
       >
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={styles.cameraButton}
-          onPress={handleCameraPress}
-        >
-          <IconSymbol name="camera.fill" size={24} color="white" />
-          <Text style={styles.buttonText}>{t('onboarding.ahaMoment.cameraButton')}</Text>
-        </TouchableOpacity>
+        <View style={styles.bottomInner}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.cameraButton}
+            onPress={handleCameraPress}
+          >
+            <IconSymbol name="camera.fill" size={24} color="white" />
+            <Text style={styles.buttonText} numberOfLines={1} adjustsFontSizeToFit>
+              {t('onboarding.ahaMoment.cameraButton')}
+            </Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          activeOpacity={0.6}
-          style={styles.skipButton}
-          onPress={handleSkip}
-        >
-          <Text style={styles.skipButtonText}>{t('onboarding.ahaMoment.skip')}</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.6}
+            style={styles.skipButton}
+            onPress={handleSkip}
+          >
+            <Text style={styles.skipButtonText}>{t('onboarding.ahaMoment.skip')}</Text>
+          </TouchableOpacity>
+        </View>
       </Animated.View>
     </View>
   );
@@ -139,28 +146,28 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    ...contentColumn(),
     paddingHorizontal: 24,
   },
   centerSection: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 150,
   },
   emoji: {
-    fontSize: width * 0.15,
+    fontSize: rw(0.15),
     marginBottom: 20,
   },
   title: {
-    fontSize: width * 0.08,
+    fontSize: rw(0.08),
     fontFamily: 'Degular',
     color: Colors.light.text,
     textAlign: 'center',
-    lineHeight: width * 0.1,
+    lineHeight: rw(0.1),
     marginBottom: 16,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: rw(0.046),
     fontFamily: 'CronosPro',
     color: '#8C8C8C',
     textAlign: 'center',
@@ -168,9 +175,16 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 50 : 75,
-    left: 24,
-    right: 24,
+    bottom: 24,
+    left: 0,
+    right: 0,
+    // `alignSelf` n'a pas d'effet sur un enfant absolu : on centre via un
+    // conteneur interne (bottomInner) plutôt que sur ce nœud.
+    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
+  bottomInner: {
+    ...contentColumn(),
     gap: 16,
   },
   cameraButton: {
@@ -190,8 +204,9 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: width * 0.05,
-    fontFamily: 'Degular'
+    fontSize: rw(0.05),
+    fontFamily: 'Degular',
+    flexShrink: 1,
   },
   skipButton: {
     paddingVertical: 12,
@@ -199,7 +214,7 @@ const styles = StyleSheet.create({
   },
   skipButtonText: {
     color: '#8C8C8C',
-    fontSize: 16,
+    fontSize: rw(0.041),
     fontFamily: 'CronosPro',
     textDecorationLine: 'underline',
   },

@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
   Platform,
   ScrollView,
   Animated,
@@ -15,11 +14,12 @@ import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Colors } from '../../constants/Colors';
+import { rw } from '../../constants/Layout';
 import analytics from '../../services/analytics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { loadRecipePreferences } from '../../services/recipePreferences';
 
-const { width } = Dimensions.get('window');
 
 interface IngredientItem {
   id: string;
@@ -27,7 +27,13 @@ interface IngredientItem {
   emoji: string;
 }
 
-const DEFAULT_SELECTED = ['2', '4', '5', '7', '8', '10', '14', '21', '22', '24'];
+// Ancien parcours encore accessible : sa présélection reste aussi généreuse
+// que la démo principale afin de ne pas produire une recette artificiellement
+// simple selon la branche d'onboarding empruntée.
+const DEFAULT_SELECTED = [
+  '1', '2', '4', '6', '7', '9', '10', '11', '13',
+  '14', '16', '17', '18', '20', '21', '22', '24', '26',
+];
 
 const IngredientCard = ({ item, isSelected, onSelect }: { item: IngredientItem, isSelected: boolean, onSelect: () => void }) => {
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -118,10 +124,10 @@ export default function IngredientSelectionScreen() {
     { id: '26', label: t('onboarding.ingredientSelection.ingredients.butter'), emoji: '🧈' },
     { id: '27', label: t('onboarding.ingredientSelection.ingredients.tuna'), emoji: '🐟' },
     { id: '28', label: t('onboarding.ingredientSelection.ingredients.turkey'), emoji: '🦃' },
-  ], []);
+  ], [t]);
 
   React.useEffect(() => {
-    analytics.track('Onboarding - Ingredient Selection View');
+    analytics.track('onboarding_ingredient_selection_viewed');
   }, []);
 
   const toggleIngredient = (id: string) => {
@@ -139,6 +145,7 @@ export default function IngredientSelectionScreen() {
       const ingredientsString = selectedIngredients
         .map(id => INGREDIENTS.find(i => i.id === id)?.label)
         .join(', ');
+      const preferences = await loadRecipePreferences({ preferCurrentOnboarding: true });
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       const nextParams = {
@@ -146,14 +153,7 @@ export default function IngredientSelectionScreen() {
         showGenerateButton: 'false',
         ingredients: ingredientsString,
         isOnboarding: 'true',
-        preferences: JSON.stringify({
-          dishType: 'Meal',
-          duration: 'Medium',
-          servings: 2,
-          cuisineStyle: 'All',
-          diet: 'None',
-          allowOtherIngredients: true
-        })
+        preferences: JSON.stringify(preferences),
       };
 
       router.replace({
@@ -168,7 +168,7 @@ export default function IngredientSelectionScreen() {
   };
 
   const handleSkip = async () => {
-    analytics.track('Onboarding - Ingredient Selection Skip');
+    analytics.track('onboarding_ingredient_selection_skipped');
     const variant = await analytics.getOnboardingVariant();
 
     if (variant === 'B') {
@@ -191,7 +191,7 @@ export default function IngredientSelectionScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <View style={styles.progressHeader}>
         {router.canGoBack() && (
           <TouchableOpacity
@@ -300,11 +300,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: width * 0.08,
+    fontSize: rw(0.08),
     fontFamily: 'Degular',
     color: Colors.light.text,
     textAlign: 'center',
-    lineHeight: width * 0.1,
+    lineHeight: rw(0.1),
   },
   subtitle: {
     fontSize: 16,
@@ -327,7 +327,9 @@ const styles = StyleSheet.create({
   },
   ingredientCard: {
     backgroundColor: 'white',
-    width: Platform.OS === 'android' ? (width - 48 - 12 - 8) / 2 : (width - 48 - 12) / 2, // Ajustement pour le paddingHorizontal
+    // Deux colonnes : padding d'écran (48) + gouttière (12), plus la marge
+    // supplémentaire qu'Android réserve à l'ombre.
+    width: (rw(1) - 48 - 12 - (Platform.OS === 'android' ? 8 : 0)) / 2,
     borderRadius: 20,
     padding: 20,
     alignItems: 'center',

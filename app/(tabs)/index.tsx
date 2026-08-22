@@ -1,11 +1,13 @@
 import { router, useFocusEffect } from "expo-router";
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, Text, View, TouchableOpacity, Platform, Image, ActivityIndicator, Alert, RefreshControl, Animated, Easing } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, TouchableOpacity, Platform, Image, ActivityIndicator, Alert, RefreshControl, Animated } from 'react-native';
 import Reanimated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../constants/Colors';
+import { font as fontSize, getTabBarHeight, space } from '../../constants/Layout';
+import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { Ionicons } from '@expo/vector-icons';
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import revenueCatService from '../../config/revenuecat';
@@ -16,10 +18,28 @@ import { getUniqueDeviceId } from '../../services/deviceStorage';
 import { RecipeCard } from "../../components/RecipeCard";
 import recipeStorage from "../../services/recipeStorage";
 import { hasShownWheelInSession, markWheelShownInSession } from '../../services/sessionFlags';
-import { LuckyWheelIcon } from "../../components/LuckyWheelIcon";
+import analytics from '../../services/analytics';
+import { ImportLinkSheet } from '../../components/ImportLinkSheet';
+import { LUCKY_WHEEL_ENABLED } from '../../config/features';
+import { loadOrCreateStarterPantry } from '../../services/pantryDefaults';
 
 const STORAGE_KEY = 'pantry_ingredients';
 const HISTORY_BATCH_SIZE = 30;
+
+/**
+ * L'accueil ne listait que les recettes générées (`isImported: false`), ce qui
+ * masquait l'import à l'utilisateur une fois l'onboarding passé. Le feed est
+ * désormais unifié, avec un filtre explicite.
+ */
+type HistoryFilter = 'all' | 'generated' | 'imported';
+
+const HISTORY_FILTERS: HistoryFilter[] = ['all', 'generated', 'imported'];
+
+function filterToQuery(filter: HistoryFilter): { isImported?: boolean } {
+  if (filter === 'generated') return { isImported: false };
+  if (filter === 'imported') return { isImported: true };
+  return {};
+}
 
 interface HistoryItem {
   id: string;
@@ -35,6 +55,10 @@ export default function HomeScreen() {
   const { t, i18n } = useTranslation();
   const colors = Colors.light;
   const insets = useSafeAreaInsets();
+  const { width, height, isTablet, isSmallPhone, gutter, font } = useResponsive();
+  // La rangée de 7 jours se mesure : la largeur restante dépend de la longueur du
+  // compteur de streak et de la traduction de « jours », qui varient par locale.
+  const [weekRowWidth, setWeekRowWidth] = useState(0);
   const [pantryCount, setPantryCount] = useState(0);
   const [isSubscribed, setIsSubscribed] = useState(true); // Par défaut true pour éviter le flash de l'upsell
   const [history, setHistory] = useState<HistoryItem[]>([]);
@@ -44,24 +68,16 @@ export default function HomeScreen() {
   const [streakCount, setStreakCount] = useState(0);
   const [weekActivity, setWeekActivity] = useState<boolean[]>(Array(7).fill(false));
   const [refreshing, setRefreshing] = useState(false);
-  const wheelRotate = useRef(new Animated.Value(0)).current;
+  const [historyFilter, setHistoryFilter] = useState<HistoryFilter>('all');
+  const [showImportSheet, setShowImportSheet] = useState(false);
+  // Feature jamais utilisée par cet utilisateur, à mettre en avant. `null` quand
+  // il a déjà essayé les deux (ou aucune) : inutile de pousser quoi que ce soit.
+  const [featureToPromote, setFeatureToPromote] = useState<'import' | 'generate' | null>(null);
 
-  // Animation de la roue
-  useEffect(() => {
-    Animated.loop(
-      Animated.timing(wheelRotate, {
-        toValue: 1,
-        duration: 2000,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      })
-    ).start();
-  }, [wheelRotate]);
-
-  const rotation = wheelRotate.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
+  // `useFocusEffect` capture la closure du premier rendu : on lit le filtre via
+  // une ref pour que le chargement utilise toujours la valeur courante.
+  const historyFilterRef = useRef(historyFilter);
+  historyFilterRef.current = historyFilter;
 
   const animatedValues = useRef<Map<string, Animated.Value>>(new Map());
 
@@ -74,7 +90,15 @@ export default function HomeScreen() {
 
   const { updateActivity } = useNotifications();
 
+  /**
+   * Roue au lancement de l'app.
+   *
+   * Plus appelée : la roue est désactivée (`LUCKY_WHEEL_ENABLED`) et l'app est
+   * en paywall dur. Conservée telle quelle pour qu'un retour en arrière ne
+   * demande que de rallumer le drapeau et de rebrancher l'appel.
+   */
   const maybeShowLaunchWheel = useCallback(async () => {
+    if (!LUCKY_WHEEL_ENABLED) return;
     if (hasShownWheelInSession()) return;
 
     try {
@@ -122,18 +146,40 @@ export default function HomeScreen() {
     });
   };
 
+  const refreshFeatureToPromote = async () => {
+    const used = await analytics.getUsedFeatures();
+    if (used.length !== 1) {
+      setFeatureToPromote(null);
+      return;
+    }
+    setFeatureToPromote(used[0] === 'import' ? 'generate' : 'import');
+  };
+
   useFocusEffect(
     useCallback(() => {
       loadPantryCount();
       checkSubscription();
       loadHistory(1, false); // On ne reset plus pour préserver la position du scroll
       applyCachedImages();
+      refreshFeatureToPromote();
     }, [])
   );
 
   useEffect(() => {
     calculateStreak();
   }, [history]);
+
+  // Changement de filtre : on repart de la page 1 en vidant la liste, sinon les
+  // recettes du filtre précédent resteraient fusionnées avec les nouvelles.
+  const isFirstFilterRender = useRef(true);
+  useEffect(() => {
+    if (isFirstFilterRender.current) {
+      isFirstFilterRender.current = false;
+      return;
+    }
+    setHasMoreHistory(true);
+    loadHistory(1, true);
+  }, [historyFilter]);
 
   const resolveUserId = async (): Promise<string | null> => {
     const storedUserId = await AsyncStorage.getItem('userId');
@@ -204,7 +250,12 @@ export default function HomeScreen() {
         return;
       }
 
-      const response = await apiService.getRecipeHistory(userId, page, HISTORY_BATCH_SIZE, { isImported: false });
+      const response = await apiService.getRecipeHistory(
+        userId,
+        page,
+        HISTORY_BATCH_SIZE,
+        filterToQuery(historyFilterRef.current)
+      );
       if (response.data?.history) {
         const imageById = new Map<string, string>();
         try {
@@ -297,10 +348,12 @@ export default function HomeScreen() {
 
   const loadPantryCount = async () => {
     try {
-      const stored = await AsyncStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        const items = JSON.parse(stored);
-        setPantryCount(items.length);
+      const { ingredients, initialized } = await loadOrCreateStarterPantry(t);
+      setPantryCount(ingredients.length);
+      if (initialized) {
+        analytics.track('starter_pantry_initialized', {
+          ingredient_count: ingredients.length,
+        });
       }
     } catch (e) {
       console.error(e);
@@ -425,6 +478,15 @@ export default function HomeScreen() {
     }
   };
 
+  const DAY_GAP = 4;
+  // Une pastille par jour, dimensionnée d'après la place réellement disponible :
+  // avant, 7 pastilles de 32pt débordaient de la carte sur les écrans étroits, d'où
+  // le rustine `Platform.OS === 'android' ? 24 : 32` qui rétrécissait aussi sur les
+  // grands Android.
+  const dayCircleSize = weekRowWidth > 0
+    ? Math.max(20, Math.min(isTablet ? 40 : 32, Math.floor((weekRowWidth - DAY_GAP * 6) / 7)))
+    : 24;
+
   return (
     <LinearGradient
       colors={['#F6EEE9', '#FFFFFF']}
@@ -438,8 +500,10 @@ export default function HomeScreen() {
         style={{ overflow: 'visible' }}
         contentContainerStyle={{
           paddingTop: insets.top,
-          paddingBottom: 100,
-          paddingHorizontal: 20
+          // La barre d'onglets et le bouton caméra flottant recouvrent le bas.
+          paddingBottom: getTabBarHeight(width, height) + insets.bottom + 40,
+          paddingHorizontal: gutter,
+          ...contentColumn(),
         }}
         onScroll={handleHistoryScroll}
         scrollEventThrottle={16}
@@ -469,23 +533,40 @@ export default function HomeScreen() {
           >
             <View style={styles.streakLeft}>
               <Text
+                allowFontScaling={false}
                 style={[
                   styles.streakNumber,
                   {
                     color: colors.button,
+                    fontSize: font(isSmallPhone ? 38 : 46),
+                    lineHeight: font(isSmallPhone ? 40 : 50),
                     textAlign: 'right',
-                    maxWidth: Platform.OS === 'android' ? 50 : 60,
-                    lineHeight: Platform.OS === 'android' ? 38 : 46
+                    maxWidth: font(isSmallPhone ? 46 : 58),
                   }
                 ]}
               >
                 {String(streakCount).match(/.{1,2}/g)?.join('\n')}
               </Text>
-              <Text style={[styles.streakLabel, { color: colors.button, marginLeft: 4, alignSelf: 'flex-end' }]}>
+              <Text
+                numberOfLines={1}
+                allowFontScaling={false}
+                style={[
+                  styles.streakLabel,
+                  {
+                    color: colors.button,
+                    fontSize: font(isSmallPhone ? 22 : 28),
+                    marginLeft: 4,
+                    alignSelf: 'flex-end',
+                  },
+                ]}
+              >
                 {streakCount > 1 ? t('home.streak.days') : t('home.streak.day')}
               </Text>
             </View>
-            <View style={styles.streakRight}>
+            <View
+              style={styles.streakRight}
+              onLayout={(e) => setWeekRowWidth(e.nativeEvent.layout.width)}
+            >
               <View style={styles.weekDaysRow}>
                 {Array(7).fill(0).map((_, i) => {
                   const today = new Date();
@@ -502,12 +583,26 @@ export default function HomeScreen() {
 
                   return (
                     <View key={i} style={styles.dayContainer}>
-                      <Text style={isToday ? styles.todayName : styles.dayName}>{dayName}</Text>
+                      <Text
+                        allowFontScaling={false}
+                        numberOfLines={1}
+                        style={[
+                          isToday ? styles.todayName : styles.dayName,
+                          { fontSize: Math.max(10, Math.round(dayCircleSize * 0.42)) },
+                        ]}
+                      >
+                        {dayName}
+                      </Text>
                       <View style={[
                         styles.dayCircle,
+                        {
+                          width: dayCircleSize,
+                          height: dayCircleSize,
+                          borderRadius: dayCircleSize / 2,
+                        },
                         isActive ? { backgroundColor: colors.button } : styles.dayCircleInactive
                       ]}>
-                        {isActive && <IconSymbol name="checkmark" size={14} color="white" />}
+                        {isActive && <IconSymbol name="checkmark" size={Math.round(dayCircleSize * 0.5)} color="white" />}
                       </View>
                     </View>
                   );
@@ -517,48 +612,10 @@ export default function HomeScreen() {
           </Reanimated.View>
         </Reanimated.View>
 
-        {/* Bandeau Offre de Bienvenue - Affiché uniquement si non abonné */}
-        {(!isSubscribed) && (
-          <Reanimated.View entering={FadeInDown.duration(400).delay(150)}>
-            <TouchableOpacity
-              style={[styles.welcomeOfferCard, { marginBottom: 20 }]}
-              onPress={() => router.push({ pathname: '/paywall', params: { source: 'home_welcome_offer', initialState: 'WHEEL' } })}
-              activeOpacity={0.9}
-            >
-              <LinearGradient
-                colors={['#FF5C00', '#FF8E53']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.premiumGradient}
-              >
-                <View style={styles.premiumContent}>
-                  <View style={{ flex: 1 }}>
-                    {/* <View style={styles.welcomeBadge}>
-                    <Text style={styles.proBadgeText} numberOfLines={2} adjustsFontSizeToFit={true}>{t('luckyWheel.title_A').toUpperCase()}</Text>
-                  </View> */}
-                    <Text style={styles.premiumTitle} numberOfLines={1} adjustsFontSizeToFit={true}>{t('luckyWheel.congrats')}</Text>
-                  </View>
-                  <View style={styles.premiumIconContainer}>
-                    {/* Flèche de la roue */}
-                    <View style={{
-                      position: 'absolute',
-                      top: -1,
-                      left: '50%',
-                      marginLeft: -6,
-                      zIndex: 2,
-                      transform: [{ rotate: '180deg' }]
-                    }}>
-                      <Ionicons name="triangle" size={12} color={Colors.light.button} />
-                    </View>
-                    <Animated.View style={{ transform: [{ rotate: rotation }] }}>
-                      <LuckyWheelIcon size={56} />
-                    </Animated.View>
-                  </View>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
-          </Reanimated.View>
-        )}
+        {/* La carte cadeau qui ouvrait la roue a été retirée : l'app est en
+            paywall dur, quiconque atteint l'accueil est déjà passé par la
+            souscription. La remise ne se propose plus qu'au moment du refus,
+            depuis le paywall lui-même. */}
 
         {/* Upsell Premium - Affiché uniquement si non abonné, ou toujours en mode dev */}
         {(!isSubscribed) && (
@@ -619,18 +676,78 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </Reanimated.View>
 
+        {/* Cross-sell : la seconde feature se découvre après le premier aha
+            moment, moment où l'utilisateur est le plus réceptif. */}
+        {featureToPromote && (
+          <Reanimated.View entering={FadeInDown.duration(400).delay(275)}>
+            <TouchableOpacity
+              style={styles.crossSellCard}
+              activeOpacity={0.9}
+              onPress={() => {
+                analytics.track('cross_sell_pressed', { promoted_feature: featureToPromote });
+                if (featureToPromote === 'import') {
+                  setShowImportSheet(true);
+                } else {
+                  router.push('/camera');
+                }
+              }}
+            >
+              <View style={styles.crossSellIcon}>
+                <Ionicons
+                  name={featureToPromote === 'import' ? 'link' : 'camera'}
+                  size={22}
+                  color={colors.button}
+                />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.crossSellTitle}>{t(`home.crossSell.${featureToPromote}.title`)}</Text>
+                <Text style={styles.crossSellDescription}>
+                  {t(`home.crossSell.${featureToPromote}.description`)}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#C7C7CC" />
+            </TouchableOpacity>
+          </Reanimated.View>
+        )}
+
         {/* Historique */}
-        {history.length > 0 && (
+        {(history.length > 0 || historyFilter !== 'all') && (
           <View style={styles.historyContainer}>
             <Reanimated.View
               entering={FadeInDown.duration(400).delay(300)}
               style={styles.historyHeader}
             >
-              <Text style={styles.sectionTitle}>{t('home.generatedRecipes')}</Text>
+              <Text style={styles.sectionTitle}>{t('home.myRecipes')}</Text>
               <TouchableOpacity onPress={() => router.push('/favorites-list')} activeOpacity={0.7}>
                 <Ionicons name="heart-outline" size={24} color="#FFD700" />
               </TouchableOpacity>
             </Reanimated.View>
+
+            <View style={styles.filterRow}>
+              {HISTORY_FILTERS.map((filter) => {
+                const isActive = historyFilter === filter;
+                return (
+                  <TouchableOpacity
+                    key={filter}
+                    style={[styles.filterChip, isActive && styles.filterChipActive]}
+                    onPress={() => {
+                      if (isActive) return;
+                      analytics.track('home_history_filter_changed', { filter });
+                      setHistoryFilter(filter);
+                    }}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>
+                      {t(`home.filters.${filter}`)}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+            {history.length === 0 && !isLoadingMoreHistory && (
+              <Text style={styles.filterEmpty}>{t(`home.filterEmpty.${historyFilter}`)}</Text>
+            )}
             {history.map((item, index) => {
               const anim = getAnimatedValue(item.id);
               return (
@@ -647,9 +764,12 @@ export default function HomeScreen() {
                           outputRange: [0.8, 1],
                         }),
                       }],
+                      // Plafond utilisé pour l'animation de suppression : il doit
+                      // rester au-dessus de la hauteur réelle de la carte, sinon
+                      // celle-ci est rognée en permanence.
                       maxHeight: anim.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [0, 250],
+                        outputRange: [0, isTablet ? 340 : 260],
                       }),
                       overflow: 'hidden',
                       marginHorizontal: -12,
@@ -671,6 +791,12 @@ export default function HomeScreen() {
           </View>
         )}
       </ScrollView>
+
+      <ImportLinkSheet
+        visible={showImportSheet}
+        onClose={() => setShowImportSheet(false)}
+        source="home_cross_sell"
+      />
     </LinearGradient>
   );
 }
@@ -689,14 +815,14 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   mainTitle: {
-    fontSize: 32,
+    fontSize: fontSize(32),
     color: Colors.light.text,
     marginBottom: 8,
     fontFamily: 'Degular'
   },
   mainTitleMascot: {
-    width: 40,
-    height: 40,
+    width: fontSize(40),
+    height: fontSize(40),
     marginBottom: 8,
     transform: [{ rotate: '20deg' }],
   },
@@ -709,7 +835,9 @@ const styles = StyleSheet.create({
   streakCard: {
     backgroundColor: 'white',
     borderRadius: 30,
-    padding: Platform.OS === 'android' ? 12 : 20,
+    // Un padding par plateforme n'avait pas de sens : c'est la largeur de l'écran
+    // qui contraint cette carte, pas l'OS.
+    padding: space(16),
     flexDirection: 'row',
     alignItems: 'center',
     ...Platform.select({
@@ -736,19 +864,18 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   streakNumber: {
-    fontSize: Platform.OS === 'android' ? 40 : 48,
-    lineHeight: Platform.OS === 'android' ? 44 : 52,
+    // fontSize / lineHeight sont fournis à l'usage (dépendent de la largeur).
     fontFamily: 'Degular'
   },
   streakLabel: {
     paddingLeft: 1,
     paddingBottom: 4,
-    fontSize: 32,
     fontFamily: 'CronosProBold'
   },
   streakRight: {
     flex: 1,
-    paddingLeft: 12,
+    minWidth: 0,
+    paddingLeft: 10,
   },
   weekDaysRow: {
     flexDirection: 'row',
@@ -756,23 +883,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dayContainer: {
+    flex: 1,
     alignItems: 'center',
-    gap: Platform.OS === 'android' ? 4 : 8,
+    gap: 6,
   },
   dayName: {
-    fontSize: Platform.OS === 'android' ? 11 : 14,
     fontFamily: 'CronosPro',
     color: '#AEAEB2'
   },
   todayName: {
-    fontSize: Platform.OS === 'android' ? 11 : 14,
     fontFamily: 'CronosProBold',
     color: '#1C1C1E',
   },
   dayCircle: {
-    width: Platform.OS === 'android' ? 24 : 32,
-    height: Platform.OS === 'android' ? 24 : 32,
-    borderRadius: Platform.OS === 'android' ? 12 : 16,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -851,49 +974,27 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     fontFamily: 'Degular'
   },
-  welcomeBadge: {
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginBottom: 8,
-    marginRight: 8,
-  },
-  welcomeOfferCard: {
-    borderRadius: 24,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#FF5C00',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 12,
-      },
-      android: {
-        elevation: 8,
-        backgroundColor: '#FF5C00',
-      },
-    }),
-  },
   premiumTitle: {
-    fontSize: 22,
+    fontSize: fontSize(22),
     color: 'white',
     marginBottom: 4,
-    width: '90%',
+    // `width: '90%'` réservait un vide fixe à droite ; le parent est déjà en flex:1
+    // à côté de l'icône, donc laisser le texte occuper sa colonne suffit.
     fontFamily: 'Degular'
   },
   premiumDescription: {
     fontFamily: 'CronosPro',
-    fontSize: 16,
+    fontSize: fontSize(16),
     color: 'rgba(255, 255, 255, 0.9)',
   },
   premiumIconContainer: {
-    width: 60,
-    height: 60,
+    width: space(60),
+    height: space(60),
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 30,
+    borderRadius: space(60) / 2,
     justifyContent: 'center',
     alignItems: 'center',
+    marginLeft: 12,
   },
   pantryCard: {
     backgroundColor: 'white',
@@ -923,12 +1024,13 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   pantryCardTitle: {
-    fontSize: 20,
+    fontSize: fontSize(20),
     color: Colors.light.text,
+    flexShrink: 1,
     fontFamily: 'Degular'
   },
   pantryCardLink: {
-    fontSize: 16,
+    fontSize: fontSize(16),
     fontFamily: 'CronosProBold'
   },
   pantryCardContent: {
@@ -947,7 +1049,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   pantryStatText: {
-    fontSize: 18,
+    fontSize: fontSize(18),
     fontFamily: 'CronosPro',
     color: '#8E8E93',
   },
@@ -967,8 +1069,79 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: fontSize(24),
     color: Colors.light.text,
     fontFamily: 'Degular'
+  },
+  crossSellCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    backgroundColor: 'white',
+    borderRadius: 24,
+    padding: 18,
+    marginTop: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 15,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+  crossSellIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#FDF0E8',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  crossSellTitle: {
+    fontSize: fontSize(17),
+    fontFamily: 'Degular',
+    color: Colors.light.text,
+    marginBottom: 2,
+  },
+  crossSellDescription: {
+    fontSize: fontSize(14),
+    fontFamily: 'CronosPro',
+    color: '#8E8E93',
+  },
+  filterRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 16,
+  },
+  filterChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 100,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#E9E9E9',
+  },
+  filterChipActive: {
+    backgroundColor: Colors.light.button,
+    borderColor: Colors.light.button,
+  },
+  filterChipText: {
+    fontSize: fontSize(14),
+    fontFamily: 'CronosProBold',
+    color: '#8E8E93',
+  },
+  filterChipTextActive: {
+    color: 'white',
+  },
+  filterEmpty: {
+    fontSize: fontSize(16),
+    fontFamily: 'CronosPro',
+    color: '#8E8E93',
+    textAlign: 'center',
+    paddingVertical: 24,
   },
 });

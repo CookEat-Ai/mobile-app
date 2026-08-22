@@ -6,12 +6,17 @@ import Reanimated, { FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../constants/Colors';
+import { font } from '../../constants/Layout';
+import { contentColumn } from '../../hooks/useResponsive';
 import { RecipeCard } from "../../components/RecipeCard";
 import { IconSymbol } from "../../components/ui/IconSymbol";
 import apiService from '../../services/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import revenueCatService from '../../config/revenuecat';
 import recipeStorage from "../../services/recipeStorage";
+import analytics from '../../services/analytics';
+import { ImportLinkSheet } from '../../components/ImportLinkSheet';
+import { Ionicons } from '@expo/vector-icons';
 
 interface ImportedRecipe {
   id: string;
@@ -39,6 +44,12 @@ export default function ImportedScreen() {
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(true);
+  const [showImportSheet, setShowImportSheet] = useState(false);
+
+  const handleOpenImportSheet = () => {
+    analytics.track('import_sheet_opened', { source: 'imported_tab' });
+    setShowImportSheet(true);
+  };
 
   const hasMoreRef = useRef(hasMore);
   hasMoreRef.current = hasMore;
@@ -242,6 +253,17 @@ export default function ImportedScreen() {
       </View>
       <Text style={styles.emptyTitle}>{t('imported.noImported')}</Text>
       <Text style={styles.emptyDescription}>{t('imported.noImportedDescription')}</Text>
+      {/* Sans ce bouton, l'écran décrit une fonctionnalité que l'utilisateur ne
+          peut déclencher que depuis TikTok : premier motif d'abandon des
+          installs venues pour l'import. */}
+      <TouchableOpacity
+        style={styles.emptyCta}
+        onPress={handleOpenImportSheet}
+        activeOpacity={0.85}
+      >
+        <Ionicons name="link" size={18} color="white" />
+        <Text style={styles.emptyCtaText}>{t('importLink.submit')}</Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -258,16 +280,27 @@ export default function ImportedScreen() {
         style={styles.titleContainer}
       >
         <Text style={styles.mainTitle} numberOfLines={1} adjustsFontSizeToFit>{t('imported.title')}</Text>
-        <TouchableOpacity
-          style={styles.helpButton}
-          onPress={() => router.push({
-            pathname: '/onboarding/videoImportTutorial',
-            params: { isFromImport: 'true' }
-          })}
-          activeOpacity={0.7}
-        >
-          <IconSymbol name="help" size={24} color={Colors.light.textSecondary} />
-        </TouchableOpacity>
+        <View style={styles.headerActions}>
+          <TouchableOpacity
+            style={styles.importButton}
+            onPress={handleOpenImportSheet}
+            activeOpacity={0.85}
+            accessibilityRole="button"
+            accessibilityLabel={t('importLink.title')}
+          >
+            <Ionicons name="add" size={22} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.helpButton}
+            onPress={() => router.push({
+              pathname: '/onboarding/videoImportTutorial',
+              params: { isFromImport: 'true' }
+            })}
+            activeOpacity={0.7}
+          >
+            <IconSymbol name="help" size={24} color={Colors.light.textSecondary} />
+          </TouchableOpacity>
+        </View>
       </Reanimated.View>
 
       {loading ? (
@@ -335,6 +368,12 @@ export default function ImportedScreen() {
           }
         />
       )}
+
+      <ImportLinkSheet
+        visible={showImportSheet}
+        onClose={() => setShowImportSheet(false)}
+        source="imported_tab"
+      />
     </LinearGradient>
   );
 }
@@ -344,6 +383,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   titleContainer: {
+    ...contentColumn(),
     paddingHorizontal: 20,
     paddingBottom: 20,
     flexDirection: 'row',
@@ -351,10 +391,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   mainTitle: {
-    fontSize: 32,
+    fontSize: font(32),
     color: Colors.light.text,
     flex: 1,
     fontFamily: 'Degular'
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginTop: -30,
+  },
+  importButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.light.button,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   helpButton: {
     width: 40,
@@ -363,11 +417,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#F2F2F7',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: -30,
+  },
+  emptyCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: Colors.light.button,
+    borderRadius: 100,
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    marginTop: 24,
+  },
+  emptyCtaText: {
+    color: 'white',
+    fontSize: font(17),
+    fontFamily: 'Degular',
   },
   scrollContent: {
+    ...contentColumn(),
     paddingHorizontal: 20,
-    paddingBottom: 100,
+    // Laisse passer la barre d'onglets et le bouton caméra flottant.
+    paddingBottom: 140,
   },
   loadingContainer: {
     flex: 1,
@@ -408,10 +478,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Degular'
   },
   premiumTitle: {
-    fontSize: 22,
+    fontSize: font(22),
     color: 'white',
     marginBottom: 4,
-    width: '90%',
     fontFamily: 'Degular'
   },
   premiumDescription: {

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
-  Dimensions,
   Platform,
   StyleSheet,
   View,
@@ -12,7 +11,7 @@ import {
   GestureResponderEvent,
   StatusBar,
   Alert,
-  Linking
+  Linking,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -22,21 +21,32 @@ import Svg, { Circle } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../components/ui/IconSymbol';
-import { router, useGlobalSearchParams } from 'expo-router';
+import { router, useGlobalSearchParams, useNavigation } from 'expo-router';
 import { Colors } from '../constants/Colors';
+import { rw } from '../constants/Layout';
+import { contentColumn } from '../hooks/useResponsive';
 import * as Haptics from 'expo-haptics';
 import apiService from '../services/api';
+import analytics from '../services/analytics';
 import { useTranslation } from 'react-i18next';
 
-const { width } = Dimensions.get('window');
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const MAX_PHOTOS = 30;
 const MAX_VIDEO_DURATION = 40; // seconds
+
+type CameraTransitionNavigation = {
+  addListener: (
+    event: 'transitionEnd',
+    listener: (event: { data: { closing: boolean } }) => void,
+  ) => () => void;
+};
 
 export default function CameraScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const params = useGlobalSearchParams();
+  const navigation = useNavigation<CameraTransitionNavigation>();
+  const isOnboarding = params.isOnboarding === 'true';
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<'back' | 'front'>('back');
   const [mode, setMode] = useState<'photo' | 'video'>('photo');
@@ -53,11 +63,13 @@ export default function CameraScreen() {
   const [isCapturing, setIsCapturing] = useState(false);
   const [zoom, setZoom] = useState(0);
   const [focusPulsePoint, setFocusPulsePoint] = useState<{ x: number; y: number } | null>(null);
+  const [hasPresentationFinished, setHasPresentationFinished] = useState(Platform.OS === 'web');
   const zoomRef = useRef(0);
   const isRecordingRef = useRef(false);
   const cameraRef = useRef<CameraView>(null);
   const focusPulseScale = useRef(new Animated.Value(0.7)).current;
   const focusPulseOpacity = useRef(new Animated.Value(0)).current;
+  const hasShownAutomaticHelp = useRef(false);
 
   useEffect(() => {
     isRecordingRef.current = isRecording;
@@ -169,21 +181,16 @@ export default function CameraScreen() {
     }
   }, [permission, requestPermission]);
 
+  // Ce rappel s'affiche à chaque ouverture de la caméra, pas une seule fois :
+  // savoir quoi cadrer reste utile même après plusieurs utilisations.
   const showOnboarding = useCallback(async () => {
-    if (mode === 'video') {
-      Alert.alert(
-        t('camera.onboarding.video.title'),
-        t('camera.onboarding.video.message'),
-        [{ text: t('camera.onboarding.video.button'), onPress: () => AsyncStorage.setItem('hasSeenCameraOnboarding_video', 'true') }]
-      );
-    } else {
-      Alert.alert(
-        t('camera.onboarding.photo.title'),
-        t('camera.onboarding.photo.message'),
-        [{ text: t('camera.onboarding.photo.button'), onPress: () => AsyncStorage.setItem('hasSeenCameraOnboarding_photo', 'true') }]
-      );
-    }
-  }, [mode]);
+    const key = mode === 'video' ? 'video' : 'photo';
+    Alert.alert(
+      t(`camera.onboarding.${key}.title`),
+      t(`camera.onboarding.${key}.message`),
+      [{ text: t(`camera.onboarding.${key}.button`) }]
+    );
+  }, [mode, t]);
 
   const handleRequestPermission = async () => {
     if (permission && !permission.granted) {
@@ -193,18 +200,52 @@ export default function CameraScreen() {
     await requestPermission();
   };
 
-  useEffect(() => {
-    const checkOnboarding = async () => {
-      const hasSeenOnboarding = await AsyncStorage.getItem(`hasSeenCameraOnboarding_${mode}`);
-      if (!hasSeenOnboarding) {
-        showOnboarding();
-      }
-    };
+  const handleSkipCapture = useCallback(() => {
+    // Ce raccourci appartient à la caméra de l'application, pas à l'onboarding.
+    // Aucune donnée n'est écrite ici : la liste existante reste donc intacte.
+    if (isOnboarding) return;
 
-    if (permission?.granted) {
-      checkOnboarding();
+    analytics.track('camera_capture_skipped', {
+      destination: 'ingredient_list',
+      pantry_preserved: true,
+      mode: params.mode === 'append' ? 'append' : 'replace',
+    });
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
+
+    if (params.mode === 'append') {
+      // La liste est encore montée sous la caméra : revenir en arrière conserve
+      // exactement son état courant, sans rechargement ni remplacement.
+      router.back();
+      return;
     }
-  }, [mode, permission?.granted, showOnboarding]);
+
+    // Sans paramètre `ingredients`, ingredient-list recharge le garde-manger
+    // existant depuis AsyncStorage au lieu de le remplacer par une liste vide.
+    router.replace('/ingredient-list');
+  }, [isOnboarding, params.mode]);
+
+  useEffect(() => {
+    // `transitionEnd` est émis par le native stack depuis `onAppear`, donc après
+    // la fin réelle de la présentation de la route caméra. Contrairement à un
+    // timeout, il ne dépend ni de la vitesse de l'appareil ni de l'animation iOS.
+    return navigation.addListener('transitionEnd', (event) => {
+      if (!event.data.closing) setHasPresentationFinished(true);
+    });
+  }, [navigation]);
+
+  useEffect(() => {
+    if (
+      !hasPresentationFinished
+      || !permission?.granted
+      || hasShownAutomaticHelp.current
+    ) return;
+
+    hasShownAutomaticHelp.current = true;
+    // Un frame supplémentaire laisse React appliquer l'état final reçu du
+    // native stack avant d'ouvrir la fenêtre système de l'alerte.
+    const frame = requestAnimationFrame(showOnboarding);
+    return () => cancelAnimationFrame(frame);
+  }, [hasPresentationFinished, permission?.granted, showOnboarding]);
 
   useEffect(() => {
     if (isLoading) {
@@ -277,6 +318,11 @@ export default function CameraScreen() {
           <TouchableOpacity onPress={handleRequestPermission} style={styles.permissionButton}>
             <Text style={styles.permissionButtonText}>{t('camera.grantPermission')}</Text>
           </TouchableOpacity>
+          {!isOnboarding && (
+            <TouchableOpacity onPress={handleSkipCapture} style={styles.skipButton}>
+              <Text style={styles.skipButtonText}>{t('camera.skip')}</Text>
+            </TouchableOpacity>
+          )}
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <Text style={styles.backButtonText}>{t('camera.back')}</Text>
           </TouchableOpacity>
@@ -712,6 +758,16 @@ export default function CameraScreen() {
               <IconSymbol name="chevron-forward" size={20} color="white" weight="bold" />
             </TouchableOpacity>
           )}
+
+          {!isOnboarding && capturedImages.length === 0 && !recordedVideoUri && !isRecording && (
+            <TouchableOpacity
+              style={styles.skipButton}
+              onPress={handleSkipCapture}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.skipButtonText}>{t('camera.skip')}</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>
@@ -727,7 +783,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     justifyContent: 'space-between',
   },
   topBar: {
@@ -907,6 +963,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'CronosPro',
   },
+  skipButton: {
+    alignSelf: 'center',
+    minHeight: 44,
+    paddingHorizontal: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  skipButtonText: {
+    color: 'white',
+    fontSize: 17,
+    fontFamily: 'CronosProBold',
+    textDecorationLine: 'underline',
+    textShadowColor: 'rgba(0,0,0,0.65)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
   // Mode Switcher
   modeSwitcher: {
     flexDirection: 'row',
@@ -934,7 +1006,7 @@ const styles = StyleSheet.create({
   },
   // Video Preview
   videoPreviewContainer: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'black',
   },
   videoPreview: {
@@ -961,13 +1033,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
   loadingContent: {
-    width: '100%',
+    ...contentColumn(),
     alignItems: 'center',
     gap: 32,
   },
   loadingMascot: {
-    width: width * 0.5,
-    height: width * 0.5,
+    width: rw(0.5),
+    height: rw(0.5),
     transform: [{ rotate: '20deg' }],
   },
   loadingTextWrapper: {
@@ -977,10 +1049,10 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontFamily: 'Degular',
-    fontSize: width * 0.06,
+    fontSize: rw(0.06),
     color: Colors.light.text,
     textAlign: 'center',
-    lineHeight: width * 0.07,
+    lineHeight: rw(0.07),
   },
   loadingBarTrack: {
     width: '100%',

@@ -1,2 +1,4 @@
-export const POSTHOG_API_KEY = 'phc_I2bovihxiSIvn580f0Pd0TFLsxVPC1lKK4i5Du8JZKS';
-export const POSTHOG_HOST = 'https://eu.i.posthog.com';
+import { PUBLIC_ENV } from './env';
+
+export const POSTHOG_API_KEY = PUBLIC_ENV.posthogKey;
+export const POSTHOG_HOST = PUBLIC_ENV.posthogHost;

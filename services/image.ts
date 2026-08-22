@@ -1,374 +1,308 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { apiService } from './api';
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const PINTEREST_BASE_URL = 'https://fr.pinterest.com';
-const DUCKDUCKGO_URL = 'https://duckduckgo.com/';
+const MAX_PINTEREST_CANDIDATES = 10;
+const MAX_AI_CANDIDATES = 5;
+const IMAGE_PROBE_TIMEOUT_MS = 1500;
+const SEARCH_REQUEST_TIMEOUT_MS = 4000;
+const SEARCH_BUDGET_MS = 14000;
+const MIN_IMAGE_RANKING_WINDOW_MS = 5000;
+const MAX_IMAGE_RANKING_TIMEOUT_MS = 9000;
+const IMAGE_SEARCH_CACHE_KEY = '@cookeat_image_search_cache_v1';
+// v3 invalide les anciennes sélections qui pouvaient conserver une image avec texte.
+const PINTEREST_CACHE_NAMESPACE = 'pinterest-ai-rank-v3';
+const SEARCH_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const MAX_CACHE_ENTRIES = 100;
 const PINTEREST_STATIC_ASSET_URLS = new Set([
   'https://i.pinimg.com/originals/d5/3b/01/d53b014d86a6b6761bf649a0ed813c2b.png',
 ]);
 
-function normalizeImageUrl(url: string) {
-  return url.replace(/\\u002F/g, '/').replace(/\\\//g, '/');
+type TimestampedValue<T> = { value: T; timestamp: number };
+type TimestampedCache<T> = Record<string, TimestampedValue<T>>;
+
+let searchCache: TimestampedCache<string> | null = null;
+const inFlightSearches = new Map<string, Promise<string | null>>();
+
+export type RecipeImageSearchInput = string | {
+  title: string;
+  dishType?: string;
+  dish_type?: string;
+  cuisineStyle?: string;
+  cuisine_style?: string;
+  mainIngredients?: string[];
+  main_ingredients?: string[];
+};
+
+type RecipeImageContext = {
+  title: string;
+  dishType?: string;
+  cuisineStyle?: string;
+  mainIngredients?: string[];
+};
+
+function normalizedQuery(value: string) {
+  return value.trim().toLocaleLowerCase();
 }
 
-function isValidImageUrl(url: string, existingImages: string[]) {
-  return Boolean(url)
-    && url.startsWith('https://')
-    && !url.includes('fbsbx')
-    && !PINTEREST_STATIC_ASSET_URLS.has(url)
-    && !existingImages.includes(url);
+function normalizeRecipeContext(input: RecipeImageSearchInput): RecipeImageContext {
+  if (typeof input === 'string') return { title: input.trim() };
+  return {
+    title: input.title.trim(),
+    dishType: input.dishType || input.dish_type,
+    cuisineStyle: input.cuisineStyle || input.cuisine_style,
+    mainIngredients: (input.mainIngredients || input.main_ingredients || []).filter(Boolean).slice(0, 8),
+  };
+}
+
+function pinterestCacheKey(context: RecipeImageContext) {
+  return `${PINTEREST_CACHE_NAMESPACE}:${[
+    normalizedQuery(context.title),
+    normalizedQuery(context.dishType || ''),
+    normalizedQuery(context.cuisineStyle || ''),
+    ...(context.mainIngredients || []).map(normalizedQuery),
+  ].join('|')}`;
+}
+
+async function loadCache<T>(key: string): Promise<TimestampedCache<T>> {
+  try {
+    const stored = await AsyncStorage.getItem(key);
+    return stored ? JSON.parse(stored) : {};
+  } catch {
+    return {};
+  }
+}
+
+function trimCache<T>(cache: TimestampedCache<T>) {
+  return Object.fromEntries(
+    Object.entries(cache)
+      .sort(([, a], [, b]) => b.timestamp - a.timestamp)
+      .slice(0, MAX_CACHE_ENTRIES),
+  );
+}
+
+function persistCache<T>(key: string, cache: TimestampedCache<T>) {
+  void AsyncStorage.setItem(key, JSON.stringify(trimCache(cache))).catch(() => undefined);
+}
+
+async function fetchWithTimeout(url: string, options: RequestInit, timeoutMs: number) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function isAbortError(error: unknown) {
+  const name = error && typeof error === 'object' && 'name' in error
+    ? String(error.name)
+    : '';
+  return name === 'AbortError' || /aborted|cancel(?:ed|led)/i.test(errorMessage(error));
+}
+
+function isTransientNetworkError(error: unknown) {
+  return /fetch failed|network request failed|connexion réseau.*perdue|network connection.*lost|timed?\s*out|offline|internet connection/i
+    .test(errorMessage(error));
+}
+
+async function fetchPinterestPage(url: string, options: RequestInit) {
+  try {
+    return await fetchWithTimeout(url, options, SEARCH_REQUEST_TIMEOUT_MS);
+  } catch (error) {
+    // Une perte de connexion iOS est souvent très brève (changement Wi-Fi/4G,
+    // réveil radio). Un seul nouvel essai suffit sans multiplier les requêtes.
+    if (!isTransientNetworkError(error) || isAbortError(error)) throw error;
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    return fetchWithTimeout(url, options, SEARCH_REQUEST_TIMEOUT_MS);
+  }
+}
+
+function normalizeImageUrl(url: string) {
+  return url
+    .replace(/\\u002F/gi, '/')
+    .replace(/\\\//g, '/')
+    .replace(/&amp;/g, '&');
+}
+
+/** Une même photo Pinterest existe en 236x, 474x, 736x et original. */
+function pinterestImageFingerprint(url: string) {
+  try {
+    return new URL(url).pathname.split('/').pop()?.toLowerCase() || url;
+  } catch {
+    return url;
+  }
+}
+
+function isValidPinterestImageUrl(url: string, existingImages: string[]) {
+  if (!url.startsWith('https://i.pinimg.com/')) return false;
+  if (PINTEREST_STATIC_ASSET_URLS.has(url)) return false;
+
+  const fingerprint = pinterestImageFingerprint(url);
+  return !existingImages.some((existing) =>
+    existing === url || pinterestImageFingerprint(existing) === fingerprint);
+}
+
+function pinterestImageScore(url: string) {
+  if (url.includes('/originals/')) return 5;
+  if (url.includes('/736x/')) return 4;
+  if (url.includes('/564x/')) return 3;
+  if (url.includes('/474x/')) return 2;
+  return 0;
 }
 
 async function canUseImage(url: string) {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
-    const imageRes = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeoutId);
-
+    const imageRes = await fetchWithTimeout(url, { method: 'HEAD' }, IMAGE_PROBE_TIMEOUT_MS);
     const contentType = imageRes.headers.get('content-type') ?? '';
-    return imageRes.ok && ALLOWED_IMAGE_TYPES.some(type => contentType.startsWith(type));
+    return imageRes.ok && ALLOWED_IMAGE_TYPES.some((type) => contentType.startsWith(type));
   } catch {
     return false;
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function searchImageFromPinterest(keywords: string, existingImages: string[]) {
-  const searchParams = new URLSearchParams({ q: keywords, rs: 'typed' });
-  const searchUrl = `${PINTEREST_BASE_URL}/search/pins/?${searchParams.toString()}`;
-  const response = await fetch(searchUrl, {
-    headers: {
-      'accept-language': 'fr-FR,fr;q=0.9,en;q=0.8',
-      'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-    }
-  });
+function extractPinterestCandidates(html: string, existingImages: string[]) {
+  const normalizedHtml = normalizeImageUrl(html);
+  const matches = normalizedHtml.match(/https:\/\/i\.pinimg\.com\/[^"'\s<>()}]+/g) ?? [];
+  const bestByFingerprint = new Map<string, string>();
 
-  if (!response.ok) {
-    return null;
-  }
+  for (const rawUrl of matches) {
+    const imageUrl = rawUrl.replace(/[;,]+$/, '');
+    if (!isValidPinterestImageUrl(imageUrl, existingImages)) continue;
+    if (pinterestImageScore(imageUrl) === 0) continue;
 
-  const html = await response.text();
-
-  // 1) Source principale: endpoint JSON Pinterest (vraies images de résultats)
-  const cookieFromSetCookie = (response.headers.get('set-cookie') ?? '')
-    .split(',')
-    .map(part => part.trim())
-    .filter(Boolean)
-    .map(part => part.split(';')[0])
-    .join('; ');
-  const csrfToken = cookieFromSetCookie
-    .split(';')
-    .map(part => part.trim())
-    .find(part => part.startsWith('csrftoken='))
-    ?.split('=')[1];
-
-  const options = {
-    query: keywords,
-    scope: 'pins',
-    source_id: 'typed',
-  };
-  const dataParam = JSON.stringify({ options, context: {} });
-  const sourceUrl = `/search/pins/?${searchParams.toString()}`;
-  const apiParams = new URLSearchParams({
-    source_url: sourceUrl,
-    data: dataParam,
-    _: `${Date.now()}`,
-  });
-
-  const apiResponse = await fetch(`${PINTEREST_BASE_URL}/resource/BaseSearchResource/get/?${apiParams.toString()}`, {
-    headers: {
-      'accept': 'application/json, text/javascript, */*, q=0.01',
-      'accept-language': 'fr-FR,fr;q=0.9,en;q=0.8',
-      'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-      'referer': searchUrl,
-      'x-requested-with': 'XMLHttpRequest',
-      'x-pinterest-appstate': 'active',
-      'x-app-version': 'c9f6d8',
-      'x-pinterest-pws-handler': 'www/[username]/[slug].js',
-      ...(csrfToken ? { 'x-csrftoken': csrfToken } : {}),
-      ...(cookieFromSetCookie ? { cookie: cookieFromSetCookie } : {})
-    }
-  });
-
-  if (apiResponse.ok) {
-    const apiData = await apiResponse.json();
-    const results: any[] = apiData?.resource_response?.data?.results ?? [];
-
-    const apiCandidates: { url: string }[] = [];
-    for (const result of results) {
-      // Filtrage par métadonnées pour éviter les images avec trop de texte (recettes, tutoriels)
-      const gridTitle = (result.grid_title || '').toLowerCase();
-      const title = (result.title || '').toLowerCase();
-      const description = (result.description || '').toLowerCase();
-
-      const isTextHeavy =
-        gridTitle.includes('recette') || gridTitle.includes('recipe') ||
-        gridTitle.includes('ingrédient') || gridTitle.includes('ingredient') ||
-        gridTitle.includes('tuto') || gridTitle.includes('tutorial') ||
-        title.includes('recette') || title.includes('recipe') ||
-        description.includes('recette') || description.includes('recipe');
-
-      if (isTextHeavy) {
-        continue;
-      }
-
-      const images = result?.images ?? {};
-      const rankedKeys = ['orig', '736x', '564x', '474x', '236x'];
-      for (const key of rankedKeys) {
-        const imageObj = images?.[key];
-        const imageUrl = imageObj?.url;
-        if (isValidImageUrl(imageUrl, existingImages)) {
-          apiCandidates.push({
-            url: imageUrl,
-          });
-          break;
-        }
-      }
-    }
-
-    const uniqueApiCandidates = Array.from(
-      new Map(apiCandidates.map(candidate => [candidate.url, candidate])).values()
-    );
-
-    let validationCount = 0;
-    for (const candidate of uniqueApiCandidates) {
-      if (await canUseImage(candidate.url)) {
-        // Validation par IA (limitée aux 2 premiers candidats pour la performance)
-        if (validationCount < 2) {
-          validationCount++;
-          const validation = await apiService.validateImage(candidate.url);
-          if (validation.data?.isValid === false) {
-            console.log('[searchImage] Image rejetée par l\'IA (texte ou non-alimentaire):', candidate.url);
-            continue;
-          }
-        }
-
-        console.log('[searchImage] title=', keywords, 'source=pinterest-api url=', candidate.url);
-        return candidate.url;
-      }
+    const fingerprint = pinterestImageFingerprint(imageUrl);
+    const current = bestByFingerprint.get(fingerprint);
+    if (!current || pinterestImageScore(imageUrl) > pinterestImageScore(current)) {
+      bestByFingerprint.set(fingerprint, imageUrl);
     }
   }
 
-  // 2) Fallback Pinterest robuste: ouvrir les pages de pins et lire og:image
-  const pinPathRegex = /\/pin\/\d+\//g;
-  const pinPaths = Array.from(new Set(html.match(pinPathRegex) ?? [])).slice(0, 10);
-  let validationCount = 0;
-  for (const pinPath of pinPaths) {
-    try {
-      const pinResponse = await fetch(`${PINTEREST_BASE_URL}${pinPath}`, {
-        headers: {
-          'accept-language': 'fr-FR,fr;q=0.9,en;q=0.8',
-          'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-        }
-      });
-      if (!pinResponse.ok) {
-        continue;
-      }
-
-      const pinHtml = await pinResponse.text();
-      const ogImageMatch = pinHtml.match(/<meta\s+property="og:image"\s+content="([^"]+)"/i);
-      const ogImageUrl = ogImageMatch?.[1];
-      if (ogImageUrl
-        && isValidImageUrl(ogImageUrl, existingImages)
-        && await canUseImage(ogImageUrl)
-      ) {
-        // Validation par IA (limitée aux 2 premiers candidats pour la performance)
-        if (validationCount < 2) {
-          validationCount++;
-          const validation = await apiService.validateImage(ogImageUrl);
-          if (validation.data?.isValid === false) {
-            console.log('[searchImage] Image rejetée par l\'IA (texte ou non-alimentaire):', ogImageUrl);
-            continue;
-          }
-        }
-
-        console.log('[searchImage] title=', keywords, 'source=pinterest-pin-page url=', ogImageUrl);
-        return ogImageUrl;
-      }
-    } catch {
-      // ignore et on teste le pin suivant
-    }
-  }
-
-  // 3) Fallback Pinterest final: extraction simple depuis le HTML
-  const pinimgRegex = /https:\/\/i\.pinimg\.com\/[^"'\s<>()]+/g;
-  const matches = html.match(pinimgRegex) ?? [];
-  const uniqueCandidates = Array.from(new Set(matches))
-    .map(normalizeImageUrl)
-    .filter(url => isValidImageUrl(url, existingImages));
-
-  let finalValidationCount = 0;
-  for (const imageUrl of uniqueCandidates) {
-    if (await canUseImage(imageUrl)) {
-      // Validation par IA (limitée aux 2 premiers candidats pour la performance)
-      if (finalValidationCount < 2) {
-        finalValidationCount++;
-        const validation = await apiService.validateImage(imageUrl);
-        if (validation.data?.isValid === false) {
-          console.log('[searchImage] Image rejetée par l\'IA (texte ou non-alimentaire):', imageUrl);
-          continue;
-        }
-      }
-
-      console.log('[searchImage] title=', keywords, 'source=pinterest-html url=', imageUrl);
-      return imageUrl;
-    }
-  }
-
-  return null;
+  return [...bestByFingerprint.values()]
+    .sort((a, b) => pinterestImageScore(b) - pinterestImageScore(a));
 }
 
-async function searchImageFromGoogle(keywords: string, existingImages: string[]) {
-  const searchParams = new URLSearchParams({
-    q: keywords,
-    tbm: 'isch',
-    hl: 'fr',
-  });
-  const searchUrl = `https://www.google.com/search?${searchParams.toString()}`;
+async function searchImageFromPinterest(context: RecipeImageContext, existingImages: string[]) {
+  const deadline = Date.now() + SEARCH_BUDGET_MS;
+  const cacheKey = pinterestCacheKey(context);
+  let cachedFallback: string | null = null;
 
   try {
-    const response = await fetch(searchUrl, {
+    searchCache ??= await loadCache<string>(IMAGE_SEARCH_CACHE_KEY);
+    const cached = searchCache[cacheKey];
+    if (cached && isValidPinterestImageUrl(cached.value, existingImages)) {
+      cachedFallback = cached.value;
+    }
+    if (
+      cached
+      && Date.now() - cached.timestamp < SEARCH_CACHE_TTL_MS
+      && isValidPinterestImageUrl(cached.value, existingImages)
+      && await canUseImage(cached.value)
+    ) {
+      console.log('[searchImage] source=pinterest-cache');
+      return cached.value;
+    }
+
+    const searchParams = new URLSearchParams({ q: context.title, rs: 'typed' });
+    const searchUrl = `${PINTEREST_BASE_URL}/search/pins/?${searchParams.toString()}`;
+    const response = await fetchPinterestPage(searchUrl, {
       headers: {
-        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'accept-language': 'fr-FR,fr;q=0.9,en;q=0.8',
-        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+        'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148',
       },
     });
 
-    if (!response.ok) {
+    if (!response.ok) return null;
+    const candidates = extractPinterestCandidates(await response.text(), existingImages);
+
+    // La recherche reste entièrement côté mobile. On sonde les dix premières
+    // candidates en parallèle, puis l'API reçoit au maximum cinq vraies images
+    // dans un unique jugement multimodal comparatif.
+    const probePool = candidates.slice(0, MAX_PINTEREST_CANDIDATES);
+    const probeResults = await Promise.all(
+      probePool.map(async (imageUrl) => ({ imageUrl, usable: await canUseImage(imageUrl) })),
+    );
+    const imagesToValidate = probeResults
+      .filter(({ usable }) => usable)
+      .slice(0, MAX_AI_CANDIDATES)
+      .map(({ imageUrl }) => imageUrl);
+
+    if (imagesToValidate.length === 0) return null;
+
+    // Ne lance pas le classement si le modèle n'a plus un vrai créneau pour
+    // télécharger et comparer les cinq images.
+    const remainingMs = deadline - Date.now();
+    if (remainingMs < MIN_IMAGE_RANKING_WINDOW_MS) return null;
+    const rankingTimeoutMs = Math.min(MAX_IMAGE_RANKING_TIMEOUT_MS, remainingMs);
+    const selection = await apiService.selectBestRecipeImage(context, imagesToValidate, rankingTimeoutMs);
+    if (selection.error) {
+      console.warn('[searchImage] classement IA indisponible, source=pinterest:', selection.error);
       return null;
     }
 
-    const html = await response.text();
-    const candidates: string[] = [];
-
-    // Google embeds original image URLs as ["url", width, height] in script blocks
-    const urlPattern = /\["(https?:\/\/(?!encrypted-tbn|www\.google|maps\.google|lh\d\.google|play\.google|gstatic|googleapis)[^"]+)",\s*(\d+),\s*(\d+)\]/g;
-    let match;
-
-    while ((match = urlPattern.exec(html)) !== null) {
-      const width = parseInt(match[2], 10);
-      const height = parseInt(match[3], 10);
-      if (width < 200 || height < 200) continue;
-
-      const url = match[1]
-        .replace(/\\u003d/g, '=')
-        .replace(/\\u0026/g, '&')
-        .replace(/\\u002F/g, '/')
-        .replace(/\\\//g, '/');
-
-      if (isValidImageUrl(url, existingImages)) {
-        candidates.push(url);
-      }
+    const selected = selection.data?.imageUrl;
+    if (selected && !imagesToValidate.includes(selected)) return null;
+    const selectedRanking = selection.data?.rankings.find(
+      (ranking) => ranking.index === selection.data?.selectedIndex,
+    );
+    if (selected && (
+      !selectedRanking
+      || !selectedRanking.is_suitable
+      || !selectedRanking.is_real_food_photo
+      || selectedRanking.has_prominent_text
+      || selectedRanking.is_graphic_or_collage
+      || selectedRanking.relevance_score < 60
+    )) {
+      console.warn('[searchImage] image rejetée par le garde-fou mobile');
+      return null;
     }
-
-    // Fallback: data-ou attributes (older Google format)
-    if (candidates.length === 0) {
-      const dataPattern = /data-ou="(https?:\/\/[^"]+)"/g;
-      while ((match = dataPattern.exec(html)) !== null) {
-        const url = decodeURIComponent(match[1]);
-        if (isValidImageUrl(url, existingImages)) {
-          candidates.push(url);
-        }
-      }
-    }
-
-    const uniqueCandidates = [...new Set(candidates)];
-
-    let validationCount = 0;
-    for (const imageUrl of uniqueCandidates) {
-      if (await canUseImage(imageUrl)) {
-        if (validationCount < 2) {
-          validationCount++;
-          const validation = await apiService.validateImage(imageUrl);
-          if (validation.data?.isValid === false) {
-            console.log('[searchImage] Image rejetée par l\'IA (texte ou non-alimentaire):', imageUrl);
-            continue;
-          }
-        }
-
-        console.log('[searchImage] title=', keywords, 'source=google url=', imageUrl);
-        return imageUrl;
-      }
+    if (selected) {
+      searchCache[cacheKey] = { value: selected, timestamp: Date.now() };
+      persistCache(IMAGE_SEARCH_CACHE_KEY, searchCache);
+      console.log('[searchImage] source=pinterest-ai-rank', {
+        candidates: selection.data?.candidatesEvaluated,
+        selectedIndex: selection.data?.selectedIndex,
+        confidence: selection.data?.confidence,
+      });
+      return selected;
     }
 
     return null;
   } catch (error) {
-    console.error('Google image search error:', error instanceof Error ? error.message : String(error));
+    if (isTransientNetworkError(error) || isAbortError(error)) {
+      // Incident attendu et récupérable : ne pas déclencher l'overlay rouge
+      // Expo via console.error. Le préchargement décidera si le cache est encore
+      // exploitable ; sinon l'écran continue simplement sans image.
+      console.log('[searchImage] Pinterest temporairement indisponible:', errorMessage(error));
+      return cachedFallback;
+    }
+    console.error('[searchImage] erreur Pinterest inattendue:', errorMessage(error));
     return null;
   }
 }
 
-async function searchImageFromDuckDuckGo(keywords: string, existingImages: string[]) {
-  const url = DUCKDUCKGO_URL;
-
-  try {
-    const initialParams = new URLSearchParams({ q: keywords });
-    const res = await fetch(url + '?' + initialParams.toString());
-    const htmlData = await res.text();
-    const searchObj = htmlData.match(/vqd="([\d-]+)"/);
-
-    if (!searchObj)
-      return null;
-
-    const searchParams = new URLSearchParams({
-      l: 'wt-wt',
-      o: 'json',
-      q: keywords,
-      vqd: searchObj[1],
-      f: ',,,',
-      p: '2'
-    });
-
-    const requestUrl = url + "i.js?" + searchParams.toString();
-
-    const response = await fetch(requestUrl, {
-      headers: {
-        'dnt': '1',
-        'x-requested-with': 'XMLHttpRequest',
-        'accept-language': 'en-GB,en-US;q=0.8,en;q=0.6,ms;q=0.4',
-        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36',
-        'accept': 'application/json, text/javascript, */*; q=0.01',
-        'referer': 'https://duckduckgo.com/',
-        'authority': 'duckduckgo.com',
-      }
-    });
-
-    const data = await response.json();
-    const results: any[] = data.results ?? [];
-
-    // Trier par largeur décroissante pour commencer par les images les plus larges
-    // const sorted = [...results]
-    //   .filter(r => isValidImageUrl(r.image, existingImages))
-    //   .sort((a, b) => b.width - a.width);
-    const sorted = results
-
-    for (const result of sorted) {
-      if (await canUseImage(result.image as string)) {
-        console.log('[searchImage] title=', keywords, 'source=duckduckgo url=', result.image as string);
-        return result.image as string;
-      }
-    }
-
-    return null;
-  } catch (error) {
-    console.error('searchImage error:', error instanceof Error ? error.message : String(error));
-    return null;
-  }
-}
-
-export async function searchImage(keywords: string, existingImages: string[]) {
-  // 1) Google Images
-  try {
-    const googleImage = await searchImageFromGoogle(keywords, existingImages);
-    if (googleImage) {
-      return googleImage;
-    }
-  } catch (error) {
-    console.warn('Google search failed, fallback to DuckDuckGo:', error instanceof Error ? error.message : String(error));
+/** Pinterest est volontairement l'unique moteur pendant la phase de test. */
+export async function searchImage(input: RecipeImageSearchInput, existingImages: string[]) {
+  const context = normalizeRecipeContext(input);
+  if (!context.title) return null;
+  const key = pinterestCacheKey(context);
+  const existing = inFlightSearches.get(key);
+  if (existing) {
+    const image = await existing;
+    return image && isValidPinterestImageUrl(image, existingImages) ? image : null;
   }
 
-  // 2) Fallback: DuckDuckGo
-  return searchImageFromDuckDuckGo(keywords, existingImages);
+  const request = searchImageFromPinterest(context, existingImages);
+  inFlightSearches.set(key, request);
+  try {
+    return await request;
+  } finally {
+    inFlightSearches.delete(key);
+  }
 }

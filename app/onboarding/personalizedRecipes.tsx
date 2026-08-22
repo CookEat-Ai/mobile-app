@@ -2,20 +2,17 @@ import { router } from 'expo-router';
 import React, { useEffect, useRef, useMemo, useState } from 'react';
 import {
   Animated,
-  Dimensions,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../constants/Colors';
+import { rw } from '../../constants/Layout';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const { width } = Dimensions.get('window');
 
 export default function PersonalizedRecipesScreen() {
   const insets = useSafeAreaInsets();
@@ -128,11 +125,11 @@ export default function PersonalizedRecipesScreen() {
   }, [userAnswers, i18n.language]);
 
   const handleContinue = () => {
-    router.replace('/onboarding/reminder');
+    router.push('/onboarding/reminder');
   };
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom + 30 }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: Math.max(insets.bottom, 24) }]}>
       <View style={styles.content}>
         <View style={styles.topSection}>
           <Animated.View style={[styles.cardsContainer, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
@@ -167,7 +164,7 @@ export default function PersonalizedRecipesScreen() {
           </TouchableOpacity>
         </Animated.View>
       </View >
-    </SafeAreaView >
+    </View>
   );
 }
 
@@ -229,12 +226,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mainTitle: {
-    fontSize: width * 0.08,
+    fontSize: rw(0.08),
     fontFamily: 'Degular',
     color: Colors.light.text,
     textAlign: 'center',
     paddingHorizontal: 10,
-    lineHeight: width * 0.1,
+    lineHeight: rw(0.1),
   },
   continueButton: {
     backgroundColor: Colors.light.button,

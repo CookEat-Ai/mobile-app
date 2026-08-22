@@ -4,14 +4,16 @@ import Purchases, { PurchasesOffering } from 'react-native-purchases';
 import { apiService } from '../services/api';
 
 import analytics from '../services/analytics';
+import appsFlyerService from '../services/appsflyer';
+import { PUBLIC_ENV } from './env';
 
 // Configuration RevenueCat
 export const REVENUECAT_API_KEY = {
-  ios: 'appl_lhnWEUTIJSRJjlJziMnDGcLpsPh',
-  android: 'goog_BfHUBiwaxkMgsDMpuFljunoNrCh'
+  ios: PUBLIC_ENV.revenueCatIosApiKey,
+  android: PUBLIC_ENV.revenueCatAndroidApiKey,
 };
 
-export const ENTITLEMENT_ID = 'Pro';
+export const ENTITLEMENT_ID = PUBLIC_ENV.revenueCatEntitlementId;
 export const PROMO_CODE_STORAGE_KEY = 'promo_code_activated';
 const LAST_SUBSCRIPTION_STATUS_KEY = 'rc_last_subscription_status';
 
@@ -19,13 +21,28 @@ export interface SubscriptionStatus {
   isSubscribed: boolean;
   currentPlan: string | null;
   expirationDate: Date | null;
-  dailyQuotaRemaining: number;
+  /** Générations offertes restantes sur la vie du compte (plus de quota quotidien). */
+  freeGenerationsRemaining: number;
 }
+
+/**
+ * Générations offertes sur toute la vie du compte, hors abonnement.
+ *
+ * Il n'y a plus de remise à zéro quotidienne : avec un paywall dur, offrir une
+ * recette par jour revenait à donner la fonctionnalité à qui accepte d'attendre.
+ * Cette allocation unique n'a plus qu'un rôle, servir d'aha moment.
+ *
+ * La valeur reste pilotable à distance : l'API l'expose toujours sous son nom
+ * historique `dailySearchLimit`, qu'on interprète désormais comme un total à vie.
+ */
+const DEFAULT_FREE_GENERATIONS = 1;
+const FREE_GENERATIONS_KEY = 'free_generations_used';
 
 class RevenueCatService {
   private static instance: RevenueCatService;
   private isInitialized = false;
-  private dailySearchLimit: number = 1; // Valeur par défaut
+  private initializationPromise: Promise<void> | null = null;
+  private freeGenerationLimit: number = DEFAULT_FREE_GENERATIONS;
 
   static getInstance(): RevenueCatService {
     if (!RevenueCatService.instance) {
@@ -35,22 +52,34 @@ class RevenueCatService {
   }
 
   async initialize(appUserID?: string) {
-    if (this.isInitialized) return;
+    if (!this.isInitialized && !this.initializationPromise) {
+      this.initializationPromise = (async () => {
+        await Purchases.configure({
+          apiKey: Platform.OS === 'ios' ? REVENUECAT_API_KEY.ios : REVENUECAT_API_KEY.android,
+          appUserID: appUserID || undefined,
+        });
 
-    try {
-      await Purchases.configure({
-        apiKey: Platform.OS === 'ios' ? REVENUECAT_API_KEY.ios : REVENUECAT_API_KEY.android,
-        appUserID: appUserID || undefined,
+        await this.syncAttributionIdentifiers(appUserID);
+
+        // Récupérer la configuration de l'API sans retarder l'accès au Store.
+        void this.fetchAppConfig();
+
+        this.isInitialized = true;
+        console.log(`✅ RevenueCat initialisé avec succès ${appUserID ? `(User: ${appUserID})` : ''}`);
+      })().catch((error) => {
+        // Autoriser une vraie nouvelle tentative après un échec transitoire.
+        this.initializationPromise = null;
+        console.error('❌ Erreur lors de l\'initialisation de RevenueCat:', error);
+        throw error;
       });
-
-      // Récupérer la configuration de l'API
-      this.fetchAppConfig();
-
-      this.isInitialized = true;
-      console.log(`✅ RevenueCat initialisé avec succès ${appUserID ? `(User: ${appUserID})` : ''}`);
-    } catch (error) {
-      console.error('❌ Erreur lors de l\'initialisation de RevenueCat:', error);
     }
+
+    await this.initializationPromise;
+
+    // Le paywall peut avoir déclenché l'initialisation anonyme avant que le
+    // layout ait fini de lire l'identité stable. Dans ce cas on fusionne dès
+    // qu'elle arrive, sans reconfigurer deux fois le SDK natif.
+    if (appUserID) await this.syncAppUserId(appUserID);
   }
 
   async syncAppUserId(appUserID?: string | null): Promise<void> {
@@ -63,9 +92,32 @@ class RevenueCatService {
 
       // logIn fusionne l'utilisateur anonyme local avec l'identité stable serveur.
       await Purchases.logIn(targetUserId);
+      await this.syncAttributionIdentifiers(targetUserId);
       console.log(`🔐 RevenueCat logIn appliqué (${currentAppUserId || 'anonymous'} -> ${targetUserId})`);
     } catch (error) {
       console.error('❌ Erreur sync RevenueCat appUserID:', error);
+    }
+  }
+
+  private async syncAttributionIdentifiers(appUserID?: string): Promise<void> {
+    try {
+      const appsFlyerUID = await appsFlyerService.getAppsFlyerUID();
+      const attributes: Record<string, string> = {
+        ...(await appsFlyerService.getRevenueCatAttributionAttributes()),
+      };
+
+      if (appUserID) attributes.$posthogUserId = appUserID;
+      if (appsFlyerUID) attributes.$appsflyerId = appsFlyerUID;
+
+      if (Object.keys(attributes).length > 0) {
+        await Purchases.setAttributes(attributes);
+      }
+
+      // Collecte les identifiants publicitaires disponibles sans contourner
+      // les choix ATT/LAT de l'utilisateur.
+      await Purchases.collectDeviceIdentifiers();
+    } catch (error) {
+      console.warn('⚠️ Identifiants attribution RevenueCat non synchronisés:', error);
     }
   }
 
@@ -73,8 +125,8 @@ class RevenueCatService {
     try {
       const response = await apiService.getAppConfig();
       if (response.data?.dailySearchLimit) {
-        this.dailySearchLimit = response.data.dailySearchLimit;
-        console.log('⚙️ Limite de recherche quotidienne mise à jour:', this.dailySearchLimit);
+        this.freeGenerationLimit = response.data.dailySearchLimit;
+        console.log('⚙️ Générations offertes (à vie) mises à jour:', this.freeGenerationLimit);
       }
     } catch (error) {
       console.error('❌ Erreur lors de la récupération de la config:', error);
@@ -89,7 +141,7 @@ class RevenueCatService {
     //     isSubscribed: true,
     //     currentPlan: 'dev_mode',
     //     expirationDate: null,
-    //     dailyQuotaRemaining: 999
+    //     freeGenerationsRemaining: 999
     //   };
     // }
 
@@ -103,7 +155,7 @@ class RevenueCatService {
           isSubscribed: true,
           currentPlan: 'promo_code',
           expirationDate: null, // Pas d'expiration pour les codes promo
-          dailyQuotaRemaining: 999 // Quota illimité
+          freeGenerationsRemaining: 999 // Illimité
         };
         await this.persistLastSubscriptionStatus(status);
         return status;
@@ -137,14 +189,13 @@ class RevenueCatService {
         }
       }
 
-      // Gérer le quota quotidien pour les utilisateurs gratuits
-      const dailyQuotaRemaining = await this.getDailyQuotaRemaining();
+      const freeGenerationsRemaining = await this.getFreeGenerationsRemaining();
 
       const status = {
         isSubscribed,
         currentPlan,
         expirationDate,
-        dailyQuotaRemaining
+        freeGenerationsRemaining
       };
       await this.persistLastSubscriptionStatus(status);
 
@@ -168,7 +219,7 @@ class RevenueCatService {
         isSubscribed: false,
         currentPlan: null,
         expirationDate: null,
-        dailyQuotaRemaining: 0
+        freeGenerationsRemaining: 0
       };
     }
   }
@@ -256,7 +307,7 @@ class RevenueCatService {
         isSubscribed: Boolean(parsed.isSubscribed),
         currentPlan: parsed.currentPlan ?? null,
         expirationDate: parsed.expirationDate ? new Date(parsed.expirationDate) : null,
-        dailyQuotaRemaining: Number(parsed.dailyQuotaRemaining ?? 0),
+        freeGenerationsRemaining: Number(parsed.freeGenerationsRemaining ?? 0),
       };
     } catch {
       return null;
@@ -271,49 +322,30 @@ class RevenueCatService {
     }
   }
 
-  private async getDailyQuotaRemaining(): Promise<number> {
+  private async getFreeGenerationsRemaining(): Promise<number> {
     try {
-      // Utiliser la date locale pour s'assurer que le quota se remet à zéro à minuit
-      const now = new Date();
-      const today = now.toLocaleDateString('fr-FR'); // Format: DD/MM/YYYY
-      const quotaKey = `daily_quota_${today}`;
-      const usedQuota = await AsyncStorage.getItem(quotaKey);
-
-      if (!usedQuota) {
-        await AsyncStorage.setItem(quotaKey, '0');
-        return this.dailySearchLimit;
-      }
-
-      const used = parseInt(usedQuota);
-      return Math.max(0, this.dailySearchLimit - used);
+      const used = parseInt((await AsyncStorage.getItem(FREE_GENERATIONS_KEY)) || '0', 10);
+      return Math.max(0, this.freeGenerationLimit - (Number.isFinite(used) ? used : 0));
     } catch (error) {
-      console.error('❌ Erreur lors de la récupération du quota:', error);
+      console.error('❌ Erreur lors de la lecture des générations offertes:', error);
       return 0;
     }
   }
 
-  async useDailyQuota(): Promise<boolean> {
+  /** Consomme une génération offerte. `false` = allocation épuisée. */
+  async useFreeGeneration(): Promise<boolean> {
     try {
-      // Si un code promo est activé, pas de limite
-      const isPromoCodeActivated = await this.isPromoCodeActivated();
-      if (isPromoCodeActivated) {
-        return true;
-      }
+      // Un code promo actif ouvre l'accès complet : aucune limite.
+      if (await this.isPromoCodeActivated()) return true;
 
-      const now = new Date();
-      const today = now.toLocaleDateString('fr-FR');
-      const quotaKey = `daily_quota_${today}`;
-      const usedQuota = await AsyncStorage.getItem(quotaKey);
+      const raw = parseInt((await AsyncStorage.getItem(FREE_GENERATIONS_KEY)) || '0', 10);
+      const used = Number.isFinite(raw) ? raw : 0;
+      if (used >= this.freeGenerationLimit) return false;
 
-      const used = parseInt(usedQuota || '0');
-      if (used >= this.dailySearchLimit) {
-        return false; // Quota épuisé
-      }
-
-      await AsyncStorage.setItem(quotaKey, (used + 1).toString());
+      await AsyncStorage.setItem(FREE_GENERATIONS_KEY, String(used + 1));
       return true;
     } catch (error) {
-      console.error('❌ Erreur lors de l\'utilisation du quota:', error);
+      console.error('❌ Erreur lors de la consommation d\'une génération offerte:', error);
       return false;
     }
   }
@@ -416,7 +448,7 @@ class RevenueCatService {
           isSubscribed: true,
           currentPlan: 'promo_code',
           expirationDate: null,
-          dailyQuotaRemaining: 999
+          freeGenerationsRemaining: 999
         });
 
         console.log('✅ Code promo activé avec succès');
@@ -460,4 +492,4 @@ class RevenueCatService {
 
 }
 
-export default RevenueCatService.getInstance(); 
+export default RevenueCatService.getInstance();

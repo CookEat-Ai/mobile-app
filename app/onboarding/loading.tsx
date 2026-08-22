@@ -2,7 +2,6 @@ import { router } from "expo-router";
 import React, { useMemo, useRef, useState } from 'react';
 import {
   Animated,
-  Dimensions,
   Easing,
   StyleSheet,
   View,
@@ -10,11 +9,11 @@ import {
 } from 'react-native';
 import { Image } from 'expo-image';
 import { Colors } from '../../constants/Colors';
+import { rw } from '../../constants/Layout';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import analytics from "../../services/analytics";
 
-const { width } = Dimensions.get('window');
 
 export default function LoadingScreen() {
   const insets = useSafeAreaInsets();
@@ -188,8 +187,8 @@ const styles = StyleSheet.create({
     gap: 32,
   },
   loadingMascot: {
-    width: width * 0.5,
-    height: width * 0.5,
+    width: rw(0.5),
+    height: rw(0.5),
     transform: [{ rotate: '20deg' }],
   },
   percentContainer: {
@@ -210,10 +209,10 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontFamily: 'Degular',
-    fontSize: width * 0.06,
+    fontSize: rw(0.06),
     color: Colors.light.text,
     textAlign: 'center',
-    lineHeight: width * 0.07,
+    lineHeight: rw(0.07),
   },
   loadingBarTrack: {
     width: '100%',

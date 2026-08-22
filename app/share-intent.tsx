@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
-  Dimensions,
   Easing,
   StyleSheet,
   Text,
@@ -14,6 +13,8 @@ import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/Colors';
+import { rw } from '../constants/Layout';
+import { contentColumn } from '../hooks/useResponsive';
 import { apiService } from '../services/api';
 import { recipeStorageService } from '../services/recipeStorage';
 import analytics from '../services/analytics';
@@ -21,13 +22,54 @@ import revenueCatService from '../config/revenuecat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUniqueDeviceId } from '../services/deviceStorage';
 
-const { width } = Dimensions.get('window');
 
 export default function ShareIntentScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const params = useLocalSearchParams<{ url?: string }>();
+  const params = useLocalSearchParams<{
+    url?: string;
+    /** Point d'entrée de l'import : share_sheet par défaut (partage OS). */
+    source?: string;
+    isOnboarding?: string;
+    onboardingNext?: string;
+  }>();
+  const importSource = params.source || 'share_sheet';
+  const isOnboarding = params.isOnboarding === 'true';
+
+  /**
+   * Clôt l'onboarding après un import réussi, mais uniquement pour quelqu'un qui
+   * a réellement l'accès — abonnement actif ou code promo intégral.
+   *
+   * Le paywall d'onboarding est une boucle fermée : rien n'en sort sans
+   * souscription. Marquer l'onboarding terminé ici sans vérifier l'accès rouvrait
+   * une porte dérobée — partager une vidéo depuis TikTok déposait l'utilisateur
+   * dans l'app, tunnel jamais terminé, avec la génération gratuite en prime.
+   *
+   * Pendant l'onboarding on ne clôt jamais : la fiche recette reprend le flux.
+   */
+  const markOnboardingDoneIfEntitled = async () => {
+    if (isOnboarding) return;
+    let completionMethod: 'subscription' | 'promo_code' = 'subscription';
+    try {
+      const [{ isSubscribed }, hasPromo] = await Promise.all([
+        revenueCatService.getSubscriptionStatus(),
+        revenueCatService.isPromoCodeActivated(),
+      ]);
+      if (!isSubscribed && !hasPromo) return;
+      completionMethod = isSubscribed ? 'subscription' : 'promo_code';
+    } catch (error) {
+      // En cas d'échec de lecture, on ne clôt pas : mieux vaut refaire passer
+      // l'utilisateur par le tunnel que lui ouvrir l'app par erreur.
+      console.error('[ShareIntent] Vérification d’accès impossible:', error);
+      return;
+    }
+    await AsyncStorage.setItem('questions_answered', 'true');
+    await analytics.completeOnboarding({
+      source: importSource,
+      completion_method: completionMethod,
+    });
+  };
 
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState('');
@@ -114,22 +156,42 @@ export default function ShareIntentScreen() {
   }, [scaleAnim, fadeAnim]);
 
   useEffect(() => {
-    if (status === 'success' && recipe) {
-      setTimeout(() => {
-        router.replace('/(tabs)/imported');
-        setTimeout(() => {
-          router.push({
-            pathname: '/recipe-detail',
-            params: {
-              recipeId: recipe.id,
-              showGenerateButton: 'false',
-              isHistory: 'true',
-            },
-          });
-        }, 100);
+    if (status !== 'success' || !recipe) return;
+
+    // Pendant l'onboarding, la recette importée *est* l'aha moment : on va
+    // directement sur la fiche, qui affiche son propre bouton de continuation et
+    // reprend le tunnel. Passer par les onglets casserait le tunnel.
+    if (isOnboarding) {
+      const timer = setTimeout(() => {
+        router.replace({
+          pathname: '/recipe-detail',
+          params: {
+            recipeId: recipe.id,
+            showGenerateButton: 'false',
+            isHistory: 'true',
+            isOnboarding: 'true',
+            ...(params.onboardingNext ? { onboardingNext: params.onboardingNext } : {}),
+          },
+        });
       }, 1500);
+      return () => clearTimeout(timer);
     }
-  }, [status, recipe, router]);
+
+    const timer = setTimeout(() => {
+      router.replace('/(tabs)/imported');
+      setTimeout(() => {
+        router.push({
+          pathname: '/recipe-detail',
+          params: {
+            recipeId: recipe.id,
+            showGenerateButton: 'false',
+            isHistory: 'true',
+          },
+        });
+      }, 100);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [status, recipe, router, isOnboarding, params.onboardingNext]);
 
   useEffect(() => {
     if (hasStarted.current) return;
@@ -141,8 +203,10 @@ export default function ShareIntentScreen() {
     }
     hasStarted.current = true;
 
-    console.log('[ShareIntent] importing from url:', params.url);
-    analytics.track('share_intent_received', { url: params.url });
+    // Ne jamais envoyer l'URL complète à l'analytics : elle peut contenir un
+    // identifiant de compte, de vidéo ou un paramètre de partage personnel.
+    console.log('[ShareIntent] import started from:', importSource);
+    analytics.track('import_started', { source: importSource });
 
     (async () => {
       try {
@@ -151,13 +215,13 @@ export default function ShareIntentScreen() {
         let userId = await AsyncStorage.getItem('userId');
         if (!userId) {
           const mobileId = await getUniqueDeviceId();
-          console.log('[ShareIntent] Creating minimal user for mobileId:', mobileId);
+          console.log('[ShareIntent] Creating minimal user');
           const userResponse = await apiService.saveOnboardingAnswers({ skipped_onboarding: 'true' }, mobileId);
           if (userResponse.data?.userId) {
             userId = userResponse.data.userId;
             await AsyncStorage.setItem('userId', userId);
             analytics.identify(userId);
-            console.log('[ShareIntent] Minimal user created:', userId);
+            console.log('[ShareIntent] Minimal user created');
           }
         }
 
@@ -169,8 +233,6 @@ export default function ShareIntentScreen() {
           },
         });
 
-        console.log('[ShareIntent] API response:', JSON.stringify(response).slice(0, 500));
-
         if (response.error || !response.data?.recipe) {
           const quotaReached = response.error?.includes('quota') || response.error?.includes('Premium');
           if (quotaReached) {
@@ -181,30 +243,46 @@ export default function ShareIntentScreen() {
           return;
         }
 
-        // Importation réussie : on marque l'onboarding comme terminé
-        // pour éviter d'y revenir au prochain lancement
-        await AsyncStorage.setItem('onboarding_completed', 'true');
-        await AsyncStorage.setItem('questions_answered', 'true');
+        // Un import via le partage OS fait office d'onboarding — mais seulement
+        // pour qui a déjà l'accès. Sans la condition d'abonnement, partager une
+        // vidéo depuis TikTok suffisait à marquer l'onboarding terminé et à
+        // entrer dans l'app sans jamais passer par le paywall, ce qui contourne
+        // entièrement le tunnel fermé.
+        //
+        // Un import *pendant* l'onboarding ne le clôt pas non plus : la fiche
+        // recette reprend le flux elle-même (promo, paywall).
+        await markOnboardingDoneIfEntitled();
 
         setRecipe(response.data.recipe);
         setProgress(100);
         setIsDataReady(true);
 
         recipeStorageService.saveGeneratedRecipe(response.data.recipe, []);
-        analytics.track('share_intent_success', {
-          recipe_title: response.data.recipe.title,
-          url: params.url,
+        analytics.track('import_completed', {
+          source: importSource,
+          during_onboarding: isOnboarding,
         });
+        analytics.markFeatureUsed('import');
+        analytics.trackFirstAction('import', { source: importSource });
       } catch (error) {
         console.error('[ShareIntent] catch error:', error);
         setErrorMessage(t('shareIntent.genericError'));
         setStatus('error');
-        analytics.track('share_intent_error', { url: params.url, error: String(error) });
+        analytics.track('import_failed', {
+          error_type: error instanceof Error ? error.name : 'unknown',
+          source: importSource,
+        });
       }
     })();
   }, [params.url, router]);
 
   const handleGoHome = () => {
+    // Un import raté pendant l'onboarding ne doit pas éjecter vers les onglets :
+    // on reprend le tunnel là où il devait continuer.
+    if (isOnboarding && params.onboardingNext) {
+      router.replace(params.onboardingNext as any);
+      return;
+    }
     router.replace('/(tabs)');
   };
 
@@ -247,14 +325,20 @@ export default function ShareIntentScreen() {
             return;
           }
 
-          // Importation réussie : on marque l'onboarding comme terminé
-          await AsyncStorage.setItem('onboarding_completed', 'true');
-          await AsyncStorage.setItem('questions_answered', 'true');
+          // Même règle que sur le premier essai.
+          await markOnboardingDoneIfEntitled();
 
           setRecipe(response.data.recipe);
           setProgress(100);
           setIsDataReady(true);
           recipeStorageService.saveGeneratedRecipe(response.data.recipe, []);
+          analytics.track('import_completed', {
+            source: importSource,
+            during_onboarding: isOnboarding,
+            is_retry: true,
+          });
+          analytics.markFeatureUsed('import');
+        analytics.trackFirstAction('import', { source: importSource });
         } catch {
           setErrorMessage(t('shareIntent.genericError'));
           setStatus('error');
@@ -358,13 +442,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
   content: {
-    width: '100%',
+    ...contentColumn(),
     alignItems: 'center',
     gap: 32,
   },
   loadingMascot: {
-    width: width * 0.5,
-    height: width * 0.5,
+    width: rw(0.5),
+    height: rw(0.5),
     transform: [{ rotate: '20deg' }],
   },
   percentContainer: {
@@ -385,10 +469,10 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontFamily: 'Degular',
-    fontSize: width * 0.06,
+    fontSize: rw(0.06),
     color: Colors.light.text,
     textAlign: 'center',
-    lineHeight: width * 0.07,
+    lineHeight: rw(0.07),
   },
   loadingBarTrack: {
     width: '100%',

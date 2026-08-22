@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
-  Dimensions,
   Easing,
   Platform,
   StyleSheet,
@@ -18,18 +17,19 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Asset } from 'expo-asset';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/Colors';
+import { font, rw } from '../../constants/Layout';
+import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { useTranslation } from 'react-i18next';
 import analytics from '../../services/analytics';
 import apiService from '../../services/api';
 import revenueCatService from '../../config/revenuecat';
 import { IconSymbol } from '../../components/ui/IconSymbol';
-
-const { width } = Dimensions.get('window');
+import { useOnboardingTrialEligibility } from '../../hooks/useOnboardingTrialEligibility';
 
 const TUTORIAL_IMAGES_IOS = [
   require('../../assets/images/tuto/ios/tuto-import-tiktok-1.png'),
@@ -82,12 +82,31 @@ const RatingBadge = ({ style }: { style?: any }) => {
   );
 };
 
+const STEP_COUNT = 6;
+
 export default function FastOnboardingScreen() {
   const insets = useSafeAreaInsets();
   const { t, i18n } = useTranslation();
+  const params = useLocalSearchParams<{ initialStep?: string }>();
+  const { layoutWidth } = useResponsive();
+  const trial = useOnboardingTrialEligibility();
+  const hasFreeTrial = trial.status === 'eligible' && Boolean(trial.days);
+  // La maquette de téléphone fait le double de sa largeur en hauteur (aspectRatio
+  // 538/1076). Bornée seulement par la largeur, elle dépassait sous le bouton sur
+  // iPhone SE et explosait sur iPad. On mesure la zone du carrousel et on réserve
+  // la pagination (~26pt) plus un peu d'air (~20pt).
+  const [carouselHeight, setCarouselHeight] = useState(0);
+  const mockupWidth = carouselHeight > 0
+    ? Math.min(layoutWidth * 0.55, Math.max(carouselHeight - 46, 0) * (538 / 1076))
+    : layoutWidth * 0.55;
 
-  const [step, setStep] = useState(0);
-  const [totalSteps, setTotalSteps] = useState(6);
+  // Permet de rentrer directement à une étape donnée quand l'utilisateur revient
+  // dans le flux après une excursion hors écran (caméra → ingredient-list → recipe-detail).
+  const [step, setStep] = useState(() => {
+    const parsed = Number(params.initialStep);
+    return Number.isInteger(parsed) && parsed >= 0 && parsed < STEP_COUNT ? parsed : 0;
+  });
+  const [totalSteps, setTotalSteps] = useState(STEP_COUNT);
 
   // Anims
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -105,9 +124,6 @@ export default function FastOnboardingScreen() {
   const [promoSuccess, setPromoSuccess] = useState(false);
   const [discountPercent, setDiscountPercent] = useState<number | null>(null);
 
-  // Step 4: Personalized Recipes State
-  const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
-
   useEffect(() => {
     // Preload tutorial images
     Asset.loadAsync([
@@ -119,22 +135,16 @@ export default function FastOnboardingScreen() {
     // Set total steps based on variant
     (async () => {
       const v = await analytics.getOnboardingVariant();
-      setTotalSteps(v === 'E' ? 4 : 6);
+      setTotalSteps(v === 'E' ? 4 : STEP_COUNT);
     })();
 
-    // Load answers for personalization (even if empty for E/F, we try)
-    const loadAnswers = async () => {
-      try {
-        const keys = ['cookingTime', 'question_13', 'diet', 'question_17'];
-        const results = await Promise.all(keys.map((k) => AsyncStorage.getItem(k)));
-        const answers: Record<string, string> = {};
-        keys.forEach((key, i) => {
-          if (results[i]) answers[key] = results[i]!;
-        });
-        setUserAnswers(answers);
-      } catch { }
-    };
-    loadAnswers();
+    // Pas de chargement de réponses ici : les variantes E/F ne posent aucune
+    // question, donc les clés lues (`cookingTime`, `diet`, `question_13`…)
+    // n'existent jamais dans ce flux. Le code précédent les lisait et stockait
+    // le résultat dans un état que personne ne consommait — l'écran « recettes
+    // personnalisées » de la variante F affiche des catégories fixes
+    // (cf. `renderPersonalizedRecipes`). Le rendre réellement personnalisé
+    // suppose d'abord de poser des questions dans ce tunnel.
 
     // Initial Mascot Anim
     Animated.timing(mascotOpacity, {
@@ -209,7 +219,10 @@ export default function FastOnboardingScreen() {
     // Vérifier si un code promo premium a déjà été activé
     const isPremium = await revenueCatService.isPromoCodeActivated();
     if (isPremium) {
-      await AsyncStorage.setItem('onboarding_completed', 'true');
+      await analytics.completeOnboarding({
+        source,
+        completion_method: 'promo_code',
+      });
       router.replace('/(tabs)');
       return;
     }
@@ -217,7 +230,7 @@ export default function FastOnboardingScreen() {
     const pendingDiscount = await AsyncStorage.getItem('pending_promo_discount');
 
     if (pendingDiscount) {
-      router.replace({
+      router.push({
         pathname: '/paywall',
         params: {
           source,
@@ -226,7 +239,7 @@ export default function FastOnboardingScreen() {
         },
       });
     } else {
-      router.replace({ pathname: '/paywall', params: { source } });
+      router.push({ pathname: '/paywall', params: { source } });
     }
   };
 
@@ -278,12 +291,12 @@ export default function FastOnboardingScreen() {
   );
 
   const renderTutorial = () => {
-    const itemWidth = width - 140;
+    const itemWidth = layoutWidth - 140;
     const padding = 70;
 
     const renderTutoItem = ({ item, index }: { item: any; index: number }) => (
       <View style={[styles.tutoCarouselItem, { width: itemWidth }]}>
-        <View style={styles.iphoneWrapper}>
+        <View style={[styles.iphoneWrapper, { width: mockupWidth }]}>
           <Image source={item} style={styles.tutoImage} priority={index === 0 ? 'high' : 'normal'} />
           <Image
             source={
@@ -305,7 +318,12 @@ export default function FastOnboardingScreen() {
           <Text style={styles.howToText}>{t('onboardingVideoImport.howTo')}</Text>
         </View>
 
-        <View style={styles.carouselContainer}>
+        {/* Sur tablette le carrousel est recentré au lieu de s'étaler sur
+            toute la largeur de l'écran. */}
+        <View
+          style={[styles.carouselContainer, { maxWidth: layoutWidth }]}
+          onLayout={(e) => setCarouselHeight(e.nativeEvent.layout.height)}
+        >
           <FlatList
             data={TUTORIAL_IMAGES}
             renderItem={renderTutoItem}
@@ -377,14 +395,6 @@ export default function FastOnboardingScreen() {
           ))}
           <Text> 🎉</Text>
         </Text>
-        <View style={styles.ratingSection}>
-          <Text style={styles.ratingPrompt}>{t('onboarding.socialProof.subtitle')}</Text>
-          <View style={styles.starsContainer}>
-            {[1, 2, 3, 4, 5].map((s) => (
-              <Ionicons key={s} name="star" size={28} color="#FEB50A" />
-            ))}
-          </View>
-        </View>
         <View style={styles.reviewsContainer}>
           {reviews.map((r) => (
             <View key={r.id} style={styles.reviewCard}>
@@ -496,24 +506,30 @@ export default function FastOnboardingScreen() {
   };
 
   const renderReminder = () => {
-    const fullText = t('onboarding.reminder.title', { days: '1' });
-    const parts = fullText.split(/(1 jour|1 day)/);
-
     return (
       <View style={styles.stepContent}>
         <View style={styles.centerSectionReminder}>
           <Text style={styles.emojiLarge}>🔔</Text>
+          {/* Même formulation que l'écran `reminder` : aucune date annoncée,
+              cf. le commentaire de `renderTitle` là-bas. */}
           <Text style={styles.title}>
-            {parts.map((part, index) => (
-              <Text key={index} style={part.match(/1 jour|1 day/) ? styles.highlight : null}>
-                {part}
-              </Text>
-            ))}
+            {hasFreeTrial
+              ? t('onboarding.reminder.eligibleTitle', { count: trial.days ?? 7 })
+              : t('onboarding.reminder.standardTitle')}
+          </Text>
+          <Text style={styles.reminderSubtitle}>
+            {hasFreeTrial
+              ? t('onboarding.reminder.eligibleSubtitle')
+              : t('onboarding.reminder.standardSubtitle')}
           </Text>
         </View>
         <View style={styles.checkContainer}>
           <Ionicons name="checkmark" size={20} color={Colors.light.text} />
-          <Text style={styles.checkText}>{t('onboarding.offerTrial.noPayment')}</Text>
+          <Text style={styles.checkText}>
+            {hasFreeTrial
+              ? t('onboarding.offerTrial.noPayment')
+              : t('onboarding.offerTrial.reviewOffer')}
+          </Text>
         </View>
       </View>
     );
@@ -525,7 +541,9 @@ export default function FastOnboardingScreen() {
         styles.container,
         {
           paddingTop: insets.top,
-          paddingBottom: Platform.OS === 'ios' ? 40 : insets.bottom + 20,
+          // 40pt en dur sur iOS laissait un vide sous les boutons sur iPhone SE et
+          // n'était pas assez sur les Android à navigation gestuelle.
+          paddingBottom: Math.max(insets.bottom, 16) + 12,
         },
       ]}
     >
@@ -580,22 +598,17 @@ export default function FastOnboardingScreen() {
         {/* Action Buttons */}
         <View style={styles.bottomSection}>
           {step === 0 && (
-            <>
-              <TouchableOpacity
-                activeOpacity={0.8}
-                style={styles.mainButton}
-                onPress={() => {
-                  analytics.track('onboarding_fast_camera_click');
-                  router.push({ pathname: '/camera', params: { isOnboarding: 'true' } });
-                }}
-              >
-                <IconSymbol name="camera.fill" size={24} color="white" />
-                <Text style={styles.mainButtonText}>{t('onboarding.ahaMoment.cameraButton')}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.skipButton} onPress={nextStep}>
-                <Text style={styles.skipButtonText}>{t('onboarding.ahaMoment.skip')}</Text>
-              </TouchableOpacity>
-            </>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.mainButton}
+              onPress={() => {
+                analytics.track('onboarding_fast_camera_click');
+                router.push({ pathname: '/camera', params: { isOnboarding: 'true' } });
+              }}
+            >
+              <IconSymbol name="camera.fill" size={24} color="white" />
+              <Text style={styles.mainButtonText}>{t('onboarding.ahaMoment.cameraButton')}</Text>
+            </TouchableOpacity>
           )}
 
           {step === 1 && (
@@ -642,7 +655,11 @@ export default function FastOnboardingScreen() {
 
           {step === 5 && (
             <TouchableOpacity activeOpacity={0.8} style={styles.mainButton} onPress={nextStep}>
-              <Text style={styles.mainButtonText}>{t('onboarding.reminder.button')}</Text>
+              <Text style={styles.mainButtonText}>
+                {hasFreeTrial
+                  ? t('onboarding.reminder.button')
+                  : t('onboarding.offerTrial.standardButton')}
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -657,6 +674,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FDF9E2',
   },
   header: {
+    // Barre de progression : pleine largeur, comme sur téléphone.
     paddingHorizontal: 24,
     paddingTop: 10,
     paddingBottom: 10,
@@ -688,44 +706,47 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+    ...contentColumn(),
     paddingHorizontal: 24,
     paddingBottom: 20,
   },
   stepContent: {
     alignItems: 'center',
     flex: 1,
+    minHeight: 0,
     paddingTop: 20,
   },
   title: {
-    fontSize: width * 0.08,
+    fontSize: rw(0.08),
     fontFamily: 'Degular',
     color: Colors.light.text,
     textAlign: 'center',
-    lineHeight: width * 0.1,
+    lineHeight: rw(0.1),
     marginBottom: 12,
   },
   titleSmall: {
-    fontSize: 24,
+    fontSize: font(24),
     fontFamily: 'Degular',
     color: Colors.light.text,
     textAlign: 'center',
     marginBottom: 6,
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: font(18),
     fontFamily: 'CronosPro',
     color: '#8C8C8C',
     textAlign: 'center',
     paddingHorizontal: 10,
   },
   subtitleSmall: {
-    fontSize: 16,
+    fontSize: font(16),
     fontFamily: 'CronosPro',
     color: '#666',
     textAlign: 'center',
     marginBottom: 10,
   },
   bottomSection: {
+    ...contentColumn(),
     paddingTop: 10,
     gap: 12,
     paddingHorizontal: 24,
@@ -748,7 +769,7 @@ const styles = StyleSheet.create({
   },
   mainButtonText: {
     color: 'white',
-    fontSize: 19,
+    fontSize: font(19),
     fontFamily: 'Degular',
   },
   skipButton: {
@@ -757,7 +778,7 @@ const styles = StyleSheet.create({
   },
   skipButtonText: {
     color: '#8C8C8C',
-    fontSize: 16,
+    fontSize: font(16),
     fontFamily: 'CronosPro',
     textDecorationLine: 'underline',
   },
@@ -775,12 +796,18 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   emojiLarge: {
-    fontSize: width * 0.15,
+    fontSize: rw(0.15),
   },
 
   // Tuto
   carouselContainer: {
+    // flex:1 pour que la maquette soit contrainte par la place restante et non
+    // l'inverse (sinon elle poussait le bouton hors de l'écran).
+    flex: 1,
+    minHeight: 0,
     width: '100%',
+    alignSelf: 'center',
+    justifyContent: 'center',
     marginTop: 10,
   },
   flatList: {
@@ -790,7 +817,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iphoneWrapper: {
-    width: width * 0.55,
+    // width fourni à l'usage (borné par la hauteur disponible).
     aspectRatio: 538 / 1076,
     position: 'relative',
   },
@@ -1025,6 +1052,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'CronosPro',
     color: Colors.light.text,
+  },
+  reminderSubtitle: {
+    fontSize: 16,
+    lineHeight: 22,
+    fontFamily: 'CronosPro',
+    color: Colors.light.textSecondary,
+    textAlign: 'center',
+    marginTop: 14,
+    paddingHorizontal: 16,
   },
 
   ratingBadgeContainer: {

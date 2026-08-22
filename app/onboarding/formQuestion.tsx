@@ -1,10 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   AppState,
-  Dimensions,
   Easing,
   Platform,
   ScrollView,
@@ -16,19 +15,40 @@ import {
 import * as Haptics from 'expo-haptics';
 import * as Localization from 'expo-localization';
 import { Image } from 'expo-image';
-import * as Notifications from 'expo-notifications';
 import * as StoreReview from 'expo-store-review';
 import { FontAwesome6, Ionicons } from '@expo/vector-icons';
 import { getUniqueDeviceId } from '../../services/deviceStorage';
 import { Colors } from '../../constants/Colors';
 import { useTranslation } from 'react-i18next';
 import api from '../../services/api';
-import analytics from '../../services/analytics';
+import analytics, { EntryFeature } from '../../services/analytics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-const { width, height } = Dimensions.get('window');
+import { font, rw } from '../../constants/Layout';
+import { contentColumn, useResponsive } from '../../hooks/useResponsive';
+import { ContextualProof } from '../../components/onboarding/ContextualProof';
+import { CommitmentTitle } from '../../components/onboarding/CommitmentTitle';
+import { ProjectionStep } from '../../components/onboarding/ProjectionStep';
+import {
+  loadOnboardingProfile,
+  OnboardingProfile,
+  ProofKey,
+} from '../../services/onboardingProfile';
 
 const QUESTIONS_ANSWERED_KEY = 'questions_answered';
+
+/**
+ * Question de segmentation : elle oriente la fin du tunnel selon ce que
+ * l'utilisateur est venu chercher. Le trafic étant organique, c'est la seule
+ * source de vérité disponible sur son intention (cf. `EntryFeature`).
+ */
+const ENTRY_FEATURE_FIELD = 'entryFeature';
+
+/**
+ * Étape de bascule vers l'aha moment d'import, à la position qu'occupait la
+ * question de segmentation. Elle ne demande rien : la branche est déjà connue
+ * depuis l'accueil, cet écran annonce simplement le premier import.
+ */
+const IMPORT_HANDOFF_FIELD = 'intro_import_handoff';
 
 type Question = {
   question: string;
@@ -39,7 +59,30 @@ type Question = {
   optional?: boolean;
   interstitial?: boolean;
   hideProgress?: boolean;
-  specialType?: 'socialProof' | 'notifications' | 'onboardingReady';
+  specialType?: 'socialProof' | 'onboardingReady' | 'projection';
+  /**
+   * Restreint la question à une branche. Les questions de personnalisation ne
+   * servent qu'à la génération : les poser à quelqu'un venu importer une vidéo
+   * n'a aucun effet sur son résultat et allonge le tunnel pour rien.
+   */
+  branch?: EntryFeature;
+  /**
+   * Transforme un interstitiel en écran de preuve contextuelle : son contenu
+   * est choisi d'après les réponses déjà données plutôt qu'écrit en dur.
+   * Volontairement porté par `interstitial` et non par `specialType` : la
+   * logique de sauvegarde du tunnel se déclenche sur le premier `specialType`
+   * rencontré, un écran de preuve au milieu du questionnaire la ferait partir
+   * trop tôt.
+   */
+  proofKey?: ProofKey;
+  /** Rend le titre via un composant dédié au lieu du texte statique. */
+  dynamicTitle?: 'commitment';
+  /**
+   * Autorise deux lignes par option. Réservé aux questions dont les libellés
+   * sont des phrases : sur une seule ligne, `adjustsFontSizeToFit` les réduirait
+   * jusqu'à l'illisible.
+   */
+  multilineOptions?: boolean;
 }
 
 type Option = {
@@ -53,7 +96,7 @@ type Option = {
 const SocialProofContent = ({ onRate }: { onRate?: () => void }) => {
   const { t, i18n } = useTranslation();
   const count = i18n.language.startsWith('fr') ? '10 000' : '10,000';
-  const fullText = t('onboarding.socialProof.title', { count });
+  const fullText = t('onboarding.socialProof.title', { total: count });
   const parts = fullText.split(new RegExp(`(${count})`));
 
   const reviews = [
@@ -117,70 +160,9 @@ const SocialProofContent = ({ onRate }: { onRate?: () => void }) => {
   );
 };
 
-const NotificationsContent = ({ onNext }: { onNext?: () => void }) => {
-  const { t } = useTranslation();
-  const fingerAnim = useRef(new Animated.Value(0)).current;
-
-  React.useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(fingerAnim, {
-          toValue: -20,
-          duration: 1000,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(fingerAnim, {
-          toValue: 0,
-          duration: 1000,
-          easing: Easing.in(Easing.quad),
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, [fingerAnim]);
-
-  return (
-    <View style={styles.specialStepContainer}>
-      <View style={{ position: 'absolute', top: 40, width: '100%' }}>
-        <Text style={styles.title}>{t('notifications.title')}</Text>
-      </View>
-
-      <View style={[styles.mockDialogContainer, { marginTop: 180 }]}>
-        <View style={styles.mockDialog}>
-          <Text style={styles.mockDialogTitle}>
-            {t('notifications.permissionTitle')}
-          </Text>
-
-          <View style={styles.mockButtons}>
-            <View style={styles.mockButtonLeft}>
-              <Text style={[styles.mockButtonText, { color: '#8E8E93' }]}>
-                {t('notifications.dontAllow')}
-              </Text>
-            </View>
-
-            <View style={styles.mockButtonRight}>
-              <Text style={[styles.mockButtonText, { fontWeight: 'bold', color: '#FFF' }]}>
-                {t('notifications.allow')}
-              </Text>
-            </View>
-          </View>
-        </View>
-        <View style={{ width: width * 0.8, flexDirection: 'row' }}>
-          <View style={{ flex: 1 }} />
-          <View style={{ flex: 1, alignItems: 'center' }}>
-            <Animated.View style={{ transform: [{ translateY: fingerAnim }] }}>
-              <Text style={styles.pointingEmoji}>👆</Text>
-            </Animated.View>
-          </View>
-        </View>
-      </View>
-    </View>
-  );
-};
-
 const OnboardingReadyContent = () => {
   const { t } = useTranslation();
+  const { height } = useResponsive();
   return (
     <View style={[styles.specialStepContainer, { paddingTop: height * 0.3 }]}>
       <View style={styles.badge}>
@@ -219,6 +201,21 @@ const RatingBadge = ({ style }: { style?: any }) => {
 export default function FormQuestionScreen() {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
+  // `windowWidth/Height` = dimensions réelles (pour les animations qui sortent de
+  // l'écran) ; `layoutWidth` = largeur plafonnée servant à la mise en page.
+  const { width: windowWidth, height: windowHeight, layoutWidth } = useResponsive();
+
+  // Permet de reprendre le questionnaire à une étape précise. La branche import
+  // en sort après la question de segmentation (pour l'aha moment d'import) puis
+  // y revient à `socialProof`. On cible par nom d'étape et non par index, qui
+  // dépend de la branche.
+  const routeParams = useLocalSearchParams<{ initialStep?: string }>();
+
+  // Branche choisie sur l'écran d'accueil, relue au montage. `null` seulement le
+  // temps de la lecture asynchrone : toutes les questions sont alors considérées
+  // comme visibles, ce qui n'affiche rien de faux, juste une barre de
+  // progression momentanément trop longue.
+  const [entryFeature, setEntryFeature] = useState<EntryFeature | null>(null);
 
   const questions: Question[] = useMemo(() => [
     {
@@ -240,26 +237,34 @@ export default function FormQuestionScreen() {
         { label: t('onboarding.formQuestions.more_than_45'), value: 'more_than_45', emoji: '🏡' }
       ]
     },
+    // Objectif : remontée de la fin du tunnel vers le début, et sortie de la
+    // branche `generate`. C'est la seule réponse dont dépendent l'engagement, la
+    // projection et la preuve contextuelle — la poser tard revenait à
+    // personnaliser un tunnel déjà terminé. Elle sert aussi à découvrir *pourquoi*
+    // les gens installent l'app, ce qu'aucune autre question ne dit.
     {
-      fieldName: 'howDidHeKnowCookEatAI',
-      question: t('onboarding.howDidHeKnowCookEatAI'),
+      fieldName: 'useCase',
+      question: t('onboarding.useCase'),
+      multilineOptions: true,
       options: [
-        {
-          label: Platform.OS === 'ios' ? t('onboarding.formQuestions.app_store') : t('onboarding.formQuestions.google_play'),
-          value: 'store',
-          iconName: Platform.OS === 'ios' ? 'apple' : 'google-play',
-          iconColor: Platform.OS === 'ios' ? '#000000' : '#3DDC84'
-        },
-        { label: t('onboarding.formQuestions.tiktok'), value: 'tiktok', iconName: 'tiktok', iconColor: '#000000' },
-        { label: t('onboarding.formQuestions.instagram'), value: 'instagram', iconName: 'instagram', iconColor: '#E4405F' },
-        { label: t('onboarding.formQuestions.facebook'), value: 'facebook', iconName: 'facebook', iconColor: '#1877F2' },
-        { label: t('onboarding.formQuestions.youtube'), value: 'youtube', iconName: 'youtube', iconColor: '#FF0000' },
-        { label: t('onboarding.formQuestions.google'), value: 'google', iconName: 'google', iconColor: '#4285F4' },
-        { label: t('onboarding.formQuestions.friend'), value: 'friend', iconName: 'user', iconColor: '#6366F1' },
-        { label: t('onboarding.formQuestions.other'), value: 'other', iconName: 'ellipsis', iconColor: '#94A3B8' },
+        { label: t('onboarding.formQuestions.usecase_ideas'), value: 'usecase_ideas', emoji: '💡' },
+        { label: t('onboarding.formQuestions.usecase_leftovers'), value: 'usecase_leftovers', emoji: '🥬' },
+        { label: t('onboarding.formQuestions.usecase_money'), value: 'usecase_money', emoji: '💸' },
+        { label: t('onboarding.formQuestions.usecase_organize'), value: 'usecase_organize', emoji: '📚' },
+        { label: t('onboarding.formQuestions.usecase_time'), value: 'usecase_time', emoji: '⏱️' },
+        { label: t('onboarding.formQuestions.usecase_healthy'), value: 'usecase_healthy', emoji: '🥗' },
       ]
     },
     {
+      fieldName: 'proof_goal',
+      question: 'proof:goal',
+      options: [],
+      interstitial: true,
+      hideProgress: true,
+      proofKey: 'goal',
+    },
+    {
+      fieldName: 'intro_habits',
       question: t('onboarding.habitsIntroInterstitial'),
       options: [],
       interstitial: true,
@@ -294,6 +299,14 @@ export default function FormQuestionScreen() {
       ]
     },
     {
+      fieldName: 'proof_habits',
+      question: 'proof:habits',
+      options: [],
+      interstitial: true,
+      hideProgress: true,
+      proofKey: 'habits',
+    },
+    {
       key: 'cookingForWho',
       fieldName: 'cookingForWho',
       question: t('onboarding.cookingForWho'),
@@ -312,17 +325,33 @@ export default function FormQuestionScreen() {
         { label: t('onboarding.formQuestions.more_than_1_hour'), value: 'more_than_1_hour', emoji: '⌛️' }
       ]
     },
+    // La question de segmentation vivait ici. Elle est désormais posée sur
+    // l'écran d'accueil : le trafic étant organique, l'app n'a aucun moyen de
+    // savoir ce que l'utilisateur venait chercher, et ouvrir sur une promesse
+    // « scanne ton frigo » faisait fuir la moitié venue pour l'import. Il ne
+    // reste ici que la bascule vers l'aha moment d'import, à la même position.
     {
+      fieldName: IMPORT_HANDOFF_FIELD,
+      question: t('onboarding.importHandoff'),
+      options: [],
+      interstitial: true,
+      hideProgress: true,
+      branch: 'import',
+    },
+    {
+      fieldName: 'intro_preferences',
       question: t('onboarding.preferencesIntro'),
       options: [],
       interstitial: true,
       hideProgress: true,
+      branch: 'generate',
     },
     {
       fieldName: 'equipments',
       question: t('onboarding.equipmentQuestion'),
       multi: true,
       optional: true,
+      branch: 'generate',
       options: [
         { label: t('onboarding.formQuestions.equipment_oven'), value: 'equipment_oven', emoji: '🔥' },
         { label: t('onboarding.formQuestions.equipment_airfryer'), value: 'equipment_airfryer', emoji: '🍟' },
@@ -335,6 +364,7 @@ export default function FormQuestionScreen() {
       key: 'mealBudget',
       fieldName: 'mealBudget',
       question: t('onboarding.mealBudget'),
+      branch: 'generate',
       options: [
         { label: t('onboarding.formQuestions.budget_small'), value: 'budget_small', emoji: '💡' },
         { label: t('onboarding.formQuestions.budget_medium'), value: 'budget_medium', emoji: '💰' },
@@ -342,9 +372,19 @@ export default function FormQuestionScreen() {
       ]
     },
     {
+      fieldName: 'proof_budget',
+      question: 'proof:budget',
+      options: [],
+      interstitial: true,
+      hideProgress: true,
+      branch: 'generate',
+      proofKey: 'budget',
+    },
+    {
       fieldName: 'favoriteDishType',
       question: t('onboarding.favoriteDishType'),
       optional: true,
+      branch: 'generate',
       options: [
         { label: t('onboarding.formQuestions.dish_soup'), value: 'dish_soup', emoji: '🥣' },
         { label: t('onboarding.formQuestions.dish_gratin'), value: 'dish_gratin', emoji: '🧀' },
@@ -358,6 +398,7 @@ export default function FormQuestionScreen() {
       question: t('onboarding.favoriteCuisineStyle'),
       multi: true,
       optional: true,
+      branch: 'generate',
       options: [
         { label: t('onboarding.formQuestions.cuisine_mediterranean'), value: 'cuisine_mediterranean', emoji: '🫒' },
         { label: t('onboarding.formQuestions.cuisine_french'), value: 'cuisine_french', emoji: '🥖' },
@@ -370,15 +411,18 @@ export default function FormQuestionScreen() {
       ]
     },
     {
+      fieldName: 'intro_waste',
       question: t('onboarding.habitsIntro'),
       options: [],
       interstitial: true,
       hideProgress: true,
+      branch: 'generate',
     },
     {
       fieldName: 'diet',
       question: t('onboarding.diet'),
       optional: true,
+      branch: 'generate',
       options: [
         { label: t('onboarding.formQuestions.halal'), value: 'halal', emoji: '🥙' },
         { label: t('onboarding.formQuestions.vegetarian'), value: 'vegetarian', emoji: '🥦' },
@@ -390,6 +434,7 @@ export default function FormQuestionScreen() {
       question: t('onboarding.avoidIngredients'),
       multi: true,
       optional: true,
+      branch: 'generate',
       options: [
         { label: t('onboarding.formQuestions.avoid_pork'), value: 'avoid_pork', emoji: '🐷' },
         { label: t('onboarding.formQuestions.avoid_alcohol'), value: 'avoid_alcohol', emoji: '🍷' },
@@ -399,15 +444,107 @@ export default function FormQuestionScreen() {
         { label: t('onboarding.formQuestions.avoid_gluten'), value: 'avoid_gluten', emoji: '🌾' },
       ]
     },
+    // --- Branche import -----------------------------------------------------
+    // Posées *après* l'aha moment d'import (cf. `ONBOARDING_NEXT_AFTER_IMPORT`
+    // dans `videoImportTutorial`) : l'utilisateur vient de voir une vidéo se
+    // transformer en recette, c'est le moment où parler de ses recettes
+    // éparpillées est concret plutôt qu'abstrait.
     {
-      fieldName: 'useCase',
-      question: t('onboarding.useCase'),
+      fieldName: 'intro_import',
+      question: t('onboarding.importIntro'),
+      options: [],
+      interstitial: true,
+      hideProgress: true,
+      branch: 'import',
+    },
+    {
+      fieldName: 'importSources',
+      question: t('onboarding.importSources'),
+      multi: true,
+      branch: 'import',
       options: [
-        { label: t('onboarding.formQuestions.usecase_ideas'), value: 'usecase_ideas', emoji: '💡' },
-        { label: t('onboarding.formQuestions.usecase_leftovers'), value: 'usecase_leftovers', emoji: '🧊' },
-        { label: t('onboarding.formQuestions.usecase_healthy'), value: 'usecase_healthy', emoji: '🥗' },
-        { label: t('onboarding.formQuestions.usecase_time'), value: 'usecase_time', emoji: '⏱️' },
+        { label: t('onboarding.formQuestions.source_tiktok'), value: 'source_tiktok', iconName: 'tiktok', iconColor: '#000000' },
+        { label: t('onboarding.formQuestions.source_instagram'), value: 'source_instagram', iconName: 'instagram', iconColor: '#E4405F' },
+        { label: t('onboarding.formQuestions.source_youtube'), value: 'source_youtube', iconName: 'youtube', iconColor: '#FF0000' },
+        { label: t('onboarding.formQuestions.source_web'), value: 'source_web', emoji: '🌐' },
+        { label: t('onboarding.formQuestions.source_screenshots'), value: 'source_screenshots', emoji: '📸' },
+        { label: t('onboarding.formQuestions.source_family'), value: 'source_family', emoji: '👵' },
       ]
+    },
+    {
+      fieldName: 'importVolume',
+      question: t('onboarding.importVolume'),
+      branch: 'import',
+      multilineOptions: true,
+      options: [
+        { label: t('onboarding.formQuestions.import_volume_few'), value: 'import_volume_few', emoji: '🤏' },
+        { label: t('onboarding.formQuestions.import_volume_some'), value: 'import_volume_some', emoji: '📌' },
+        { label: t('onboarding.formQuestions.import_volume_many'), value: 'import_volume_many', emoji: '📚' },
+        { label: t('onboarding.formQuestions.import_volume_chaos'), value: 'import_volume_chaos', emoji: '🌪️' },
+      ]
+    },
+    {
+      fieldName: 'proof_import',
+      question: 'proof:import',
+      options: [],
+      interstitial: true,
+      hideProgress: true,
+      branch: 'import',
+      proofKey: 'import',
+    },
+    {
+      fieldName: 'importPain',
+      question: t('onboarding.importPain'),
+      branch: 'import',
+      multilineOptions: true,
+      options: [
+        { label: t('onboarding.formQuestions.pain_find'), value: 'pain_find', emoji: '🔍' },
+        { label: t('onboarding.formQuestions.pain_pause'), value: 'pain_pause', emoji: '⏸️' },
+        { label: t('onboarding.formQuestions.pain_quantities'), value: 'pain_quantities', emoji: '⚖️' },
+        { label: t('onboarding.formQuestions.pain_never_cook'), value: 'pain_never_cook', emoji: '😅' },
+      ]
+    },
+    // --- Fin de tunnel commune aux deux branches ----------------------------
+    // L'attribution descend ici : elle ne sert qu'à nous, elle ne donne aucune
+    // raison de continuer, et en tête de tunnel elle payait le plein tarif du
+    // drop-off. À cet endroit l'utilisateur est engagé et répond quand même.
+    {
+      fieldName: 'howDidHeKnowCookEatAI',
+      question: t('onboarding.howDidHeKnowCookEatAI'),
+      options: [
+        {
+          label: Platform.OS === 'ios' ? t('onboarding.formQuestions.app_store') : t('onboarding.formQuestions.google_play'),
+          value: 'store',
+          iconName: Platform.OS === 'ios' ? 'apple' : 'google-play',
+          iconColor: Platform.OS === 'ios' ? '#000000' : '#3DDC84'
+        },
+        { label: t('onboarding.formQuestions.tiktok'), value: 'tiktok', iconName: 'tiktok', iconColor: '#000000' },
+        { label: t('onboarding.formQuestions.instagram'), value: 'instagram', iconName: 'instagram', iconColor: '#E4405F' },
+        { label: t('onboarding.formQuestions.facebook'), value: 'facebook', iconName: 'facebook', iconColor: '#1877F2' },
+        { label: t('onboarding.formQuestions.youtube'), value: 'youtube', iconName: 'youtube', iconColor: '#FF0000' },
+        { label: t('onboarding.formQuestions.google'), value: 'google', iconName: 'google', iconColor: '#4285F4' },
+        { label: t('onboarding.formQuestions.friend'), value: 'friend', iconName: 'user', iconColor: '#6366F1' },
+        { label: t('onboarding.formQuestions.other'), value: 'other', iconName: 'ellipsis', iconColor: '#94A3B8' },
+      ]
+    },
+    // Engagement daté : dernière question du tunnel, donc la dernière chose que
+    // l'utilisateur s'entend dire avant la projection et le paywall.
+    {
+      fieldName: 'commitmentLevel',
+      question: 'commitment',
+      dynamicTitle: 'commitment',
+      multilineOptions: true,
+      options: [
+        { label: t('onboarding.formQuestions.commit_all_in'), value: 'commit_all_in', emoji: '🔥' },
+        { label: t('onboarding.formQuestions.commit_serious'), value: 'commit_serious', emoji: '💪' },
+        { label: t('onboarding.formQuestions.commit_try'), value: 'commit_try', emoji: '🙂' },
+        { label: t('onboarding.formQuestions.commit_unsure'), value: 'commit_unsure', emoji: '🤔' },
+      ]
+    },
+    {
+      question: 'Projection',
+      options: [],
+      specialType: 'projection',
     },
     {
       question: 'Social Proof',
@@ -415,22 +552,65 @@ export default function FormQuestionScreen() {
       specialType: 'socialProof',
     },
     {
-      question: 'Notifications',
-      options: [],
-      specialType: 'notifications',
-    },
-    {
       question: 'Ready',
       options: [],
       specialType: 'onboardingReady',
+      // « Place à tes recettes sur-mesure ! » annonce la personnalisation, qui
+      // n'existe pas pour une recette importée : l'écran n'a rien à promettre à
+      // cette branche.
+      branch: 'generate',
     }
+    // `t` est volontairement hors des dépendances : la locale ne change pas en
+    // cours de tunnel, et recalculer ce tableau invaliderait la restauration des
+    // réponses qui en dépend.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   ], []);
+
+  /**
+   * Une question est visible si elle n'est pas réservée à l'autre branche.
+   * Tant que la branche est inconnue, tout est visible.
+   */
+  const isQuestionVisible = useCallback(
+    (question: Question, branch: EntryFeature | null) =>
+      !question.branch || !branch || question.branch === branch,
+    []
+  );
+
+  /**
+   * Index de la prochaine question visible, ou -1 s'il n'y en a plus.
+   * `branch` est passé explicitement : au moment où l'utilisateur répond à la
+   * question de segmentation, l'état React n'est pas encore à jour.
+   */
+  const findNextVisibleIndex = useCallback(
+    (from: number, branch: EntryFeature | null) => {
+      for (let i = from + 1; i < questions.length; i++) {
+        if (isQuestionVisible(questions[i], branch)) return i;
+      }
+      return -1;
+    },
+    [questions, isQuestionVisible]
+  );
+
+  const findPreviousVisibleIndex = useCallback(
+    (from: number, branch: EntryFeature | null) => {
+      for (let i = from - 1; i >= 0; i--) {
+        if (isQuestionVisible(questions[i], branch)) return i;
+      }
+      return -1;
+    },
+    [questions, isQuestionVisible]
+  );
 
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [index, setIndex] = useState(0);
   const [isReviewDelayActive, setIsReviewDelayActive] = useState(false);
   const [answers, setAnswers] = useState<string[]>([]);
+  // Profil dérivé des réponses, relu depuis le stockage à l'entrée de chaque
+  // écran personnalisé. Volontairement hors du tableau `questions` : le rendre
+  // dépendant des réponses ferait changer l'identité du `useMemo` à chaque
+  // sélection, ce qui relancerait la restauration des réponses en boucle.
+  const [profile, setProfile] = useState<OnboardingProfile | null>(null);
   const contentOpacity = useRef(new Animated.Value(1)).current;
   const mascotOpacity = useRef(new Animated.Value(0)).current;
 
@@ -446,11 +626,14 @@ export default function FormQuestionScreen() {
   const scrollViewRef = useRef<ScrollView>(null);
 
   const runAutoSkip = useCallback(
-    (savedAnswers: string[]) => {
+    (savedAnswers: string[], branch: EntryFeature | null) => {
       if (autoSkipRef.current) return;
 
       const targetIndex = questions.findIndex((item, idx) => {
         if (item.specialType) return false; // Ne jamais sauter les specialTypes
+        // Une question d'une autre branche n'est jamais une cible : sinon la
+        // reprise s'arrêterait sur une question que cet utilisateur ne voit pas.
+        if (!isQuestionVisible(item, branch)) return false;
         if (item.interstitial) {
           if (savedAnswers[idx]) return false;
           const hasLaterAnswers = savedAnswers.some((answer, laterIdx) => laterIdx > idx && !questions[laterIdx].specialType && Boolean(answer));
@@ -479,7 +662,10 @@ export default function FormQuestionScreen() {
           duration: Platform.OS === 'android' ? 100 : 140,
           useNativeDriver: true,
         }).start(() => {
-          currentIndex += 1;
+          // On avance de question *visible* en question visible : sinon la
+          // reprise ferait défiler les questions de l'autre branche à l'écran.
+          const next = findNextVisibleIndex(currentIndex, branch);
+          currentIndex = next === -1 ? targetIndex : next;
           setIndex(currentIndex);
           contentOpacity.setValue(0);
 
@@ -493,7 +679,7 @@ export default function FormQuestionScreen() {
 
       step();
     },
-    [contentOpacity, index, questions]
+    [contentOpacity, index, questions, isQuestionVisible, findNextVisibleIndex]
   );
 
   const loadPreviousAnswers = useCallback(async () => {
@@ -507,13 +693,35 @@ export default function FormQuestionScreen() {
         }
       }
       setAnswers(savedAnswers);
-      if (!__DEV__) {
-        runAutoSkip(savedAnswers);
+
+      // La branche doit être connue avant la reprise, sinon on s'arrêterait sur
+      // une question de personnalisation que l'utilisateur import ne voit pas.
+      const storedBranch = await analytics.getEntryFeature();
+      if (storedBranch) setEntryFeature(storedBranch);
+
+      // Une étape imposée par l'appelant fait autorité : la reprise automatique
+      // recalculerait une position d'après les réponses et nous ferait reculer.
+      if (!__DEV__ && !routeParams.initialStep) {
+        runAutoSkip(savedAnswers, storedBranch);
       }
     } catch (error) {
       console.error('❌ Erreur lors du chargement des réponses:', error);
     }
-  }, [questions, runAutoSkip]);
+  }, [questions, runAutoSkip, routeParams.initialStep]);
+
+  React.useEffect(() => {
+    if (!routeParams.initialStep) return;
+
+    const target = questions.findIndex(
+      (question) =>
+        question.specialType === routeParams.initialStep ||
+        question.fieldName === routeParams.initialStep
+    );
+    if (target === -1) return;
+
+    autoSkipRef.current = true;
+    setIndex(target);
+  }, [routeParams.initialStep, questions]);
 
   const loadAnswerForCurrentQuestion = useCallback(async () => {
     try {
@@ -547,6 +755,16 @@ export default function FormQuestionScreen() {
     }
   }, [index, questions]);
 
+  // La branche est lue à part, avant la boucle de restauration des réponses :
+  // elle conditionne quelles questions sont visibles, donc la progression et le
+  // routage de fin. Une seule lecture, pour réduire au minimum la fenêtre où
+  // l'écran se croit encore sur le tunnel complet.
+  React.useEffect(() => {
+    analytics.getEntryFeature().then((branch) => {
+      if (branch) setEntryFeature(branch);
+    });
+  }, []);
+
   // Charger les réponses précédentes au montage du composant
   React.useEffect(() => {
     loadPreviousAnswers();
@@ -563,18 +781,46 @@ export default function FormQuestionScreen() {
   }, [mascotOpacity]);
 
   React.useEffect(() => {
-    const progress = (index + 1) / questions.length;
+    // La progression se compte sur les questions réellement posées à cet
+    // utilisateur : la branche import en saute une partie, et une barre calculée
+    // sur le tableau complet resterait bloquée au tiers jusqu'à la fin.
+    const visible = questions.filter((question) => isQuestionVisible(question, entryFeature));
+    const visiblePosition = questions
+      .slice(0, index + 1)
+      .filter((question) => isQuestionVisible(question, entryFeature)).length;
+
     Animated.timing(progressAnim, {
-      toValue: progress,
+      toValue: visible.length > 0 ? visiblePosition / visible.length : 0,
       duration: 300,
       easing: Easing.out(Easing.quad),
       useNativeDriver: false,
     }).start();
-  }, [index, progressAnim, questions.length]);
+  }, [index, progressAnim, questions, entryFeature, isQuestionVisible]);
 
   React.useEffect(() => {
     if (!questions[index].interstitial) return;
     scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+  }, [index, questions]);
+
+  // Les écrans personnalisés relisent le profil au moment de s'afficher plutôt
+  // qu'une fois pour toutes : la réponse qui les alimente vient parfois d'être
+  // écrite par l'écran précédent, et l'utilisateur peut revenir en arrière la
+  // changer.
+  React.useEffect(() => {
+    const current = questions[index];
+    const needsProfile =
+      Boolean(current.proofKey) ||
+      Boolean(current.dynamicTitle) ||
+      current.specialType === 'projection';
+    if (!needsProfile) return;
+
+    let cancelled = false;
+    loadOnboardingProfile().then((loaded) => {
+      if (!cancelled) setProfile(loaded);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [index, questions]);
 
   // Charger les réponses précédentes quand l'index change
@@ -606,15 +852,15 @@ export default function FormQuestionScreen() {
       if (isNavigatingForward) {
         // Vient d'une question normale : part vers la gauche
         Animated.spring(mascotX, {
-          toValue: -width,
+          toValue: -windowWidth,
           useNativeDriver: true,
           tension: 50,
           friction: 8,
         }).start();
       } else {
-        // Revient des notifications : part vers la droite
+        // Revient de l'étape suivante : part vers la droite
         Animated.spring(mascotX, {
-          toValue: width,
+          toValue: windowWidth,
           useNativeDriver: true,
           tension: 50,
           friction: 8,
@@ -653,58 +899,6 @@ export default function FormQuestionScreen() {
         easing: Easing.out(Easing.back(1.5)),
         useNativeDriver: true,
       }).start();
-    } else if (questions[index].specialType === 'notifications') {
-      analytics.track('onboarding_notifications_viewed');
-
-      const isNavigatingForward = index > prevIndexRef.current;
-
-      // Animation inverse pour readyTransition si on revient de onboardingReady
-      Animated.timing(readyTransition, {
-        toValue: 0,
-        duration: 1000,
-        easing: Easing.out(Easing.quad),
-        useNativeDriver: true,
-      }).start();
-
-      if (isNavigatingForward) {
-        // En avançant, la mascotte entre par la droite
-        mascotX.setValue(width);
-        Animated.spring(mascotX, {
-          toValue: 0,
-          useNativeDriver: true,
-          tension: 50,
-          friction: 8,
-        }).start();
-
-        setIsReviewDelayActive(true);
-        setTimeout(async () => {
-          try {
-            const { status: existingStatus } = await Notifications.getPermissionsAsync();
-            if (existingStatus !== 'granted') {
-              const { status } = await Notifications.requestPermissionsAsync();
-              analytics.track('onboarding_notifications_choice', { allowed: status === 'granted' });
-            }
-          } catch (e) {
-            console.error('Error requesting notifications:', e);
-          }
-        }, 2000);
-
-        // Réactivation du bouton après 3s (comme socialProof)
-        setTimeout(() => {
-          setIsReviewDelayActive(false);
-        }, 3000);
-      } else {
-        // En reculant, elle est déjà au centre
-        Animated.spring(mascotX, {
-          toValue: 0,
-          useNativeDriver: true,
-          tension: 50,
-          friction: 8,
-        }).start();
-        // Désactiver le bouton au début même en arrière, puis le réactiver
-        setIsReviewDelayActive(true);
-        setTimeout(() => setIsReviewDelayActive(false), 2000);
-      }
     } else {
       // Pour les questions normales (Go back)
       const isNavigatingBackward = index < prevIndexRef.current;
@@ -712,7 +906,7 @@ export default function FormQuestionScreen() {
       if (isNavigatingBackward) {
         // Si on revient de socialProof, la mascotte revient de la gauche
         if (prevIndexRef.current === questions.findIndex(q => q.specialType === 'socialProof')) {
-          mascotX.setValue(-width);
+          mascotX.setValue(-windowWidth);
         }
         Animated.spring(mascotX, {
           toValue: 0,
@@ -739,7 +933,15 @@ export default function FormQuestionScreen() {
       }).start();
     }
 
-    if (questions[index].specialType !== 'onboardingReady' && questions[index].specialType !== 'socialProof' && questions[index].specialType !== 'notifications') {
+    if (questions[index].specialType === 'projection') {
+      analytics.track('onboarding_projection_viewed');
+    } else if (questions[index].proofKey) {
+      analytics.track('onboarding_contextual_proof_viewed', {
+        proof_key: questions[index].proofKey,
+      });
+    }
+
+    if (!questions[index].specialType) {
       analytics.track('onboarding_question_view', {
         question_index: index,
         question_text: questions[index].question,
@@ -790,9 +992,8 @@ export default function FormQuestionScreen() {
       analytics.track('onboarding_option_selected', {
         question_index: index,
         question_field: questions[index].fieldName || questions[index].key || `question_${index}`,
-        selected_value: value,
         is_multi: true,
-        all_selected_values: next
+        selected_count: next.length,
       });
     } else {
       setSelectedOption(value);
@@ -802,8 +1003,7 @@ export default function FormQuestionScreen() {
       analytics.track('onboarding_option_selected', {
         question_index: index,
         question_field: questions[index].fieldName || questions[index].key || `question_${index}`,
-        selected_value: value,
-        is_multi: false
+        is_multi: false,
       });
 
       transitionToNextQuestion(value);
@@ -819,8 +1019,22 @@ export default function FormQuestionScreen() {
     });
 
     Haptics.selectionAsync();
-    setIndex(index - 1);
+    // Retour sur la précédente question *visible* : un utilisateur import ne doit
+    // pas atterrir sur une question de personnalisation qu'il n'a jamais vue.
+    const previous = findPreviousVisibleIndex(index, entryFeature);
+    if (previous !== -1) setIndex(previous);
   };
+
+  /**
+   * Branche de l'utilisateur. Elle est choisie sur l'écran d'accueil, donc déjà
+   * connue en arrivant ici ; l'état peut simplement ne pas encore être hydraté
+   * au tout premier rendu, auquel cas les appelants retombent sur la valeur
+   * persistée par `analytics`.
+   */
+  const resolveBranch = (): EntryFeature | null => entryFeature;
+
+  const isLeavingForImportAhaMoment = () =>
+    questions[index].fieldName === IMPORT_HANDOFF_FIELD;
 
   const transitionToNextQuestion = (value: string | string[]) => {
     isTransitioningRef.current = true;
@@ -844,7 +1058,11 @@ export default function FormQuestionScreen() {
       duration: Platform.OS === 'android' ? 150 : 220,
       useNativeDriver: true,
     }).start(async () => {
-      const isLastQuestion = index === questions.length - 1;
+      const branch = resolveBranch();
+      // « Dernière » au sens « on quitte cet écran » : soit il n'y a plus de
+      // question visible, soit la branche import part vivre son aha moment.
+      const isLastQuestion =
+        findNextVisibleIndex(index, branch) === -1 || isLeavingForImportAhaMoment();
 
       if (isLastQuestion) {
         // Pour la dernière question, on ne réaffiche pas le contenu
@@ -867,6 +1085,64 @@ export default function FormQuestionScreen() {
   };
 
 
+  /**
+   * Pousse toutes les réponses connues vers l'API. Appelé à l'entrée de la
+   * section finale et au départ vers l'aha moment d'import : dans les deux cas
+   * l'utilisateur peut ne jamais revenir, et on ne veut pas perdre ce qu'il a
+   * déjà donné. L'endpoint est un upsert par `mobileId`, l'appeler deux fois est
+   * sans effet de bord.
+   */
+  const persistAllAnswers = async (currentKey?: string, currentValue?: string) => {
+    await AsyncStorage.setItem(QUESTIONS_ANSWERED_KEY, 'true');
+
+    // Pas de `await` : une connexion lente ne doit pas figer la transition.
+    (async () => {
+      try {
+        const allAnswers: Record<string, string> = {};
+
+        const actualQuestions = questions.filter((q) => !q.specialType);
+        const results = await Promise.all(
+          actualQuestions.map(async (q, i) => {
+            const questionKey = q.fieldName || q.key || `question_${i}`;
+            return { key: questionKey, value: await AsyncStorage.getItem(questionKey) };
+          })
+        );
+        results.forEach((result) => {
+          if (result.value) allAnswers[result.key] = result.value;
+        });
+
+        // La branche n'est plus une question du tunnel : elle est choisie sur
+        // l'accueil. Sans cette ligne elle ne serait jamais envoyée à l'API.
+        const branch = await analytics.getEntryFeature();
+        if (branch) allAnswers[ENTRY_FEATURE_FIELD] = branch;
+
+        if (currentKey && currentValue !== undefined) {
+          allAnswers[currentKey] = currentValue;
+        }
+
+        const mobileId = await getUniqueDeviceId();
+        const timezone = Localization.getCalendars()[0].timeZone || undefined;
+
+        const response = await api.saveOnboardingAnswers(allAnswers, mobileId, timezone);
+        if (response.error) {
+          console.error('❌ Erreur lors de la sauvegarde des réponses:', response.error);
+        } else if (response.data?.userId) {
+          await AsyncStorage.setItem('userId', response.data.userId);
+          analytics.identify(response.data.userId);
+          // Les réponses détaillées servent à personnaliser les recettes côté
+          // CookEat. Elles ne doivent pas devenir des propriétés de profil
+          // PostHog, notamment le régime et les ingrédients évités.
+          analytics.setUserProperties({
+            onboarding_profile_completed: true,
+            onboarding_answered_count: Object.keys(allAnswers).length,
+          });
+        }
+      } catch (error) {
+        console.error('Erreur lors de la sauvegarde des réponses:', error);
+      }
+    })();
+  };
+
   const handleContinue = async (overrideValue?: string | string[]) => {
     if (questions[index].interstitial) {
       analytics.track('onboarding_interstitial_continue', {
@@ -875,7 +1151,17 @@ export default function FormQuestionScreen() {
       });
       const questionKey = questions[index].fieldName || `question_${index}`;
       await AsyncStorage.setItem(questionKey, 'seen');
-      setIndex(index + 1);
+
+      // Bascule vers l'aha moment d'import. Le tutoriel renvoie ensuite dans le
+      // tunnel via `initialStep`, sur les questions propres à cette branche.
+      if (isLeavingForImportAhaMoment()) {
+        await persistAllAnswers();
+        router.replace('/onboarding/videoImportTutorial');
+        return;
+      }
+
+      const nextInterstitialIndex = findNextVisibleIndex(index, entryFeature);
+      if (nextInterstitialIndex !== -1) setIndex(nextInterstitialIndex);
       return;
     }
     const isMulti = Boolean(questions[index].multi);
@@ -899,62 +1185,38 @@ export default function FormQuestionScreen() {
         setAnswers(newAnswers);
       }
 
-      if (index === questions.length - 4) { // Juste avant les specialTypes
-        // Sauvegarder toutes les réponses et marquer les questions comme répondues
-        await AsyncStorage.setItem(QUESTIONS_ANSWERED_KEY, 'true');
+      // Au retour depuis l'aha moment d'import, l'état peut ne pas encore être
+      // hydraté : on retombe sur la valeur persistée plutôt que de router comme
+      // si la branche était inconnue (ce qui réafficherait l'écran « prêt »).
+      const effectiveBranch = resolveBranch() ?? (await analytics.getEntryFeature());
+      const nextIndex = findNextVisibleIndex(index, effectiveBranch);
+      // Bascule vers la section finale (projection / social proof / prêt).
+      // Repéré ainsi plutôt que par un décalage fixe depuis la fin du
+      // tableau, car la branche import n'a pas le même nombre de questions avant
+      // cette section.
+      const isEnteringFinalSection =
+        !questions[index].specialType &&
+        nextIndex !== -1 &&
+        Boolean(questions[nextIndex].specialType);
 
-        // Sauvegarder les réponses dans la base de données pour un utilisateur anonyme
-        // On ne met pas de "await" ici pour ne pas bloquer l'UI si le réseau est lent
-        (async () => {
-          try {
-            const allAnswers: Record<string, string> = {};
-
-            // Récupérer toutes les réponses en parallèle pour être plus rapide
-            const actualQuestions = questions.filter(q => !q.specialType);
-            const answerPromises = actualQuestions.map(async (q, i) => {
-              const questionKey = q.fieldName || q.key || `question_${i}`;
-              const savedAnswer = await AsyncStorage.getItem(questionKey);
-              return { key: questionKey, value: savedAnswer };
-            });
-
-            const results = await Promise.all(answerPromises);
-            results.forEach(result => {
-              if (result.value) {
-                allAnswers[result.key] = result.value;
-              }
-            });
-
-            // Ajouter la réponse actuelle si elle n'est pas déjà dans allAnswers
-            const currentQuestionKey = questions[index].fieldName || questions[index].key || `question_${index}`;
-            allAnswers[currentQuestionKey] = answer;
-
-            // Récupérer le mobileId unique de l'appareil
-            const mobileId = await getUniqueDeviceId();
-            const timezone = Localization.getCalendars()[0].timeZone || undefined;
-
-            // Envoyer les réponses à l'API
-            const response = await api.saveOnboardingAnswers(allAnswers, mobileId, timezone);
-            if (response.error) {
-              console.error('❌ Erreur lors de la sauvegarde des réponses:', response.error);
-            } else if (response.data?.userId) {
-              await AsyncStorage.setItem('userId', response.data.userId);
-              analytics.identify(response.data.userId);
-              analytics.setUserProperties({
-                ...allAnswers
-              });
-            }
-          } catch (error) {
-            console.error('Erreur lors de la sauvegarde des réponses:', error);
-          }
-        })();
+      if (isEnteringFinalSection) {
+        const currentQuestionKey =
+          questions[index].fieldName || questions[index].key || `question_${index}`;
+        await persistAllAnswers(currentQuestionKey, answer);
       }
 
-      if (index === questions.length - 1) {
-        // C'est l'étape OnboardingReady, on va vers loading
-        router.replace('/onboarding/loading');
+      if (nextIndex === -1) {
+        if (effectiveBranch === 'import') {
+          // L'import a déjà démontré sa valeur, mais l'onboarding doit aussi
+          // faire vivre une vraie génération avant toute offre commerciale.
+          router.replace('/onboarding/generationDemo');
+        } else {
+          // C'est l'étape OnboardingReady, on va vers loading
+          router.replace('/onboarding/loading');
+        }
       } else {
-        // Passer à l'étape suivante
-        setIndex(index + 1);
+        // Passer à l'étape suivante (en sautant les questions de l'autre branche)
+        setIndex(nextIndex);
       }
     } catch (error) {
       console.error('❌ Erreur lors de la sauvegarde de la réponse:', error);
@@ -962,7 +1224,7 @@ export default function FormQuestionScreen() {
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <ScrollView
         ref={scrollViewRef}
         style={styles.scrollArea}
@@ -1014,8 +1276,8 @@ export default function FormQuestionScreen() {
           </View>
         )}
 
-        {(!questions[index].hideProgress || questions[index].specialType === 'onboardingReady' || questions[index].specialType === 'socialProof' || questions[index].specialType === 'notifications') && (
-          <View style={{ height: width * 0.25, justifyContent: 'center', alignItems: 'center', zIndex: 10 }}>
+        {(!questions[index].hideProgress || questions[index].specialType === 'onboardingReady' || questions[index].specialType === 'socialProof') && (
+          <View style={{ height: layoutWidth * 0.25, justifyContent: 'center', alignItems: 'center', zIndex: 10 }}>
             <Animated.View
               style={[
                 {
@@ -1031,7 +1293,7 @@ export default function FormQuestionScreen() {
                     {
                       translateY: readyTransition.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [0, height * 0.095]
+                        outputRange: [0, windowHeight * 0.095]
                       })
                     },
                     {
@@ -1039,7 +1301,7 @@ export default function FormQuestionScreen() {
                         mascotX,
                         readyTransition.interpolate({
                           inputRange: [0, 1],
-                          outputRange: [0, height * 0.035]
+                          outputRange: [0, windowHeight * 0.035]
                         })
                       )
                     },
@@ -1063,7 +1325,7 @@ export default function FormQuestionScreen() {
                   {
                     translateX: socialProofTransition.interpolate({
                       inputRange: [0, 1, 2],
-                      outputRange: [width, 0, -width],
+                      outputRange: [windowWidth, 0, -windowWidth],
                     })
                   }
                 ]
@@ -1084,22 +1346,29 @@ export default function FormQuestionScreen() {
                 <SocialProofContent onRate={() => {
                   analytics.track('onboarding_social_proof_rated');
                 }} />
-              ) : questions[index].specialType === 'notifications' ? (
-                <NotificationsContent
-                  onNext={() => {
-                    handleContinue();
-                  }}
-                />
               ) : questions[index].specialType === 'onboardingReady' ? (
                 <OnboardingReadyContent />
+              ) : questions[index].specialType === 'projection' ? (
+                <ProjectionStep profile={profile} />
               ) : questions[index].interstitial ? (
-                <View style={[styles.interstitialContainer, { minHeight: height - 220 }]}>
-                  {renderQuestionText(questions[index].question)}
+                <View style={[styles.interstitialContainer, { minHeight: windowHeight - 220 }]}>
+                  {questions[index].proofKey ? (
+                    <ContextualProof
+                      proofKey={questions[index].proofKey!}
+                      profile={profile}
+                    />
+                  ) : (
+                    renderQuestionText(questions[index].question)
+                  )}
                 </View>
               ) : (
                 <>
                   <View style={{ marginBottom: 40 }}>
-                    {renderQuestionText(questions[index].question)}
+                    {questions[index].dynamicTitle === 'commitment' ? (
+                      <CommitmentTitle profile={profile} />
+                    ) : (
+                      renderQuestionText(questions[index].question)
+                    )}
                   </View>
 
                   <View style={styles.cardsContainer}>
@@ -1139,7 +1408,7 @@ export default function FormQuestionScreen() {
                                   styles.cardTitle,
                                   isSelected && styles.cardTitleSelected
                                 ]}
-                                numberOfLines={1}
+                                numberOfLines={questions[index].multilineOptions ? 2 : 1}
                                 adjustsFontSizeToFit={true}
                                 minimumFontScale={0.7}
                               >
@@ -1178,12 +1447,12 @@ export default function FormQuestionScreen() {
         </View>
       </ScrollView>
 
-      {(questions[index].multi || questions[index].optional || questions[index].interstitial || questions[index].specialType === 'socialProof' || questions[index].specialType === 'notifications' || questions[index].specialType === 'onboardingReady') && (
+      {(questions[index].multi || questions[index].optional || questions[index].interstitial || questions[index].specialType === 'socialProof' || questions[index].specialType === 'onboardingReady' || questions[index].specialType === 'projection') && (
         <TouchableOpacity
           style={[
             styles.continueButton,
             styles.continueButtonFloating,
-            (((questions[index].multi && !questions[index].optional) && selectedOptions.length === 0) || ((questions[index].specialType === 'socialProof' || questions[index].specialType === 'notifications') && isReviewDelayActive)) && styles.continueButtonDisabled
+            (((questions[index].multi && !questions[index].optional) && selectedOptions.length === 0) || (questions[index].specialType === 'socialProof' && isReviewDelayActive)) && styles.continueButtonDisabled
           ]}
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -1191,7 +1460,7 @@ export default function FormQuestionScreen() {
               analytics.track('onboarding_multi_continue', {
                 question_index: index,
                 question_field: questions[index].fieldName || questions[index].key || `question_${index}`,
-                selected_values: selectedOptions
+                selected_count: selectedOptions.length,
               });
               transitionToNextQuestion(selectedOptions);
             } else {
@@ -1200,15 +1469,17 @@ export default function FormQuestionScreen() {
           }}
           disabled={questions[index].multi
             ? (!questions[index].optional && selectedOptions.length === 0)
-            : ((questions[index].specialType === 'socialProof' || questions[index].specialType === 'notifications') ? isReviewDelayActive : false)}
+            : (questions[index].specialType === 'socialProof' ? isReviewDelayActive : false)}
           activeOpacity={0.8}
         >
           <Text style={styles.buttonText}>
-            {questions[index].specialType === 'socialProof' || questions[index].specialType === 'notifications'
+            {questions[index].specialType === 'socialProof'
               ? t('onboarding.socialProof.button')
               : questions[index].specialType === 'onboardingReady'
                 ? t('onboardingReady.button')
-                : t('onboarding.next')}
+                : questions[index].specialType === 'projection'
+                  ? t('onboarding.projection.button')
+                  : t('onboarding.next')}
           </Text>
         </TouchableOpacity>
       )}
@@ -1223,12 +1494,14 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    ...contentColumn(),
     paddingHorizontal: 24,
     // justifyContent: 'space-between',
   },
   progressHeader: {
     flexDirection: 'row',
     alignItems: 'center',
+    // Bouton retour + progression : ancrés aux bords de l'écran.
     paddingHorizontal: 20,
     marginTop: 5,
     marginBottom: 5,
@@ -1257,8 +1530,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   progressMascot: {
-    width: width * 0.25,
-    height: width * 0.25,
+    width: rw(0.25),
+    height: rw(0.25),
     resizeMode: 'contain',
   },
   progressFill: {
@@ -1282,6 +1555,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    ...contentColumn(),
     paddingBottom: 24,
     flexGrow: 1,
   },
@@ -1290,10 +1564,10 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    fontSize: width * 0.08,
+    fontSize: rw(0.08),
     fontFamily: 'Degular',
     color: Colors.light.text,
-    lineHeight: width * 0.1,
+    lineHeight: rw(0.1),
   },
   cardsContainer: {
     width: '100%',
@@ -1376,11 +1650,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
-    fontSize: width * 0.05,
+    fontSize: rw(0.05),
     fontFamily: 'Degular',
     color: Colors.light.text,
     marginBottom: 4,
-    lineHeight: Platform.OS === 'android' ? width * 0.06 : undefined, // Fix truncation on Android
+    lineHeight: Platform.OS === 'android' ? rw(0.06) : undefined, // Fix truncation on Android
   },
   cardTitleSelected: {
     color: '#FEB50A',
@@ -1424,7 +1698,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
-    fontSize: width * 0.05,
+    fontSize: rw(0.05),
     fontFamily: 'Degular',
   },
   highlight: {
@@ -1437,7 +1711,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: font(18),
     fontFamily: 'CronosPro',
     color: '#8C8C8C',
     textAlign: 'center',
@@ -1535,9 +1809,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   mascotCircle: {
-    width: width * 0.6,
-    height: width * 0.6,
-    borderRadius: (width * 0.6) / 2,
+    width: rw(0.6),
+    height: rw(0.6),
+    borderRadius: rw(0.6) / 2,
     backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1641,4 +1915,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-}); 
+});

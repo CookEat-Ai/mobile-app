@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Animated,
-  Dimensions,
   StyleProp,
   StyleSheet,
   ViewStyle,
@@ -13,6 +12,7 @@ import {
   Platform,
 } from 'react-native';
 import { Colors } from '../constants/Colors';
+import { useResponsive } from '../hooks/useResponsive';
 import { IconSymbol } from "./ui/IconSymbol";
 import { useVoice, resetVoiceCompletely } from '../hooks/useVoice';
 import { ExpoSpeechRecognitionModule } from 'expo-speech-recognition';
@@ -20,7 +20,6 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Haptics from 'expo-haptics';
 
 
-const { height } = Dimensions.get('window');
 
 interface MicroProps {
   style?: StyleProp<ViewStyle>;
@@ -42,6 +41,9 @@ export default function Micro({
 }: MicroProps) {
   const { t } = useTranslation();
   const colors = Colors.light;
+  // Suit la rotation / le Split View, contrairement à un `Dimensions.get`
+  // lu une seule fois à l'import du module.
+  const { height } = useResponsive();
 
 
   const [isRecordingAnimationDelayFinished, setIsRecordingAnimationDelayFinished] = useState(false);
@@ -76,8 +78,8 @@ export default function Micro({
       expandContainer();
 
       // Masquer la tabbar
-      if ((global as any).setTabBarVisibility) {
-        (global as any).setTabBarVisibility(false);
+      if ((globalThis as any).setTabBarVisibility) {
+        (globalThis as any).setTabBarVisibility(false);
       }
     } else {
       setIsRecordingAnimationDelayFinished(false);
@@ -86,8 +88,8 @@ export default function Micro({
       shrinkContainer();
 
       // Afficher la tabbar
-      if ((global as any).setTabBarVisibility) {
-        (global as any).setTabBarVisibility(true);
+      if ((globalThis as any).setTabBarVisibility) {
+        (globalThis as any).setTabBarVisibility(true);
       }
     }
   }, [isRecording]);
@@ -499,4 +501,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'CronosPro',
   },
-}); 
+});

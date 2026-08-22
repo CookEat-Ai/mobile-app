@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
-  Dimensions,
   Easing,
   StyleSheet,
   Text,
@@ -13,21 +12,21 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useCallback } from 'react';
 import { Colors } from '../../constants/Colors';
+import { rw } from '../../constants/Layout';
 import { useTranslation } from 'react-i18next';
 import analytics from '../../services/analytics';
 import apiService from '../../services/api';
 import revenueCatService from '../../config/revenuecat';
 import { Ionicons } from '@expo/vector-icons';
 
-const { width } = Dimensions.get('window');
 
 export default function PromoCodeScreen() {
+  const { generationDemoCompleted } = useLocalSearchParams<{ generationDemoCompleted?: string }>();
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
@@ -38,6 +37,12 @@ export default function PromoCodeScreen() {
   const [success, setSuccess] = useState(false);
   const [discountPercentage, setDiscountPercentage] = useState<number | null>(null);
   const [hasShownPaywall, setHasShownPaywall] = useState(false);
+  /**
+   * Vrai quand on revient ici depuis le paywall remisé : le code est déjà saisi
+   * et validé, il ne s'agit plus de le vérifier mais de choisir entre repartir
+   * avec ou l'abandonner.
+   */
+  const [restoredCode, setRestoredCode] = useState(false);
   const { t } = useTranslation();
 
   useFocusEffect(
@@ -47,13 +52,33 @@ export default function PromoCodeScreen() {
         (async () => {
           const status = await revenueCatService.getSubscriptionStatus();
           if (status.isSubscribed) {
-            await AsyncStorage.setItem('onboarding_completed', 'true');
+            await analytics.completeOnboarding({
+              source: 'onboarding_promo_code',
+              completion_method: 'subscription',
+            });
             router.replace('/(tabs)');
           }
         })();
       }
     }, [hasShownPaywall])
   );
+
+  // Retour depuis le paywall remisé : on restaure le code saisi et sa remise
+  // plutôt que de présenter un champ vide à quelqu'un qui vient de le remplir.
+  useEffect(() => {
+    (async () => {
+      const [[, savedCode], [, savedDiscount]] = await AsyncStorage.multiGet([
+        'pending_promo_code',
+        'pending_promo_discount',
+      ]);
+      if (!savedCode) return;
+      setCode(savedCode);
+      setSuccess(true);
+      setRestoredCode(true);
+      const parsed = Number(savedDiscount);
+      if (Number.isFinite(parsed)) setDiscountPercentage(parsed);
+    })();
+  }, []);
 
   useEffect(() => {
     analytics.track('onboarding_promo_code_viewed');
@@ -74,6 +99,23 @@ export default function PromoCodeScreen() {
     ]).start();
   }, [fadeAnim, slideAnim]);
 
+  /**
+   * Le code promo a son propre circuit fermé : paywall remisé, et retour ici si
+   * l'utilisateur refuse. Il ne traverse jamais `offerTrial` ni `reminder`, qui
+   * promettent un essai gratuit que l'offre remisée ne contient pas.
+   */
+  const goToDiscountedPaywall = (discount: number) => {
+    setHasShownPaywall(true);
+    router.push({
+      pathname: '/paywall',
+      params: {
+        source: 'onboarding_promo_code',
+        initialState: 'PROMO_DISCOUNTED',
+        promoDiscount: String(discount),
+      },
+    });
+  };
+
   const handleValidate = async () => {
     if (!code.trim()) return;
 
@@ -89,20 +131,32 @@ export default function PromoCodeScreen() {
         setSuccess(true);
         setDiscountPercentage(response.data.discountPercentage);
 
-        // Si c'est un code premium (100% de réduction), on l'active directement
-        if (response.data.discountPercentage === 100) {
+        const discount = response.data.discountPercentage;
+
+        analytics.track('onboarding_promo_code_valid', { discount });
+
+        // Un code à 100 % ouvre l'accès complet : c'est le contournement du
+        // paywall, notamment pour les relecteurs Apple et Google. Il ne doit
+        // surtout pas passer par le paywall — `getSubscriptionStatus` renvoie
+        // déjà `isSubscribed: true` une fois le code activé, donc l'utilisateur
+        // entre dans l'app avec tous les droits.
+        if (discount === 100) {
           await revenueCatService.activatePromoCode(code.trim());
           analytics.track('onboarding_promo_premium_activated');
-        } else {
-          await AsyncStorage.setItem('pending_promo_code', code.trim().toUpperCase());
-          await AsyncStorage.setItem('pending_promo_discount', String(response.data.discountPercentage));
+          await analytics.completeOnboarding({
+            source: 'onboarding_promo_code',
+            completion_method: 'promo_code',
+          });
+          setTimeout(() => router.replace('/(tabs)'), 1500);
+          return;
         }
 
-        analytics.track('onboarding_promo_code_valid', {
-          discount: response.data.discountPercentage,
-        });
+        await AsyncStorage.setItem('pending_promo_code', code.trim().toUpperCase());
+        await AsyncStorage.setItem('pending_promo_discount', String(discount));
 
-        setTimeout(() => navigateNext(), 1500);
+        // On laisse la confirmation s'afficher, puis on part sur le paywall
+        // remisé plutôt que sur la suite du tunnel.
+        setTimeout(() => goToDiscountedPaywall(discount), 1500);
       } else {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         setError(response.error || t('onboardingPromoCode.invalid'));
@@ -117,11 +171,22 @@ export default function PromoCodeScreen() {
 
   const navigateNext = async () => {
     const variant = await analytics.getOnboardingVariant();
+    const entryFeature = await analytics.getEntryFeature();
+
+    // Aucun chemin (promo, code 100 %, variante expérimentale) ne peut éviter
+    // la recette test de la branche import.
+    if (entryFeature === 'import' && generationDemoCompleted !== 'true') {
+      router.replace('/onboarding/generationDemo');
+      return;
+    }
 
     // Vérifier si un code promo premium a déjà été activé
     const isPremium = await revenueCatService.isPromoCodeActivated();
     if (isPremium) {
-      await AsyncStorage.setItem('onboarding_completed', 'true');
+      await analytics.completeOnboarding({
+        source: 'onboarding_promo_code',
+        completion_method: 'promo_code',
+      });
       router.replace('/(tabs)');
       return;
     }
@@ -140,7 +205,21 @@ export default function PromoCodeScreen() {
     } else if (variant === 'F') {
       router.replace('/onboarding/personalizedRecipes');
     } else if (variant === 'C' || variant === 'D') {
-      router.replace('/onboarding/videoDemo');
+      // Chaque branche a déjà vécu son aha moment principal. Juste avant
+      // l'offre, on présente l'autre capacité comme un bonus facultatif :
+      // génération réelle pour la branche import, import guidé pour la branche
+      // génération.
+      if (entryFeature === 'import') {
+        router.replace({
+          pathname: '/onboarding/offerTrial',
+          params: { source: 'onboarding_import_branch' },
+        });
+      } else {
+        router.replace({
+          pathname: '/onboarding/offerTrial',
+          params: { source: 'onboarding_generate_branch' },
+        });
+      }
     } else {
       router.replace('/onboarding/ahaMoment');
     }
@@ -148,7 +227,16 @@ export default function PromoCodeScreen() {
 
   const handleSkip = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    analytics.track('onboarding_promo_code_skipped');
+    analytics.track('onboarding_promo_code_skipped', { had_code: restoredCode });
+
+    // Renoncer au code le retire du stockage : sans ça, `reminder` le relirait
+    // et repousserait le paywall remisé juste après avoir promis un essai
+    // gratuit. Passer ici, c'est basculer sur l'offre d'essai standard.
+    await AsyncStorage.multiRemove(['pending_promo_code', 'pending_promo_discount']);
+    setRestoredCode(false);
+    setSuccess(false);
+    setDiscountPercentage(null);
+
     await navigateNext();
   };
 
@@ -209,24 +297,35 @@ export default function PromoCodeScreen() {
         </View>
 
         <Animated.View style={[styles.bottomSection, { opacity: fadeAnim }]}>
-          {!success && (
+          {/* `success` sans `restoredCode` = validation en cours, la navigation
+              part toute seule après 1,5 s : on masque les boutons. Au retour du
+              paywall en revanche, il faut de quoi repartir ou renoncer. */}
+          {(!success || restoredCode) && (
             <TouchableOpacity
               activeOpacity={0.8}
               style={[styles.validateButton, (!code.trim() || loading) && styles.disabledButton]}
-              onPress={handleValidate}
+              onPress={
+                restoredCode
+                  ? () => goToDiscountedPaywall(discountPercentage ?? 15)
+                  : handleValidate
+              }
               disabled={!code.trim() || loading}
             >
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
                 <Text style={styles.validateButtonText}>
-                  {t('onboardingPromoCode.validate')}
+                  {t(
+                    restoredCode
+                      ? 'onboardingPromoCode.continueWithCode'
+                      : 'onboardingPromoCode.validate'
+                  )}
                 </Text>
               )}
             </TouchableOpacity>
           )}
 
-          {!success && (
+          {(!success || restoredCode) && (
             <TouchableOpacity
               activeOpacity={0.6}
               style={[styles.skipButton, loading && { opacity: 0.5 }]}
@@ -234,7 +333,7 @@ export default function PromoCodeScreen() {
               disabled={loading}
             >
               <Text style={styles.skipButtonText}>
-                {t('onboardingPromoCode.skip')}
+                {t(restoredCode ? 'onboardingPromoCode.dropCode' : 'onboardingPromoCode.skip')}
               </Text>
             </TouchableOpacity>
           )}
@@ -270,12 +369,12 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   title: {
-    fontSize: width * 0.08,
+    fontSize: rw(0.08),
     color: Colors.light.text,
     textAlign: 'center',
     marginBottom: 8,
     fontFamily: 'Degular',
-    lineHeight: width * 0.1,
+    lineHeight: rw(0.1),
   },
   subtitle: {
     fontSize: 16,

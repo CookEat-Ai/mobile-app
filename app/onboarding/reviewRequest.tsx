@@ -1,10 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
-  Dimensions,
   Easing,
-  Platform,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -17,9 +14,9 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../../constants/Colors';
+import { rw } from '../../constants/Layout';
 import analytics from '../../services/analytics';
 
-const { width, height } = Dimensions.get('window');
 
 const RatingBadge = ({ style }: { style?: any }) => {
   return (
@@ -52,7 +49,7 @@ export default function ReviewRequestScreen() {
   const contentOpacity = useRef(new Animated.Value(0)).current;
 
   const count = i18n.language.startsWith('fr') ? '10 000' : '10,000';
-  const fullText = t('onboarding.socialProof.title', { count });
+  const fullText = t('onboarding.socialProof.title', { total: count });
   const parts = fullText.split(new RegExp(`(${count})`));
 
   const reviews = [
@@ -86,7 +83,7 @@ export default function ReviewRequestScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { paddingTop: insets.top, paddingBottom: Platform.OS === 'ios' ? 0 : insets.bottom + 30 }]}>
+    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: Math.max(insets.bottom, 24) }]}>
       <View style={styles.content}>
         <View style={styles.mascotContainer}>
           <Animated.View style={{ opacity: mascotOpacity, transform: [{ rotate: '20deg' }] }}>
@@ -117,28 +114,6 @@ export default function ReviewRequestScreen() {
               ))}
               <Text> 🎉</Text>
             </Text>
-
-            <View style={styles.ratingSection}>
-              <Text
-                style={styles.ratingPrompt}
-                numberOfLines={2}
-                adjustsFontSizeToFit={true}
-                minimumFontScale={0.7}
-              >
-                {t('onboarding.socialProof.subtitle')}
-              </Text>
-              <View style={styles.starsContainer}>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <View key={star}>
-                    <Ionicons
-                      name="star"
-                      size={32}
-                      color="#FEB50A"
-                    />
-                  </View>
-                ))}
-              </View>
-            </View>
 
             <View style={styles.reviewsContainer}>
               {reviews.map(review => (
@@ -174,7 +149,7 @@ export default function ReviewRequestScreen() {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -189,14 +164,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   mascotContainer: {
-    height: width * 0.3,
+    height: rw(0.3),
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
   },
   mascot: {
-    width: width * 0.22,
-    height: width * 0.22,
+    width: rw(0.22),
+    height: rw(0.22),
   },
   ratingBadge: {
     position: 'absolute',
@@ -229,10 +204,10 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    fontSize: width * 0.08,
+    fontSize: rw(0.08),
     fontFamily: 'Degular',
     color: Colors.light.text,
-    lineHeight: width * 0.1,
+    lineHeight: rw(0.1),
   },
   highlight: {
     color: Colors.light.button,

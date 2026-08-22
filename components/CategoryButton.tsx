@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Colors } from '../constants/Colors';
+import { font } from '../constants/Layout';
 
 interface CategoryButtonProps {
   title: string;
@@ -56,13 +57,16 @@ const styles = StyleSheet.create({
   container: {
     aspectRatio: 1,
     width: '23.9%',
+    // Sans plafond, la tuile atteignait 240pt de côté sur iPad pour un libellé
+    // de 12pt.
+    maxWidth: 120,
     borderRadius: 16,
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
-    fontSize: 12,
+    fontSize: font(12),
     fontFamily: 'CronosProBold',
     marginTop: 8,
     textAlign: 'center'

@@ -9,7 +9,6 @@ import {
   Alert,
   Animated,
   AppState,
-  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
@@ -21,8 +20,8 @@ import {
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../constants/Colors';
-import { searchImage } from "../services/image";
-import { apiService } from '../services/api';
+import { searchImage, type RecipeImageSearchInput } from "../services/image";
+import { apiService, type RecipeIdentity } from '../services/api';
 import {
   Skeleton,
   RecipeImageSkeleton,
@@ -38,8 +37,11 @@ import * as StoreReview from 'expo-store-review';
 import { useTranslation } from 'react-i18next';
 import analytics from "../services/analytics";
 import recipeStreamManager from '../services/recipeStreamManager';
+import { completeGenerationLoading } from '../services/generationLoadingCoordinator';
+import { font } from '../constants/Layout';
+import { GENERIC_RECIPE_IMAGE, isGenericRecipeImage } from '../constants/RecipeImages';
+import { contentColumn, useResponsive } from '../hooks/useResponsive';
 
-const { width, height } = Dimensions.get('window');
 const IMAGE_HISTORY_LOOKBACK = 30;
 
 function TypewriterText({ text, style, animate = true, speed = 40 }: { text: string; style: any; animate?: boolean; speed?: number }) {
@@ -103,6 +105,12 @@ interface Recipe {
 }
 
 export default function RecipeDetailScreen() {
+  // Suit la rotation / le Split View : les anciennes constantes issues de
+  // `Dimensions.get('window')` étaient figées au premier import du module.
+  const { height, isTablet } = useResponsive();
+  // Le héros occupait 40% de la hauteur quel que soit l'appareil ; sur iPhone SE
+  // ça ne laissait presque rien au contenu, sur iPad c'était une bannière géante.
+  const heroHeight = Math.round(height * (isTablet ? 0.32 : 0.4));
   const { t } = useTranslation();
   const colors = Colors.light;
   const params = useLocalSearchParams();
@@ -179,14 +187,40 @@ export default function RecipeDetailScreen() {
   });
 
   useEffect(() => {
-    if (recipe.id && recipe.title) {
-      analytics.track('recipe_generated', {
-        recipe_title: recipe.title,
+    if (!recipe.id || !recipe.title) return;
+
+    // Cet écran sert aussi à relire l'historique et les recettes importées :
+    // sans ce garde, `recipe_generated` comptait des consultations et gonflait
+    // artificiellement le volume de générations.
+    if (params.isHistory === 'true') {
+      analytics.track('recipe_viewed', {
         recipe_id: recipe.id,
-        is_first_time: params.isFirstGeneration === 'true'
+        is_imported: Boolean((recipe as any).videoUrl),
+      });
+      return;
+    }
+
+    analytics.track('recipe_generated', {
+      recipe_id: recipe.id,
+      is_first_time: params.isFirstGeneration === 'true'
+    });
+    analytics.markFeatureUsed('generate');
+    analytics.trackFirstAction('generate');
+
+    if (params.isOnboarding === 'true') {
+      analytics.track('onboarding_generation_demo_completed', {
+        demo_role: params.onboardingDemoRole || 'primary',
+        recipe_id: recipe.id,
       });
     }
-  }, [recipe.id, recipe.title, params.isFirstGeneration]);
+  }, [
+    recipe.id,
+    recipe.title,
+    params.isFirstGeneration,
+    params.isHistory,
+    params.isOnboarding,
+    params.onboardingDemoRole,
+  ]);
 
   // Reset fallback flag when recipe changes (e.g. navigation to another recipe)
   useEffect(() => {
@@ -199,18 +233,45 @@ export default function RecipeDetailScreen() {
   const [streamingSteps, setStreamingSteps] = useState(isStreaming);
   const [isFirstGeneration, setIsFirstGeneration] = useState(params.isFirstGeneration === 'true');
   const [loadingImage, setLoadingImage] = useState(isStreaming || !recipe.image);
+  const [displayedImageUrl, setDisplayedImageUrl] = useState<string | null>(null);
   const [isUpdatingImage, setIsUpdatingImage] = useState(false);
+  const [isReloadingImage, setIsReloadingImage] = useState(false);
   const [isGeneratingNewRecipe, setIsGeneratingNewRecipe] = useState(false);
   const [isModalActive, setIsModalActive] = useState(false);
   const firstTime = useRef(true);
   const firstTimeImage = useRef(true);
-  const firstTimeSteps = useRef(true);
   const sseCloseRef = useRef<(() => void) | null>(null);
   const streamSessionIdRef = useRef(0);
   const savedRecipeIdRef = useRef<string | null>(null);
   const sessionRecipeIdMapRef = useRef<Map<number, string>>(new Map());
   const pendingImagesBySessionRef = useRef<Map<number, string>>(new Map());
+  const lockedIdentityBySessionRef = useRef<Map<number, RecipeIdentity>>(new Map());
+  const imageSearchTitleBySessionRef = useRef<Map<number, string>>(new Map());
+  const regenerationLoadingRef = useRef<Map<number, {
+    key: string;
+    recipeDone: boolean;
+    imageResolved: boolean;
+  }>>(new Map());
   const imageErrorFallbackTriedRef = useRef(false);
+  const reviewRequestedForRecipeRef = useRef<string | null>(null);
+
+  const markRegenerationLoading = useCallback((
+    sessionId: number,
+    part: 'recipe' | 'image' | 'all',
+  ) => {
+    const status = regenerationLoadingRef.current.get(sessionId);
+    if (!status) return;
+    if (part === 'recipe' || part === 'all') status.recipeDone = true;
+    if (part === 'image' || part === 'all') status.imageResolved = true;
+    if (!status.recipeDone || !status.imageResolved) return;
+    regenerationLoadingRef.current.delete(sessionId);
+    completeGenerationLoading(status.key);
+    setIsModalActive(false);
+  }, []);
+
+  useEffect(() => {
+    setDisplayedImageUrl(null);
+  }, [recipe.image]);
 
   const saveImageForSession = useCallback((sessionId: number, image: string) => {
     const recipeId = sessionRecipeIdMapRef.current.get(sessionId);
@@ -255,19 +316,26 @@ export default function RecipeDetailScreen() {
 
       const historyImages = recentStoredRecipes
         .map((item: any) => item?.recipe?.image)
-        .filter((img: unknown): img is string => typeof img === 'string' && img.length > 0);
+        .filter((img: unknown): img is string =>
+          typeof img === 'string' && !isGenericRecipeImage(img)
+        );
 
       // Inclure l'image courante évite de la réutiliser pendant une régénération
-      const currentImage = recipe.image ? [recipe.image] : [];
+      const currentImage = isGenericRecipeImage(recipe.image) ? [] : [recipe.image];
       return Array.from(new Set([...historyImages, ...currentImage]));
     } catch {
       return recipe.image ? [recipe.image] : [];
     }
   }, [recipe.image]);
 
-  const fetchUniqueImageForTitle = useCallback(async (title: string) => {
+  const recipeImageContext = useCallback((source: Partial<Recipe>): RecipeImageSearchInput => ({
+    title: source.title || '',
+    mainIngredients: source.ingredients?.map((ingredient) => ingredient.name).filter(Boolean) || [],
+  }), []);
+
+  const fetchUniqueImage = useCallback(async (input: RecipeImageSearchInput) => {
     const existingImages = await getHistoryImageUrls();
-    return searchImage(title, existingImages);
+    return searchImage(input, existingImages);
   }, [getHistoryImageUrls]);
 
   const handleImageError = useCallback(() => {
@@ -281,7 +349,7 @@ export default function RecipeDetailScreen() {
       setRecipe((prev) => ({ ...prev, image: '' }));
       return;
     }
-    fetchUniqueImageForTitle(recipe.title).then((newImage) => {
+    fetchUniqueImage(recipeImageContext(recipe)).then((newImage) => {
       if (newImage) {
         setRecipe((prev) => ({ ...prev, image: newImage }));
         if (recipe.id) {
@@ -294,9 +362,9 @@ export default function RecipeDetailScreen() {
     }).catch(() => {
       setRecipe((prev) => ({ ...prev, image: '' }));
     });
-  }, [recipe.title, recipe.id, fetchUniqueImageForTitle]);
+  }, [recipe, fetchUniqueImage, recipeImageContext]);
 
-  const applyStreamSnapshot = useCallback((snapshot: { recipe: any; steps: any[]; isFirstGeneration?: boolean; isDone: boolean; error?: string }, sessionId?: number) => {
+  const applyStreamSnapshot = useCallback((snapshot: { recipe: any; steps: any[]; isFirstGeneration?: boolean; isDone: boolean; error?: string; imageResolved?: boolean }, sessionId?: number) => {
     const r = snapshot.recipe || {};
 
     if (r.id && typeof sessionId === 'number') {
@@ -307,16 +375,12 @@ export default function RecipeDetailScreen() {
     if (r && typeof r === 'object' && Object.keys(r).length > 0) {
       setRecipe((prev) => ({ ...prev, ...r }));
       if (r.title) setLoadingRecipe(false);
-      if (r.title && (r.cooking_time || r.difficulty || r.dish_type) && firstTimeImage.current) {
-        firstTimeImage.current = false;
-        fetchUniqueImageForTitle(r.title).then((image) => {
-          if (!image) return;
-          if (typeof sessionId === 'number') saveImageForSession(sessionId, image);
-          if (typeof sessionId === 'number' && streamSessionIdRef.current !== sessionId) return;
-          setRecipe((prev) => ({ ...prev, image }));
-        }).catch(() => { });
-      }
     }
+
+    // En préchargement, RecipeStreamManager est l'unique propriétaire de la
+    // recherche d'image. Relancer une recherche ici provoquait le changement
+    // visible entre deux photos différentes pour une même recette.
+    if (snapshot.imageResolved && !r.image) setLoadingImage(false);
 
     if (Array.isArray(snapshot.steps) && snapshot.steps.length > 0) {
       setRecipe((prev) => ({ ...prev, steps: snapshot.steps }));
@@ -332,13 +396,58 @@ export default function RecipeDetailScreen() {
       setStreamingTitleAndIngredients(false);
       setStreamingSteps(false);
     }
-  }, [fetchUniqueImageForTitle, registerSessionRecipeId, saveImageForSession]);
+  }, [registerSessionRecipeId]);
 
   const applyStreamSnapshotRef = useRef(applyStreamSnapshot);
   applyStreamSnapshotRef.current = applyStreamSnapshot;
 
-  const fetchUniqueImageForTitleRef = useRef(fetchUniqueImageForTitle);
-  fetchUniqueImageForTitleRef.current = fetchUniqueImageForTitle;
+  const fetchUniqueImageRef = useRef(fetchUniqueImage);
+  fetchUniqueImageRef.current = fetchUniqueImage;
+
+  const lockedRecipeFields = useCallback((sessionId: number) => {
+    const identity = lockedIdentityBySessionRef.current.get(sessionId);
+    if (!identity) return {};
+    return {
+      title: identity.title,
+      ...(identity.dish_type ? { dish_type: identity.dish_type } : {}),
+      ...(identity.cuisine_style ? { cuisine_style: identity.cuisine_style } : {}),
+    };
+  }, []);
+
+  const startImageSearchForSession = useCallback((sessionId: number, input: RecipeImageSearchInput) => {
+    const title = typeof input === 'string' ? input : input.title;
+    if (!title || imageSearchTitleBySessionRef.current.has(sessionId)) return;
+    imageSearchTitleBySessionRef.current.set(sessionId, title);
+    firstTimeImage.current = false;
+    setLoadingImage(true);
+
+    fetchUniqueImageRef.current(input).then(async (image) => {
+      if (!image) {
+        if (streamSessionIdRef.current === sessionId) {
+          setLoadingImage(false);
+          markRegenerationLoading(sessionId, 'image');
+        }
+        return;
+      }
+      const prefetched = await Image.prefetch(image, 'memory-disk');
+      if (!prefetched) {
+        if (streamSessionIdRef.current === sessionId) {
+          setLoadingImage(false);
+          markRegenerationLoading(sessionId, 'image');
+        }
+        return;
+      }
+      saveImageForSession(sessionId, image);
+      if (streamSessionIdRef.current !== sessionId) return;
+      setRecipe((prev) => ({ ...prev, image }));
+      markRegenerationLoading(sessionId, 'image');
+    }).catch(() => {
+      if (streamSessionIdRef.current === sessionId) {
+        setLoadingImage(false);
+        markRegenerationLoading(sessionId, 'image');
+      }
+    });
+  }, [markRegenerationLoading, saveImageForSession]);
 
   // SSE streaming: lance la génération progressive si mode streaming
   useEffect(() => {
@@ -400,47 +509,41 @@ export default function RecipeDetailScreen() {
       preferences.allowOtherIngredients,
       isSubscribed,
       {
+        onRecipeIdentity: ({ identity }) => {
+          if (streamSessionIdRef.current !== streamSessionId || !identity?.title) return;
+          lockedIdentityBySessionRef.current.set(streamSessionId, identity);
+          setRecipe((prev) => ({ ...prev, ...lockedRecipeFields(streamSessionId) }));
+          setLoadingRecipe(false);
+          startImageSearchForSession(streamSessionId, identity);
+        },
         onRecipeChunk: (partial) => {
           if (streamSessionIdRef.current !== streamSessionId) return;
           const r = partial?.recipe || partial;
           if (r && typeof r === 'object') {
             if (r.id) registerSessionRecipeId(streamSessionId, r.id);
-            setRecipe((prev) => ({ ...prev, ...r }));
-            if (r.title) setLoadingRecipe(false);
+            const incoming = { ...r };
+            if (!lockedIdentityBySessionRef.current.has(streamSessionId)) delete incoming.title;
+            setRecipe((prev) => ({ ...prev, ...incoming, ...lockedRecipeFields(streamSessionId) }));
+            if (r.title && lockedIdentityBySessionRef.current.has(streamSessionId)) {
+              setLoadingRecipe(false);
+            }
             if (Array.isArray(r.steps) && r.steps.length > 0) {
               setStreamingTitleAndIngredients(false);
               setLoadingSteps(false);
-            }
-            if (r.title && (r.cooking_time || r.difficulty || r.dish_type) && firstTimeImage.current) {
-              firstTimeImage.current = false;
-              fetchUniqueImageForTitleRef.current(r.title).then((image) => {
-                if (!image) return;
-                saveImageForSession(streamSessionId, image);
-                if (streamSessionIdRef.current !== streamSessionId) return;
-                setRecipe((prev) => ({ ...prev, image }));
-              }).catch(() => { });
             }
           }
         },
         onRecipe: (data) => {
           registerSessionRecipeId(streamSessionId, data.recipe.id);
           if (streamSessionIdRef.current !== streamSessionId) return;
-          setRecipe((prev) => ({ ...prev, ...data.recipe }));
+          setRecipe((prev) => ({ ...prev, ...data.recipe, ...lockedRecipeFields(streamSessionId) }));
           setLoadingRecipe(false);
           setStreamingTitleAndIngredients(false);
           setIsFirstGeneration(data.isFirstGeneration);
           if (Array.isArray(data.recipe.steps) && data.recipe.steps.length > 0) {
             setLoadingSteps(false);
           }
-          if (firstTimeImage.current) {
-            firstTimeImage.current = false;
-            fetchUniqueImageForTitleRef.current(data.recipe.title).then((image) => {
-              if (!image) return;
-              saveImageForSession(streamSessionId, image);
-              if (streamSessionIdRef.current !== streamSessionId) return;
-              setRecipe((prev) => ({ ...prev, image }));
-            }).catch(() => { });
-          }
+          startImageSearchForSession(streamSessionId, recipeImageContext(data.recipe));
         },
         onStepsChunk: (partial) => {
           if (streamSessionIdRef.current !== streamSessionId) return;
@@ -473,7 +576,7 @@ export default function RecipeDetailScreen() {
 
     sseCloseRef.current = close;
     return () => { close(); };
-  }, [goToIngredientListSafely, isStreaming, params.ingredients, params.preferences, prefetchStreamId, registerSessionRecipeId, saveImageForSession]);
+  }, [goToIngredientListSafely, isStreaming, lockedRecipeFields, params.ingredients, params.preferences, prefetchStreamId, recipeImageContext, registerSessionRecipeId, startImageSearchForSession]);
 
   useFocusEffect(useCallback(() => {
     const checkSubscriptionStatus = async () => {
@@ -511,22 +614,54 @@ export default function RecipeDetailScreen() {
 
   useEffect(() => {
     if (params.showGenerateButton === 'false')
-      analytics.track('Recipe Detail - View');
+      analytics.track('recipe_detail_viewed');
   }, []);
 
   useEffect(() => {
+    const isCompleteRecipe =
+      Boolean(recipe.id && recipe.title) &&
+      (isGenericRecipeImage(recipe.image) || displayedImageUrl === recipe.image) &&
+      Boolean(recipe.steps?.length) &&
+      !loadingRecipe &&
+      !loadingSteps &&
+      !loadingImage &&
+      !streamingTitleAndIngredients &&
+      !streamingSteps &&
+      !isGeneratingNewRecipe;
+
+    if (!isCompleteRecipe) return;
+    if (reviewRequestedForRecipeRef.current === recipe.id) return;
+
+    reviewRequestedForRecipeRef.current = recipe.id;
     const timer = setTimeout(async () => {
       try {
         if (AppState.currentState !== 'active') return;
         if (await StoreReview.hasAction()) {
+          analytics.track('recipe_review_requested', {
+            recipe_id: recipe.id,
+            during_onboarding: isOnboarding,
+          });
           await StoreReview.requestReview();
         }
       } catch (e) {
         console.warn('Store review request skipped:', e);
       }
-    }, 15000);
+    }, 3000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [
+    isOnboarding,
+    recipe.id,
+    recipe.title,
+    recipe.image,
+    displayedImageUrl,
+    recipe.steps,
+    loadingRecipe,
+    loadingSteps,
+    loadingImage,
+    streamingTitleAndIngredients,
+    streamingSteps,
+    isGeneratingNewRecipe,
+  ]);
 
   useEffect(() => {
     // En mode streaming, on attend les données complètes via WS
@@ -546,37 +681,10 @@ export default function RecipeDetailScreen() {
       return;
     }
 
-    // Charger les étapes si nécessaire (avec affichage progressif)
-    if (!recipe.steps?.length && firstTimeSteps.current && recipe.id) {
-      firstTimeSteps.current = false;
-      setStreamingSteps(true);
-      apiService.getRecipeSteps(recipe as any).then(async (response) => {
-        if (streamSessionIdRef.current !== effectSessionId) return;
-        const steps = response.data?.steps || [];
-        if (steps.length > 0) {
-          for (let i = 0; i < steps.length; i++) {
-            if (streamSessionIdRef.current !== effectSessionId) return;
-            setRecipe((prev) => ({ ...prev, steps: steps.slice(0, i + 1) }));
-            if (i === 0) setLoadingSteps(false);
-            if (i < steps.length - 1) {
-              await new Promise(resolve => setTimeout(resolve, 400));
-            }
-          }
-        }
-        setStreamingSteps(false);
-        setLoadingSteps(false);
-      }).catch((error) => {
-        if (streamSessionIdRef.current !== effectSessionId) return;
-        console.error('Erreur lors du chargement des étapes:', error);
-        setStreamingSteps(false);
-        setLoadingSteps(false);
-        Alert.alert(t('recipeDetail.error'), t('recipeDetail.unableToGenerateRecipe'));
-      });
-    }
     // Charger l'image si nécessaire
     if (!recipe.image && firstTimeImage.current && recipe.title && shouldSearchImage) {
       firstTimeImage.current = false;
-      fetchUniqueImageForTitle(recipe.title).then((image) => {
+      fetchUniqueImage(recipeImageContext(recipe)).then((image) => {
         if (streamSessionIdRef.current !== effectSessionId) return;
         if (image) {
           setRecipe((prevRecipe) => ({ ...prevRecipe, image }));
@@ -599,8 +707,11 @@ export default function RecipeDetailScreen() {
   }, [recipe, isGeneratingNewRecipe, shouldSearchImage]);
 
   useEffect(() => {
-    if (!recipe.id || !recipe.title || !recipe.image) return;
+    if (!recipe.id || !recipe.title) return;
     if (!recipe.steps || recipe.steps.length === 0) return;
+    // Une recherche terminée sans résultat reste une recette valide : elle sera
+    // sauvegardée sans URL et affichera l'illustration locale générique.
+    if (loadingImage) return;
     if (streamingTitleAndIngredients || streamingSteps) return;
     if (isGeneratingNewRecipe) return;
     if (savedRecipeIdRef.current === recipe.id) return;
@@ -618,7 +729,7 @@ export default function RecipeDetailScreen() {
       .catch((error) => {
         console.error('Erreur lors de la sauvegarde de la recette:', error);
       });
-  }, [recipe, streamingTitleAndIngredients, streamingSteps, isGeneratingNewRecipe, params.ingredients]);
+  }, [recipe, loadingImage, streamingTitleAndIngredients, streamingSteps, isGeneratingNewRecipe, params.ingredients]);
 
   useEffect(() => {
     if (!recipe.id) return;
@@ -630,11 +741,21 @@ export default function RecipeDetailScreen() {
   }, [recipe.id]);
 
   const handleOnboardingContinue = async () => {
+    // Une étape d'onboarding peut imposer explicitement la suite du tunnel
+    // (c'est le cas de l'aha moment d'import, qui n'est pas rattaché à une
+    // variante). Elle prime sur le routage par variante ci-dessous.
+    if (typeof params.onboardingNext === 'string' && params.onboardingNext) {
+      router.replace(params.onboardingNext as any);
+      return;
+    }
+
     const variant = await analytics.getOnboardingVariant();
     if (variant === 'B') {
       router.push({ pathname: '/paywall', params: { source: 'onboarding_variant_b' } });
     } else if (variant === 'E' || variant === 'F') {
-      router.replace('/onboarding/videoImportTutorial');
+      // On reprend le flux mono-écran à l'étape tutoriel (step 1), juste après
+      // l'aha moment (step 0) d'où la caméra a été lancée.
+      router.replace({ pathname: '/onboarding/fastOnboarding', params: { initialStep: '1' } });
     } else {
       router.replace('/onboarding/personalizedRecipes');
     }
@@ -695,10 +816,42 @@ export default function RecipeDetailScreen() {
     }
   };
 
+  const handleReloadRecipeImage = async () => {
+    if (!__DEV__ || !recipe.title || isReloadingImage) return;
+
+    setIsReloadingImage(true);
+    try {
+      // getHistoryImageUrls inclut l'image courante : la recherche ne peut donc
+      // pas simplement rendre la même URL depuis le cache du titre.
+      const image = await fetchUniqueImage(recipeImageContext(recipe));
+      if (!image) {
+        if (!recipe.image) setLoadingImage(false);
+        return;
+      }
+
+      const prefetched = await Image.prefetch(image, 'memory-disk');
+      if (!prefetched) {
+        if (!recipe.image) setLoadingImage(false);
+        return;
+      }
+
+      setRecipe((prev) => ({ ...prev, image }));
+      imageErrorFallbackTriedRef.current = false;
+      if (recipe.id) {
+        apiService.updateRecipeImage(recipe.id, image).catch(() => undefined);
+        recipeStorageService.cacheRecipeImage(recipe.id, image);
+      }
+    } catch {
+      if (!recipe.image) setLoadingImage(false);
+    } finally {
+      setIsReloadingImage(false);
+    }
+  };
+
   const handleScroll = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     // Si on a scrollé plus que la moitié de l'image, on passe en mode sombre (icônes noires)
-    if (offsetY > height * 0.36) {
+    if (offsetY > heroHeight * 0.9) {
       setStatusBarStyle('dark');
     } else {
       setStatusBarStyle('light');
@@ -732,7 +885,6 @@ export default function RecipeDetailScreen() {
         await favoritesStorageService.addToFavorites(recipe);
         setIsFavorite(true);
         analytics.track('recipe_saved', {
-          recipe_title: recipe.title,
           recipe_id: recipe.id
         });
         Alert.alert(t('recipeDetail.success'), t('recipeDetail.recipeAddedToFavorites'));
@@ -781,7 +933,6 @@ export default function RecipeDetailScreen() {
 
       if (result.action === Share.sharedAction) {
         analytics.track('recipe_shared', {
-          recipe_title: recipe.title,
           recipe_id: recipe.id
         });
       }
@@ -798,9 +949,9 @@ export default function RecipeDetailScreen() {
   const handleGenerateRecipe = async () => {
     await revenueCatService.invalidateCache();
     if (!(await revenueCatService.getSubscriptionStatus()).isSubscribed) {
-      const canGenerate = await revenueCatService.useDailyQuota();
+      const canGenerate = await revenueCatService.useFreeGeneration();
       if (!canGenerate) {
-        router.push({ pathname: '/paywall', params: { source: 'quota_reached_detail' } });
+        router.push({ pathname: '/paywall', params: { source: 'free_generation_used_detail' } });
         return;
       }
     }
@@ -815,15 +966,29 @@ export default function RecipeDetailScreen() {
       setIsLiked(false);
       setIsFavorite(false);
       setIsModalActive(true);
+      const streamSessionId = ++streamSessionIdRef.current;
+      const loadingCompletionKey = `recipe-regeneration-${streamSessionId}-${Date.now()}`;
+      regenerationLoadingRef.current.set(streamSessionId, {
+        key: loadingCompletionKey,
+        recipeDone: false,
+        imageResolved: false,
+      });
       router.push({
         pathname: '/recipe-loading-modal',
         params: {
-          durationMs: '6000',
+          durationMs: '10000',
           dismissOnly: 'true',
+          completionKey: loadingCompletionKey,
+          maxWaitMs: '45000',
         },
       });
-      setTimeout(() => setIsModalActive(false), 6500); // Désactive après la fermeture du modal (6s + buffer)
-      const streamSessionId = ++streamSessionIdRef.current;
+      // Même limite que le loader : évite de laisser le contenu sous-jacent
+      // bloqué si le système ferme le modal par son filet de sécurité.
+      setTimeout(() => {
+        if (!regenerationLoadingRef.current.has(streamSessionId)) return;
+        regenerationLoadingRef.current.delete(streamSessionId);
+        setIsModalActive(false);
+      }, 45500);
       setRecipe({
         id: '',
         title: '',
@@ -859,6 +1024,8 @@ export default function RecipeDetailScreen() {
       sseCloseRef.current?.();
       firstTimeImage.current = true;
       savedRecipeIdRef.current = null;
+      imageSearchTitleBySessionRef.current.delete(streamSessionId);
+      lockedIdentityBySessionRef.current.delete(streamSessionId);
 
       const { close } = apiService.generateRecipeStream(
         ingredientsParam,
@@ -873,13 +1040,23 @@ export default function RecipeDetailScreen() {
         preferences.allowOtherIngredients,
         isSubscribed,
         {
+          onRecipeIdentity: ({ identity }) => {
+            if (streamSessionIdRef.current !== streamSessionId || !identity?.title) return;
+            lockedIdentityBySessionRef.current.set(streamSessionId, identity);
+            setRecipe((prev) => ({ ...prev, ...lockedRecipeFields(streamSessionId) }));
+            setLoadingRecipe(false);
+            setIsGeneratingNewRecipe(false);
+            startImageSearchForSession(streamSessionId, identity);
+          },
           onRecipeChunk: (partial) => {
             if (streamSessionIdRef.current !== streamSessionId) return;
             const r = partial?.recipe || partial;
             if (r && typeof r === 'object') {
               if (r.id) registerSessionRecipeId(streamSessionId, r.id);
-              setRecipe((prev) => ({ ...prev, ...r }));
-              if (r.title) {
+              const incoming = { ...r };
+              if (!lockedIdentityBySessionRef.current.has(streamSessionId)) delete incoming.title;
+              setRecipe((prev) => ({ ...prev, ...incoming, ...lockedRecipeFields(streamSessionId) }));
+              if (r.title && lockedIdentityBySessionRef.current.has(streamSessionId)) {
                 setLoadingRecipe(false);
                 setIsGeneratingNewRecipe(false);
               }
@@ -887,22 +1064,12 @@ export default function RecipeDetailScreen() {
                 setStreamingTitleAndIngredients(false);
                 setLoadingSteps(false);
               }
-              if (r.title && (r.cooking_time || r.difficulty || r.dish_type) && firstTimeImage.current) {
-                firstTimeImage.current = false;
-                setLoadingImage(true);
-                fetchUniqueImageForTitle(r.title).then((image) => {
-                  if (!image) return;
-                  saveImageForSession(streamSessionId, image);
-                  if (streamSessionIdRef.current !== streamSessionId) return;
-                  setRecipe((prev) => ({ ...prev, image }));
-                }).catch(() => { });
-              }
             }
           },
           onRecipe: (data) => {
             registerSessionRecipeId(streamSessionId, data.recipe.id);
             if (streamSessionIdRef.current !== streamSessionId) return;
-            setRecipe((prev) => ({ ...prev, ...data.recipe }));
+            setRecipe((prev) => ({ ...prev, ...data.recipe, ...lockedRecipeFields(streamSessionId) }));
             setLoadingRecipe(false);
             setStreamingTitleAndIngredients(false);
             setIsGeneratingNewRecipe(false);
@@ -910,21 +1077,11 @@ export default function RecipeDetailScreen() {
             setIsLiked(false);
             setIsFavorite(false);
             firstTime.current = true;
-            firstTimeSteps.current = true;
             if (Array.isArray(data.recipe.steps) && data.recipe.steps.length > 0) {
               setLoadingSteps(false);
             }
 
-            if (firstTimeImage.current) {
-              firstTimeImage.current = false;
-              setLoadingImage(true);
-              fetchUniqueImageForTitle(data.recipe.title).then((image) => {
-                if (!image) return;
-                saveImageForSession(streamSessionId, image);
-                if (streamSessionIdRef.current !== streamSessionId) return;
-                setRecipe((prev) => ({ ...prev, image }));
-              }).catch(() => { });
-            }
+            startImageSearchForSession(streamSessionId, recipeImageContext(data.recipe));
           },
           onStepsChunk: (partial) => {
             if (streamSessionIdRef.current !== streamSessionId) return;
@@ -946,6 +1103,7 @@ export default function RecipeDetailScreen() {
             setStreamingTitleAndIngredients(false);
             setStreamingSteps(false);
             setIsGeneratingNewRecipe(false);
+            markRegenerationLoading(streamSessionId, 'recipe');
           },
           onError: (message) => {
             if (streamSessionIdRef.current !== streamSessionId) return;
@@ -956,6 +1114,7 @@ export default function RecipeDetailScreen() {
             setStreamingTitleAndIngredients(false);
             setStreamingSteps(false);
             setLoadingImage(false);
+            markRegenerationLoading(streamSessionId, 'all');
           }
         }
       );
@@ -1033,28 +1192,35 @@ export default function RecipeDetailScreen() {
         scrollEventThrottle={16}
       >
         {/* Section Image avec boutons overlay */}
-        <View style={styles.imageContainer}>
-          {recipe.image && (
+        <View style={[styles.imageContainer, { height: heroHeight }]}>
+          {!isGenericRecipeImage(recipe.image) && (
             <Image
               source={{
                 uri: recipe.image,
               }}
               style={styles.recipeImage}
               contentFit="cover"
-              onLoadEnd={() => setLoadingImage(false)}
+              onLoad={() => {
+                setDisplayedImageUrl(recipe.image);
+                setLoadingImage(false);
+              }}
               onError={handleImageError}
             />
           )}
-          {(!recipe.image || loadingImage) && (
+          {loadingImage && (
             <View style={StyleSheet.absoluteFill}>
               <RecipeImageSkeleton />
             </View>
           )}
-          {!recipe.image && !loadingImage && (
-            <Text style={{ fontSize: width * 0.5 }}>{recipe.icon}</Text>
+          {isGenericRecipeImage(recipe.image) && !loadingImage && (
+            <Image
+              source={GENERIC_RECIPE_IMAGE}
+              style={styles.recipeImage}
+              contentFit="cover"
+            />
           )}
 
-          <View style={{ position: 'absolute', left: 10, bottom: 10, zIndex: 1000, backgroundColor: 'rgba(0, 0, 0, 0.5)', padding: 10, borderRadius: 10 }}>
+          <View style={[styles.illustrationBadge, __DEV__ && styles.illustrationBadgeWithReload]}>
             <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'white' }}>
               {t('recipeDetail.illustration')}
             </Text>
@@ -1111,6 +1277,23 @@ export default function RecipeDetailScreen() {
               <Ionicons name="camera-outline" size={20} color="#000" />
             )}
           </TouchableOpacity>
+
+          {__DEV__ && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel={t('recipeDetail.reloadImage')}
+              style={styles.reloadImageButton}
+              onPress={handleReloadRecipeImage}
+              disabled={isReloadingImage || !recipe.title}
+            >
+              {isReloadingImage ? (
+                <ActivityIndicator size="small" color="#000" />
+              ) : (
+                <Ionicons name="reload" size={20} color="#000" />
+              )}
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Section Informations */}
@@ -1449,7 +1632,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     position: 'relative',
-    height: height * 0.4,
+    // height fourni à l'usage (dépend de la hauteur de fenêtre courante).
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1547,20 +1730,23 @@ const styles = StyleSheet.create({
     fontFamily: 'Degular'
   },
   infoContainer: {
+    // Sur tablette le corps de la recette est recentré : des lignes de texte de
+    // 900pt de large sont illisibles.
+    ...contentColumn(),
     paddingHorizontal: 20,
     paddingTop: 10,
   },
   recipeTitle: {
-    fontSize: 28,
+    fontSize: font(28),
     color: '#000',
     marginBottom: 20,
     fontFamily: 'Degular'
   },
   recipeDescription: {
     fontFamily: 'CronosProBold',
-    fontSize: 16,
+    fontSize: font(16),
     color: '#666',
-    lineHeight: 22,
+    lineHeight: font(22),
     marginBottom: 24,
   },
   metricsContainer: {
@@ -1585,14 +1771,14 @@ const styles = StyleSheet.create({
   metricLabel: {
     textAlign: 'center',
     fontFamily: 'CronosProBold',
-    fontSize: 16,
+    fontSize: font(15),
     color: '#666',
     marginTop: 8,
     marginBottom: 4,
   },
   metricValue: {
     textAlign: 'center',
-    fontSize: 16,
+    fontSize: font(16),
     color: '#000',
     fontFamily: 'Degular'
   },
@@ -1607,7 +1793,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   ingredientsTitle: {
-    fontSize: 20,
+    fontSize: font(20),
     color: '#000',
     fontFamily: 'Degular'
   },
@@ -1847,6 +2033,36 @@ const styles = StyleSheet.create({
     elevation: 5,
     zIndex: 1001,
   },
+  reloadImageButton: {
+    position: 'absolute',
+    left: 20,
+    bottom: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    zIndex: 1001,
+  },
+  illustrationBadge: {
+    position: 'absolute',
+    left: 10,
+    bottom: 10,
+    zIndex: 1000,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    padding: 10,
+    borderRadius: 10,
+  },
+  illustrationBadgeWithReload: {
+    left: 68,
+    bottom: 20,
+  },
   videoLinkContainer: {
     marginTop: 10,
     marginBottom: 20,
@@ -1867,4 +2083,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Degular'
   },
-}); 
+});
