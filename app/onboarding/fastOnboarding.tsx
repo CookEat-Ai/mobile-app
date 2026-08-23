@@ -30,6 +30,7 @@ import apiService from '../../services/api';
 import revenueCatService from '../../config/revenuecat';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { useOnboardingTrialEligibility } from '../../hooks/useOnboardingTrialEligibility';
+import { formatNumber } from '../../components/onboarding/projectionFormat';
 
 const TUTORIAL_IMAGES_IOS = [
   require('../../assets/images/tuto/ios/tuto-import-tiktok-1.png'),
@@ -357,8 +358,8 @@ export default function FastOnboardingScreen() {
   };
 
   const renderSocialProof = () => {
-    const count = i18n.language.startsWith('fr') ? '10 000' : '10,000';
-    const parts = (t as any)('onboarding.socialProof.title', { count }).split(
+    const count = formatNumber(10000, i18n.language);
+    const parts = t('onboarding.socialProof.title', { total: count }).split(
       new RegExp(`(${count})`)
     );
     const reviews = [

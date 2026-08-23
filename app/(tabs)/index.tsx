@@ -22,6 +22,7 @@ import analytics from '../../services/analytics';
 import { ImportLinkSheet } from '../../components/ImportLinkSheet';
 import { LUCKY_WHEEL_ENABLED } from '../../config/features';
 import { loadOrCreateStarterPantry } from '../../services/pantryDefaults';
+import { getLanguageLocale } from '../../i18n';
 
 const STORAGE_KEY = 'pantry_ingredients';
 const HISTORY_BATCH_SIZE = 30;
@@ -577,7 +578,7 @@ export default function HomeScreen() {
                   monday.setDate(today.getDate() - diffToMonday);
                   const date = new Date(monday);
                   date.setDate(monday.getDate() + i);
-                  const dayName = date.toLocaleDateString(i18n.language.startsWith('fr') ? 'fr-FR' : 'en-US', { weekday: 'short' }).slice(0, 2);
+                  const dayName = date.toLocaleDateString(getLanguageLocale(i18n.language), { weekday: 'short' }).slice(0, 2);
                   const isToday = date.getTime() === today.getTime();
                   const isActive = weekActivity[i];
 

@@ -5,6 +5,7 @@ import {
   useSpeechRecognitionEvent,
 } from 'expo-speech-recognition';
 import { useTranslation } from 'react-i18next';
+import { getLanguageLocale } from '../i18n';
 
 interface UseVoiceOptions {
   onTextReceived?: (text: string) => void;
@@ -114,7 +115,7 @@ export const useVoice = (options: UseVoiceOptions = {}) => {
         return;
       }
       ExpoSpeechRecognitionModule.start({
-        lang: i18n.language === 'fr' ? 'fr-FR' : 'en-US',
+        lang: getLanguageLocale(i18n.language),
         interimResults: true,
         continuous: false,
       });

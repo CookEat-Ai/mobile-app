@@ -32,9 +32,18 @@ import api from '../../services/api';
 import { getUniqueDeviceId } from '../../services/deviceStorage';
 import analytics from '../../services/analytics';
 import { getPrivacyPolicyUrl, getTermsUrl } from '../../config/legal';
+import { getLanguageLocale, resolveSupportedLanguage, SupportedLanguage } from '../../i18n';
 
 const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 const QUESTIONS_ANSWERED_KEY = 'questions_answered';
+const LANGUAGE_OPTIONS: readonly { value: SupportedLanguage; label: string }[] = [
+  { value: 'fr', label: 'Français' },
+  { value: 'en', label: 'English' },
+  { value: 'de', label: 'Deutsch' },
+  { value: 'es-ES', label: 'Español (España)' },
+  { value: 'es-MX', label: 'Español (México)' },
+  { value: 'pt-BR', label: 'Português (Brasil)' },
+];
 
 export default function ProfileScreen() {
 
@@ -42,7 +51,8 @@ export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const { t, i18n } = useTranslation();
   const { subscriptionStatus, isLoading: subscriptionLoading, loadSubscriptionStatus, cancelSubscription } = useSubscription();
-  const [currentLanguage, setCurrentLanguage] = useState<'fr' | 'en'>((i18n.language?.startsWith('fr') ? 'fr' : 'en') as 'fr' | 'en');
+  const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguage>(resolveSupportedLanguage(i18n.language));
+  const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
   const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] = useState(false);
   const [isPromoModalVisible, setIsPromoModalVisible] = useState(false);
   const [promoCode, setPromoCode] = useState('');
@@ -141,9 +151,7 @@ export default function ProfileScreen() {
   useEffect(() => {
     const loadSavedLanguage = async () => {
       const savedLang = await AsyncStorage.getItem('app_language');
-      if (savedLang === 'fr' || savedLang === 'en') {
-        setCurrentLanguage(savedLang);
-      }
+      if (savedLang) setCurrentLanguage(resolveSupportedLanguage(savedLang));
     };
     loadSavedLanguage();
   }, []);
@@ -267,22 +275,15 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleLanguagePress = async () => {
-    const newLanguage = currentLanguage === 'fr' ? 'en' : 'fr';
+  const selectLanguage = async (newLanguage: SupportedLanguage) => {
     setCurrentLanguage(newLanguage);
     await i18n.changeLanguage(newLanguage);
     await AsyncStorage.setItem('app_language', newLanguage);
+    setIsLanguageModalVisible(false);
   };
 
   const getLanguageText = () => {
-    switch (currentLanguage) {
-      case 'fr':
-        return t('profile.languages.french');
-      case 'en':
-        return t('profile.languages.english');
-      default:
-        return t('profile.languages.french');
-    }
+    return LANGUAGE_OPTIONS.find(({ value }) => value === currentLanguage)?.label ?? 'English';
   };
 
   const handleNotificationsPress = async () => {
@@ -436,7 +437,7 @@ export default function ProfileScreen() {
                   </Text>
                   {subscriptionStatus.expirationDate && (
                     <Text style={[styles.planExpiration, { color: colors.textSecondary }]}>
-                      {t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString(i18n.language === 'fr' ? 'fr-FR' : 'en-US')}
+                      {t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString(getLanguageLocale(i18n.language))}
                     </Text>
                   )}
                 </View>
@@ -517,7 +518,7 @@ export default function ProfileScreen() {
 
             <View style={styles.separator} />
 
-            <TouchableOpacity style={styles.settingItem} onPress={handleLanguagePress}>
+            <TouchableOpacity style={styles.settingItem} onPress={() => setIsLanguageModalVisible(true)}>
               <IconSymbol name="globe" size={20} color={colors.button} />
               <View style={styles.settingInfo}>
                 <Text style={[styles.settingText, { marginLeft: 0, marginBottom: 5, color: colors.text }]}>
@@ -657,7 +658,7 @@ export default function ProfileScreen() {
                         </Text>
                         {subscriptionStatus.expirationDate && (
                           <Text style={styles.modalExpirationText}>
-                            {t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString(i18n.language === 'fr' ? 'fr-FR' : 'en-US')}
+                            {t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString(getLanguageLocale(i18n.language))}
                           </Text>
                         )}
                       </View>
@@ -684,6 +685,60 @@ export default function ProfileScreen() {
                     </View>
                   </ScrollView>
                 </Animated.View>
+              </TouchableWithoutFeedback>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+      {/* Sélecteur de langue */}
+      <Modal
+        visible={isLanguageModalVisible}
+        transparent={true}
+        animationType="fade"
+        presentationStyle="overFullScreen"
+        statusBarTranslucent={true}
+        onRequestClose={() => setIsLanguageModalVisible(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setIsLanguageModalVisible(false)}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalOverlayInner}>
+              <TouchableWithoutFeedback>
+                <View
+                  style={[
+                    styles.modalContent,
+                    { paddingBottom: Math.max(insets.bottom, 16) + 16 },
+                  ]}
+                >
+                  <View style={styles.modalHeader}>
+                    <Text style={styles.modalTitle}>{t('profile.language')}</Text>
+                    <TouchableOpacity
+                      style={styles.modalCloseButton}
+                      onPress={() => setIsLanguageModalVisible(false)}
+                      accessibilityRole="button"
+                      accessibilityLabel={t('common.close')}
+                    >
+                      <IconSymbol name="close" size={24} color="#000" />
+                    </TouchableOpacity>
+                  </View>
+
+                  {LANGUAGE_OPTIONS.map((option) => {
+                    const selected = option.value === currentLanguage;
+                    return (
+                      <TouchableOpacity
+                        key={option.value}
+                        style={[styles.languageOption, selected && styles.languageOptionSelected]}
+                        onPress={() => selectLanguage(option.value)}
+                        accessibilityRole="radio"
+                        accessibilityState={{ checked: selected }}
+                      >
+                        <Text style={[styles.languageOptionText, selected && { color: colors.button }]}>
+                          {option.label}
+                        </Text>
+                        {selected && <IconSymbol name="checkmark" size={22} color={colors.button} />}
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
               </TouchableWithoutFeedback>
             </View>
           </View>
@@ -979,6 +1034,23 @@ const styles = StyleSheet.create({
   },
   modalBody: {
     alignItems: 'center',
+  },
+  languageOption: {
+    minHeight: 52,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderRadius: 16,
+    marginBottom: 6,
+  },
+  languageOptionSelected: {
+    backgroundColor: '#FFF8E6',
+  },
+  languageOptionText: {
+    fontFamily: 'CronosProBold',
+    fontSize: 17,
+    color: '#081A10',
   },
   modalPlanCard: {
     width: '100%',

@@ -16,6 +16,7 @@ import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
+import { formatNumber } from '../../components/onboarding/projectionFormat';
 
 export default function WelcomeScreen() {
   const insets = useSafeAreaInsets();
@@ -229,7 +230,7 @@ export default function WelcomeScreen() {
           <Animated.View style={{ opacity: socialOpacity }}>
             <View style={styles.socialProof}>
               <View style={styles.laurel} />
-              <Text style={styles.socialProofText}>{t('onboarding.socialProof.title', { total: i18n.language.startsWith('fr') ? '10 000' : '10,000' })}</Text>
+              <Text style={styles.socialProofText}>{t('onboarding.socialProof.title', { total: formatNumber(10000, i18n.language) })}</Text>
               <View style={styles.laurel} />
             </View>
           </Animated.View>

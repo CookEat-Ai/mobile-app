@@ -28,6 +28,7 @@ import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { ContextualProof } from '../../components/onboarding/ContextualProof';
 import { CommitmentTitle } from '../../components/onboarding/CommitmentTitle';
 import { ProjectionStep } from '../../components/onboarding/ProjectionStep';
+import { formatNumber } from '../../components/onboarding/projectionFormat';
 import {
   loadOnboardingProfile,
   OnboardingProfile,
@@ -95,7 +96,7 @@ type Option = {
 
 const SocialProofContent = ({ onRate }: { onRate?: () => void }) => {
   const { t, i18n } = useTranslation();
-  const count = i18n.language.startsWith('fr') ? '10 000' : '10,000';
+  const count = formatNumber(10000, i18n.language);
   const fullText = t('onboarding.socialProof.title', { total: count });
   const parts = fullText.split(new RegExp(`(${count})`));
 

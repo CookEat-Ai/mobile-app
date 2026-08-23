@@ -1,0 +1,8 @@
+{
+  "NSCameraUsageDescription": "CookEat Ai quiere acceder a la cámara para tomar fotos de tus ingredientes.",
+  "NSMicrophoneUsageDescription": "CookEat Ai utiliza el micrófono para reconocer los ingredientes que dictas.",
+  "NSPhotoLibraryUsageDescription": "CookEat Ai quiere acceder a tus fotos para reconocer los ingredientes que nos muestras.",
+  "NSSpeechRecognitionUsageDescription": "CookEat Ai utiliza el reconocimiento de voz para entender tus ingredientes y sugerirte recetas personalizadas.",
+  "NSUserNotificationsUsageDescription": "Recibe recordatorios y sugerencias de recetas personalizadas.",
+  "NSUserTrackingUsageDescription": "Tus datos nos ayudan a mostrarte recetas y anuncios que se ajustan mejor a tus intereses."
+}

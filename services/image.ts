@@ -1,8 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { apiService } from './api';
+import i18n, { getLanguageLocale } from '../i18n';
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-const PINTEREST_BASE_URL = 'https://fr.pinterest.com';
+const PINTEREST_BASE_URL = 'https://www.pinterest.com';
 const MAX_PINTEREST_CANDIDATES = 10;
 const MAX_AI_CANDIDATES = 5;
 const IMAGE_PROBE_TIMEOUT_MS = 1500;
@@ -213,7 +214,7 @@ async function searchImageFromPinterest(context: RecipeImageContext, existingIma
     const searchUrl = `${PINTEREST_BASE_URL}/search/pins/?${searchParams.toString()}`;
     const response = await fetchPinterestPage(searchUrl, {
       headers: {
-        'accept-language': 'fr-FR,fr;q=0.9,en;q=0.8',
+        'accept-language': `${getLanguageLocale(i18n.language)},en;q=0.8`,
         'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148',
       },
     });

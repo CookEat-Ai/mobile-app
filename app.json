@@ -9,7 +9,11 @@
     "userInterfaceStyle": "light",
     "locales": {
       "fr": "./locales/ios/fr.json",
-      "en": "./locales/ios/en.json"
+      "en": "./locales/ios/en.json",
+      "de": "./locales/ios/de.json",
+      "es": "./locales/ios/es-ES.json",
+      "es-MX": "./locales/ios/es-MX.json",
+      "pt-BR": "./locales/ios/pt-BR.json"
     },
     "ios": {
       "appStoreUrl": "https://apps.apple.com/fr/app/cookeat-ai/id6748924011",

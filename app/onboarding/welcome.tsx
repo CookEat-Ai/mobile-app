@@ -24,6 +24,7 @@ import { useTranslation } from 'react-i18next';
 import analytics, { EntryFeature } from '../../services/analytics';
 import apiService from '../../services/api';
 import { getUniqueDeviceId } from '../../services/deviceStorage';
+import { formatNumber } from '../../components/onboarding/projectionFormat';
 
 /**
  * Écran d'accueil et de segmentation.
@@ -293,7 +294,7 @@ export default function WelcomeVideoScreen() {
                     pluralisation et n'en accepte qu'un nombre, ce qui casse le
                     typage dès qu'on passe une chaîne déjà formatée. */}
                 {t('onboarding.welcomeSocialProof', {
-                  total: i18n.language.startsWith('fr') ? '10 000' : '10,000',
+                  total: formatNumber(10000, i18n.language),
                 })}
               </Text>
               <Ionicons

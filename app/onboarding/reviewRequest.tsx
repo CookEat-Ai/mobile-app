@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { Colors } from '../../constants/Colors';
 import { rw } from '../../constants/Layout';
 import analytics from '../../services/analytics';
+import { formatNumber } from '../../components/onboarding/projectionFormat';
 
 
 const RatingBadge = ({ style }: { style?: any }) => {
@@ -48,7 +49,7 @@ export default function ReviewRequestScreen() {
   const mascotOpacity = useRef(new Animated.Value(0)).current;
   const contentOpacity = useRef(new Animated.Value(0)).current;
 
-  const count = i18n.language.startsWith('fr') ? '10 000' : '10,000';
+  const count = formatNumber(10000, i18n.language);
   const fullText = t('onboarding.socialProof.title', { total: count });
   const parts = fullText.split(new RegExp(`(${count})`));
 

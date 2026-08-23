@@ -1,4 +1,5 @@
 import type { ProjectionUnit } from '../../services/onboardingProfile';
+import { getLanguageLocale } from '../../i18n';
 
 /**
  * Date cible de la projection, en toutes lettres et sans l'année : « 1 septembre »
@@ -6,7 +7,7 @@ import type { ProjectionUnit } from '../../services/onboardingProfile';
  * représente, pas sur un format ISO.
  */
 export function formatTargetDate(date: Date, language: string): string {
-  const locale = language?.startsWith('fr') ? 'fr-FR' : 'en-US';
+  const locale = getLanguageLocale(language);
   try {
     return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long' }).format(date);
   } catch {
@@ -17,7 +18,7 @@ export function formatTargetDate(date: Date, language: string): string {
 
 /** Séparateur de milliers selon la locale (10 000 vs 10,000). */
 export function formatNumber(value: number, language: string): string {
-  const locale = language?.startsWith('fr') ? 'fr-FR' : 'en-US';
+  const locale = getLanguageLocale(language);
   try {
     return new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(value);
   } catch {
