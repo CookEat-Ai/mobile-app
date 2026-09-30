@@ -54,12 +54,13 @@ class RevenueCatService {
   async initialize(appUserID?: string) {
     if (!this.isInitialized && !this.initializationPromise) {
       this.initializationPromise = (async () => {
+        const initialUserId = appUserID || await AsyncStorage.getItem('userId');
         await Purchases.configure({
           apiKey: Platform.OS === 'ios' ? REVENUECAT_API_KEY.ios : REVENUECAT_API_KEY.android,
-          appUserID: appUserID || undefined,
+          appUserID: initialUserId || undefined,
         });
 
-        await this.syncAttributionIdentifiers(appUserID);
+        await this.syncAttributionIdentifiers(initialUserId || undefined);
 
         // Récupérer la configuration de l'API sans retarder l'accès au Store.
         void this.fetchAppConfig();
@@ -86,6 +87,7 @@ class RevenueCatService {
     try {
       const targetUserId = String(appUserID || '').trim();
       if (!targetUserId) return;
+      if (!this.isInitialized) await this.initialize();
 
       const currentAppUserId = await this.getSafeAppUserId();
       if (currentAppUserId === targetUserId) return;
@@ -161,6 +163,7 @@ class RevenueCatService {
         return status;
       }
 
+      await this.initialize();
       let customerInfo = await Purchases.getCustomerInfo();
       let activeEntitlements = customerInfo.entitlements.active || {};
       let activeEntitlementKeys = Object.keys(activeEntitlements);
@@ -231,6 +234,7 @@ class RevenueCatService {
 
   async getOfferings(): Promise<PurchasesOffering | null> {
     try {
+      await this.initialize();
       const offerings = await Purchases.getOfferings();
       const currentOffering = offerings.current;
 
@@ -251,6 +255,7 @@ class RevenueCatService {
 
   async purchasePackage(packageToPurchase: any): Promise<boolean> {
     try {
+      await this.initialize();
       const { customerInfo } = await Purchases.purchasePackage(packageToPurchase);
       const isSubscribed = this.hasActiveSubscription(customerInfo);
 
@@ -269,6 +274,7 @@ class RevenueCatService {
 
   async restorePurchases(): Promise<boolean> {
     try {
+      await this.initialize();
       const customerInfo = await Purchases.restorePurchases();
       const isSubscribed = this.hasActiveSubscription(customerInfo);
       return isSubscribed;
@@ -352,6 +358,7 @@ class RevenueCatService {
 
   async cancelSubscription(): Promise<boolean> {
     try {
+      await this.initialize();
       // RevenueCat ne permet pas de cancellation directe côté client
       // L'utilisateur doit gérer son abonnement via les stores
       const customerInfo = await Purchases.getCustomerInfo();
@@ -484,9 +491,10 @@ class RevenueCatService {
 
   async invalidateCache(): Promise<void> {
     try {
-      Purchases.invalidateCustomerInfoCache();
-    } catch {
-      // no-op
+      await this.initialize();
+      await Purchases.invalidateCustomerInfoCache();
+    } catch (error) {
+      console.warn('⚠️ Cache RevenueCat non actualisé:', error);
     }
   }
 

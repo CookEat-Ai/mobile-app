@@ -300,6 +300,7 @@ class AnalyticsService {
 
   private async syncRevenueCatIdentity(userId: string, appsFlyerUID: string | null) {
     try {
+      if (!(await Purchases.isConfigured())) return;
       const currentAppUserId = await Purchases.getAppUserID();
       if (currentAppUserId !== userId) {
         await Purchases.logIn(userId);
@@ -342,6 +343,7 @@ class AnalyticsService {
     // Si RevenueCat est déjà configuré, les dimensions sont immédiatement
     // disponibles sur les prochains achats. Sinon initialize() les rejouera.
     try {
+      if (!(await Purchases.isConfigured())) return;
       const attributes = await appsFlyerService.getRevenueCatAttributionAttributes();
       if (Object.keys(attributes).length > 0) {
         await Purchases.setAttributes(attributes);

@@ -376,7 +376,9 @@ function RootLayout() {
       }
     };
 
-    initAnalytics().then(() => syncUserIdentity());
+    void initAnalytics().then(() => syncUserIdentity()).catch((error) => {
+      console.error('[Startup] Initialisation impossible:', error);
+    });
   }, []);
 
   const [loaded, error] = useFonts({
