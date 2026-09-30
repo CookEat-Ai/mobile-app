@@ -16,8 +16,7 @@
     "update:preview": "sh ./scripts/eas-update-with-sentry.sh preview preview",
     "test:goal-timeline": "node scripts/test-goal-timeline.cjs",
     "test:planning-loading": "node scripts/test-planning-loading.cjs",
-    "test:planned-meal-navigation": "node scripts/test-planned-meal-navigation.cjs",
-    "test:revenuecat-startup": "node scripts/test-revenuecat-startup.cjs"
+    "test:planned-meal-navigation": "node scripts/test-planned-meal-navigation.cjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
