@@ -1,3 +1,5 @@
+import { EntranceView } from '../components/motion/Entrance';
+import { NavigationIconButton } from '../components/NavigationIconButton';
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import {
   View,
@@ -18,7 +20,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
-import { Ionicons, FontAwesome6 } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from '../components/ui/IconSymbol';
@@ -1066,12 +1068,10 @@ export default function RecipeSummaryScreen() {
       />
 
       {/* Floating Back Button */}
-      <TouchableOpacity
+      <NavigationIconButton
         style={[styles.floatingCircleButton, { left: 20, top: insets.top + 10 }]}
         onPress={handleBack}
-      >
-        <FontAwesome6 name="arrow-left" size={18} color={Colors.light.textSecondary} />
-      </TouchableOpacity>
+       />
 
       {/* Floating Filter Button */}
       <TouchableOpacity
@@ -1193,8 +1193,8 @@ export default function RecipeSummaryScreen() {
                 {group.items.length === 0 ? (
                   <Text style={styles.categoryEmptyText}>{t('recipeSummary.none')}</Text>
                 ) : (
-                  group.items.map(ingredient => (
-                    <View style={styles.ingredientItem} key={ingredient.id}>
+                  group.items.map((ingredient, index) => (
+                    <EntranceView entranceIndex={index} style={styles.ingredientItem} key={ingredient.id}>
                       <TextInput
                         style={styles.ingredientName}
                         value={ingredient.name}
@@ -1208,7 +1208,7 @@ export default function RecipeSummaryScreen() {
                       >
                         <IconSymbol name="trash" size={20} color={Colors.light.textSecondary} weight="medium" />
                       </TouchableOpacity>
-                    </View>
+                    </EntranceView>
                   ))
                 )}
               </View>
@@ -1249,9 +1249,7 @@ export default function RecipeSummaryScreen() {
               <Text style={styles.modalTitle}>
                 {categoryAddModalCategoryId ? (CATEGORY_META[categoryAddModalCategoryId]?.title ?? categoryAddModalCategoryId) : ''}
               </Text>
-              <TouchableOpacity onPress={closeCategoryAddModal} style={styles.modalCloseButton}>
-                <IconSymbol name="close" size={24} color="#000" />
-              </TouchableOpacity>
+              <NavigationIconButton kind="close" onPress={closeCategoryAddModal} style={styles.modalCloseButton} />
             </View>
             <View style={styles.categoryAddModalSearchBar}>
               <IconSymbol name="search" size={18} color="#9A9A9A" />
@@ -1362,9 +1360,7 @@ export default function RecipeSummaryScreen() {
           >
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{t('recipeSummary.recipePreferences')}</Text>
-              <TouchableOpacity onPress={closeFilterModal} style={styles.modalCloseButton}>
-                <IconSymbol name="close" size={24} color="#000" />
-              </TouchableOpacity>
+              <NavigationIconButton kind="close" onPress={closeFilterModal} style={styles.modalCloseButton} />
             </View>
 
             <ScrollView

@@ -48,6 +48,7 @@ export type OnboardingProfile = {
   hasGoalAnswer: boolean;
   branch: EntryFeature | null;
   cookingForWho: string | null;
+  weeklyMealCount: number;
   cookingLevel: string | null;
   cookingFrequency: string | null;
   eatOutFrequency: string | null;
@@ -70,6 +71,7 @@ const PROFILE_KEYS = [
   'entryFeature',
   ANALYTICS_ENTRY_FEATURE_KEY,
   'cookingForWho',
+  'weeklyMealCount',
   'cookingLevel',
   'cookingFrequency',
   'eatOutFrequency',
@@ -108,6 +110,7 @@ export async function loadOnboardingProfile(): Promise<OnboardingProfile> {
     hasGoalAnswer: useCase !== null && USE_CASE_TO_GOAL[useCase] !== undefined,
     branch: branch === 'import' || branch === 'generate' ? branch : null,
     cookingForWho: read('cookingForWho'),
+    weeklyMealCount: Math.min(7, Math.max(1, Number(read('weeklyMealCount')) || 3)),
     cookingLevel: read('cookingLevel'),
     cookingFrequency: read('cookingFrequency'),
     eatOutFrequency: read('eatOutFrequency'),

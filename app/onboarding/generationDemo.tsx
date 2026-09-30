@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, Easing, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../../services/haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../../constants/Colors';
@@ -55,7 +55,7 @@ export default function GenerationDemoScreen() {
   }, [fade, translateY]);
 
   const startDemo = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    feedback.light();
     analytics.track('onboarding_cross_feature_demo_started', {
       primary_feature: 'import',
       demo_feature: 'generate',

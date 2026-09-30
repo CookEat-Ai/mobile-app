@@ -1,440 +1,140 @@
-import React, { useEffect, useRef } from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Animated,
-  ScrollView,
-  Platform,
-} from 'react-native';
+import { NutritionExplanation } from '../../components/NutritionExplanation';
+import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
+import { Ionicons } from '@expo/vector-icons';
+import { feedback } from '../../services/haptics';
 import { router } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Platform, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
-import { Colors } from '../../constants/Colors';
 import { useTranslation } from 'react-i18next';
+import { Colors } from '../../constants/Colors';
+import { OnboardingFooter } from '../../components/onboarding/OnboardingFooter';
+import { ClassicLoadingView } from '../../components/loading/ClassicLoadingView';
 import analytics from '../../services/analytics';
-import {
-  buildGenerationDemoIngredients,
-  buildGenerationDemoParams,
-} from '../../services/onboardingDemo';
+import { calculateFitnessProjection, FitnessProfile, loadFitnessProfile } from '../../services/fitnessProfile';
 
-const NutriCard = ({ icon, label, value, unit, color, delay, fadeAnim, slideAnim }: any) => (
-  <Animated.View
-    style={[
-      styles.nutriCard,
-      {
-        opacity: fadeAnim,
-        transform: [{ translateY: slideAnim }]
-      }
-    ]}
-    needsOffscreenAlphaCompositing={true}
-    renderToHardwareTextureAndroid={Platform.OS === 'android'}
-  >
-    <View style={[styles.iconCircle, { backgroundColor: color + '20' }]}>
-      <MaterialCommunityIcons name={icon} size={Platform.OS === 'android' ? 18 : 20} color={color} />
-    </View>
-    <View style={{ flex: 1, paddingRight: 24 }}>
-      <Text
-        style={styles.nutriLabel}
-        numberOfLines={1}
-        adjustsFontSizeToFit={true}
-        minimumFontScale={0.7}
-      >
-        {label}
-      </Text>
-      <View style={styles.valueRow}>
-        <Text
-          style={styles.nutriValue}
-          numberOfLines={1}
-          adjustsFontSizeToFit={true}
-          minimumFontScale={0.7}
-        >
-          {value}
-        </Text>
-        {unit && (
-          <Text
-            style={styles.nutriUnit}
-            numberOfLines={1}
-            adjustsFontSizeToFit={true}
-            minimumFontScale={0.7}
-          >
-            {unit}
-          </Text>
-        )}
+type MetricCardProps = {
+  icon: keyof typeof Ionicons.glyphMap;
+  label: string;
+  value: string;
+  color: string;
+  fade: Animated.Value;
+  slide: Animated.Value;
+};
+
+function MetricCard({ icon, label, value, color, fade, slide }: MetricCardProps) {
+  return (
+    <Animated.View style={[styles.metricCard, { opacity: fade, transform: [{ translateY: slide }] }]}>
+      <View style={styles.metricHeader}>
+        <View style={[styles.metricIcon, { backgroundColor: `${color}20` }]}><Ionicons name={icon} size={17} color={color} /></View>
+        <Text style={styles.metricLabel}>{label}</Text>
       </View>
-    </View>
-    <View style={styles.progressCircleContainer}>
-      {/* Simulation d'un cercle de progression simple */}
-      <View style={[styles.progressCircleBase, { borderColor: color + '30' }]}>
-        <View style={[styles.progressCircleFill, { borderTopColor: color, borderLeftColor: color, borderRightColor: 'transparent', borderBottomColor: 'transparent' }]} />
-      </View>
-    </View>
-  </Animated.View>
-);
+      <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.85}>{value}</Text>
+    </Animated.View>
+  );
+}
 
 export default function OnboardingProfileReadyScreen() {
-  const insets = useSafeAreaInsets();
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
+  const [profile, setProfile] = useState<FitnessProfile | null>(null);
+  const fade = useRef(new Animated.Value(0)).current;
+  const slide = useRef(new Animated.Value(30)).current;
 
   useEffect(() => {
-    analytics.track('onboarding_summary_dashboard_viewed');
-
+    void loadFitnessProfile().then(setProfile);
+    analytics.track('onboarding_nutrition_targets_viewed');
     Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: Platform.OS === 'android' ? 400 : 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: Platform.OS === 'android' ? 400 : 800,
-        useNativeDriver: true,
-      })
+      Animated.timing(fade, { toValue: 1, duration: Platform.OS === 'android' ? 400 : 800, useNativeDriver: true }),
+      Animated.timing(slide, { toValue: 0, duration: Platform.OS === 'android' ? 400 : 800, useNativeDriver: true }),
     ]).start();
-  }, [fadeAnim, slideAnim]);
+  }, [fade, slide]);
+
+  if (!profile) return <ClassicLoadingView messageKey="onboarding_loading.messages" durationMs={1800} />;
+  const projection = calculateFitnessProjection(profile);
 
   const handleContinue = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    const variant = await analytics.getOnboardingVariant();
-
-    analytics.track('onboarding_summary_dashboard_continue', { variant });
-
-    analytics.track('onboarding_generation_demo_started', {
-      demo_role: 'primary',
-      prefilled_ingredient_count: buildGenerationDemoIngredients(t).length,
-    });
-    router.replace({
-      pathname: '/ingredient-list',
-      params: buildGenerationDemoParams(
-        t,
-        'primary',
-        '/onboarding/videoImportTutorial',
-      ),
-    });
+    await feedback.confirm();
+    analytics.track('onboarding_nutrition_targets_confirmed');
+    router.replace('/onboarding/trajectory');
   };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-      {/* Progress Bar (Final Step) */}
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <View style={styles.progressHeader}>
-        <View style={styles.progressTrackContainer}>
-          <View style={styles.progressTrack}>
-            <Animated.View style={[styles.progressFill, { width: '100%' }]} />
-          </View>
-        </View>
+        <View style={styles.progressTrack}><View style={styles.progressFill} /></View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <OnboardingScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 + insets.bottom }]}>
         <View style={styles.header}>
-          <View style={styles.checkCircle}>
-            <Ionicons name="checkmark" size={30} color={"white"} />
-          </View>
-          <Text
-            style={styles.title}
-            numberOfLines={2}
-            adjustsFontSizeToFit={true}
-            minimumFontScale={0.7}
-          >
-            {t('onboardingProfileReady.title')}
-          </Text>
-          <Text style={styles.subtitle} numberOfLines={2} adjustsFontSizeToFit={true} minimumFontScale={0.7}>{t('onboardingProfileReady.subtitle')}</Text>
+          <View style={styles.checkCircle}><Ionicons name="checkmark" size={30} color="white" /></View>
+          <Text style={styles.title}>{t('fitnessOnboarding.targets.title')}</Text>
+          <Text style={styles.subtitle}>{t('fitnessOnboarding.targets.subtitle')}</Text>
         </View>
 
         <View style={styles.dashboardContainer}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('onboardingProfileReady.dailyRec')}</Text>
-            <Text style={styles.sectionSubtitle}>{t('onboardingProfileReady.editAnytime')}</Text>
+            <Text style={styles.sectionTitle}>{t('fitnessOnboarding.targets.daily')}</Text>
+            <Text style={styles.sectionSubtitle}>{t('nutritionEstimate.adjustable')}</Text>
           </View>
 
           <View style={styles.grid}>
-            <NutriCard
-              icon="chef-hat"
-              label={t('onboardingProfileReady.recipes')}
-              value={t('onboardingProfileReady.recipesValue')}
-              unit={t('onboardingProfileReady.recipesUnit')}
-              color="#E67E22"
-              fadeAnim={fadeAnim}
-              slideAnim={slideAnim}
-            />
-            <NutriCard
-              icon="auto-fix"
-              label={t('onboardingProfileReady.personalization')}
-              value={t('onboardingProfileReady.personalizationValue')}
-              unit=""
-              color="#F1C40F"
-              fadeAnim={fadeAnim}
-              slideAnim={slideAnim}
-            />
-            <NutriCard
-              icon="clock-fast"
-              label={t('onboardingProfileReady.time')}
-              value={t('onboardingProfileReady.timeValue')}
-              unit={t('onboardingProfileReady.timeUnit')}
-              color="#E74C3C"
-              fadeAnim={fadeAnim}
-              slideAnim={slideAnim}
-            />
-            <NutriCard
-              icon="piggy-bank"
-              label={t('onboardingProfileReady.budget')}
-              value={t('onboardingProfileReady.budgetValue')}
-              unit=""
-              color="#3498DB"
-              fadeAnim={fadeAnim}
-              slideAnim={slideAnim}
-            />
+            <MetricCard icon="flame-outline" label="Calories" value={`≈ ${projection.dailyCalories} kcal`} color="#E67E22" fade={fade} slide={slide} />
+            <MetricCard icon="barbell-outline" label={t('fitnessOnboarding.projection.protein')} value={`${projection.dailyProteinGrams} g`} color="#E74C3C" fade={fade} slide={slide} />
+            <MetricCard icon="leaf-outline" label={t('fitnessOnboarding.projection.carbs')} value={`${projection.dailyCarbsGrams} g`} color="#4CAF50" fade={fade} slide={slide} />
+            <MetricCard icon="water-outline" label={t('fitnessOnboarding.projection.fats')} value={`${projection.dailyFatGrams} g`} color="#3498DB" fade={fade} slide={slide} />
           </View>
 
-          {/* Match Score Card */}
-          <Animated.View
-            style={[styles.healthScoreCard, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}
-            needsOffscreenAlphaCompositing={true}
-            renderToHardwareTextureAndroid={Platform.OS === 'android'}
-          >
-            <View style={styles.healthHeader}>
-              <View style={styles.healthRow}>
-                <Ionicons name="sparkles" size={20} color="#FEB50A" />
-                <Text style={styles.healthLabel}>{t('onboardingProfileReady.matchScore')}</Text>
+          <Animated.View style={[styles.goalCard, { opacity: fade, transform: [{ translateY: slide }] }]}>
+            <View style={styles.goalHeader}>
+              <View style={styles.goalTitleRow}>
+                <Ionicons name="sparkles" size={20} color={Colors.light.button} />
+                <Text style={styles.goalTitle}>{['gain_muscle', 'lose_weight'].includes(profile.goal) ? t('nutritionEstimate.toward', { weight: projection.targetWeightKg }) : t('fitnessOnboarding.targets.maintenance', { calories: projection.estimatedMaintenanceCalories })}</Text>
               </View>
-              <Text style={styles.healthValue}>{t('onboardingProfileReady.matchScoreValue')}</Text>
             </View>
-            <View style={styles.healthBarTrack}>
-              <View style={[styles.healthBarFill, { width: '98%', backgroundColor: '#FEB50A' }]} />
-            </View>
+            <Text style={styles.goalSubtitle}>{t('nutritionEstimate.adjustable')}</Text>
           </Animated.View>
+          <NutritionExplanation profile={profile} />
         </View>
-      </ScrollView>
 
-      <View style={styles.footer}>
-        <TouchableOpacity activeOpacity={0.8} style={styles.continueButton} onPress={handleContinue}>
-          <Text style={styles.buttonText}>
-            {t('onboardingProfileReady.button')}
-          </Text>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.info}><Ionicons name="information-circle-outline" size={20} color={Colors.light.textSecondary} /><Text style={styles.infoText}>{t('fitnessOnboarding.targets.disclaimer')}</Text></View>
+      </OnboardingScrollView>
+
+      <OnboardingFooter label={t('fitnessOnboarding.targets.cta')} onPress={() => void handleContinue()} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FDF9E2',
-  },
-  progressHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    marginTop: 20,
-    height: 60,
-  },
-  progressTrackContainer: {
-    flex: 1,
-    height: 40,
-    justifyContent: 'center',
-  },
-  progressTrack: {
-    width: '100%',
-    height: 12,
-    borderRadius: 999,
-    backgroundColor: '#F1EACB',
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    borderRadius: 999,
-    backgroundColor: Colors.light.button,
-  },
-  scrollContent: {
-    paddingBottom: 120,
-  },
-  header: {
-    alignItems: 'center',
-    paddingHorizontal: 30,
-    marginTop: 20,
-  },
-  checkCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: Colors.light.button,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontFamily: 'Degular',
-    color: Colors.light.text,
-    textAlign: 'center',
-    lineHeight: 34,
-    marginBottom: 12,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: Colors.light.textSecondary,
-    textAlign: 'center',
-    lineHeight: 22,
-    fontFamily: Platform.OS === 'android' ? 'CronosProBold' : 'CronosPro',
-  },
-  dashboardContainer: {
-    backgroundColor: 'white',
-    marginHorizontal: 20,
-    marginTop: 30,
-    borderRadius: 24,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.05,
-    shadowRadius: 20,
-    elevation: 5,
-  },
-  sectionHeader: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    color: Colors.light.text,
-    fontFamily: 'Degular'
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    color: '#8C8C8C',
-    fontFamily: 'CronosProBold',
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    // `gap: 12` s'ajoutait aux deux cartes à 48% : la ligne dépassait 100% et la
-    // seconde carte passait dessous, ce qui écrasait la grille en une colonne de
-    // cartes à demi-largeur sur les écrans étroits (iPhone SE). L'espacement
-    // horizontal vient de `space-between` (les 4% restants), le vertical de rowGap.
-    rowGap: 12,
-    paddingHorizontal: Platform.OS === 'android' ? 2 : 0, // Espace pour les ombres sur Android
-  },
-  nutriCard: {
-    width: '48%',
-    minWidth: 0,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 16,
-    padding: Platform.OS === 'android' ? 10 : 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'relative',
-    marginVertical: Platform.OS === 'android' ? 4 : 0,
-  },
-  iconCircle: {
-    width: Platform.OS === 'android' ? 32 : 36,
-    height: Platform.OS === 'android' ? 32 : 36,
-    borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: Platform.OS === 'android' ? 6 : 10,
-  },
-  nutriLabel: {
-    fontSize: Platform.OS === 'android' ? 11 : 13,
-    fontFamily: 'CronosPro',
-    color: '#8C8C8C',
-  },
-  valueRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-  },
-  nutriValue: {
-    fontSize: Platform.OS === 'android' ? 17 : 20,
-    color: Colors.light.text,
-    fontFamily: 'Degular'
-  },
-  nutriUnit: {
-    fontSize: Platform.OS === 'android' ? 11 : 13,
-    fontFamily: 'CronosPro',
-    color: '#8C8C8C',
-    marginLeft: 2,
-  },
-  progressCircleContainer: {
-    position: 'absolute',
-    right: Platform.OS === 'android' ? 8 : 12,
-    top: Platform.OS === 'android' ? 10 : 12,
-  },
-  progressCircleBase: {
-    width: Platform.OS === 'android' ? 20 : 24,
-    height: Platform.OS === 'android' ? 20 : 24,
-    borderRadius: 12,
-    borderWidth: 2,
-  },
-  progressCircleFill: {
-    ...StyleSheet.absoluteFill,
-    borderRadius: 12,
-    borderWidth: 2,
-    transform: [{ rotate: '45deg' }],
-  },
-  healthScoreCard: {
-    marginTop: 20,
-    backgroundColor: '#F8F9FA',
-    borderRadius: 16,
-    padding: 16,
-  },
-  healthHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  healthRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  healthLabel: {
-    fontSize: 16,
-    color: Colors.light.text,
-    fontFamily: 'Degular'
-  },
-  healthValue: {
-    fontSize: 16,
-    color: Colors.light.text,
-    fontFamily: 'Degular'
-  },
-  healthBarTrack: {
-    height: 8,
-    backgroundColor: '#E9E9E9',
-    borderRadius: 4,
-    overflow: 'hidden',
-  },
-  healthBarFill: {
-    height: '100%',
-    backgroundColor: '#4CAF50',
-    borderRadius: 4,
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    paddingHorizontal: 24,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 60,
-    paddingTop: 20,
-  },
-  continueButton: {
-    backgroundColor: Colors.light.button,
-    paddingVertical: 18,
-    borderRadius: 200,
-    alignItems: 'center',
-    shadowColor: Colors.light.button,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  buttonText: {
-    color: 'white',
-    fontSize: 18,
-    fontFamily: 'Degular'
-  },
+  container: { flex: 1, backgroundColor: '#FDF9E2' },
+  progressHeader: { paddingHorizontal: 20, marginTop: 20, height: 40, justifyContent: 'center' },
+  progressTrack: { width: '100%', height: 12, borderRadius: 999, backgroundColor: '#F1EACB', overflow: 'hidden' },
+  progressFill: { width: '100%', height: '100%', borderRadius: 999, backgroundColor: Colors.light.button },
+  scrollContent: { width: '100%', maxWidth: 560, alignSelf: 'center' },
+  header: { alignItems: 'center', paddingHorizontal: 30, marginTop: 20 },
+  checkCircle: { width: 60, height: 60, borderRadius: 30, backgroundColor: Colors.light.button, justifyContent: 'center', alignItems: 'center', marginBottom: 20 },
+  title: { fontSize: 28, lineHeight: 34, fontFamily: 'Degular', color: Colors.light.text, textAlign: 'center', marginBottom: 12 },
+  subtitle: { fontSize: 16, lineHeight: 22, fontFamily: 'CronosPro', color: Colors.light.textSecondary, textAlign: 'center' },
+  dashboardContainer: { backgroundColor: 'white', marginHorizontal: 20, marginTop: 30, borderRadius: 24, padding: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.05, shadowRadius: 20, elevation: 5 },
+  sectionHeader: { marginBottom: 20 },
+  sectionTitle: { fontSize: 18, color: Colors.light.text, fontFamily: 'Degular' },
+  sectionSubtitle: { fontSize: 14, color: '#8C8C8C', fontFamily: 'CronosProBold' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 12 },
+  metricCard: { width: '48%', minWidth: 0, minHeight: 100, backgroundColor: '#F8F9FA', borderRadius: 16, padding: Platform.OS === 'android' ? 10 : 14, alignItems: 'flex-start' },
+  metricHeader: { flexDirection: 'row', alignItems: 'center', gap: 7 },
+  metricIcon: { width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center', marginRight: 0 },
+  metricCopy: { flex: 1, paddingRight: 18 },
+  metricLabel: { flexShrink: 1, fontSize: 12, fontFamily: 'CronosPro', color: '#8C8C8C', textTransform: 'capitalize' },
+  metricValue: { marginTop: 10, fontSize: 22, fontFamily: 'Degular', color: Colors.light.text },
+  progressCircle: { position: 'absolute', right: 9, top: 10, width: 22, height: 22, borderRadius: 11, borderWidth: 2 },
+  progressCircleFill: { ...StyleSheet.absoluteFill, borderRadius: 11, borderWidth: 2, borderRightColor: 'transparent', borderBottomColor: 'transparent', transform: [{ rotate: '45deg' }] },
+  goalCard: { marginTop: 20, backgroundColor: '#F8F9FA', borderRadius: 16, padding: 16 },
+  goalHeader: { marginBottom: 10 },
+  goalTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  goalTitle: { flex: 1, fontSize: 16, color: Colors.light.text, fontFamily: 'Degular' },
+  goalTrack: { height: 8, backgroundColor: '#E9E9E9', borderRadius: 4, overflow: 'hidden' },
+  goalFill: { width: '92%', height: '100%', backgroundColor: Colors.light.button, borderRadius: 4 },
+  goalSubtitle: { marginTop: 9, fontSize: 13, color: Colors.light.textSecondary, fontFamily: 'CronosPro' },
+  info: { flexDirection: 'row', gap: 8, marginTop: 16, paddingHorizontal: 28 },
+  infoText: { flex: 1, fontFamily: 'CronosPro', color: Colors.light.textSecondary, fontSize: 12, lineHeight: 16 },
 });

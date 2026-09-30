@@ -1,6 +1,6 @@
-# CookEat Ai - Mobile App 🍳🥗
+# CookEat - Mobile App 🍳🥗
 
-Bienvenue dans le dépôt de l'application mobile **CookEat Ai**. Cette application multi-plateforme est développée avec [Expo](https://expo.dev) et React Native.
+Bienvenue dans le dépôt de l'application mobile **CookEat**. Cette application multi-plateforme est développée avec [Expo](https://expo.dev) et React Native.
 
 Elle permet aux utilisateurs de trouver des recettes intelligemment en fonction de ce qu'ils ont dans leur cuisine grâce à l'IA.
 

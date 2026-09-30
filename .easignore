@@ -1,0 +1,17 @@
+node_modules/
+.expo/
+ios/
+android/
+dist/
+web-build/
+.git/
+.env
+.env.*
+!.env.example
+docs/audits/
+metadata/
+*.p8
+*.p12
+*.key
+*.mobileprovision
+.DS_Store

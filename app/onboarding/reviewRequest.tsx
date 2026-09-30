@@ -1,3 +1,4 @@
+import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -8,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../../services/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
@@ -16,7 +17,6 @@ import { useTranslation } from 'react-i18next';
 import { Colors } from '../../constants/Colors';
 import { rw } from '../../constants/Layout';
 import analytics from '../../services/analytics';
-import { formatNumber } from '../../components/onboarding/projectionFormat';
 
 
 const RatingBadge = ({ style }: { style?: any }) => {
@@ -44,19 +44,16 @@ const RatingBadge = ({ style }: { style?: any }) => {
 
 export default function ReviewRequestScreen() {
   const insets = useSafeAreaInsets();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const mascotOpacity = useRef(new Animated.Value(0)).current;
   const contentOpacity = useRef(new Animated.Value(0)).current;
 
-  const count = formatNumber(10000, i18n.language);
-  const fullText = t('onboarding.socialProof.title', { total: count });
-  const parts = fullText.split(new RegExp(`(${count})`));
-
-  const reviews = [
-    { id: 1, name: 'Marie L.', rating: 5, text: t('onboarding.socialProof.review1') },
-    { id: 2, name: 'Thomas D.', rating: 5, text: t('onboarding.socialProof.review2') },
-  ];
+  const reviews = ['time', 'planning', 'training'].map(id => ({
+    id,
+    name: t(`testimonials.${id}.author`),
+    text: t(`testimonials.${id}.text`),
+  }));
 
   useEffect(() => {
     analytics.track('onboarding_review_request_viewed');
@@ -78,7 +75,7 @@ export default function ReviewRequestScreen() {
   }, []);
 
   const handleContinue = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    feedback.confirm();
     analytics.track('onboarding_review_request_continue');
     router.replace('/onboarding/promoCode');
   };
@@ -97,7 +94,7 @@ export default function ReviewRequestScreen() {
           <RatingBadge style={styles.ratingBadge} />
         </View>
 
-        <Animated.ScrollView 
+        <OnboardingScrollView
           style={[styles.scrollArea, { opacity: contentOpacity }]}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
@@ -108,12 +105,7 @@ export default function ReviewRequestScreen() {
             </View>
 
             <Text style={styles.title}>
-              {parts.map((part, index) => (
-                <Text key={index} style={part === count ? styles.highlight : null}>
-                  {part}
-                </Text>
-              ))}
-              <Text> 🎉</Text>
+              {t('onboarding.socialProof.title')}
             </Text>
 
             <View style={styles.reviewsContainer}>
@@ -132,7 +124,7 @@ export default function ReviewRequestScreen() {
               ))}
             </View>
           </View>
-        </Animated.ScrollView>
+        </OnboardingScrollView>
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity

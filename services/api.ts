@@ -1,8 +1,9 @@
+import { getAnonymousSessionToken, invalidateAnonymousSession } from './anonymousSession';
 import * as Localization from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EventSource from 'react-native-sse';
 import { API_BASE_URL, WS_URL } from '../config/api';
-import i18n from '../i18n';
+import i18n, { resolveSupportedLanguage } from '../i18n';
 
 function parsePartialJSON(text: string): any {
   if (!text || !text.trim()) return null;
@@ -54,6 +55,7 @@ function parsePartialJSON(text: string): any {
 
 interface ApiResponse<T> {
   data?: T;
+  status?: number;
   message?: string;
   error?: string;
 }
@@ -82,6 +84,121 @@ export type RecipeIdentity = {
   dish_type?: string;
   cuisine_style?: string;
   main_ingredients?: string[];
+};
+
+export type MealPlanMeal = {
+  portionScale?: number;
+  calorieFit?: 'standard' | 'closest_available';
+  slotId: string;
+  position: number;
+  scheduledDate?: string;
+  dayIndex?: number;
+  mealType?: 'breakfast' | 'lunch' | 'snack' | 'dinner';
+  source: 'library' | 'catalog' | 'suggestion' | 'generated';
+  status: 'ready' | 'idea' | 'generating' | 'failed';
+  recipeId?: string;
+  catalogRecipeId?: string;
+  title: string;
+  dishType?: string;
+  cuisineStyle?: string;
+  mainIngredients: string[];
+  cookingTime?: string;
+  difficulty?: 'EASY' | 'MEDIUM' | 'HARD';
+  chefTip?: string;
+  image?: string;
+  imageAttribution?: CatalogImageAttribution | null;
+  calories?: number;
+  proteins?: number;
+  carbs?: number;
+  fats?: number;
+  ingredients?: { name: string; quantity: string; icon?: string; tags?: string[] }[];
+  steps?: { title: string; description: string }[];
+  servings: number;
+  locked: boolean;
+};
+
+export type CatalogCuisine = {
+  id: string;
+  names: Array<{ language: string; value: string }>;
+  aliases: string[];
+  coverage?: { total: number; express: number; vegetarian: number; vegan: number; ready: boolean } | null;
+};
+
+export type CatalogImageAttribution = {
+  provider: 'themealdb' | 'wikimedia-commons' | 'owned';
+  sourceUrl: string;
+  creator?: string;
+  license?: string;
+  licenseUrl?: string;
+  title?: string;
+};
+
+export type CatalogMealCategory = 'breakfast' | 'main' | 'snack';
+
+export type CatalogRecipe = {
+  id: string;
+  title: string;
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+  cooking_time: string;
+  icon: string;
+  image: string;
+  imageAttribution?: CatalogImageAttribution | null;
+  calories: string;
+  lipids: string;
+  proteins: string;
+  carbs: string;
+  chef_tip?: string;
+  servings: number;
+  ingredients: Array<{ name: string; quantity: string; icon?: string; tags?: string[] }>;
+  steps: Array<{ title: string; description: string }>;
+  mainIngredients: string[];
+  language: string;
+  cuisine_style: string;
+  dish_type: string;
+  mealTypes: Array<'breakfast' | 'lunch' | 'snack' | 'dinner'>;
+  mealCategories?: CatalogMealCategory[];
+  replacementMealTypes: Array<'breakfast' | 'lunch' | 'snack' | 'dinner'>;
+  express: boolean;
+};
+
+export type ShoppingListItem = {
+  id: string;
+  name: string;
+  canonicalName: string;
+  icon?: string;
+  category: string;
+  quantities: { amount?: number; unit?: string; display: string }[];
+  recipeIds: string[];
+  checked: boolean;
+  excluded: boolean;
+};
+
+export type MealPlan = {
+  _id: string;
+  userId: string;
+  weekStart: string;
+  weekEnd?: string;
+  mealCount: number;
+  servings: number;
+  language: string;
+  status: 'draft' | 'ready';
+  preferences: Record<string, unknown>;
+  profileSnapshot?: Record<string, unknown>;
+  nutritionTargets?: {
+    bmi: number;
+    estimatedMaintenanceCalories: number;
+    dailyCalories: number;
+    dailyProteinGrams: number;
+    dailyCarbsGrams: number;
+    dailyFatGrams: number;
+    targetWeightKg: number;
+    weeklyChangeKg: number;
+    durationWeeks: number;
+    minimumDurationWeeks: number;
+  };
+  meals: MealPlanMeal[];
+  shoppingList: ShoppingListItem[];
+  updatedAt: string;
 };
 
 class ApiService {
@@ -186,9 +303,7 @@ class ApiService {
   }
 
   private getCurrentLanguage(): string {
-    // On s'assure de n'envoyer que le code de langue (ex: 'fr' au lieu de 'fr-FR')
-    const locale = i18n.language || 'fr';
-    return locale.split('-')[0].split('_')[0].toLowerCase();
+    return resolveSupportedLanguage(i18n.language);
   }
 
   private async request<T>(
@@ -202,7 +317,10 @@ class ApiService {
     try {
       const url = `${API_BASE_URL}${endpoint}`;
 
-      const headers: HeadersInit = { ...this.getHeaders() };
+      const headers: Record<string, string> = { ...this.getHeaders() } as Record<string, string>;
+      if (/^\/(?:meal-plans|user(?:s)?\/|recipe(?:\/|$)|promo-code\/(?:validate|mark-used))/.test(endpoint)) {
+        headers.Authorization = 'Bearer ' + await getAnonymousSessionToken();
+      }
 
       if (options.body instanceof FormData) {
         if ('Content-Type' in headers) {
@@ -219,7 +337,8 @@ class ApiService {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || i18n.t('common.requestError'));
+        if (response.status === 401) invalidateAnonymousSession();
+        return { error: response.status >= 500 ? i18n.t('common.requestError') : data.message || i18n.t('common.requestError'), status: response.status };
       }
 
       return { data };
@@ -230,22 +349,15 @@ class ApiService {
         return { error: i18n.t('common.networkError') };
       }
 
-      console.error('Erreur API:', error);
-      let errorMessage = error instanceof Error ? error.message : String(error);
-
-      if (errorMessage === 'Network request failed' || errorMessage.includes('connection') || errorMessage.includes('timeout')) {
-        errorMessage = i18n.t('common.networkError');
-      }
-
-      return { error: errorMessage };
+      return { error: i18n.t('common.networkError') };
     } finally {
       clearTimeout(timeoutId);
     }
   }
 
   // Utilisateur
-  async getCurrentUser(mobileId: string) {
-    return this.request<any>(`/users/who-am-i?mobileId=${mobileId}`);
+  async getCurrentUser(_mobileId: string) {
+    return this.request<any>('/users/who-am-i');
   }
 
   // Recettes
@@ -514,6 +626,43 @@ class ApiService {
     });
   }
 
+  async getCatalogCuisines() {
+    return this.request<{ success: boolean; cuisines: CatalogCuisine[] }>('/catalog/cuisines', { method: 'GET' }, 12000);
+  }
+
+  async getCatalogRecipe(recipeId: string) {
+    const params = new URLSearchParams({ language: this.getCurrentLanguage() });
+    return this.request<{ success: boolean; recipe: CatalogRecipe }>(`/catalog/recipes/${encodeURIComponent(recipeId)}?${params.toString()}`, { method: 'GET' }, 12000);
+  }
+
+  async getRecipeCatalog(options: {
+    page?: number;
+    limit?: number;
+    cuisineId?: string;
+    mealType?: CatalogMealCategory | 'lunch' | 'dinner';
+    express?: boolean;
+    highProtein?: boolean;
+    diet?: string;
+    maxMinutes?: number;
+    allergies?: string[];
+    excludedIngredients?: string[];
+  } = {}) {
+    const params = new URLSearchParams({
+      language: this.getCurrentLanguage(),
+      page: String(options.page || 1),
+      limit: String(options.limit || 50),
+    });
+    if (options.cuisineId && options.cuisineId !== 'all') params.set('cuisineId', options.cuisineId);
+    if (options.mealType) params.set('mealType', options.mealType);
+    if (options.express) params.set('express', 'true');
+    if (options.highProtein) params.set('highProtein', 'true');
+    if (options.diet && options.diet !== 'none') params.set('diet', options.diet);
+    if (options.maxMinutes) params.set('maxMinutes', String(options.maxMinutes));
+    if (options.allergies?.length) params.set('allergies', options.allergies.join(','));
+    if (options.excludedIngredients?.length) params.set('excludedIngredients', options.excludedIngredients.join(','));
+    return this.request<{ success: boolean; recipes: CatalogRecipe[]; page: number; limit: number; total: number; pages: number }>(`/catalog/recipes?${params.toString()}`, { method: 'GET' }, 12000);
+  }
+
   async likeRecipe(recipeId: string) {
     return this.request<{ success: boolean; message: string; recipe: any }>(`/recipe/like/${recipeId}`, {
       method: 'POST',
@@ -524,6 +673,7 @@ class ApiService {
     const params = new URLSearchParams({
       page: String(page),
       limit: String(limit),
+      language: this.getCurrentLanguage(),
     });
     if (options?.isImported !== undefined) {
       params.set('isImported', String(options.isImported));
@@ -534,8 +684,86 @@ class ApiService {
   }
 
   async getRecipeById(id: string) {
-    return this.request<{ success: boolean; recipe: any }>(`/recipe/detail/${id}`, {
+    return this.request<{ success: boolean; recipe: any }>(`/recipe/detail/${id}?language=${encodeURIComponent(this.getCurrentLanguage())}`, {
       method: 'GET',
+    });
+  }
+
+  async getMealPlan(userId: string, weekStart?: string) {
+    const params = new URLSearchParams({ language: this.getCurrentLanguage() });
+    if (weekStart) params.set('weekStart', weekStart);
+    const query = `?${params.toString()}`;
+    return this.request<{ success: boolean; plan: MealPlan | null }>(`/meal-plans/user/${userId}${query}`, { method: 'GET' }, 12000);
+  }
+
+  async listMealPlans(userId: string) {
+    return this.request<{ success: boolean; plans: MealPlan[] }>(`/meal-plans/user/${userId}/all?language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000);
+  }
+
+  async getMealPlanById(planId: string, userId: string) {
+    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}?userId=${encodeURIComponent(userId)}&language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000);
+  }
+
+  async createMealPlan(input: {
+    userId: string;
+    weekStart: string;
+    mealCount?: number;
+    preferences: Record<string, unknown>;
+    isSubscribed?: boolean;
+    preview?: boolean;
+    replaceExisting?: boolean;
+  }) {
+    return this.request<{ success: boolean; plan: MealPlan }>('/meal-plans/draft', {
+      method: 'POST',
+      body: JSON.stringify({ ...input, language: this.getCurrentLanguage() }),
+    }, 90000);
+  }
+
+  async replaceMeal(planId: string, slotId: string, userId: string) {
+    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/meals/${slotId}/replace`, {
+      method: 'POST', body: JSON.stringify({ language: this.getCurrentLanguage(), userId }),
+    }, 90000);
+  }
+
+  async setPlannedMealRecipe(planId: string, slotId: string, userId: string, recipeId: string) {
+    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/meals/${slotId}/recipe`, {
+      method: 'PUT', body: JSON.stringify({ language: this.getCurrentLanguage(), userId, recipeId }),
+    }, 15000);
+  }
+
+  async materializeMeal(planId: string, slotId: string, userId: string) {
+    return this.request<{ success: boolean; plan: MealPlan; recipeId: string }>(`/meal-plans/${planId}/meals/${slotId}/materialize`, {
+      method: 'POST', body: JSON.stringify({ language: this.getCurrentLanguage(), userId }),
+    }, 90000);
+  }
+
+  async updatePlannedMeal(planId: string, slotId: string, userId: string, patch: { locked?: boolean; servings?: number; image?: string }) {
+    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/meals/${slotId}`, {
+      method: 'PATCH', body: JSON.stringify({ language: this.getCurrentLanguage(), userId, ...patch }),
+    });
+  }
+
+  async deletePlannedMeal(planId: string, slotId: string, userId: string) {
+    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/meals/${slotId}`, {
+      method: 'DELETE', body: JSON.stringify({ language: this.getCurrentLanguage(), userId }),
+    });
+  }
+
+  async reorderPlannedMeals(planId: string, userId: string, orderedSlotIds: string[]) {
+    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/meals/reorder`, {
+      method: 'PATCH', body: JSON.stringify({ language: this.getCurrentLanguage(), userId, orderedSlotIds }),
+    });
+  }
+
+  async generateShoppingList(planId: string, userId: string, preview = false) {
+    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/shopping-list`, {
+      method: 'POST', body: JSON.stringify({ language: this.getCurrentLanguage(), userId, preview }),
+    }, 15000);
+  }
+
+  async updateShoppingItem(planId: string, itemId: string, userId: string, patch: { checked?: boolean; excluded?: boolean }, preview = false) {
+    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/shopping-list/${itemId}`, {
+      method: 'PATCH', body: JSON.stringify({ language: this.getCurrentLanguage(), userId, ...patch, preview }),
     });
   }
 
@@ -630,6 +858,8 @@ class ApiService {
       onProgress?: (progress: number, step?: string) => void;
     }
   ): Promise<ApiResponse<{ success: boolean; recipe: any }>> {
+    let token: string;
+    try { token = await getAnonymousSessionToken(); } catch { return { error: i18n.t('common.networkError') }; }
     const userId = await AsyncStorage.getItem('userId');
     const url = `${API_BASE_URL}/recipe/import-from-video`;
 
@@ -638,6 +868,7 @@ class ApiService {
         method: 'POST',
         headers: {
           ...this.getHeaders() as any,
+          Authorization: 'Bearer ' + token,
         },
         body: JSON.stringify({
           url: videoUrl,
@@ -751,7 +982,7 @@ class ApiService {
   }
 
   async getFavorites(userId: string) {
-    return this.request<{ success: boolean; recipes: any[] }>(`/recipe/favorites/${userId}`, {
+    return this.request<{ success: boolean; recipes: any[] }>(`/recipe/favorites/${userId}?language=${encodeURIComponent(this.getCurrentLanguage())}`, {
       method: 'GET',
     });
   }

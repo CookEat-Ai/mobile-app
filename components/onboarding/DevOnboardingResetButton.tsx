@@ -14,6 +14,10 @@ const QUESTION_KEYS = new Set([
   'importPain', 'howDidHeKnowCookEatAI', 'commitmentLevel', 'entryFeature',
   'entry_feature', 'first_action', 'used_features', 'questions_answered',
   'pending_promo_code', 'pending_promo_discount',
+  'weeklyMealCount',
+  'fitnessGoal', 'heightCm', 'currentWeightKg', 'targetChangeKg',
+  'goalDurationWeeks', 'activityLevel', 'trainingDays', 'trainingDurationMinutes', 'includeSnack',
+  'nutritionWeightKg', 'dailyCalorieAdjustment', 'targetWeightKg', '@cookeat_weight_logs_v1', '@cookeat_weight_review_v1',
   // Les préférences sont initialisées par l'onboarding : sans leur remise à
   // zéro, un nouveau test DEV réutilise silencieusement le précédent profil.
   'recipe_preferences',
@@ -45,6 +49,7 @@ export function DevOnboardingResetButton() {
         || key.startsWith('proof_')
         || key.startsWith('onboarding_')
         || key.startsWith('@cookeat_onboarding')
+        || key.startsWith('@cookeat_weekly')
         || key.startsWith('@cookeat_trial_reminder'),
       );
       if (onboardingKeys.length > 0) await AsyncStorage.multiRemove(onboardingKeys);
@@ -56,7 +61,7 @@ export function DevOnboardingResetButton() {
 
   return (
     <TouchableOpacity
-      style={[styles.button, { top: Math.max(insets.top - 2, 8) }]}
+      style={[styles.button, { top: Math.max(insets.top - 8, 8) }]}
       onPress={reset}
       activeOpacity={0.8}
       accessibilityRole="button"

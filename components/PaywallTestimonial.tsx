@@ -10,15 +10,18 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** Avis autorisé déjà utilisé dans l'onboarding, choisi selon le profil. */
+/** Témoignages fournis par le propriétaire ; provenance dans docs/testimonials.md. */
 export function PaywallTestimonial({ testimonialKey, style }: Props) {
   const { t } = useTranslation();
+  const authorKey = testimonialKey.endsWith('.text')
+    ? testimonialKey.replace(/\.text$/, '.author')
+    : `${testimonialKey}Author`;
 
   return (
     <View style={[styles.card, style]}>
       <View style={styles.header}>
-        <Text style={styles.author}>{t(`${testimonialKey}Author`)}</Text>
-        <View style={styles.stars} accessible accessibilityLabel="5/5">
+        <Text style={styles.author}>{t(authorKey)}</Text>
+        <View style={styles.stars} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           {[1, 2, 3, 4, 5].map((star) => (
             <Ionicons key={star} name="star" size={14} color="#FEB50A" />
           ))}

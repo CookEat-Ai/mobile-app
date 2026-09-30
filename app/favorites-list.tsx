@@ -1,10 +1,10 @@
+import { NavigationIconButton } from '../components/NavigationIconButton';
 import { router, useFocusEffect } from "expo-router";
 import React, { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, StyleSheet, Text, View, RefreshControl, TouchableOpacity } from 'react-native';
-import Reanimated, { FadeInDown } from 'react-native-reanimated';
+import { FlatList, StyleSheet, Text, View, RefreshControl } from 'react-native';
+import Reanimated, { ReduceMotion, FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../constants/Colors';
 import { font } from '../constants/Layout';
@@ -88,9 +88,7 @@ export default function FavoritesListScreen() {
         entering={FadeInDown.duration(400).delay(50)}
         style={styles.header}
       >
-        <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
+        <NavigationIconButton onPress={() => router.back()} activeOpacity={0.7} style={styles.backButton} />
         <Text style={styles.mainTitle}>{t('favorites.title')}</Text>
         <View style={{ width: 40 }} />
       </Reanimated.View>
@@ -105,7 +103,7 @@ export default function FavoritesListScreen() {
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => (
             <Reanimated.View
-              entering={FadeInDown.duration(400).delay(150 + index * 50)}
+              entering={FadeInDown.duration(340).delay(Math.min(index, 5) * 45).reduceMotion(ReduceMotion.System)}
             >
               <RecipeCard
                 item={item as any}

@@ -67,18 +67,18 @@ export function AnimatedChevron() {
     const animation = Animated.loop(
       Animated.sequence([
         Animated.timing(translateX, {
-          toValue: 5,
-          duration: 460,
+          toValue: 10,
+          duration: 300,
           easing: Easing.inOut(Easing.cubic),
           useNativeDriver: true,
         }),
         Animated.timing(translateX, {
           toValue: 0,
-          duration: 460,
+          duration: 300,
           easing: Easing.inOut(Easing.cubic),
           useNativeDriver: true,
         }),
-        Animated.delay(520),
+        Animated.delay(280),
       ])
     );
 
@@ -150,7 +150,7 @@ export function TrialConversionFooter({
               showChevron && styles.primaryContentWithChevron,
             ]}
           >
-            <Text style={styles.primaryLabel} numberOfLines={2} adjustsFontSizeToFit>
+            <Text style={styles.primaryLabel} numberOfLines={1} adjustsFontSizeToFit>
               {primaryLabel}
             </Text>
             {primarySuffix ? (
@@ -237,9 +237,11 @@ const styles = StyleSheet.create({
   },
   primaryChevron: {
     position: 'absolute',
-    right: 0,
-    width: 28,
-    height: 28,
+    right: -2,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: 'rgba(255,255,255,0.18)',
     alignItems: 'center',
     justifyContent: 'center',
   },

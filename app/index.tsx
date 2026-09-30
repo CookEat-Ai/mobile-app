@@ -39,7 +39,7 @@ export default function RootLayout() {
       </View>
     )
 
-  return <Redirect href={entryRoute} />;
+  return <Redirect href={entryRoute as any} />;
 }
 
 const styles = StyleSheet.create({

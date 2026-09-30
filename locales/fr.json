@@ -1,4 +1,259 @@
 {
+  "planningReveal": {
+    "replay": "Rejouer l’animation"
+  },
+  "fitnessOnboarding": {
+    "required": "Choisis une réponse pour continuer.",
+    "numberError": "Entre une valeur comprise entre {{min}} et {{max}}.",
+    "units": {
+      "years": "ans",
+      "weeks": "semaines"
+    },
+    "interstitials": {
+      "facts": {
+        "days": "jours planifiés",
+        "meals": "repas",
+        "list": "liste de courses",
+        "perDay": "repas par jour",
+        "readyList": "courses prêtes"
+      },
+      "goal": {
+        "proof": "Tes prochaines réponses préciseront comment adapter tes repas."
+      },
+      "profile": {
+        "title": "Une première estimation pour toi",
+        "subtitle": "Ton âge, ta taille, ton poids et ton activité donnent ces premiers repères pour ton objectif.",
+        "proof": "Les portions partiront de ces repères. Ils pourront évoluer avec ton poids et ton activité.",
+        "activity": "Au quotidien : {{activity}}",
+        "training": "Entraînements : {{days}} j/semaine · {{minutes}} min",
+        "noTraining": "Sans entraînement prévu"
+      },
+      "meals": {
+        "title": "Des recettes selon tes préférences",
+        "subtitle": "Le choix des recettes tiendra compte de ton temps en cuisine, de tes goûts et des aliments à éviter.",
+        "proof": "Les quantités seront adaptées à ton objectif. La liste de courses suivra les repas que tu choisiras de planifier.",
+        "cooking": "Temps en cuisine",
+        "diet": "Alimentation",
+        "cuisines": "Cuisines choisies",
+        "avoid": "Aliments à éviter"
+      }
+    },
+    "goal": {
+      "title": "Quel est ton objectif principal ?",
+      "subtitle": "Ton planning et tes apports seront adaptés à cet objectif."
+    },
+    "reflection": {
+      "lose_weight": {
+        "title": "Des repas adaptés à ta perte de poids",
+        "subtitle": "Nous ajusterons les portions pour réduire tes apports, avec des repas rassasiants."
+      },
+      "gain_muscle": {
+        "title": "Des repas adaptés à ta prise de muscle",
+        "subtitle": "Nous ajusterons les portions et les protéines selon ton profil et tes entraînements."
+      },
+      "maintain": {
+        "title": "Des repas pour maintenir ton poids",
+        "subtitle": "Nous adapterons les portions pour couvrir tes besoins au quotidien."
+      },
+      "balanced": {
+        "title": "Des repas pour manger plus équilibré",
+        "subtitle": "Nous varierons les recettes et les ingrédients en tenant compte de tes goûts."
+      }
+    },
+    "sex": {
+      "title": "Quel est ton sexe biologique ?",
+      "subtitle": "Cette donnée améliore l'estimation calorique. Tu peux ne pas répondre."
+    },
+    "age": {
+      "title": "Quel âge as-tu ?",
+      "subtitle": "Il nous aide à estimer tes besoins quotidiens."
+    },
+    "height": {
+      "title": "Quelle est ta taille ?",
+      "subtitle": "Elle sert au calcul de l'IMC et à la personnalisation de ton objectif."
+    },
+    "weight": {
+      "title": "Quel est ton poids actuel ?",
+      "subtitle": "Tu pourras le modifier plus tard."
+    },
+    "change": {
+      "title": "Combien de kilos souhaites-tu changer ?",
+      "loseTitle": "Combien de kilos veux-tu perdre ?",
+      "gainTitle": "Combien de kilos veux-tu prendre ?",
+      "muscleTitle": "Combien de kilos veux-tu prendre ?",
+      "subtitle": "Choisis ton objectif. Nous ajusterons les apports avec tes progrès.",
+      "targetError": "Cet objectif mènerait à un IMC inférieur à 18,5. Choisis une cible plus sûre."
+    },
+    "duration": {
+      "title": "En combien de temps ?",
+      "subtitle": "Nous vérifions que le rythme reste réaliste.",
+      "error": "Pour cet objectif, prévois au minimum {{weeks}} semaines."
+    },
+    "projection": {
+      "badge": "RYTHME ESTIMÉ",
+      "title": "Ta trajectoire personnalisée",
+      "subtitle": "Un scénario indicatif à partir de ton poids actuel et de ta cible.",
+      "today": "Aujourd'hui",
+      "target": "Objectif",
+      "duration": "≈ {{weeks}} semaines",
+      "stable": "stabilité",
+      "pace": "Environ {{pace}} kg/semaine pendant {{weeks}} semaines",
+      "maintenancePace": "Un apport stable pour entretenir ton équilibre",
+      "autoCalculated": "Le délai suppose que ce rythme moyen se maintient. Tes besoins évoluent avec ton poids et ton activité.",
+      "protein": "protéines",
+      "carbs": "glucides",
+      "fats": "lipides",
+      "disclaimer": "Projection indicative, pas une promesse de résultat. Le poids dépend notamment de l'apport calorique réel, de l'activité et du métabolisme."
+    },
+    "commitment": {
+      "title": "À quel point veux-tu t'investir ?",
+      "subtitle": {
+        "lose_weight": "Ton planning t'aidera à avancer progressivement vers {{weight}} kg.",
+        "gain_muscle": "Ton planning soutiendra ta progression vers {{weight}} kg.",
+        "maintain": "Ton planning t'aidera à garder ton équilibre semaine après semaine.",
+        "balanced": "Ton planning t'aidera à construire une routine équilibrée qui tient dans le temps."
+      }
+    },
+    "activity": {
+      "title": "En dehors du sport, tu bouges beaucoup ?",
+      "subtitle": "Pense à tes déplacements et à ton activité au travail."
+    },
+    "training": {
+      "title": "Combien de jours par semaine fais-tu du sport ?",
+      "subtitle": "Tes entraînements sont comptés séparément de ton activité quotidienne."
+    },
+    "snack": {
+      "title": "Veux-tu prévoir une collation ?",
+      "subtitle": "Chaque journée comprendra petit-déjeuner, déjeuner et dîner ; la collation est optionnelle."
+    },
+    "cookingTime": {
+      "title": "Combien de temps veux-tu cuisiner ?",
+      "subtitle": "Nous garderons chaque repas compatible avec ton quotidien."
+    },
+    "diet": {
+      "title": "Suis-tu un régime alimentaire ?",
+      "subtitle": "Ce choix s'appliquera à toute la semaine."
+    },
+    "avoid": {
+      "title": "Des ingrédients à éviter ?",
+      "subtitle": "Optionnel. Sélectionne uniquement ce que tu ne veux jamais retrouver dans tes repas."
+    },
+    "cuisine": {
+      "title": "Quelles cuisines te motivent ?",
+      "subtitle": "Optionnel. Choisis-en plusieurs pour une semaine variée."
+    },
+    "social": {
+      "title": "CookEat, vu par ses utilisateurs",
+      "subtitle": "Leurs mots, leur expérience.",
+      "reviews": {
+        "lose_weight": {
+          "text": "$t(testimonials.regularity.text)",
+          "author": "$t(testimonials.regularity.author)"
+        },
+        "gain_muscle": {
+          "text": "$t(testimonials.macros.text)",
+          "author": "$t(testimonials.macros.author)"
+        },
+        "maintain": {
+          "text": "$t(testimonials.planning.text)",
+          "author": "$t(testimonials.planning.author)"
+        },
+        "balanced": {
+          "text": "$t(testimonials.simplicity.text)",
+          "author": "$t(testimonials.simplicity.author)"
+        }
+      }
+    },
+    "ready": {
+      "title": "Tes réponses vont guider tes repas",
+      "fullDay": "Toute la journée planifiée, pendant 7 jours",
+      "macros": "Calories et macronutriments adaptés à ton objectif",
+      "shopping": "Liste de courses automatique, à cocher en magasin",
+      "cta": "Voir mes repères",
+      "subtitle": "Retrouve maintenant tes repères quotidiens et la façon de suivre ton objectif."
+    },
+    "preview": {
+      "generating": "Nous générons 7 journées complètes, variées et adaptées à ton objectif. Cela peut prendre quelques instants.",
+      "title": "Ta semaine de repas, enfin planifiée 😋",
+      "shoppingTitle": "Ta liste de courses aussi",
+      "shopping": "Tous ces repas, une liste organisée automatiquement, à cocher en magasin.",
+      "disclaimer": "Les apports sont des estimations et ne remplacent pas l'avis d'un professionnel de santé."
+    },
+    "targets": {
+      "title": "Tes repères quotidiens",
+      "subtitle": "Le récapitulatif pour préparer tes repas.",
+      "daily": "Objectif quotidien estimé",
+      "maintenance": "Maintenance estimée : {{calories}} kcal",
+      "goal": "Pour avancer vers {{weight}} kg",
+      "goalSubtitle": "Rythme indicatif : {{pace}} kg par semaine",
+      "cta": "Comprendre le suivi",
+      "disclaimer": "Tes besoins évoluent. Le suivi du poids aide à ajuster ces estimations, avec ton accord."
+    },
+    "options": {
+      "goal": {
+        "lose_weight": "Perdre du poids",
+        "gain_muscle": "Prendre du muscle",
+        "maintain": "Maintenir mon poids",
+        "balanced": "Manger équilibré"
+      },
+      "sex": {
+        "female": "Femme",
+        "male": "Homme",
+        "unspecified": "Je préfère ne pas répondre"
+      },
+      "activity": {
+        "sedentary": "Peu actif",
+        "light": "Légèrement actif",
+        "moderate": "Modérément actif",
+        "active": "Très actif",
+        "very_active": "Extrêmement actif"
+      },
+      "training": {
+        "0": "Aucun",
+        "1": "1 jour",
+        "2": "2 jours",
+        "3": "3 jours",
+        "4": "4 jours",
+        "5": "5 jours",
+        "6": "6 jours",
+        "7": "Tous les jours"
+      },
+      "boolean": {
+        "true": "Oui, ajoute une collation",
+        "false": "Non, trois repas me suffisent"
+      },
+      "cookingTime": {
+        "less_than_30_minutes": "Moins de 30 minutes",
+        "between_30_minutes_and_1_hour": "30 à 60 minutes",
+        "more_than_1_hour": "Plus d'une heure"
+      },
+      "diet": {
+        "none": "Aucun régime particulier",
+        "vegetarian": "Végétarien",
+        "vegan": "Végane",
+        "pescatarian": "Pescétarien",
+        "halal": "Halal"
+      },
+      "avoid": {
+        "avoid_pork": "Porc",
+        "avoid_alcohol": "Alcool",
+        "avoid_beef": "Bœuf",
+        "avoid_fish": "Poisson",
+        "avoid_dairy": "Produits laitiers",
+        "avoid_gluten": "Gluten",
+        "avoid_egg": "Œufs",
+        "avoid_peanut": "Arachides"
+      },
+      "cuisine": {
+        "cuisine_mediterranean": "Méditerranéenne",
+        "cuisine_french": "Française",
+        "cuisine_italian": "Italienne",
+        "cuisine_middle_eastern": "Moyen-Orient",
+        "cuisine_indian": "Indienne",
+        "cuisine_asian": "Asiatique"
+      }
+    }
+  },
   "quickActions": {
     "tryFree": {
       "title": "TESTE GRATUITEMENT 🎁",
@@ -6,10 +261,21 @@
     },
     "discount": {
       "title": "PROFITE DE −80 % 🎁",
-      "subtitle": "L’offre annuelle CookEat Ai à prix réduit"
+      "subtitle": "L’offre annuelle CookEat à prix réduit"
     }
   },
   "home": {
+    "weeklyPlan": {
+      "eyebrow": "Mon objectif nutrition",
+      "ready": "{{count}} repas adaptés à ton objectif",
+      "readySubtitle": "Calories, macros et liste de courses déjà organisés.",
+      "empty": "Planifie 7 journées complètes",
+      "emptySubtitle": "CookEat génère tes repas healthy et ta liste de courses."
+    },
+    "nutrition": {
+      "today": "Objectif nutrition du jour",
+      "trajectory": "Trajectoire : {{from}} → {{to}} kg en {{weeks}} sem."
+    },
     "hi": "Coucou",
     "title": "Que veux-tu manger aujourd'hui ? 🍳",
     "intro": "Indique-nous ce que tu as sous la main et on s'occupe du reste !",
@@ -283,6 +549,13 @@
         "title": "Un frigo à vider ?",
         "description": "Prends tes ingrédients en photo, on trouve la recette."
       }
+    },
+    "notifications": {
+      "enabled": "Notifications activées",
+      "description": "Tu recevras désormais les notifications de CookEat !",
+      "description2": "Tu recevras désormais les notifications de CookEat !",
+      "error": "Erreur",
+      "errorDescription": "Impossible de modifier les autorisations de notification."
     }
   },
   "search": {
@@ -341,7 +614,11 @@
       "All": "Toutes",
       "facile": "Facile",
       "moyen": "Moyen",
-      "difficile": "Difficile"
+      "difficile": "Difficile",
+      "Breakfast": "Petit-déjeuner",
+      "Lunch": "Déjeuner",
+      "Dinner": "Dîner",
+      "Snack": "Collation"
     }
   },
   "imported": {
@@ -357,7 +634,110 @@
     "favorites": "Favoris",
     "imported": "Importées",
     "search": "Recherche",
-    "profile": "Profil"
+    "profile": "Réglages",
+    "planning": "Planning",
+    "meals": "Repas",
+    "goal": "Objectif"
+  },
+  "planning": {
+    "dayMeals": "Repas du {{day}}",
+    "shoppingTitle": "Mes courses",
+    "shoppingSubtitle": "Coche les articles au fil de tes achats.",
+    "title": "Planning",
+    "subtitle": "Tes repas, organisés en quelques secondes.",
+    "loading": "Préparation de ton planning…",
+    "newPlan": "Créer un nouveau planning",
+    "newPlanConfirm": {
+      "title": "Recommencer le planning ?",
+      "description": "Le planning et la liste de courses actuels seront remplacés.",
+      "action": "Recommencer"
+    },
+    "weekTitle": "Ta semaine",
+    "weekSummary": "Jours : {{days}} · Repas : {{meals}}",
+    "generation": {
+      "title": "Quels jours vas-tu cuisiner ?",
+      "subtitle": "Ta semaine ira toujours du lundi au dimanche.",
+      "daysTitle": "Jours de cuisine",
+      "summary": "Jours sélectionnés : {{days}} · Repas : {{meals}}",
+      "cta": "Générer mon planning"
+    },
+    "settings": {
+      "title": "Réglages du planning",
+      "subtitle": "Choisis les règles de tes prochaines semaines.",
+      "daysHelp": "Ces jours seront présélectionnés avant chaque génération.",
+      "snackTitle": "Ajouter une collation",
+      "snackHelp": "Un quatrième repas adapté à tes objectifs.",
+      "durationTitle": "Temps de cuisine",
+      "durationHelp": "Limite la durée proposée pour chaque repas.",
+      "duration": {
+        "all": "Peu importe",
+        "fast": "Moins de 30 min",
+        "medium": "30 à 60 min"
+      },
+      "nextPlanNotice": "Ces réglages seront appliqués au prochain planning.",
+      "save": "Enregistrer les réglages"
+    },
+    "views": {
+      "meals": "Repas",
+      "shopping": "Courses"
+    },
+    "setup": {
+      "title": "Combien de repas veux-tu prévoir ?",
+      "description": "CookEat crée de nouvelles recettes adaptées à tes préférences.",
+      "count": "Nombre de repas",
+      "preferences": "Régime, allergies, portions et temps de cuisine sont repris automatiquement.",
+      "cta": "Préparer {{count}} repas"
+    },
+    "summary": "{{count}} repas cette semaine",
+    "ready": "{{ready}} sur {{total}} prêts",
+    "sources": {
+      "library": "Bibliothèque",
+      "suggestion": "Nouvelle idée",
+      "generated": "Créée pour toi"
+    },
+    "finishing": "CookEat termine cette recette…",
+    "queued": "Prête à être créée",
+    "actions": {
+      "replace": "Remplacer",
+      "lock": "Garder",
+      "unlock": "Libérer",
+      "manage": "Options du repas",
+      "up": "Monter",
+      "down": "Descendre"
+    },
+    "delete": {
+      "title": "Supprimer ce repas ?",
+      "description": "« {{title}} » sera retiré du planning."
+    },
+    "shopping": {
+      "title": "Mes courses",
+      "subtitle": "Coche les articles au fil de tes achats.",
+      "create": "Créer la liste de courses",
+      "refresh": "Actualiser la liste de courses",
+      "pending": "Encore {{count}} recette(s) en préparation.",
+      "waiting": "Attends que toutes les recettes soient prêtes.",
+      "emptyTitle": "Ta liste est à un geste",
+      "emptyDescription": "Les ingrédients seront regroupés et ajustés au nombre de portions.",
+      "progress": "{{done}} sur {{total}} articles terminés",
+      "haveIt": "Je l’ai déjà"
+    },
+    "categories": {
+      "protein": "Viandes et poissons",
+      "dairy": "Produits frais",
+      "produce": "Fruits et légumes",
+      "pantry": "Épicerie",
+      "spices": "Épices",
+      "other": "Autres"
+    },
+    "errors": {
+      "user": "Ton profil n’est pas encore disponible.",
+      "load": "Impossible de charger le planning.",
+      "create": "Impossible de créer le planning.",
+      "replace": "Impossible de trouver une autre recette.",
+      "update": "La modification n’a pas pu être enregistrée.",
+      "generateRecipe": "Cette recette n’a pas pu être terminée.",
+      "shopping": "Impossible de créer la liste de courses."
+    }
   },
   "common": {
     "searchPlaceholder": "Rechercher ici",
@@ -365,6 +745,8 @@
     "success": "Succès",
     "error": "Erreur",
     "cancel": "Annuler",
+    "back": "Retour",
+    "continue": "Continuer",
     "close": "Fermer",
     "confirm": "Confirmer",
     "unexpectedError": "Une erreur inattendue est survenue",
@@ -459,7 +841,7 @@
     "legal": "Mentions légales",
     "feedback": "Feedback",
     "feedbackDescription": "Envoie-nous tes suggestions et commentaires",
-    "feedbackSubject": "Feedback CookEat Ai",
+    "feedbackSubject": "Feedback CookEat",
     "emailError": "Impossible d'ouvrir l'application email.",
     "emailNotAvailable": "Email non disponible",
     "settingsError": "Impossible d'ouvrir les paramètres.",
@@ -474,16 +856,16 @@
     "premiumPrice": "Pour moins de 1€ / semaine",
     "emailNotAvailableTitle": "Email non disponible",
     "emailNotAvailableMessage": "L'adresse no-reply@cookeat.info a été copiée dans ton presse-papiers.",
-    "feedbackBody": "Bonjour,\n\nJe souhaite te faire part de mon feedback concernant l'application CookEat Ai :\n\n[Ton message ici]\n\nCordialement,\n[Ton nom]",
+    "feedbackBody": "Bonjour,\n\nJe souhaite te faire part de mon feedback concernant l'application CookEat :\n\n[Ton message ici]\n\nCordialement,\n[Ton nom]",
     "languages": {
       "french": "Français",
       "english": "English"
     },
     "deleteAccount": "Supprimer mes données",
     "deleteAccountTitle": "Supprimer définitivement ?",
-    "deleteAccountMessage": "Cette action supprime ton profil pseudonyme, tes préférences et ton historique CookEat Ai. Elle ne résilie pas ton abonnement Apple ou Google.",
+    "deleteAccountMessage": "Cette action supprime ton profil pseudonyme, tes préférences et ton historique CookEat. Elle ne résilie pas ton abonnement Apple ou Google.",
     "deleteAccountConfirmTitle": "Dernière confirmation",
-    "deleteAccountConfirmMessage": "Tes favoris, ton garde-manger, tes préférences et ton historique seront supprimés du serveur CookEat Ai et de cet appareil. Continuer ?",
+    "deleteAccountConfirmMessage": "Tes favoris, ton garde-manger, tes préférences et ton historique seront supprimés du serveur CookEat et de cet appareil. Continuer ?",
     "deleteAccountButton": "Oui, supprimer mes données",
     "deleteError": "Une erreur est survenue lors de la suppression.",
     "promoCode": "Code promo",
@@ -562,13 +944,40 @@
     "processing": "Traitement de ta liste..."
   },
   "paywall": {
+    "billedAnnually": "facturé {{price}} par an",
+    "weeklyPlanning": {
+      "headline": "Mange mieux, à ton rythme.",
+      "subheadline": "Planifie chaque semaine tes recettes sur 7 jours, adapte chaque repas et crée ta liste de courses en un geste.",
+      "cta": "Débloquer ma semaine",
+      "goals": {
+        "lose_weight": {
+          "headline": "Des repas pour ta perte de poids.",
+          "subheadline": "Planifie ta semaine avec des portions adaptées à ton objectif et des repères en calories. Ta liste de courses suit ton planning."
+        },
+        "gain_muscle": {
+          "headline": "Nourris ta prise de muscle.",
+          "subheadline": "Planifie des repas avec des protéines réparties sur la journée et des portions adaptées à ton objectif. Ta liste de courses est prête."
+        },
+        "maintain": {
+          "headline": "Garde ton équilibre.",
+          "subheadline": "Planifie des repas adaptés à tes besoins pour maintenir ton poids, avec des portions claires et ta liste de courses prête."
+        },
+        "balanced": {
+          "headline": "Mange équilibré, simplement.",
+          "subheadline": "Retrouve chaque semaine des repas variés selon tes préférences, des portions adaptées et ta liste de courses prête."
+        }
+      }
+    },
     "loadingOfferings": "Chargement des offres...",
-    "title": "Débloque toutes les fonctionnalités",
-    "subtitle": "Génère des recettes avec ce que tu as, importe celles qui te font envie et retrouve-les toutes au même endroit — sans limites.",
+    "title": "Débloque ton partenaire de planification",
+    "subtitle": "Planifie ta semaine de recettes sur 7 jours, adapte chaque repas et garde génération et import à portée de main.",
     "purchaseErrorTitle": "Erreur lors de l'achat",
     "purchaseErrorDescription": "Une erreur est survenue lors de l'achat. Réessaie.",
     "features": {
-      "unlimited": "Recettes illimitées",
+      "fullDay": "7 journées complètes générées pour ton objectif",
+      "macros": "Calories et macros personnalisés",
+      "shopping": "Liste de courses interactive en magasin",
+      "unlimited": "Planifications hebdomadaires illimitées",
       "import": "Import TikTok & Insta illimité",
       "favorites": "Sauve tes favoris",
       "refine": "Affiner résultat",
@@ -612,13 +1021,13 @@
     "selectPlanTitle": "Sélectionne un plan",
     "selectPlanDescription": "Sélectionne un plan avant de continuer.",
     "loading": "Chargement...",
-    "tryFree": "Commencer GRATUITEMENT",
+    "tryFree": "Commence GRATUITEMENT",
     "noPaymentDueNow": "Aucun paiement requis aujourd'hui",
     "trialHeadline_one": "Débloque toutes les fonctionnalités",
     "trialHeadline_other": "Débloque toutes les fonctionnalités",
     "trialSubheadline": "Génère des recettes avec ce que tu as, importe celles qui te font envie et retrouve-les toutes au même endroit — sans limites.",
-    "startTrial_one": "Commencer GRATUITEMENT",
-    "startTrial_other": "Commencer GRATUITEMENT",
+    "startTrial_one": "Commence GRATUITEMENT",
+    "startTrial_other": "Commence GRATUITEMENT",
     "unlimitedRecipes": "Recettes illimitées",
     "saveRecipes": "Sauvegarde tes recettes",
     "customFilter": "Filtre personnalisé",
@@ -627,50 +1036,50 @@
     "customRecipe": "Recette personnalisé",
     "pantry": "Garde manger",
     "variants": {
-    "import": {
-      "headline": "Toutes les recettes qui t’inspirent, enfin au même endroit",
-      "subheadline": "Importe une vidéo, retrouve la recette complète et cuisine-la quand tu veux.",
-      "cta": "Importer sans limite"
-    },
-    "generate": {
-      "headline": "Ne te demande plus jamais quoi cuisiner",
-      "subheadline": "Transforme ce que tu as déjà en recettes qui donnent vraiment envie.",
-      "cta": "Commencer à cuisiner"
-    }
-  },
-  "personalization": {
-    "goals": {
-      "waste": {
-        "headline": "Cuisine tout ce que tu as, sans rien jeter",
-        "subheadline": "CookEat Ai transforme tes ingrédients disponibles en recettes gourmandes avant qu’ils ne se perdent."
+      "import": {
+        "headline": "Toutes les recettes qui t’inspirent, enfin au même endroit",
+        "subheadline": "Importe une vidéo, retrouve la recette complète et cuisine-la quand tu veux.",
+        "cta": "Importer sans limite"
       },
-      "money": {
-        "headline": "Fais durer tes courses plus longtemps",
-        "subheadline": "Cuisine d’abord ce que tu as déjà et trouve des repas qui respectent mieux ton budget."
-      },
-      "ideas": {
+      "generate": {
         "headline": "Ne te demande plus jamais quoi cuisiner",
-        "subheadline": "CookEat Ai transforme ce que tu as en idées de repas variées qui donnent vraiment envie."
-      },
-      "organize": {
-        "headline": "Toutes tes recettes, enfin au même endroit",
-        "subheadline": "Importe tes vidéos de recettes, retrouve les ingrédients et cuisine-les quand tu veux."
-      },
-      "time": {
-        "headline": "Moins de temps à chercher, plus de temps à cuisiner",
-        "subheadline": "Passe directement de tes ingrédients à une recette claire, sans chercher pendant des heures."
-      },
-      "healthy": {
-        "headline": "Mange mieux avec ce que tu as déjà",
-        "subheadline": "Découvre des recettes maison adaptées à tes préférences, sans compliquer tes repas."
+        "subheadline": "Transforme ce que tu as déjà en recettes qui donnent vraiment envie.",
+        "cta": "Commencer à cuisiner"
       }
     },
-    "focus": {
-      "quick": "Avec des idées adaptées aux repas de moins de 30 minutes.",
-      "beginner": "Chaque recette est expliquée simplement, étape par étape."
-    }
-  },
-  "viewAllPlans": "Voir toutes les offres",
+    "personalization": {
+      "goals": {
+        "waste": {
+          "headline": "Cuisine tout ce que tu as, sans rien jeter",
+          "subheadline": "CookEat transforme tes ingrédients disponibles en recettes gourmandes avant qu’ils ne se perdent."
+        },
+        "money": {
+          "headline": "Fais durer tes courses plus longtemps",
+          "subheadline": "Cuisine d’abord ce que tu as déjà et trouve des repas qui respectent mieux ton budget."
+        },
+        "ideas": {
+          "headline": "Ne te demande plus jamais quoi cuisiner",
+          "subheadline": "CookEat transforme ce que tu as en idées de repas variées qui donnent vraiment envie."
+        },
+        "organize": {
+          "headline": "Toutes tes recettes, enfin au même endroit",
+          "subheadline": "Importe tes vidéos de recettes, retrouve les ingrédients et cuisine-les quand tu veux."
+        },
+        "time": {
+          "headline": "Moins de temps à chercher, plus de temps à cuisiner",
+          "subheadline": "Passe directement de tes ingrédients à une recette claire, sans chercher pendant des heures."
+        },
+        "healthy": {
+          "headline": "Mange mieux avec ce que tu as déjà",
+          "subheadline": "Découvre des recettes maison adaptées à tes préférences, sans compliquer tes repas."
+        }
+      },
+      "focus": {
+        "quick": "Avec des idées adaptées aux repas de moins de 30 minutes.",
+        "beginner": "Chaque recette est expliquée simplement, étape par étape."
+      }
+    },
+    "viewAllPlans": "Voir toutes les offres",
     "perMonthEquivalent": "soit {{price}}/mois",
     "per": {
       "weekly": "/ semaine",
@@ -682,11 +1091,11 @@
       "monthly": "mois",
       "annual": "an"
     },
-    "renewalNotice": "{{price}} par {{period}}, renouvelé automatiquement. Annulable à tout moment dans les réglages.",
-    "renewalNoticeTrial_one": "1 jour gratuit, puis {{price}} par {{period}}, renouvelé automatiquement. Annulable à tout moment.",
-    "renewalNoticeTrial_other": "{{count}} jours gratuits, puis {{price}} par {{period}}, renouvelé automatiquement. Annulable à tout moment.",
-    "renewalNoticeTrialAnnual_one": "1 jour gratuit, puis {{price}} par an ({{monthly}}/mois), renouvelé automatiquement. Annulable à tout moment.",
-    "renewalNoticeTrialAnnual_other": "{{count}} jours gratuits, puis {{price}} par an ({{monthly}}/mois), renouvelé automatiquement. Annulable à tout moment.",
+    "renewalNotice": "{{price}} par {{period}}. Annulable à tout moment dans les réglages.",
+    "renewalNoticeTrial_one": "1 jour gratuit, puis {{price}} par {{period}}. Annulable à tout moment.",
+    "renewalNoticeTrial_other": "{{count}} jours gratuits, puis {{price}} par {{period}}. Annulable à tout moment.",
+    "renewalNoticeTrialAnnual_one": "1 jour gratuit, puis {{price}} par an ({{monthly}}/mois). Annulable à tout moment.",
+    "renewalNoticeTrialAnnual_other": "{{count}} jours gratuits, puis {{price}} par an ({{monthly}}/mois). Annulable à tout moment.",
     "discountApplied": "de réduction appliqués",
     "terms": "CGU",
     "privacy": "Confidentialité",
@@ -700,12 +1109,13 @@
     "trialBadge_one": "{{count}} JOUR OFFERT",
     "trialBadge_other": "{{count}} JOURS OFFERTS",
     "savePercent": "économise {{percent}} %",
+    "annualSavingsReference": "par rapport au mensuel",
     "discountBadge": "−{{percent}}%",
     "exitOffer": {
-      "title": "Ton offre unique",
+      "title": "Garde ta semaine organisée",
       "vsMonthly": "{{percent}} % moins cher que notre tarif mensuel !",
       "noCommitment": "Sans engagement — annulable à tout moment",
-      "cta": "J'en profite",
+      "cta": "Débloquer mon planning",
       "duration": {
         "annual": "12 mois",
         "monthly": "1 mois",
@@ -714,28 +1124,28 @@
     }
   },
   "notifications": {
-    "title": "Économise du temps et de l'argent ! 💸",
+    "title": "Ta semaine de repas, sans charge mentale 📅",
     "permissionTitle": "Activer les notifications",
     "dontAllow": "Plus tard",
     "allow": "Autoriser",
     "subtitle": "",
     "enabled": "Notifications activées",
-    "description": "Tu recevras maintenant des notifications de CookEat Ai !",
+    "description": "Tu recevras maintenant des notifications de CookEat !",
     "error": "Erreur",
     "errorDescription": "Une erreur est survenue lors de la gestion des permissions de notification.",
     "disabledTitle": "Notifications désactivées",
-    "disabledMessage": "Active les notifications dans Réglages > CookEat Ai pour ne rater aucun rappel !",
+    "disabledMessage": "Active les notifications dans Réglages > CookEat pour ne rater aucun rappel !",
     "activateTitle": "Activer les notifications",
     "activateMessage": "Pour recevoir tes rappels culinaires :",
-    "manualInstructionIOS": "Va dans Réglages > CookEat Ai > Notifications et active 'Autoriser les notifications'",
-    "manualInstructionAndroid": "Va dans Paramètres > Apps > CookEat Ai > Notifications et active les notifications",
+    "manualInstructionIOS": "Va dans Réglages > CookEat > Notifications et active 'Autoriser les notifications'",
+    "manualInstructionAndroid": "Va dans Paramètres > Apps > CookEat > Notifications et active les notifications",
     "understood": "Compris !",
     "trialReminder": {
-      "channelName": "Rappels d’essai CookEat Ai",
+      "channelName": "Rappels d’essai CookEat",
       "generate": {
         "title_one": "Il te reste {{count}} jour d'essai 🍳",
         "title_other": "Il te reste {{count}} jours d'essai 🍳",
-        "body": "Qu'est-ce qu'il y a dans ton frigo ce soir ? Prends-le en photo, je m'occupe du reste."
+        "body": "Ta semaine est déjà planifiée dans CookEat. Ouvre-la pour ajuster tes prochains repas."
       },
       "import": {
         "title_one": "Il te reste {{count}} jour d'essai 📱",
@@ -750,16 +1160,16 @@
     "button": "Continuer"
   },
   "onboardingProfileReady": {
-    "title": "Félicitations !\nTon profil culinaire est prêt !",
-    "subtitle": "Notre IA a analysé tes préférences pour te proposer les meilleures recettes en fonction de tes ingrédients.",
-    "dailyRec": "Ton ADN Culinaire",
+    "title": "Félicitations !\nTa semaine peut prendre forme !",
+    "subtitle": "CookEat a analysé tes préférences pour planifier chaque semaine des recettes vraiment adaptées à ton quotidien.",
+    "dailyRec": "Ton profil de planification",
     "editAnytime": "Ajusté selon tes réponses",
     "recipes": "Recettes",
     "personalization": "Sur-mesure",
     "time": "Cuisine",
     "budget": "Budget",
     "matchScore": "Score de Match",
-    "button": "Créer ma première recette",
+    "button": "Construire ma semaine",
     "recipesValue": "500+",
     "recipesUnit": "matchs",
     "personalizationValue": "100%",
@@ -785,12 +1195,13 @@
     "cookingFrequency": "À quelle fréquence cuisines-tu ?",
     "eatOutFrequency": "À quelle fréquence manges-tu à l’extérieur ou commandes-tu ?",
     "cookingForWho": "Pour qui cuisines-tu ?",
+    "weeklyMealCount": "Combien de repas veux-tu planifier chaque semaine ?",
     "cookingTime": "Combien de temps as-tu pour cuisiner ?",
-    "habitsIntro": "Savais-tu qu'on gaspille en moyenne 30kg de nourriture par an ? C'est 150€ jetés à la poubelle ! 💸\n\nCookEat Ai t'aide à économiser.",
+    "habitsIntro": "Savais-tu qu'on gaspille en moyenne 30kg de nourriture par an ? C'est 150€ jetés à la poubelle ! 💸\n\nCookEat t'aide à économiser.",
     "fridgeStatus": "Ton frigo est plutôt…",
     "equipmentQuestion": "Quel équipement as-tu ?",
     "mealBudget": "Quel est ton budget par repas ?",
-    "preferencesIntro": "Savais-tu qu'on passe en moyenne 1h par semaine à décider quoi cuisiner ? 🤯\n\nCookEat Ai te libère l'esprit.",
+    "preferencesIntro": "Savais-tu qu'on passe en moyenne 1h par semaine à décider quoi cuisiner ? 🤯\n\nCookEat te libère l'esprit.",
     "favoriteDishType": "Quels types de plats préfères-tu ?",
     "favoriteCuisineStyle": "Quels styles de cuisine aimes-tu ?",
     "recipeStyle": "Tu préfères des recettes plutôt…",
@@ -798,7 +1209,7 @@
     "avoidIngredients": "As-tu des ingrédients que tu évites ?",
     "useCase": "Quel est ton objectif principal ?",
     "diet": "As-tu un régime alimentaire spécifique ?",
-    "howDidHeKnowCookEatAI": "Comment as-tu connu CookEat Ai ?",
+    "howDidHeKnowCookEatAI": "Comment as-tu connu CookEat ?",
     "sex": "Quel est ton genre ?",
     "age": "Quel est ton âge ?",
     "title": "Hey, je suis Cook !",
@@ -847,17 +1258,16 @@
       "skip": "Passer"
     },
     "videoDemo": {
-      "title": "Débloquer CookEat Ai pour économiser du temps et de l'argent"
+      "title": "Débloquer CookEat pour économiser du temps et de l'argent"
     },
-    "welcomeTagline": "Photographie tes ingrédients, CookEat Ai te dit quoi cuisiner en quelques secondes.",
+    "welcomeTagline": "Photographie tes ingrédients, CookEat te dit quoi cuisiner en quelques secondes.",
     "socialProof": {
-      "title": "Déjà plus de {{total}} recettes prêtes à cuisiner !",
-      "subtitle": "Rejoins la communauté et commence à cuisiner malin dès maintenant.",
+      "title": "CookEat, vu par ses utilisateurs",
+      "subtitle": "Leurs mots, leur expérience.",
       "button": "Continuer",
-      "review1": "Génial pour vider mon frigo sans prise de tête !",
-      "review2": "Les recettes sont super bonnes et faciles à faire.",
-      "review3": "J'adore l'import de recettes depuis TikTok, ça me fait gagner un temps fou !",
-      "topBadge": "🏆 #1 App de Cuisine IA"
+      "review1": "Superbe app qui m’a permis de découvrir beaucoup de recettes que je ne connaissais pas, je la recommande fortement !",
+      "topBadge": "Témoignages utilisateurs",
+      "reviewAuthor": "Julien Arman"
     },
     "continue": "Continuer",
     "skip": "Passer",
@@ -865,20 +1275,20 @@
     "reminder": {
       "title": "On t’enverra une notification avant la fin de ton essai gratuit",
       "eligibleTitle": "Profite vraiment de tes {{count}} jours d’essai",
-      "eligibleSubtitle": "Profite sereinement de CookEat Ai : on te préviendra au jour {{day}}. Ça te laissera encore du temps pour essayer toutes les fonctionnalités.",
+      "eligibleSubtitle": "Profite sereinement de CookEat : on te préviendra au jour {{day}}. Ça te laissera encore du temps pour essayer toutes les fonctionnalités.",
       "pendingTitle": "Ton essai de 7 jours, l’esprit tranquille",
-      "pendingSubtitle": "Profite sereinement de CookEat Ai : on te préviendra à mi-parcours. Ça te laissera encore du temps pour essayer toutes les fonctionnalités.",
+      "pendingSubtitle": "Profite sereinement de CookEat : on te préviendra à mi-parcours. Ça te laissera encore du temps pour essayer toutes les fonctionnalités.",
       "standardTitle": "Ton essai gratuit, l’esprit tranquille",
       "standardSubtitle": "On te préviendra à mi-parcours. Ça te laissera encore du temps pour essayer toutes les fonctionnalités.",
       "backButton": "Revenir à l’écran précédent",
-      "button": "Continuer GRATUITEMENT",
+      "button": "Continue GRATUITEMENT",
       "permissionNote": "Sous réserve de l’activation des notifications.",
       "todayLabel": "Aujourd’hui",
       "todayText": "Tes 7 jours gratuits commencent après ta confirmation.",
       "pendingTodayText": "Ton essai de 7 jours commence après ta confirmation.",
       "midpointLabel": "Jour {{day}}",
       "genericMidpointLabel": "À mi-parcours",
-      "midpointText": "CookEat Ai t’envoie une notification, plusieurs jours avant la fin.",
+      "midpointText": "CookEat t’envoie une notification, plusieurs jours avant la fin.",
       "renewalLabel": "Jour {{count}}",
       "genericRenewalLabel": "À la fin de l’essai",
       "renewalText": "L’abonnement annuel démarre après l’essai, sauf annulation préalable.",
@@ -894,30 +1304,53 @@
       "errorTitle": "Erreur",
       "errorMessage": "Impossible d'activer les notifications. Réessaie.",
       "successTitle": "Notifications activées",
-      "successMessage": "Notifications activées. Dès que ton essai commence, CookEat Ai programmera une notification à mi-parcours."
+      "successMessage": "Notifications activées. Dès que ton essai commence, CookEat programmera une notification à mi-parcours."
     },
     "offerTrial": {
-      "title": "On aimerait que tu essaies CookEat Ai gratuitement",
-      "subtitle": "Découvre toutes les recettes CookEat Ai sans aucune limite pendant {{count}} jours.",
-      "eligibleTitle": "{{count}} jours pour essayer CookEat Ai gratuitement",
+      "title": "On aimerait que tu essaies CookEat gratuitement",
+      "subtitle": "Profite de {{count}} jours gratuits pour découvrir CookEat.",
+      "eligibleTitle": "{{count}} jours pour essayer CookEat gratuitement",
       "eligibleSubtitle": "Toutes tes recettes, générées ou importées, sans aucune limite pendant ton essai.",
-      "standardTitle": "On aimerait que tu essaies CookEat Ai gratuitement",
-      "standardSubtitle": "Découvre toutes les recettes CookEat Ai sans aucune limite pendant 7 jours.",
-      "trialPill": "{{count}} jours d’essai",
+      "standardTitle": "On aimerait que tu essaies CookEat gratuitement",
+      "standardSubtitle": "Retrouve ton planning personnalisé et ta liste de courses avec CookEat.",
+      "trialPill": "{{count}} jours gratuits",
       "storePill": "7 jours gratuits",
-      "includedTitle": "Tout CookEat Ai, dans une seule offre",
+      "includedTitle": "Tout pour cuisiner au quotidien",
       "noPayment": "Aucun paiement requis aujourd'hui",
       "reviewOffer": "Aucun paiement requis aujourd'hui",
-      "button": "Essayer pour {{price}}",
-      "standardButton": "Essayer pour 0,00 €",
+      "button": "Continue GRATUITEMENT",
+      "standardButton": "Continuer avec CookEat",
       "zeroPriceFallback": "0,00 €",
       "annualPriceLine": "Puis seulement {{price}} par an ({{monthly}}/mois)",
-      "annualPriceLineWithoutMonthly": "Puis seulement {{price}} par an"
+      "annualPriceLineWithoutMonthly": "Puis seulement {{price}} par an",
+      "personalized": {
+        "lose_weight": {
+          "subtitle": "Garde le cap sur ta perte de poids, avec des repas pensés pour toi.",
+          "includedTitle": "Ton allié pour perdre du poids",
+          "nutrition": "Des portions adaptées à ton objectif"
+        },
+        "gain_muscle": {
+          "subtitle": "Accompagne tes efforts avec des repas pensés pour ta prise de muscle.",
+          "includedTitle": "Nourris ta prise de muscle",
+          "nutrition": "Des repères en protéines pour tes repas"
+        },
+        "maintain": {
+          "subtitle": "Garde tes bonnes habitudes, sans chercher chaque jour quoi cuisiner.",
+          "includedTitle": "Ton équilibre, jour après jour",
+          "nutrition": "Des repères pour maintenir ton poids"
+        },
+        "balanced": {
+          "subtitle": "Mange plus équilibré, sans te demander chaque jour quoi cuisiner.",
+          "includedTitle": "Mieux manger devient plus simple",
+          "nutrition": "Des repères pour équilibrer tes repas"
+        }
+      },
+      "standardReassurance": "Abonnement à choisir à l’étape suivante"
     },
     "generationDemo": {
       "badge": "Fonctionnalité supplémentaire",
       "title": "Tu peux aussi cuisiner avec ce que tu as déjà",
-      "subtitle": "CookEat Ai transforme une simple liste d’ingrédients en recette complète. Cette démo est facultative.",
+      "subtitle": "CookEat transforme une simple liste d’ingrédients en recette complète. Cette démo est facultative.",
       "listReady": "Liste de démonstration",
       "resultTitle": "Une recette complète",
       "resultSubtitle": "Ingrédients, étapes et portions",
@@ -954,7 +1387,7 @@
     "next": "Suivant",
     "secondStep": {
       "title": "Dicte-nous tes ingrédients et on s'occupe du reste !",
-      "description": "CookEat Ai se base sur tes ingrédients, tes préférences et ton niveau de cuisine.",
+      "description": "CookEat se base sur tes ingrédients, tes préférences et ton niveau de cuisine.",
       "continue": "Commencer"
     },
     "thirdStep": {
@@ -990,6 +1423,9 @@
       "myself": "Moi-même",
       "myself_and_another_person": "Moi et une autre personne",
       "my_family": "Ma famille",
+      "weekly_meals_3": "3 repas par semaine",
+      "weekly_meals_5": "5 repas par semaine",
+      "weekly_meals_7": "7 repas par semaine",
       "morning": "Matin",
       "noon": "Midi",
       "evening": "Soir",
@@ -1082,7 +1518,7 @@
       "commit_unsure": "Je ne sais pas encore"
     },
     "entryFeature": {
-      "question": "Qu'est-ce qui t'amène sur CookEat Ai ?",
+      "question": "Qu'est-ce qui t'amène sur CookEat ?",
       "import": "Importer des recettes depuis TikTok/Insta",
       "generate": "Générer des recettes avec mes ingrédients"
     },
@@ -1094,66 +1530,66 @@
       "goal": {
         "badge": "Tu n'es pas seul·e",
         "waste": {
-          "title": "{{percent}} % des utilisateurs CookEat Ai ont le même objectif que toi : ne plus rien jeter.",
-          "titleNeutral": "Ne plus rien jeter : l'objectif le plus courant chez CookEat Ai.",
+          "title": "{{percent}} % des utilisateurs CookEat ont le même objectif que toi : ne plus rien jeter.",
+          "titleNeutral": "Ne plus rien jeter : l'objectif le plus courant chez CookEat.",
           "subtitle": "En France, on jette en moyenne 30kg de nourriture par personne et par an. La moitié était encore consommable.",
-          "review": "Je regarde ce qu'il me reste, l'app me sort une recette. Je ne jette quasiment plus rien.",
-          "reviewAuthor": "Inès, 3 mois d'utilisation"
+          "review": "$t(onboarding.socialProof.review1)",
+          "reviewAuthor": "$t(onboarding.socialProof.reviewAuthor)"
         },
         "money": {
-          "title": "{{percent}} % des utilisateurs CookEat Ai viennent d'abord pour dépenser moins.",
-          "titleNeutral": "Dépenser moins en courses : l'une des premières raisons d'installer CookEat Ai.",
+          "title": "{{percent}} % des utilisateurs CookEat viennent d'abord pour dépenser moins.",
+          "titleNeutral": "Dépenser moins en courses : l'une des premières raisons d'installer CookEat.",
           "subtitle": "Cuisiner ce qu'on a déjà avant de racheter, c'est là que se fait l'essentiel de l'économie.",
-          "review": "Je fais mes courses autour de ce que l'app me propose. Mon budget a vraiment baissé.",
-          "reviewAuthor": "Karim, 2 mois d'utilisation"
+          "review": "$t(onboarding.socialProof.review1)",
+          "reviewAuthor": "$t(onboarding.socialProof.reviewAuthor)"
         },
         "ideas": {
-          "title": "{{percent}} % des utilisateurs CookEat Ai installent l'app pour la même raison que toi.",
-          "titleNeutral": "« Je ne sais pas quoi cuisiner » : la raison numéro un d'installer CookEat Ai.",
+          "title": "{{percent}} % des utilisateurs CookEat installent l'app pour la même raison que toi.",
+          "titleNeutral": "« Je ne sais pas quoi cuisiner » : la raison numéro un d'installer CookEat.",
           "subtitle": "On passe en moyenne 1h par semaine à décider quoi manger. Autant la passer à table.",
-          "review": "Fini les vingt minutes devant le frigo. Je photographie, je choisis, je cuisine.",
-          "reviewAuthor": "Léa, 4 mois d'utilisation"
+          "review": "$t(testimonials.planning.text)",
+          "reviewAuthor": "$t(testimonials.planning.author)"
         },
         "organize": {
-          "title": "{{percent}} % des utilisateurs CookEat Ai veulent la même chose : toutes leurs recettes au même endroit.",
+          "title": "{{percent}} % des utilisateurs CookEat veulent la même chose : toutes leurs recettes au même endroit.",
           "titleNeutral": "Rassembler ses recettes au même endroit : un besoin qui revient tout le temps.",
           "subtitle": "Vidéos enregistrées, captures d'écran, favoris du navigateur… tout finit éparpillé.",
-          "review": "Toutes mes recettes TikTok sont enfin au même endroit, avec les quantités.",
-          "reviewAuthor": "Sarah, 5 mois d'utilisation"
+          "review": "$t(testimonials.planning.text)",
+          "reviewAuthor": "$t(testimonials.planning.author)"
         },
         "time": {
-          "title": "{{percent}} % des utilisateurs CookEat Ai cherchent d'abord à gagner du temps.",
-          "titleNeutral": "Gagner du temps : l'attente la plus fréquente chez les utilisateurs CookEat Ai.",
+          "title": "{{percent}} % des utilisateurs CookEat cherchent d'abord à gagner du temps.",
+          "titleNeutral": "Gagner du temps : l'attente la plus fréquente chez les utilisateurs CookEat.",
           "subtitle": "Décider, chercher une recette, faire une liste : le temps passe surtout avant de cuisiner.",
-          "review": "Je gagne un temps fou le soir. Plus besoin de chercher, l'app propose directement.",
-          "reviewAuthor": "Thomas, 2 mois d'utilisation"
+          "review": "$t(testimonials.time.text)",
+          "reviewAuthor": "$t(testimonials.time.author)"
         },
         "healthy": {
-          "title": "{{percent}} % des utilisateurs CookEat Ai veulent d'abord mieux manger au quotidien.",
+          "title": "{{percent}} % des utilisateurs CookEat veulent d'abord mieux manger au quotidien.",
           "titleNeutral": "Mieux manger au quotidien, sans y passer ses soirées.",
           "subtitle": "Le fait-maison ne prend pas plus de temps quand on sait quoi faire avec ce qu'on a.",
-          "review": "Je mange beaucoup plus équilibré depuis que je cuisine avec ce que j'ai.",
-          "reviewAuthor": "Nadia, 3 mois d'utilisation"
+          "review": "$t(testimonials.training.text)",
+          "reviewAuthor": "$t(testimonials.training.author)"
         }
       },
       "habits": {
         "badge": "Ce que ça représente",
         "eatOut": {
           "title": "Un repas commandé coûte en moyenne 4 fois le prix du même plat fait maison.",
-          "subtitle": "CookEat Ai te dit quoi cuisiner avec ce que tu as déjà, en quelques secondes."
+          "subtitle": "CookEat te dit quoi cuisiner avec ce que tu as déjà, en quelques secondes."
         },
         "home": {
           "title": "On jette en moyenne 30kg de nourriture par personne et par an, soit 150€.",
           "subtitle": "La moitié de ce qui part à la poubelle était encore parfaitement consommable."
         },
-        "review": "J'ai arrêté de commander : l'app me trouve toujours quelque chose à faire.",
-        "reviewAuthor": "Julien, 6 mois d'utilisation"
+        "review": "$t(onboarding.socialProof.review1)",
+        "reviewAuthor": "$t(onboarding.socialProof.reviewAuthor)"
       },
       "budget": {
         "badge": "Ton potentiel",
-        "subtitle": "CookEat Ai part de ce que tu as déjà, pour éviter d'en racheter.",
-        "review": "Je cuisine avec ce qu'il y a, pas avec ce qu'il faudrait acheter. Ça change tout.",
-        "reviewAuthor": "Camille, 4 mois d'utilisation",
+        "subtitle": "CookEat part de ce que tu as déjà, pour éviter d'en racheter.",
+        "review": "$t(onboarding.socialProof.review1)",
+        "reviewAuthor": "$t(onboarding.socialProof.reviewAuthor)",
         "budget_small": {
           "title": "Avec un petit budget, ce qui part à la poubelle pèse lourd : environ {{euros}}€ par mois."
         },
@@ -1168,9 +1604,9 @@
         "badge": "Tu n'es pas seul·e",
         "title": "{{percent}} % des utilisateurs ne retrouvent jamais une recette qu'ils avaient pourtant sauvegardée.",
         "titleNeutral": "Une recette enfermée dans une vidéo est une recette qu'on ne refera pas.",
-        "subtitle": "CookEat Ai en extrait les ingrédients, les quantités et les étapes, puis la range avec les autres.",
-        "review": "J'avais 200 vidéos en favoris. Maintenant j'ai 200 recettes que je peux vraiment cuisiner.",
-        "reviewAuthor": "Manon, 3 mois d'utilisation"
+        "subtitle": "CookEat en extrait les ingrédients, les quantités et les étapes, puis la range avec les autres.",
+        "review": "$t(onboarding.socialProof.review1)",
+        "reviewAuthor": "$t(onboarding.socialProof.reviewAuthor)"
       }
     },
     "commitment": {
@@ -1243,10 +1679,57 @@
         }
       }
     },
-    "welcomeTitle": "Coucou, moi c'est Cook 👋",
-    "welcomeSubtitle": "Tu es là pour quoi ?",
+    "welcomeTitle": "Ton partenaire nutrition pour atteindre tes objectifs 💪",
+    "welcomeSubtitle": "Mange sainement, fais le plein de protéines et progresse à ton rythme.",
+    "welcomeCta": "Je passe à l’action",
     "importHandoff": "Parfait. Passons à ta première recette importée 👇",
-    "welcomeSocialProof": "Plus de {{total}} recettes cuisinées"
+    "welcomeSocialProof": "Déjà plus de {{total}} repas créés pour mieux manger"
+  },
+  "weeklyOnboarding": {
+    "preview": {
+      "badge": "Ta semaine personnalisée",
+      "title": "Ton planning est prêt",
+      "subtitle": "Voici les {{count}} repas que CookEat a créés et répartis sur tes 7 prochains jours.",
+      "generatingTitle": "CookEat construit ta semaine…",
+      "generatingSubtitle": "On crée des recettes variées selon tes goûts, ton temps et ton foyer.",
+      "generatingProgress": "Recettes créées pour toi : {{done}}/{{total}}.",
+      "errorTitle": "Ta semaine n’a pas pu être créée",
+      "errorSubtitle": "Réessaie ou modifie les jours et tes préférences. Tes choix sont conservés.",
+      "networkErrorTitle": "Connexion interrompue",
+      "networkErrorSubtitle": "Reconnecte-toi puis réessaie. Ta semaine reprendra là où elle s’est arrêtée.",
+      "retry": "Réessayer",
+      "firstMeal": "Premier repas",
+      "generatedMeal": "Ta première recette personnalisée",
+      "remaining": "CookEat complètera encore {{count}} repas pendant ton essai.",
+      "remainingReady": "{{count}} autre(s) repas déjà planifié(s) pour cette semaine.",
+      "swap": "Changer ce repas",
+      "swapHint": "Teste la personnalisation : change gratuitement un repas maintenant.",
+      "swapSuccess": "Ce repas a été remplacé selon tes préférences.",
+      "swapError": "Ce repas n’a pas pu être remplacé. Tu peux réessayer.",
+      "importBadge": "Bonus facultatif",
+      "importTitle": "Une recette repérée en vidéo ?",
+      "importSubtitle": "Importe-la et ajoute-la directement à cette semaine.",
+      "importCta": "Essayer",
+      "editable": "Tu pourras déplacer, remplacer ou verrouiller chaque repas.",
+      "cta": "Voir comment débloquer ma semaine",
+      "shoppingAccess": "Ta liste à cocher, incluse avec CookEat Premium."
+    },
+    "activation": {
+      "loadingTitle": "On ouvre ta semaine…",
+      "loadingSubtitle": "Ton planning créé pendant l’onboarding est déjà là.",
+      "readyTitle": "Ta semaine est débloquée !",
+      "readySubtitle": "Tes {{count}} repas sont prêts à être consultés et modifiés.",
+      "errorTitle": "Ton planning reste bien enregistré",
+      "errorSubtitle": "On n’arrive pas à le charger pour le moment. Tu peux réessayer ou l’ouvrir plus tard.",
+      "steps": {
+        "preferences": "Tes préférences sont appliquées",
+        "variety": "Tes recettes ont été créées",
+        "week": "Tes repas sont répartis sur 7 jours"
+      },
+      "open": "Ouvrir ma semaine",
+      "retry": "Réessayer",
+      "later": "Ouvrir l’app et réessayer plus tard"
+    }
   },
   "recipeSummary": {
     "ingredients": "Ingrédients",
@@ -1342,14 +1825,22 @@
   },
   "micro": {
     "permissionTitle": "Permission Microphone",
-    "permissionMessage": "CookEat Ai a besoin d'accéder au microphone pour la reconnaissance vocale",
+    "permissionMessage": "CookEat a besoin d'accéder au microphone pour la reconnaissance vocale",
     "later": "Plus tard",
     "cancel": "Annuler",
     "allow": "Autoriser",
     "requiredTitle": "Permissions requises",
-    "requiredMessage": "CookEat Ai a besoin d'accéder au microphone pour enregistrer ta voix et comprendre tes ingrédients. Autorise l'accès au microphone dans les paramètres."
+    "requiredMessage": "CookEat a besoin d'accéder au microphone pour enregistrer ta voix et comprendre tes ingrédients. Autorise l'accès au microphone dans les paramètres."
   },
   "recipeDetail": {
+    "viewPhoto": "Afficher la photo en grand",
+    "share": "Partager",
+    "removeFromFavorites": "Retirer des favoris",
+    "changePhoto": "Changer la photo",
+    "addToPlan": "Ajouter au planning",
+    "changePlannedMeal": "Changer ce repas",
+    "changingPlannedMeal": "Création du nouveau repas…",
+    "changePlannedMealErrorTitle": "Impossible de changer ce repas",
     "likeError": "Impossible de liker la recette",
     "nutritionalInfoTitle": "Informations Nutritionnelles",
     "nutritionalInfoContent": "Ces valeurs sont des estimations basées sur les ingrédients et les portions indiqués.",
@@ -1378,7 +1869,7 @@
     "unableToAddToFavorites": "Impossible d'ajouter la recette aux favoris",
     "unableToGetIngredients": "Impossible de récupérer la liste des ingrédients",
     "perServing": "/p",
-    "shareMessage": "Regarde cette délicieuse recette de {title} que j'ai trouvée sur CookEat Ai ! 🍳\n\n{url}",
+    "shareMessage": "Regarde cette délicieuse recette de {title} que j'ai trouvée sur CookEat ! 🍳\n\n{url}",
     "dailyQuotaReached": "Quota quotidien atteint",
     "dailyQuotaReachedDescription": "Tu as atteint ta limite de génération de recettes pour aujourd'hui. Passe au premium pour des recettes illimitées !",
     "later": "Plus tard",
@@ -1392,6 +1883,86 @@
     "unableToOpenVideo": "Impossible d'ouvrir la vidéo",
     "imageUpdateError": "Erreur lors de la mise à jour de l'image",
     "imagePickError": "Erreur lors du choix de l'image"
+  },
+  "planningHistory": {
+    "empty": "Aucun planning pour le moment",
+    "current": "SEMAINE ACTUELLE"
+  },
+  "planningConfig": {
+    "title": "Personnalise ton planning",
+    "dailyMeals": "Petit-déjeuner, déjeuner et dîner sont inclus pour chaque jour sélectionné.",
+    "meals": {
+      "breakfast": "Petit-déj.",
+      "lunch": "Déjeuner",
+      "snack": "Collation",
+      "dinner": "Dîner"
+    },
+    "cuisines": "Cuisines",
+    "cuisinesHelp": "Laisse vide pour varier les cuisines.",
+    "diet": "Alimentation",
+    "diets": {
+      "none": "Tout",
+      "vegetarian": "Végétarien",
+      "vegan": "Végan"
+    },
+    "duration": "Temps de préparation",
+    "exclude": "Ingrédients à exclure",
+    "excludeHelp": "Sépare plusieurs ingrédients par une virgule.",
+    "excludePlaceholder": "Ex. porc, cacahuète, coriandre"
+  },
+  "planningLoading": {
+    "title": "Ton planning se prépare",
+    "subtitle": "Nous créons chaque recette pour ta semaine.",
+    "error": "La génération a échoué",
+    "messages": [
+      "Préparation de tes jours...",
+      "Création de tes repas healthy...",
+      "Équilibrage de tes calories et protéines...",
+      "Organisation de ta liste de courses..."
+    ]
+  },
+  "planningDetail": {
+    "regenerate": "Régénérer le planning"
+  },
+  "shoppingList": {
+    "title": "Liste de courses",
+    "progress": "{{done}}/{{total}} faits",
+    "copy": "Copier",
+    "copied": "Copié",
+    "share": "Partager"
+  },
+  "mealLibrary": {
+    "types": {
+      "all": "Tous",
+      "protein": "Protéinées",
+      "favorites": "Favoris",
+      "express": "Express",
+      "breakfast": "Petit-déj.",
+      "main": "Plats",
+      "snack": "Collations",
+      "lunch": "Déjeuner",
+      "dinner": "Dîner"
+    },
+    "cuisines": {
+      "all": "Toutes les cuisines"
+    },
+    "empty": "Aucun repas ne correspond à ces filtres.",
+    "retry": "Réessayer",
+    "loadMore": "Voir plus de repas"
+  },
+  "goal": {
+    "nutrition": "Objectif nutrition",
+    "day": "jour",
+    "current": "Dernier poids renseigné",
+    "target": "Objectif",
+    "logWeight": "Renseigner mon poids",
+    "modalTitle": "Quel est ton poids aujourd’hui ?",
+    "save": "Enregistrer"
+  },
+  "addRecipe": {
+    "noCompatibleMeals": "Aucun créneau compatible dans ce planning.",
+    "title": "Remplacer quel repas ?",
+    "noPlan": "Crée d’abord un planning pour ajouter cette recette."
   },
   "recipe_loading": {
     "messages": [
@@ -1444,7 +2015,7 @@
       },
       "photo": {
         "title": "Que photographier ?",
-        "message": "Ton frigo, tes placards, ou même ton ticket de caisse — tu peux prendre plusieurs photos. CookEat Ai reconnaît les ingrédients, tu vérifies la liste, puis tu obtiens des recettes avec ce que tu as déjà.",
+        "message": "Ton frigo, tes placards, ou même ton ticket de caisse — tu peux prendre plusieurs photos. CookEat reconnaît les ingrédients, tu vérifies la liste, puis tu obtiens des recettes avec ce que tu as déjà.",
         "button": "Compris !"
       }
     },
@@ -1452,11 +2023,11 @@
   },
   "onboarding_loading": {
     "messages": [
-      "Chargement de tes réponses...",
-      "Analyse de tes préférences culinaires...",
-      "On personnalise ton expérience...",
-      "Presque prêt...",
-      "C'est prêt !"
+      "Ton objectif est pris en compte...",
+      "Tes besoins caloriques sont estimés...",
+      "Tes repères en protéines sont préparés...",
+      "Ton profil nutritionnel prend forme...",
+      "Ton profil nutritionnel est prêt !"
     ]
   },
   "shareIntent": {
@@ -1483,12 +2054,12 @@
     "secondaryTitle": "Importe aussi n'importe quelle vidéo de recette facilement 😋",
     "secondaryHowTo": "Voici comment faire 👇🏼",
     "secondaryStepLink": "Colle le lien de la vidéo",
-    "secondaryStepRecipe": "CookEat Ai crée la recette",
-    "description": "Partage la vidéo vers CookEat Ai et l'IA s'occupe de tout : ingrédients, étapes et valeurs nutritionnelles.",
+    "secondaryStepRecipe": "CookEat crée la recette",
+    "description": "Partage la vidéo vers CookEat et l'IA s'occupe de tout : ingrédients, étapes et valeurs nutritionnelles.",
     "howItWorks": "Comment ça marche ?",
     "step1": "1. Ouvre TikTok ou Instagram",
     "step2": "2. Appuie sur « Partager »",
-    "step3": "3. Choisis CookEat Ai",
+    "step3": "3. Choisis CookEat",
     "button": "Compris !",
     "skip": "Passer cette étape",
     "pasteLink": "Coller un lien",
@@ -1497,7 +2068,7 @@
   },
   "update": {
     "title": "Mise à jour requise",
-    "message": "Une nouvelle version de CookEat Ai est disponible avec des fonctionnalités essentielles. Merci de mettre à jour l'application pour continuer.",
+    "message": "Une nouvelle version de CookEat est disponible avec des fonctionnalités essentielles. Merci de mettre à jour l'application pour continuer.",
     "button": "Mettre à jour"
   },
   "importLink": {
@@ -1521,5 +2092,181 @@
       "title": "Importer une recette",
       "description": "Depuis TikTok, Instagram ou YouTube"
     }
+  },
+  "auditFixes": {
+    "editSelection": "Modifier les jours",
+    "editPreferences": "Modifier mes préférences",
+    "offerTitle": "Mange mieux, dès aujourd’hui.",
+    "offerSubtitle": "Découvre les offres pour accéder à ton planning et à ta liste de courses.",
+    "offerPill": "CookEat Premium",
+    "offerReassurance": "Choisis ton offre à l’étape suivante",
+    "seePlans": "Voir les offres",
+    "premiumRequired": "Un abonnement est nécessaire pour créer ta liste de courses."
+  },
+  "nutritionEstimate": {
+    "how": "Comment est-ce estimé ?",
+    "method": "Nous estimons ta dépense quotidienne à partir de ton âge, ta taille, ton sexe, ton activité et du poids de référence de {{weight}} kg : environ {{calories}} kcal pour maintenir ce poids.",
+    "trainingAssumption": "Tes {{days}} jours de sport sont comptés séparément, avec une séance modérée estimée à {{minutes}} minutes. La durée choisie représente une moyenne ; si elle n’a pas été renseignée, nous retenons 45 minutes.",
+    "unspecifiedSex": "Sans le sexe biologique, nous utilisons une valeur intermédiaire : le résultat est moins précis.",
+    "adjustment": "Nous adaptons ce repère à ton objectif. Une pesée seule ne change pas tes apports. Les ajustements proposés restent soumis à ton accord.",
+    "source": "Comprendre les besoins énergétiques (NIH)",
+    "durationTitle": "Combien de temps dure une séance ?",
+    "durationSubtitle": "Choisis la durée la plus habituelle pour tes entraînements.",
+    "durations": {
+      "20": "Moins de 30 min",
+      "45": "30 à 60 min",
+      "75": "Plus d’une heure"
+    },
+    "activityDescriptions": {
+      "sedentary": "Surtout assis, peu de marche.",
+      "light": "Quelques déplacements à pied chaque jour.",
+      "moderate": "Souvent debout, tu marches régulièrement.",
+      "active": "Tu marches beaucoup ou ton travail est physique.",
+      "very_active": "Tu fais des efforts physiques soutenus toute la journée."
+    },
+    "caloriesPerDay": "kcal par jour",
+    "toward": "Pour avancer vers {{weight}} kg",
+    "basedOnTraining": "Basé sur ton profil et tes {{days}} jours de sport par semaine.",
+    "basedOnProfile": "Basé sur ton profil et ton activité quotidienne.",
+    "adjustable": "Un point de départ, à ajuster avec tes progrès.",
+    "followBalanced": "Des repères qui suivent ton quotidien.",
+    "noDeadline": "Ton poids évolue à son rythme. Nous suivons tes progrès sans fixer une date d’arrivée.",
+    "curve": {
+      "title": "Ton objectif en vue",
+      "stableTitle": "Garde ton équilibre",
+      "maintain": "Autour de {{weight}} kg, à ton rythme.",
+      "illustration": "Illustration de ton objectif",
+      "today": "Aujourd’hui",
+      "goal": "Objectif",
+      "everyday": "Au quotidien",
+      "you": "Toi",
+      "balance": "Équilibre",
+      "direction": "Le cap que tu as choisi",
+      "stability": "Trouver ton équilibre dans la durée",
+      "description": "Illustration de ton objectif : de {{from}} à {{to}}, sans date prévue.",
+      "balancedDescription": "Une ligne stable illustre ton objectif d’équilibre au quotidien, sans cible de poids.",
+      "balancedNote": "Des repas adaptés à ton quotidien, sans objectif de poids.",
+      "estimatedPeriod": "Période indicative",
+      "weeksRange": "{{min}}–{{max}} semaines",
+      "week": "Semaine {{count}}",
+      "reviewPeriod": "4 semaines",
+      "firstReview": "Premier bilan",
+      "reviewCaption": "Une première période pour suivre tes progrès.",
+      "pace": "Rythme repère : {{min}}–{{max}} kg par semaine",
+      "referenceProgress": "Progression indicative",
+      "estimateNote": "Une estimation à ce rythme, pas une date garantie. Fais le point après 4 semaines de pesées pour ajuster tes apports et la durée.",
+      "muscleEstimateNote": "Une estimation du poids total, pas de kilos de muscle. Fais le point après 4 semaines de pesées pour ajuster tes apports et la durée.",
+      "reviewNote": "Après 4 semaines, fais le point sur tes habitudes. Ton objectif continue au-delà.",
+      "reviewTargetNote": "Observe ton poids pendant 4 semaines, puis revois ta cible et tes apports avant d’estimer une durée.",
+      "timedDescription": "De {{from}} à {{to}} sur une période indicative de {{period}}. {{pace}}. La ligne représente un rythme repère, pas des pesées réelles.",
+      "reviewDescription": "Une période de suivi de 4 semaines, avec un repère à la semaine 2 et un premier bilan à la semaine 4. La ligne ne prédit pas de poids.",
+      "maintainReviewCaption": "Observer la stabilité de ton poids.",
+      "balancedReviewCaption": "Faire le point sur tes habitudes alimentaires.",
+      "maintainReviewNote": "Après 4 semaines de pesées, vérifie si ton poids reste stable. Le maintien continue au-delà.",
+      "balancedReviewNote": "Après 4 semaines, fais le point sur la variété de tes repas et ta régularité. Tes habitudes se construisent dans la durée."
+    }
+  },
+  "weightTracking": {
+    "dateAxis": "Date",
+    "graphInitialDescription": "Graphique du poids en kilogrammes selon la date. Poids initial : {{initial}} kg.",
+    "graphGoalDescription": "Graphique du poids en kilogrammes selon la date. Poids initial : {{initial}} kg ; objectif : {{target}} kg. Les repères initial et objectif ne sont pas des pesées.",
+    "initialWeight": "Poids initial",
+    "emptyPeriod": "Aucune pesée sur cette période. Choisis une autre période ou ajoute ton poids.",
+    "periodLabel": "Période : {{period}}",
+    "previousMeasurement": "Pesée précédente",
+    "nextMeasurement": "Pesée suivante",
+    "periods": {
+      "week": "7 jours",
+      "month": "1 mois",
+      "quarter": "3 mois",
+      "all": "Tout"
+    },
+    "history": "Ta progression",
+    "empty": "Ta courbe apparaîtra après deux pesées, prises à des dates différentes.",
+    "chartDescription": "Poids enregistré : de {{first}} à {{last}} kilogrammes.",
+    "weighHint": "Pèse-toi dans des conditions similaires, si possible le matin. Quelques pesées par semaine suffisent.",
+    "trendTitle": "Ton poids évolue-t-il ?",
+    "previousAverage": "Moyenne des 2 premières semaines",
+    "recentAverage": "Moyenne des 2 dernières semaines",
+    "states": {
+      "collecting": "Note ton poids quelques fois par semaine. Nous pourrons faire le point après environ un mois.",
+      "variable": "Les mesures varient beaucoup. Continuons à observer avant de modifier tes apports.",
+      "steady": "La tendance ne justifie pas de changement pour le moment. Garde tes repères actuels.",
+      "adjust": "La tendance suggère qu’un petit ajustement peut être utile.",
+      "limit": "Nous avons atteint la limite des ajustements simples. Vérifie ton activité et tes apports avec un professionnel avant d’aller plus loin.",
+      "reached": "Ton poids moyen a atteint ta cible. Fais le point sur la suite avant de modifier tes apports."
+    },
+    "proposalHint": "Si tu as suivi tes apports actuels ces dernières semaines, tu peux essayer ce changement. Tes plannings déjà créés restent identiques.",
+    "confirmTitle": "Adapter mes apports ?",
+    "confirmBody": "Le nouveau repère sera de {{calories}} kcal par jour pour tes prochains plannings. Nous observerons à nouveau ton poids avant de proposer un autre changement.",
+    "apply": "Appliquer cet ajustement",
+    "keep": "Garder mes apports",
+    "cancel": "Annuler",
+    "saved": "Pesée enregistrée. Tes apports restent inchangés.",
+    "applied": "Repères mis à jour pour tes prochains plannings.",
+    "kept": "Apports conservés. Nous commençons une nouvelle période d’observation.",
+    "localOnly": "Tes pesées sont conservées sur cet appareil.",
+    "todayHint": "Pesée du jour. Une nouvelle saisie remplace celle d’aujourd’hui.",
+    "invalid": "Entre un poids entre 35 et 300 kg.",
+    "loadError": "Impossible de charger ton suivi. Réessaie.",
+    "saveError": "La pesée n’a pas pu être enregistrée. Réessaie.",
+    "decisionError": "La proposition a changé ou n’a pas pu être enregistrée. Vérifie les repères affichés et réessaie.",
+    "retry": "Réessayer"
+  },
+  "planningNutrition": {
+    "adjustedPortion": "Quantités adaptées à ton objectif pour une personne.",
+    "closestAvailable": "{{day}} : {{actual}} / {{target}} kcal. Écart de {{percent}} % après ajustement des portions, au plus proche de ton objectif.",
+    "planned": "Repas prévus",
+    "below": "{{calories}} kcal en dessous du repère quotidien",
+    "above": "{{calories}} kcal au-dessus du repère quotidien",
+    "matched": "Ces repas correspondent au repère quotidien."
+  },
+  "testimonials": {
+    "regularity": {
+      "author": "Camille Martin",
+      "text": "Clairement l’app qui m’a le plus aidée à rester régulière. Je mange mieux, mes repas me calent vraiment et je n’ai plus à calculer chaque recette moi-même."
+    },
+    "macros": {
+      "author": "Lucas Bernard",
+      "text": "Un vrai game changer. Je renseigne mes objectifs et l’application me donne des recettes adaptées avec les calories et les protéines. Je ne pourrais plus revenir à ma façon de faire d’avant."
+    },
+    "simplicity": {
+      "author": "Emma Laurent",
+      "text": "Enfin une application de nutrition que j’ai réellement envie d’ouvrir tous les jours. Belle, simple et surtout vraiment utile."
+    },
+    "time": {
+      "author": "Julie Moreau",
+      "text": "Cette app m’économise tellement de temps chaque semaine. Plus besoin de chercher des recettes pendant des heures ou de calculer les macros ingrédient par ingrédient. Tout est déjà fait."
+    },
+    "planning": {
+      "author": "Alexandre Petit",
+      "text": "Honnêtement, c’est devenu mon assistant personnel pour les repas. Je sais quoi manger, quoi acheter et comment rester aligné avec mes objectifs."
+    },
+    "training": {
+      "author": "Thomas Renaud",
+      "text": "Si vous faites attention à votre alimentation ou que vous vous entraînez, cette application devrait être sur votre téléphone. C’est simple, rapide et incroyablement pratique."
+    }
+  },
+  "dailyApp": {
+    "history": "Historique",
+    "weekTitle": "Ma semaine",
+    "shopping": "Ma liste de courses",
+    "today": "Aujourd’hui",
+    "mealCount_one": "{{count}} repas",
+    "mealCount_other": "{{count}} repas",
+    "dayEmpty": "Aucun repas prévu ce jour-là.",
+    "browse": "Explorer les repas",
+    "emptyTitle": "Une semaine à votre goût.",
+    "emptyBody": "Choisissez vos jours et vos envies. Vos repas et votre liste de courses seront réunis ici.",
+    "createWeek": "Créer ma semaine",
+    "recipeEyebrow": "À votre goût",
+    "recipeSubtitle": "De quoi avoir envie de cuisiner.",
+    "filters": "Filtrer les repas",
+    "clearFilters": "Effacer le filtre",
+    "cuisines": "Les cuisines",
+    "goalEyebrow": "À votre rythme",
+    "goalSubtitle": "Vos progrès, un jour après l’autre.",
+    "profileEyebrow": "Vos préférences",
+    "subscriptionDetails": "Découvrir mon abonnement"
   }
 }

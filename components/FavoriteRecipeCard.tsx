@@ -1,8 +1,9 @@
 import React from 'react';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../services/haptics';
 import { Colors } from '../constants/Colors';
 import { IconSymbol } from './ui/IconSymbol';
+import { getRecipeImageSource } from '../constants/RecipeImages';
 
 interface FavoriteRecipeCardProps {
   title: string;
@@ -41,7 +42,7 @@ export default function FavoriteRecipeCard({
     <TouchableOpacity
       style={[styles.container, { backgroundColor: colors.card }]}
       onPress={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        feedback.light();
         onPress?.();
       }}
     >
@@ -50,7 +51,7 @@ export default function FavoriteRecipeCard({
           icon
             ? <Text style={{ fontSize: 34 }}>{icon}</Text>
             : image
-              ? <Image source={{ uri: image }} style={styles.image} />
+              ? <Image source={getRecipeImageSource(image)} style={styles.image} />
               : <Text style={{ fontSize: 34 }}>🍲</Text>
         }
       </View>
@@ -78,7 +79,7 @@ export default function FavoriteRecipeCard({
           <TouchableOpacity
             style={styles.removeButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              feedback.confirm();
               onRemove();
             }}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -161,4 +162,4 @@ const styles = StyleSheet.create({
     padding: 8,
     marginRight: 8,
   },
-}); 
+});

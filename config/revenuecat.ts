@@ -274,7 +274,7 @@ class RevenueCatService {
       return isSubscribed;
     } catch (error) {
       console.error('❌ Erreur lors de la restauration:', error);
-      return false;
+      throw error;
     }
   }
 

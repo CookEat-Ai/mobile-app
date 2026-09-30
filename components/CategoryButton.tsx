@@ -1,6 +1,8 @@
+import { feedback } from '../services/haptics';
+import { EntranceTouchable } from './motion/Entrance';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { Colors } from '../constants/Colors';
 import { font } from '../constants/Layout';
 
@@ -31,7 +33,7 @@ export default function CategoryButton({
   };
 
   return (
-    <TouchableOpacity
+    <EntranceTouchable entranceIndex={0}
       style={[
         styles.container,
         {
@@ -39,7 +41,7 @@ export default function CategoryButton({
           borderColor: colors.border
         }
       ]}
-      onPress={onPress}
+      onPress={() => { if (onPress) feedback.selection(); onPress?.(); }}
     >
       <Ionicons
         name={icon}
@@ -49,7 +51,7 @@ export default function CategoryButton({
       <Text style={[styles.title]}>
         {title}
       </Text>
-    </TouchableOpacity>
+    </EntranceTouchable>
   );
 }
 

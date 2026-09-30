@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../services/haptics';
 import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../constants/Colors';
@@ -43,11 +43,11 @@ export const RecipeCard = ({ item, onPress, onLongPress }: RecipeCardProps) => {
     <TouchableOpacity
       style={styles.card}
       onPress={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        feedback.light();
         onPress();
       }}
       onLongPress={onLongPress ? () => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+        feedback.heavy();
         onLongPress();
       } : undefined}
       delayLongPress={500}

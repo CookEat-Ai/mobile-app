@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import analytics from './analytics';
 
 const ONBOARDING_COMPLETED_KEY = 'onboarding_completed';
 const QUESTIONS_ANSWERED_KEY = 'questions_answered';
@@ -8,6 +7,7 @@ export type AppEntryRoute =
   | '/(tabs)'
   | '/onboarding/videoDemo'
   | '/onboarding/ingredientSelection'
+  | '/onboarding/loading'
   | '/onboarding/welcome';
 
 /**
@@ -34,10 +34,7 @@ export async function resolveAppEntryRoute(): Promise<AppEntryRoute> {
   if (completed === 'true') return '/(tabs)';
 
   if (questionsAnswered === 'true') {
-    const variant = await analytics.getOnboardingVariant();
-    return variant === 'C' || variant === 'D'
-      ? '/onboarding/videoDemo'
-      : '/onboarding/ingredientSelection';
+    return '/onboarding/loading';
   }
 
   return '/onboarding/welcome';

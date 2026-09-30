@@ -1,3 +1,4 @@
+import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -7,7 +8,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  ScrollView,
   TextInput,
   ActivityIndicator,
   Keyboard,
@@ -18,7 +18,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Asset } from 'expo-asset';
 import { router, useLocalSearchParams } from 'expo-router';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../../services/haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/Colors';
@@ -30,7 +30,6 @@ import apiService from '../../services/api';
 import revenueCatService from '../../config/revenuecat';
 import { IconSymbol } from '../../components/ui/IconSymbol';
 import { useOnboardingTrialEligibility } from '../../hooks/useOnboardingTrialEligibility';
-import { formatNumber } from '../../components/onboarding/projectionFormat';
 
 const TUTORIAL_IMAGES_IOS = [
   require('../../assets/images/tuto/ios/tuto-import-tiktok-1.png'),
@@ -87,7 +86,7 @@ const STEP_COUNT = 6;
 
 export default function FastOnboardingScreen() {
   const insets = useSafeAreaInsets();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const params = useLocalSearchParams<{ initialStep?: string }>();
   const { layoutWidth } = useResponsive();
   const trial = useOnboardingTrialEligibility();
@@ -253,7 +252,7 @@ export default function FastOnboardingScreen() {
     try {
       const response = await apiService.validatePromoCode(promoCode.trim());
       if (response.data?.isValid && response.data.discountPercentage) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        feedback.success();
         setPromoSuccess(true);
         setDiscountPercent(response.data.discountPercentage);
 
@@ -269,7 +268,7 @@ export default function FastOnboardingScreen() {
         analytics.track('onboarding_fast_promo_valid', { discount: response.data.discountPercentage });
         setTimeout(() => nextStep(), 1200);
       } else {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        feedback.error();
         setPromoError(response.error || t('onboardingPromoCode.invalid'));
       }
     } catch {
@@ -339,7 +338,7 @@ export default function FastOnboardingScreen() {
               const idx = Math.round(e.nativeEvent.contentOffset.x / itemWidth);
               if (idx !== activeTutoIndex) {
                 setActiveTutoIndex(idx);
-                Haptics.selectionAsync();
+                feedback.selection();
               }
             }}
             scrollEventThrottle={16}
@@ -358,30 +357,11 @@ export default function FastOnboardingScreen() {
   };
 
   const renderSocialProof = () => {
-    const count = formatNumber(10000, i18n.language);
-    const parts = t('onboarding.socialProof.title', { total: count }).split(
-      new RegExp(`(${count})`)
-    );
-    const reviews = [
-      {
-        id: 1,
-        name: 'Marie L.',
-        rating: 5,
-        text: t('onboarding.socialProof.review1'),
-      },
-      {
-        id: 2,
-        name: 'Thomas D.',
-        rating: 5,
-        text: t('onboarding.socialProof.review2'),
-      },
-      {
-        id: 3,
-        name: 'Julie M.',
-        rating: 5,
-        text: t('onboarding.socialProof.review3'),
-      },
-    ];
+    const reviews = ['time', 'planning', 'training'].map(id => ({
+      id,
+      name: t(`testimonials.${id}.author`),
+      text: t(`testimonials.${id}.text`),
+    }));
 
     return (
       <View style={styles.stepContent}>
@@ -389,12 +369,7 @@ export default function FastOnboardingScreen() {
           <Text style={styles.topBadgeText}>{t('onboarding.socialProof.topBadge')}</Text>
         </View>
         <Text style={styles.title}>
-          {parts.map((p: string, i: number) => (
-            <Text key={i} style={p === count ? styles.highlight : null}>
-              {p}
-            </Text>
-          ))}
-          <Text> 🎉</Text>
+          {t('onboarding.socialProof.title')}
         </Text>
         <View style={styles.reviewsContainer}>
           {reviews.map((r) => (
@@ -585,14 +560,15 @@ export default function FastOnboardingScreen() {
               <View style={{ flex: 1, paddingHorizontal: 24 }}>{renderPromoCode()}</View>
             </TouchableWithoutFeedback>
           ) : (
-            <ScrollView
+            <OnboardingScrollView
+              stepKey={step}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollContent}
             >
               {step === 0 && renderAhaMoment()}
               {step === 2 && renderSocialProof()}
               {step === 5 && renderReminder()}
-            </ScrollView>
+            </OnboardingScrollView>
           )}
         </Animated.View>
 

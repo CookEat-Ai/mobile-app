@@ -1,3 +1,4 @@
+import { MotionPreferencesProvider } from '../contexts/MotionPreferences';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import { DefaultTheme, Stack, ThemeProvider, useRouter } from 'expo-router';
@@ -104,12 +105,12 @@ function ShareIntentHandler() {
       }
 
       if (inOnboarding) {
-        // Importer avant d'avoir répondu à la question de segmentation est le
-        // signal d'intention le plus fort qui existe : on le prend pour argent
-        // comptant plutôt que de perdre la dimension.
+        // Le tunnel reste unique même si l'app est ouverte par un partage :
+        // l'import est une capacité bonus, puis on reprend la personnalisation
+        // du planning hebdomadaire.
         const declared = await analytics.getEntryFeature();
         if (!declared) {
-          await analytics.setEntryFeature('import', { implicit: true, reason: 'share_intent_during_onboarding' });
+          await analytics.setEntryFeature('generate', { implicit: true, reason: 'share_intent_during_weekly_onboarding' });
         }
       }
 
@@ -119,7 +120,7 @@ function ShareIntentHandler() {
           url,
           source: 'share_sheet',
           ...(inOnboarding
-            ? { isOnboarding: 'true', onboardingNext: '/onboarding/formQuestion?initialStep=socialProof' }
+            ? { isOnboarding: 'true', onboardingNext: '/onboarding/formQuestion' }
             : {}),
         },
       });
@@ -231,7 +232,7 @@ function QuickActionHandler({ revenueCatReady }: { revenueCatReady: boolean }) {
 
         void resolveAppEntryRoute()
           .then((baseRoute) => {
-            router.replace(baseRoute);
+            router.replace(baseRoute as any);
             setTimeout(() => router.push(paywallHref), 0);
           })
           .catch((routeError) => {
@@ -363,21 +364,13 @@ function RootLayout() {
             analytics.identify(serverUserId);
 
             try {
-              await revenueCatService.restorePurchases();
-              console.log('[Sync] RevenueCat purchases restaurées après resync identité');
+              if (storedUserId) await revenueCatService.restorePurchases();
             } catch (e) {
               console.error('[Sync] Erreur restore purchases:', e);
             }
           }
-        } else if (response.error && storedUserId) {
-          console.log('[Sync] userId obsolète, suppression locale sans redirection');
-          await AsyncStorage.removeItem('userId');
-          await analytics.resetIdentity({ rotateDeviceId: false, clearAttribution: false });
-
-          try {
-            await revenueCatService.restorePurchases();
-          } catch {}
         }
+
       } catch {
         // Silencieux : réseau indisponible
       }
@@ -418,6 +411,7 @@ function RootLayout() {
   }
 
   return (
+    <MotionPreferencesProvider>
     <SafeAreaProvider>
       <ShareIntentProvider>
         <RecipeProvider>
@@ -430,7 +424,7 @@ function RootLayout() {
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="index" options={{ headerShown: false, animation: 'none' }} />
               <Stack.Screen name="onboarding" options={{ headerShown: false, animation: 'none' }} />
-              <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'none' }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'none', statusBarStyle: 'dark', statusBarHidden: false }} />
               <Stack.Screen name="recipe-detail" options={{ headerShown: false }} />
               <Stack.Screen name="favorites-list" options={{ headerShown: false }} />
               <Stack.Screen name="share-intent" options={{ headerShown: false, animation: 'fade' }} />
@@ -455,6 +449,7 @@ function RootLayout() {
         </RecipeProvider>
       </ShareIntentProvider>
     </SafeAreaProvider>
+    </MotionPreferencesProvider>
   );
 }
 

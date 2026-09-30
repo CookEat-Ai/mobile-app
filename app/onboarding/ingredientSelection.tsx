@@ -1,3 +1,5 @@
+import { NavigationIconButton } from '../../components/NavigationIconButton';
+import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
 import React, { useState, useRef, useMemo } from 'react';
 import {
   View,
@@ -5,14 +7,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   Platform,
-  ScrollView,
   Animated,
   ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../../services/haptics';
 import { router } from 'expo-router';
-import { FontAwesome6 } from '@expo/vector-icons';
 import { Colors } from '../../constants/Colors';
 import { rw } from '../../constants/Layout';
 import analytics from '../../services/analytics';
@@ -39,7 +39,7 @@ const IngredientCard = ({ item, isSelected, onSelect }: { item: IngredientItem, 
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const handlePress = () => {
-    Haptics.selectionAsync();
+    feedback.selection();
     Animated.sequence([
       Animated.timing(scaleAnim, {
         toValue: 0.95,
@@ -147,7 +147,7 @@ export default function IngredientSelectionScreen() {
         .join(', ');
       const preferences = await loadRecipePreferences({ preferCurrentOnboarding: true });
 
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      feedback.success();
       const nextParams = {
         streaming: 'true',
         showGenerateButton: 'false',
@@ -194,13 +194,11 @@ export default function IngredientSelectionScreen() {
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <View style={styles.progressHeader}>
         {router.canGoBack() && (
-          <TouchableOpacity
+          <NavigationIconButton
             style={styles.backButton}
             onPress={handleBackPress}
             activeOpacity={0.7}
-          >
-            <FontAwesome6 name="arrow-left" size={18} color={Colors.light.textSecondary} />
-          </TouchableOpacity>
+           />
         )}
       </View>
 
@@ -212,7 +210,7 @@ export default function IngredientSelectionScreen() {
           </Text>
         </View>
 
-        <ScrollView
+        <OnboardingScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
@@ -226,7 +224,7 @@ export default function IngredientSelectionScreen() {
               />
             ))}
           </View>
-        </ScrollView>
+        </OnboardingScrollView>
 
         <View style={styles.bottomSection}>
           <TouchableOpacity

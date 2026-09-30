@@ -1,6 +1,7 @@
+import { NavigationIconButton } from '../components/NavigationIconButton';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../services/haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StyleSheet, View, ActivityIndicator, Text, TouchableOpacity, Animated, Easing, Image, Platform, BackHandler, Alert, Modal, TextInput, Keyboard, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -37,10 +38,7 @@ import {
 } from '../services/quickActions';
 import { resolveTrialEligibilityForPackage } from '../services/trialEligibility';
 import { syncTrialReminderWithCustomerInfo } from '../services/trialReminder';
-import {
-  loadOnboardingProfile,
-  type OnboardingProfile,
-} from '../services/onboardingProfile';
+import { loadFitnessProfile, type FitnessProfile } from '../services/fitnessProfile';
 
 
 type PaywallState = 'STANDARD' | 'WHEEL' | 'DISCOUNTED' | 'PROMO_DISCOUNTED';
@@ -63,7 +61,7 @@ export default function PaywallScreen() {
   };
 
   const { t, i18n } = useTranslation();
-  const [onboardingProfile, setOnboardingProfile] = useState<OnboardingProfile | null>(null);
+  const [onboardingProfile, setOnboardingProfile] = useState<FitnessProfile | null>(null);
   const [entryFeature, setEntryFeature] = useState<EntryFeature | null>(null);
   const [isPersonalizationResolved, setIsPersonalizationResolved] = useState(false);
   const params = useLocalSearchParams();
@@ -81,7 +79,7 @@ export default function PaywallScreen() {
   const paywallAnalyticsProperties = useMemo(() => ({
     source: analyticsSource,
     paywall_design_variant: PAYWALL_DESIGN_VARIANT,
-    personalization_segment: onboardingProfile?.hasGoalAnswer
+    personalization_segment: onboardingProfile?.goal
       ? `goal_${onboardingProfile.goal}`
       : `entry_${entryFeature === 'import' ? 'import' : 'generate'}`,
     placement: isFromQuickAction
@@ -120,11 +118,17 @@ export default function PaywallScreen() {
   useEffect(() => {
     let mounted = true;
     Promise.all([
-      loadOnboardingProfile().catch(() => null),
+      loadFitnessProfile().catch(() => null),
       analytics.getEntryFeature().catch(() => null),
-    ]).then(([profile, feature]) => {
+      AsyncStorage.multiGet(['fitnessGoal', 'cookingTime']).catch(() => []),
+    ]).then(([profile, feature, savedAnswers]) => {
       if (!mounted) return;
-      setOnboardingProfile(profile);
+      const answers = Object.fromEntries(savedAnswers);
+      // loadFitnessProfile supplies calculation defaults; those defaults are
+      // not answers and must not become a personalized commercial claim.
+      setOnboardingProfile(profile && answers.fitnessGoal === profile.goal
+        ? { ...profile, cookingTime: answers.cookingTime || '' }
+        : null);
       setEntryFeature(feature);
       setIsPersonalizationResolved(true);
     });
@@ -195,7 +199,7 @@ export default function PaywallScreen() {
   const [codeError, setCodeError] = useState('');
 
   const openSecretCodeEntry = useCallback((trigger: string) => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    feedback.success();
     analytics.track('paywall_secret_code_opened', {
       ...paywallAnalyticsProperties,
       trigger,
@@ -265,7 +269,7 @@ export default function PaywallScreen() {
         });
         analytics.track('paywall_secret_code_premium', paywallAnalyticsProperties);
         setShowCodeModal(false);
-        router.replace('/(tabs)');
+        router.replace('/(tabs)' as any);
         return;
       }
 
@@ -394,7 +398,7 @@ export default function PaywallScreen() {
       if (Math.abs(value - lastHapticAngle.current) >= step) {
         lastHapticAngle.current = value;
         if (Platform.OS !== 'web') {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          feedback.light();
         }
       }
     });
@@ -707,11 +711,7 @@ export default function PaywallScreen() {
         ...paywallAnalyticsProperties,
         completion_method: 'entitled_access',
       });
-      // Reset complet de la pile pour empêcher de revenir à l'onboarding
-      navigation.reset({
-        index: 0,
-        routes: [{ name: '(tabs)' as never }],
-      });
+      router.replace('/(tabs)' as any);
       return;
     }
 
@@ -725,10 +725,7 @@ export default function PaywallScreen() {
         ...paywallAnalyticsProperties,
         completion_method: 'entitled_access',
       });
-      navigation.reset({
-        index: 0,
-        routes: [{ name: '(tabs)' as never }],
-      });
+      router.replace('/(tabs)' as any);
       return;
     }
 
@@ -772,7 +769,7 @@ export default function PaywallScreen() {
   const handlePurchasePackage = async (pack: PurchasesPackage) => {
     if (isPurchasing) return;
     setIsPurchasing(true);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    feedback.confirm();
 
     const trial = await resolveTrialEligibilityForPackage(pack);
     analytics.track('purchase_started', {
@@ -965,15 +962,13 @@ export default function PaywallScreen() {
       {viewState === 'WHEEL' ? (
         <Animated.View style={[styles.container, styles.wheelContainer, { opacity: fadeAnim }]}>
           {(__DEV__ || canCloseWheel) && (
-            <TouchableOpacity
+            <NavigationIconButton kind="close"
               style={styles.closeButton}
               onPress={handleDismiss}
               hitSlop={16}
               accessibilityRole="button"
               accessibilityLabel={t('common.cancel')}
-            >
-              <Ionicons name="close" size={28} color={Colors.light.text} />
-            </TouchableOpacity>
+             />
           )}
 
           <View style={styles.wheelHeader}>

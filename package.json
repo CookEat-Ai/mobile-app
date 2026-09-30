@@ -1,7 +1,7 @@
 {
   "name": "CookEat",
   "main": "expo-router/entry",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "packageManager": "yarn@1.22.22",
   "scripts": {
     "start": "expo start",
@@ -13,7 +13,10 @@
     "postinstall": "yarn patch-package",
     "eas-build-post-install": "yarn patch-package && node ./scripts/postinstall.js",
     "update:production": "sh ./scripts/eas-update-with-sentry.sh production production",
-    "update:preview": "sh ./scripts/eas-update-with-sentry.sh preview preview"
+    "update:preview": "sh ./scripts/eas-update-with-sentry.sh preview preview",
+    "test:goal-timeline": "node scripts/test-goal-timeline.cjs",
+    "test:planning-loading": "node scripts/test-planning-loading.cjs",
+    "test:planned-meal-navigation": "node scripts/test-planned-meal-navigation.cjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

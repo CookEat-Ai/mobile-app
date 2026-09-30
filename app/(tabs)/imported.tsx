@@ -2,7 +2,7 @@ import { router, useFocusEffect } from "expo-router";
 import React, { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, StyleSheet, Text, View, RefreshControl, TouchableOpacity, Alert, Animated, ActivityIndicator } from 'react-native';
-import Reanimated, { FadeInDown } from 'react-native-reanimated';
+import Reanimated, { FadeInDown, ReduceMotion } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../constants/Colors';
@@ -276,7 +276,7 @@ export default function ImportedScreen() {
       style={[styles.container, { paddingTop: insets.top + 40 }]}
     >
       <Reanimated.View
-        entering={FadeInDown.duration(400).delay(50)}
+        entering={FadeInDown.duration(340).delay(50).reduceMotion(ReduceMotion.System)}
         style={styles.titleContainer}
       >
         <Text style={styles.mainTitle} numberOfLines={1} adjustsFontSizeToFit>{t('imported.title')}</Text>
@@ -312,7 +312,7 @@ export default function ImportedScreen() {
           data={recipes}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={!isSubscribed ? (
-            <Reanimated.View entering={FadeInDown.duration(400).delay(100)}>
+            <Reanimated.View entering={FadeInDown.duration(340).delay(100).reduceMotion(ReduceMotion.System)}>
               {renderPremiumCard()}
             </Reanimated.View>
           ) : null}
@@ -320,7 +320,7 @@ export default function ImportedScreen() {
             const anim = getAnimatedValue(item.id);
             return (
               <Reanimated.View
-                entering={FadeInDown.duration(400).delay(150 + index * 50)}
+                entering={FadeInDown.duration(340).delay(100 + Math.min(index, 5) * 45).reduceMotion(ReduceMotion.System)}
               >
                 <Animated.View
                   style={{

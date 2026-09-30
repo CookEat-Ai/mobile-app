@@ -1,3 +1,4 @@
+import { NavigationIconButton } from './NavigationIconButton';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -29,9 +30,11 @@ type Props = {
   isOnboarding?: boolean;
   /** Route vers laquelle continuer une fois l'aha moment passé (onboarding seulement). */
   onboardingNext?: string;
+  /** L'import enrichit le planning déjà affiché au lieu de remplacer sa recette graine. */
+  isPlanImport?: boolean;
 };
 
-export function ImportLinkSheet({ visible, onClose, source, isOnboarding, onboardingNext }: Props) {
+export function ImportLinkSheet({ visible, onClose, source, isOnboarding, onboardingNext, isPlanImport }: Props) {
   const { t } = useTranslation();
   const [url, setUrl] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -99,6 +102,7 @@ export function ImportLinkSheet({ visible, onClose, source, isOnboarding, onboar
         source,
         ...(isOnboarding ? { isOnboarding: 'true' } : {}),
         ...(onboardingNext ? { onboardingNext } : {}),
+        ...(isPlanImport ? { isPlanImport: 'true' } : {}),
       },
     });
   };
@@ -122,9 +126,7 @@ export function ImportLinkSheet({ visible, onClose, source, isOnboarding, onboar
               <View style={styles.iconWrapper}>
                 <Ionicons name="link" size={22} color={Colors.light.button} />
               </View>
-              <TouchableOpacity onPress={onClose} hitSlop={12} accessibilityRole="button">
-                <Ionicons name="close" size={24} color="#8E8E93" />
-              </TouchableOpacity>
+              <NavigationIconButton kind="close" onPress={onClose} hitSlop={12} accessibilityRole="button" />
             </View>
 
             <Text style={styles.title}>{t('importLink.title')}</Text>

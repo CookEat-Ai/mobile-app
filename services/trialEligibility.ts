@@ -22,24 +22,6 @@ export type ResolvedTrialOffer = TrialEligibility & {
 
 const UNKNOWN_TRIAL: TrialEligibility = { status: 'unknown', days: null };
 
-/**
- * En sandbox iOS, un compte neuf peut ne pas encore avoir de reçu local.
- * RevenueCat renvoie alors `unknown` même si StoreKit expose bien l'essai sur
- * le produit. Cela rendait les builds de développement impossibles à valider :
- * le CTA passait à tort sur la variante payante.
- *
- * Le repli est volontairement limité à `__DEV__` et uniquement aux produits
- * dont le Store expose une phase réellement gratuite. Une inéligibilité
- * explicite reste toujours prioritaire, et la production ne promet jamais un
- * essai quand RevenueCat ne peut pas confirmer l'éligibilité.
- */
-function developmentSandboxFallback(pack: PurchasesPackage): TrialEligibility {
-  const days = configuredTrialDays(pack);
-  return __DEV__ && days
-    ? { status: 'eligible', days }
-    : UNKNOWN_TRIAL;
-}
-
 function periodToDays(unit: string | undefined, value: number | null | undefined): number | null {
   const units = Number(value ?? 0);
   if (!Number.isFinite(units) || units <= 0) return null;
@@ -83,7 +65,9 @@ export async function resolveTrialEligibilityForPackages(
 ): Promise<Record<string, TrialEligibility>> {
   const resolved: Record<string, TrialEligibility> = {};
 
-  if (Platform.OS === 'android') {
+  // En dev, ignorer l'historique du compte, mais ne jamais inventer un essai
+  // pour un produit qui n'en expose pas dans le catalogue du Store.
+  if (__DEV__ || Platform.OS === 'android') {
     for (const pack of packages) {
       const days = configuredTrialDays(pack);
       resolved[pack.identifier] = days
@@ -124,15 +108,13 @@ export async function resolveTrialEligibilityForPackages(
       ) {
         resolved[pack.identifier] = { status: 'ineligible', days: null };
       } else {
-        resolved[pack.identifier] = developmentSandboxFallback(pack);
+        resolved[pack.identifier] = UNKNOWN_TRIAL;
       }
     }
   } catch {
     // Une éligibilité inconnue ne doit jamais devenir une promesse d'essai.
-    // Exception strictement locale : en sandbox de développement, StoreKit
-    // peut exposer l'essai tout en n'ayant pas encore généré de reçu.
     for (const pack of candidates) {
-      resolved[pack.identifier] = developmentSandboxFallback(pack);
+      resolved[pack.identifier] = UNKNOWN_TRIAL;
     }
   }
 

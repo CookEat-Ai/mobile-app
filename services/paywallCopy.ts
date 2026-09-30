@@ -1,7 +1,7 @@
 import type { PurchasesOffering } from 'react-native-purchases';
 import type { TFunction } from 'i18next';
 import type { EntryFeature } from './analytics';
-import type { OnboardingProfile } from './onboardingProfile';
+import type { FitnessProfile } from './fitnessProfile';
 
 /**
  * Contenu affiché par le paywall. L'UI vit dans le code, mais le contenu reste
@@ -47,36 +47,26 @@ function pickLocalized(value: LocalizedValue, language: string): string | null {
 function fallbackCopy(
   t: TFunction,
   entryFeature: EntryFeature | null,
-  profile: OnboardingProfile | null,
+  profile: FitnessProfile | null,
 ): PaywallCopy {
   const variant = entryFeature === 'import' ? 'import' : 'generate';
-  const goal = profile?.hasGoalAnswer ? profile.goal : null;
-  const focusKey = variant === 'generate'
-    ? profile?.cookingTime === 'less_than_30_minutes'
-      ? 'quick'
-      : profile?.cookingLevel === 'beginner'
-        ? 'beginner'
-        : null
+  const goal = profile?.goal || null;
+  const focusKey = profile?.cookingTime === 'less_than_30_minutes'
+    ? 'quick'
     : null;
-  const baseSubheadline = goal
-    ? t(`paywall.personalization.goals.${goal}.subheadline`)
-    : t(`paywall.variants.${variant}.subheadline`);
   const focus = focusKey
     ? t(`paywall.personalization.focus.${focusKey}`, { defaultValue: '' })
     : '';
 
   return {
     variant,
-    headline: goal
-      ? t(`paywall.personalization.goals.${goal}.headline`)
-      : t(`paywall.variants.${variant}.headline`),
-    subheadline: [baseSubheadline, focus].filter(Boolean).join(' '),
-    cta: t(`paywall.variants.${variant}.cta`),
-    testimonialKey: goal
-      ? `onboarding.proof.goal.${goal}.review`
-      : variant === 'import'
-        ? 'onboarding.proof.import.review'
-        : 'onboarding.proof.goal.ideas.review',
+    headline: t(goal ? `paywall.weeklyPlanning.goals.${goal}.headline` : 'paywall.weeklyPlanning.headline'),
+    subheadline: [
+      t(goal ? `paywall.weeklyPlanning.goals.${goal}.subheadline` : 'paywall.weeklyPlanning.subheadline'),
+      focus,
+    ].filter(Boolean).join(' '),
+    cta: t('paywall.weeklyPlanning.cta'),
+    testimonialKey: `fitnessOnboarding.social.reviews.${goal || 'balanced'}.text`,
     personalizationSegment: goal ? `goal_${goal}` : `entry_${variant}`,
   };
 }
@@ -90,7 +80,7 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 export function resolvePaywallCopy(options: {
   offering: PurchasesOffering | null;
   entryFeature: EntryFeature | null;
-  profile: OnboardingProfile | null;
+  profile: FitnessProfile | null;
   language: string;
   t: TFunction;
 }): PaywallCopy {
@@ -100,18 +90,15 @@ export function resolvePaywallCopy(options: {
   const metadata = offering?.metadata as Record<string, unknown> | undefined;
   if (!metadata) return fallback;
 
-  // Un texte distant générique ne doit pas effacer la personnalisation locale.
-  // RevenueCat peut néanmoins piloter une variante précise via
-  // `metadata.personalization.<goal>` ou `metadata.variants.<entryFeature>`.
-  const personalizedMetadata = profile?.hasGoalAnswer
-    ? asRecord(asRecord(metadata.personalization)?.[profile.goal])
-    : null;
-  const entryMetadata = asRecord(asRecord(metadata.variants)?.[fallback.variant]);
-  const contextualMetadata = personalizedMetadata ?? entryMetadata;
-  const headlineSource = contextualMetadata?.headline
-    ?? (profile?.hasGoalAnswer ? undefined : metadata.headline);
-  const subheadlineSource = contextualMetadata?.subheadline
-    ?? (profile?.hasGoalAnswer ? undefined : metadata.subheadline);
+  // Generic campaign copy must not erase the user's chosen goal. Remote
+  // overrides for a personalized headline live under weeklyPlanning.goals.
+  const weeklyMetadata = asRecord(metadata.weeklyPlanning);
+  const goalMetadata = asRecord(weeklyMetadata?.goals);
+  const contextualMetadata = profile?.goal
+    ? asRecord(goalMetadata?.[profile.goal])
+    : weeklyMetadata;
+  const headlineSource = contextualMetadata?.headline;
+  const subheadlineSource = contextualMetadata?.subheadline;
 
   // Chaque champ retombe indépendamment sur la traduction embarquée : un
   // metadata partiel ne doit pas produire un paywall à moitié vide.
@@ -119,7 +106,7 @@ export function resolvePaywallCopy(options: {
     variant: fallback.variant,
     headline: pickLocalized(headlineSource, language) ?? fallback.headline,
     subheadline: pickLocalized(subheadlineSource, language) ?? fallback.subheadline,
-    cta: pickLocalized(contextualMetadata?.cta ?? metadata.cta, language) ?? fallback.cta,
+    cta: pickLocalized(contextualMetadata?.cta ?? weeklyMetadata?.cta ?? metadata.cta, language) ?? fallback.cta,
     testimonialKey: fallback.testimonialKey,
     personalizationSegment: fallback.personalizationSegment,
   };

@@ -3,67 +3,42 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Easing,
-  Platform,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../../services/haptics';
 import * as Localization from 'expo-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FontAwesome6, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/Colors';
-import { font, rw } from '../../constants/Layout';
+import { ONBOARDING_CTA_BOTTOM_GAP } from '../../constants/Layout';
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { useTranslation } from 'react-i18next';
-import analytics, { EntryFeature } from '../../services/analytics';
+import analytics from '../../services/analytics';
 import apiService from '../../services/api';
 import { getUniqueDeviceId } from '../../services/deviceStorage';
 import { formatNumber } from '../../components/onboarding/projectionFormat';
 
-/**
- * Écran d'accueil et de segmentation.
- *
- * Le trafic est organique : quelqu'un voit une vidéo, puis cherche l'app sur le
- * store. Aucune attribution ne nous dira ce qu'il venait chercher — cet écran
- * est donc la seule occasion de le savoir, et il doit le demander avant d'avoir
- * pris parti pour un usage.
- *
- * La version précédente ouvrait sur « Photographie tes ingrédients » et une
- * démo du scan de frigo : une promesse entièrement tournée vers la génération,
- * servie à des gens dont la moitié vient pour importer une recette vue en
- * vidéo. La démo a été retirée plutôt que rendue neutre — la seule séquence
- * exploitable de `demo.mp4` dure moins de deux secondes. Elle reste utilisée par
- * `videoDemo`, où le contexte est le bon.
- *
- * Le choix n'est pas présenté comme une question mais comme deux façons de
- * démarrer : même donnée collectée, aucun effet « formulaire dès l'ouverture ».
- */
+/** Écran d'accueil du parcours unique de planification hebdomadaire. */
 export default function WelcomeVideoScreen() {
   const insets = useSafeAreaInsets();
   const { t, i18n } = useTranslation();
-  const { width, height, layoutWidth, isShortScreen } = useResponsive();
-
-  // La mascotte est bornée par la hauteur autant que par la largeur : à 100 % de
-  // la largeur elle faisait 1024pt de haut sur iPad et débordait sur iPhone SE.
-  const mascotSize = Math.min(layoutWidth * 0.8, height * (isShortScreen ? 0.24 : 0.32));
-
-  // Grand cercle crème qui déborde des deux côtés, repris de la maquette
-  // d'accueil : les proportions sont dérivées de la largeur réelle.
+  const { width, height, layoutWidth, font } = useResponsive();
+  const { fontScale } = useWindowDimensions();
+  const [bodyHeight, setBodyHeight] = useState(0);
+  const [heroHeight, setHeroHeight] = useState(0);
+  // Le texte prend sa hauteur naturelle ; la mascotte utilise la place restante.
+  const mascotSize = Math.min(layoutWidth * 0.8, heroHeight * 0.9);
+  const copyBudget = bodyHeight * 0.72;
   const curveWidth = width * 2.5;
   const curveHeight = curveWidth * 1.026;
   const curveLeft = -(curveWidth - width) / 2;
-  // Le sommet du cercle doit rester *au-dessus* du haut du titre, sinon celui-ci
-  // se retrouve à cheval sur la frontière jaune/crème. La section basse commence
-  // à 1/(1+1.35) ≈ 42,5 % de la hauteur et le titre démarre `paddingTop` plus
-  // bas : placer le sommet à 42 % laisse une petite marge tout en évitant la
-  // grande zone crème vide qu'on avait au-dessus de l'accroche.
-  const curveBottom = height * 0.58 - curveHeight;
 
   const [isStarting, setIsStarting] = useState(false);
 
@@ -76,28 +51,11 @@ export default function WelcomeVideoScreen() {
   const socialOpacity = useRef(new Animated.Value(0)).current;
   const cardsOpacity = useRef(new Animated.Value(0)).current;
 
-  /**
-   * Ordre fixe, import en premier.
-   *
-   * L'ordre était auparavant tiré au sort : la première position capte
-   * naturellement plus de clics, et cette réponse est notre seul substitut
-   * d'attribution. En le figeant, la répartition import/generate mesurée
-   * intègre désormais un biais de position qu'on ne peut plus isoler — à garder
-   * en tête avant d'en tirer des conclusions sur ce qui amène les gens ici.
-   */
-  const options = React.useMemo(
-    () =>
-      [
-        { value: 'import', label: t('onboarding.entryFeature.import'), emoji: '📱' },
-        { value: 'generate', label: t('onboarding.entryFeature.generate'), emoji: '🥘' },
-      ] as { value: EntryFeature; label: string; emoji: string }[],
-    [t]
-  );
-
   useEffect(() => {
     analytics.track('onboarding_started');
     analytics.track('onboarding_welcome_viewed', {
-      card_order: options.map((option) => option.value).join(','),
+      onboarding_focus: 'weekly_planning',
+      planning_horizon_days: 7,
     });
 
     // AppsFlyer attend au maximum 10 secondes la réponse ATT. La demander sur
@@ -108,9 +66,6 @@ export default function WelcomeVideoScreen() {
     }, 800);
 
     return () => clearTimeout(trackingTimer);
-    // `options` change d'identité à chaque rendu déclenché par i18n ; on ne veut
-    // qu'un seul événement de vue.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -160,7 +115,7 @@ export default function WelcomeVideoScreen() {
   }, [cardsOpacity, mascotOpacity, mascotScale, mascotTranslateY, socialOpacity, titleOpacity]);
 
   const handleMascotPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    feedback.confirm();
     pressRotate.setValue(0);
     Animated.parallel([
       Animated.sequence([
@@ -175,16 +130,17 @@ export default function WelcomeVideoScreen() {
     ]).start();
   };
 
-  const handleSelect = async (value: EntryFeature) => {
+  const handleContinue = async () => {
     if (isStarting) return;
     setIsStarting(true);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    feedback.light();
 
-    // La branche est enregistrée avant toute navigation : `formQuestion` la relit
-    // au montage pour savoir quelles questions afficher.
-    await analytics.setEntryFeature(value, {
-      card_order: options.map((option) => option.value).join(','),
-      chosen_from: 'welcome',
+    // L'onboarding n'a plus deux branches. La génération reste le premier aha
+    // moment et l'import est proposé plus tard comme essai facultatif.
+    await analytics.setEntryFeature('generate', {
+      chosen_from: 'weekly_planning_welcome',
+      onboarding_focus: 'weekly_planning',
+      planning_horizon_days: 7,
     });
 
     // Création de l'utilisateur anonyme en tâche de fond : on ne bloque pas
@@ -201,24 +157,21 @@ export default function WelcomeVideoScreen() {
       } catch { }
     })();
 
-    const variant = await analytics.getOnboardingVariant();
-    if (variant === 'E' || variant === 'F') {
-      router.replace('/onboarding/fastOnboarding');
-    } else {
-      router.replace('/onboarding/formQuestion');
-    }
+    router.replace('/onboarding/formQuestion');
   };
 
   return (
     <View
       style={[
         styles.container,
-        { paddingTop: insets.top, paddingBottom: Math.max(insets.bottom, 16) },
+        { paddingTop: insets.top, paddingBottom: 0 },
       ]}
     >
-      <View style={styles.topSection}>
-        <Text style={styles.brand}>CookEat Ai</Text>
-        <View style={styles.illustrationWrapper}>
+      <View style={styles.header}>
+        <Text style={[styles.brand, { fontSize: font(26) }]} maxFontSizeMultiplier={1.3}>CookEat</Text>
+      </View>
+      <View style={styles.body} onLayout={({ nativeEvent }) => setBodyHeight(nativeEvent.layout.height)}>
+        <View style={styles.illustrationWrapper} onLayout={({ nativeEvent }) => setHeroHeight(nativeEvent.layout.height)}>
           <Animated.View
             style={{
               opacity: mascotOpacity,
@@ -248,95 +201,99 @@ export default function WelcomeVideoScreen() {
             style={[styles.mascotHitArea, { width: mascotSize * 0.6, height: mascotSize * 0.6 }]}
           />
         </View>
+        <View style={styles.bottomSection}>
+          <View pointerEvents="none" style={{
+            position: 'absolute',
+            left: curveLeft,
+            top: -width * 0.11,
+            backgroundColor: '#FDF9E2',
+            width: curveWidth,
+            height: curveHeight,
+            borderRadius: curveHeight,
+          }} />
+          {bodyHeight > 0 && <WelcomeCopy
+            key={`${width}:${copyBudget}:${fontScale}:${i18n.language}`}
+            maxHeight={copyBudget}
+            titleOpacity={titleOpacity}
+            socialOpacity={socialOpacity}
+            subtitleOpacity={cardsOpacity}
+          />}
+        </View>
       </View>
-
-      <View
-        pointerEvents="none"
-        style={{
-          zIndex: 1,
-          position: 'absolute',
-          left: curveLeft,
-          bottom: curveBottom,
-          backgroundColor: '#FDF9E2',
-          width: curveWidth,
-          height: curveHeight,
-          borderRadius: curveHeight,
-        }}
-      />
-
-      <View style={styles.bottomSection}>
-        <ScrollView
-          style={styles.bottomScroll}
-          contentContainerStyle={styles.bottomScrollContent}
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-        >
-          {/* Accroche volontairement générique. Une phrase qui décrit les deux
-              usages laisse voir la mécanique de segmentation ; ici on accueille,
-              puis on demande, et ce sont les cartes qui portent le sens. */}
-          <Animated.View style={{ opacity: titleOpacity }}>
-            <Text style={styles.title}>{t('onboarding.welcomeTitle')}</Text>
-          </Animated.View>
-
-          <Animated.View style={{ opacity: socialOpacity }}>
-            <View style={styles.socialProof}>
-              <Ionicons
-                name="leaf"
-                size={22}
-                color="#C9903A"
-                style={{ transform: [{ scaleX: -1 }, { rotate: '-25deg' }] }}
-              />
-              {/* Formulation courte propre à cet écran : la chaîne partagée
-                  `socialProof.title` passe sur deux lignes ici, ce qui repousse
-                  les lauriers aux deux bords de l'écran. */}
-              <Text style={styles.socialProofText}>
-                {/* `total` et non `count` : i18next réserve `count` à la
-                    pluralisation et n'en accepte qu'un nombre, ce qui casse le
-                    typage dès qu'on passe une chaîne déjà formatée. */}
-                {t('onboarding.welcomeSocialProof', {
-                  total: formatNumber(10000, i18n.language),
-                })}
-              </Text>
-              <Ionicons
-                name="leaf"
-                size={22}
-                color="#C9903A"
-                style={{ transform: [{ rotate: '25deg' }] }}
-              />
-            </View>
-          </Animated.View>
-
-          {/* La question est collée aux cartes : elle appelle une réponse, une
-              ligne de preuve sociale entre les deux casserait l'enchaînement. */}
-          <Animated.View style={{ opacity: cardsOpacity, width: '100%', gap: 14 }}>
-            <Text style={styles.subtitle}>{t('onboarding.welcomeSubtitle')}</Text>
-            {options.map((option) => (
-              <TouchableOpacity
-                key={option.value}
-                style={styles.card}
-                activeOpacity={0.85}
-                disabled={isStarting}
-                onPress={() => handleSelect(option.value)}
-              >
-                <Text style={styles.cardEmoji}>{option.emoji}</Text>
-                {/* Deux lignes autorisées : sur une seule, « Importer des
-                    recettes depuis TikTok/Insta » se réduisait à ~0,73 de sa
-                    taille et devenait visiblement plus petit que l'autre carte.
-                    Sur deux lignes les deux libellés gardent la même taille. */}
-                <Text
-                  style={styles.cardLabel}
-                  numberOfLines={2}
-                  adjustsFontSizeToFit
-                  minimumFontScale={0.7}
-                >
-                  {option.label}
-                </Text>
-                <FontAwesome6 name="chevron-right" size={16} color={Colors.light.button} />
-              </TouchableOpacity>
-            ))}
-          </Animated.View>
-        </ScrollView>
+      <View style={[styles.footer, { paddingBottom: insets.bottom + ONBOARDING_CTA_BOTTOM_GAP }]}>
+        <Animated.View style={[styles.bottomAction, { opacity: cardsOpacity }]}>
+          <TouchableOpacity
+            style={styles.continueButton}
+            activeOpacity={0.85}
+            disabled={isStarting}
+            onPress={handleContinue}
+            accessibilityRole="button"
+          >
+            <Text style={[styles.continueButtonText, { fontSize: font(20) }]}
+              adjustsFontSizeToFit minimumFontScale={0.5} numberOfLines={2}
+            >{t('onboarding.welcomeCta')}</Text>
+          </TouchableOpacity>
+        </Animated.View>
       </View>
+    </View>
+  );
+}
+
+/** Mesure le texte complet, sans ellipsis, avec les métriques de la police native. */
+function WelcomeCopy({ maxHeight, titleOpacity, socialOpacity, subtitleOpacity }: {
+  maxHeight: number;
+  titleOpacity: Animated.Value;
+  socialOpacity: Animated.Value;
+  subtitleOpacity: Animated.Value;
+}) {
+  const { t, i18n } = useTranslation();
+  const { font } = useResponsive();
+  const [scale, setScale] = useState(1);
+  const [fitted, setFitted] = useState(false);
+  const bounds = useRef({ min: 0, max: 1 });
+  const textSize = (size: number) => font(size) * scale;
+
+  return (
+    <View
+      key={scale}
+      style={[styles.copy, { gap: 18 * scale, paddingVertical: 16 * scale, opacity: fitted ? 1 : 0 }]}
+      onLayout={({ nativeEvent }) => {
+        const measuredHeight = nativeEvent.layout.height;
+        const fits = measuredHeight <= maxHeight + 0.5;
+        if (fits && scale === 1) {
+          setFitted(true);
+          return;
+        }
+        if (fits) bounds.current.min = scale;
+        else bounds.current.max = scale;
+
+        // Chercher la plus grande taille qui tient. Un simple ratio de hauteurs
+        // réduit trop les caractères lorsque de nombreuses lignes se regroupent.
+        // La clé force une mesure même si deux tailles ont la même hauteur arrondie.
+        if (bounds.current.max - bounds.current.min > 0.005) {
+          setScale((bounds.current.min + bounds.current.max) / 2);
+        } else if (!fits) {
+          setScale(bounds.current.min);
+        } else {
+          setFitted(true);
+        }
+      }}
+    >
+      <Animated.View style={{ opacity: titleOpacity }}>
+        <Text style={[styles.title, { fontSize: textSize(34), lineHeight: textSize(39) }]}>{t('onboarding.welcomeTitle')}</Text>
+      </Animated.View>
+      <Animated.View style={{ opacity: socialOpacity }}>
+        <View style={[styles.socialProof, { gap: 10 * scale }]}>
+          <Ionicons name="leaf" size={22 * scale} color="#C9903A" style={{ transform: [{ scaleX: -1 }, { rotate: '-25deg' }] }} />
+          <Text style={[styles.socialProofText, { fontSize: textSize(16), lineHeight: textSize(20) }]}>
+            {t('onboarding.welcomeSocialProof', { total: formatNumber(10000, i18n.language) })}
+          </Text>
+          <Ionicons name="leaf" size={22 * scale} color="#C9903A" style={{ transform: [{ rotate: '25deg' }] }} />
+        </View>
+      </Animated.View>
+      <Animated.View style={{ opacity: subtitleOpacity }}>
+        <Text style={[styles.subtitle, { fontSize: textSize(21), lineHeight: textSize(26) }]}>{t('onboarding.welcomeSubtitle')}</Text>
+      </Animated.View>
     </View>
   );
 }
@@ -345,22 +302,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F0B84F',
+    overflow: 'hidden',
   },
-  topSection: {
-    flex: 1,
+  header: {
     paddingHorizontal: 24,
     paddingTop: 8,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    paddingBottom: 8,
   },
+  body: { flex: 1, minHeight: 0 },
   brand: {
-    fontSize: font(26),
     fontFamily: 'Degular',
     color: Colors.light.text,
     alignSelf: 'flex-end',
   },
   illustrationWrapper: {
     flex: 1,
+    minHeight: 0,
+    zIndex: 1,
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
@@ -370,93 +328,64 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   bottomSection: {
-    zIndex: 10,
-    // Deux cartes prennent plus de place que l'ancien bouton unique : la moitié
-    // basse est un peu plus haute que la moitié haute.
-    flex: 1.35,
+    flexShrink: 0,
+    backgroundColor: '#FDF9E2',
+  },
+  copy: {
     ...contentColumn(),
-    // Surtout pas de `paddingHorizontal` ici : la `ScrollView` serait décalée de
-    // 24pt et les cartes, larges de 100 %, colleraient à ses bords — une
-    // ScrollView rogne son contenu, donc ombres et coins arrondis se
-    // retrouvaient tranchés. Le retrait est porté par le contenu défilant.
-    elevation: 10,
-  },
-  bottomScroll: {
-    flex: 1,
-  },
-  bottomScrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     paddingHorizontal: 24,
-    // Marge minimale sous le sommet de la courbe : elle borne l'écart quand le
-    // contenu remplit la section, et sert de garde-fou anti-chevauchement.
-    paddingTop: 14,
-    paddingBottom: 24,
-    // Respiration entre les trois blocs : accroche, preuve sociale, question.
-    // La question garde en revanche son écart serré avec les cartes (le `gap`
-    // du bloc qui les regroupe), pour qu'elle reste lue comme leur intitulé.
-    gap: 30,
+  },
+  footer: {
+    backgroundColor: '#FDF9E2',
+    paddingTop: 8,
+  },
+  bottomAction: {
+    ...contentColumn(),
+    paddingHorizontal: 24,
   },
   title: {
     textAlign: 'center',
-    fontSize: rw(0.09),
-    lineHeight: rw(0.1),
     fontFamily: 'Degular',
     color: Colors.light.text,
   },
   subtitle: {
     textAlign: 'center',
-    fontSize: rw(0.055),
-    lineHeight: rw(0.07),
-    fontFamily: 'Degular',
+    fontFamily: 'CronosPro',
     color: Colors.light.text,
-    marginBottom: 4,
   },
   socialProof: {
+    width: '90%',
+    alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
   },
   socialProofText: {
     fontFamily: 'Degular',
-    fontSize: rw(0.042),
     color: Colors.light.text,
     flexShrink: 1,
     textAlign: 'center',
   },
-  card: {
+  continueButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    paddingVertical: 18,
-    paddingHorizontal: 18,
-    // Les deux libellés n'occupent pas le même nombre de lignes ; sans hauteur
-    // plancher, les cartes seraient de tailles différentes.
-    minHeight: rw(0.2),
-    borderWidth: 2,
-    borderColor: 'transparent',
-    marginHorizontal: Platform.OS === 'android' ? 2 : 0,
-    shadowColor: '#000',
+    justifyContent: 'center',
+    backgroundColor: Colors.light.button,
+    borderRadius: 200,
+    paddingHorizontal: 24,
+    height: 56,
+    shadowColor: Colors.light.button,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 10,
-    elevation: 4,
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  cardEmoji: {
-    fontSize: 24,
-  },
-  cardLabel: {
-    flex: 1,
-    // Une taille de moins qu'auparavant : « Importer depuis TikTok/Insta »
-    // passait sur deux lignes et se coupait après le slash (« TikTok/ » puis
-    // « Insta »), ce qui se lisait comme un bug de mise en page.
-    fontSize: rw(0.042),
-    lineHeight: Platform.OS === 'android' ? rw(0.053) : undefined,
+  continueButtonText: {
+    width: '100%',
+    maxHeight: 48,
+    textAlign: 'center',
+    textAlignVertical: 'center',
     fontFamily: 'Degular',
-    color: Colors.light.text,
+    color: 'white',
   },
 });

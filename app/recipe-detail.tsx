@@ -1,4 +1,10 @@
-import { Ionicons } from '@expo/vector-icons';
+import { invalidatePlanning } from '../services/planningUpdates';
+import { feedback } from '../services/haptics';
+import { EntranceView } from '../components/motion/Entrance';
+import { NavigationIconButton } from '../components/NavigationIconButton';
+import { applyPlannedMealPortion, isPlannedMealContext, plannedMealRecipeParams, readyPlannedRecipeId } from '../services/plannedMealNavigation';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -6,9 +12,8 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Linking from 'expo-linking';
 import {
   ActivityIndicator,
+  Modal,
   Alert,
-  Animated,
-  AppState,
   ScrollView,
   StyleSheet,
   Text,
@@ -20,8 +25,10 @@ import {
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../constants/Colors';
+import { appStyles } from '../constants/AppTheme';
+import { getIngredientIcon } from '../constants/IngredientIcons';
 import { searchImage, type RecipeImageSearchInput } from "../services/image";
-import { apiService, type RecipeIdentity } from '../services/api';
+import { apiService, type CatalogImageAttribution, type RecipeIdentity } from '../services/api';
 import {
   Skeleton,
   RecipeImageSkeleton,
@@ -33,13 +40,12 @@ import {
 import revenueCatService from '../config/revenuecat';
 import recipeStorageService from "../services/recipeStorage";
 import favoritesStorageService from "../services/favoritesStorage";
-import * as StoreReview from 'expo-store-review';
 import { useTranslation } from 'react-i18next';
 import analytics from "../services/analytics";
 import recipeStreamManager from '../services/recipeStreamManager';
 import { completeGenerationLoading } from '../services/generationLoadingCoordinator';
 import { font } from '../constants/Layout';
-import { GENERIC_RECIPE_IMAGE, isGenericRecipeImage } from '../constants/RecipeImages';
+import { GENERIC_RECIPE_IMAGE, getRecipeImageSource, isGenericRecipeImage } from '../constants/RecipeImages';
 import { contentColumn, useResponsive } from '../hooks/useResponsive';
 
 const IMAGE_HISTORY_LOOKBACK = 30;
@@ -59,22 +65,8 @@ function TypewriterText({ text, style, animate = true, speed = 40 }: { text: str
   return <Text style={style}>{text.substring(0, revealedCount)}</Text>;
 }
 
-function FadeInView({ children, style, duration = 400, delay = 0 }: { children: React.ReactNode; style?: any; duration?: number; delay?: number }) {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(16)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(opacity, { toValue: 1, duration, delay, useNativeDriver: true }),
-      Animated.timing(translateY, { toValue: 0, duration, delay, useNativeDriver: true }),
-    ]).start();
-  }, []);
-
-  return (
-    <Animated.View style={[style, { opacity, transform: [{ translateY }] }]}>
-      {children}
-    </Animated.View>
-  );
+function FadeInView({ children, style, delay = 0 }: { children: React.ReactNode; style?: any; duration?: number; delay?: number }) {
+  return <EntranceView style={style} entranceIndex={Math.round(delay / 45)}>{children}</EntranceView>;
 }
 
 interface Recipe {
@@ -90,6 +82,7 @@ interface Recipe {
   proteins: string;
   chef_tip?: string;
   servings?: number;
+  portionScale?: number;
   ingredients?: {
     name: string;
     quantity: string;
@@ -102,16 +95,24 @@ interface Recipe {
   }[];
   language?: string;
   videoUrl?: string;
+  imageAttribution?: CatalogImageAttribution | null;
+}
+
+function formatRoundedNutrition(value: string): string {
+  return value.replace(/-?\d+(?:[.,]\d+)?/, (number) => {
+    const parsed = Number(number.replace(',', '.'));
+    return Number.isFinite(parsed) ? String(Math.round(parsed)) : number;
+  });
 }
 
 export default function RecipeDetailScreen() {
   // Suit la rotation / le Split View : les anciennes constantes issues de
   // `Dimensions.get('window')` étaient figées au premier import du module.
-  const { height, isTablet } = useResponsive();
+  const { width, height, isTablet } = useResponsive();
   // Le héros occupait 40% de la hauteur quel que soit l'appareil ; sur iPhone SE
   // ça ne laissait presque rien au contenu, sur iPad c'était une bannière géante.
   const heroHeight = Math.round(height * (isTablet ? 0.32 : 0.4));
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const colors = Colors.light;
   const params = useLocalSearchParams();
   const router = useRouter();
@@ -150,8 +151,16 @@ export default function RecipeDetailScreen() {
 
   const isStreaming = params.streaming === 'true';
   const isOnboarding = params.isOnboarding === 'true';
+  const isWeeklyPlanPreview = params.source === 'onboarding_week_preview';
+  const mealPlanId = typeof params.mealPlanId === 'string' ? params.mealPlanId : null;
+  const mealSlotId = typeof params.mealSlotId === 'string' ? params.mealSlotId : null;
+  const isPlannedMeal = isPlannedMealContext(params);
+  const isMealLibrary = params.source === 'meal_library';
   const prefetchStreamId = typeof params.prefetchStreamId === 'string' ? params.prefetchStreamId : null;
-  const shouldSearchImage = params.showGenerateButton !== 'false' || params.isHistory === 'true';
+  const usesBackendManagedImage = isWeeklyPlanPreview || isPlannedMeal || isMealLibrary
+    || params.showGenerateButton === 'false';
+  const shouldSearchImage = !usesBackendManagedImage
+    && (params.showGenerateButton !== 'false' || params.isHistory === 'true');
   const recipeIdParam = (params.recipeId as string) || (params.id as string);
 
   const [recipe, setRecipe] = useState<Recipe>(() => {
@@ -232,11 +241,13 @@ export default function RecipeDetailScreen() {
   const [streamingTitleAndIngredients, setStreamingTitleAndIngredients] = useState(isStreaming);
   const [streamingSteps, setStreamingSteps] = useState(isStreaming);
   const [isFirstGeneration, setIsFirstGeneration] = useState(params.isFirstGeneration === 'true');
+  const canViewNutrition = isSubscribed || isFirstGeneration || isOnboarding || isWeeklyPlanPreview || isPlannedMeal;
+  const [imageViewerVisible, setImageViewerVisible] = useState(false);
   const [loadingImage, setLoadingImage] = useState(isStreaming || !recipe.image);
-  const [displayedImageUrl, setDisplayedImageUrl] = useState<string | null>(null);
   const [isUpdatingImage, setIsUpdatingImage] = useState(false);
   const [isReloadingImage, setIsReloadingImage] = useState(false);
   const [isGeneratingNewRecipe, setIsGeneratingNewRecipe] = useState(false);
+  const [isReplacingPlannedMeal, setIsReplacingPlannedMeal] = useState(false);
   const [isModalActive, setIsModalActive] = useState(false);
   const firstTime = useRef(true);
   const firstTimeImage = useRef(true);
@@ -253,7 +264,7 @@ export default function RecipeDetailScreen() {
     imageResolved: boolean;
   }>>(new Map());
   const imageErrorFallbackTriedRef = useRef(false);
-  const reviewRequestedForRecipeRef = useRef<string | null>(null);
+  const recipeScrollRef = useRef<ScrollView>(null);
 
   const markRegenerationLoading = useCallback((
     sessionId: number,
@@ -268,10 +279,6 @@ export default function RecipeDetailScreen() {
     completeGenerationLoading(status.key);
     setIsModalActive(false);
   }, []);
-
-  useEffect(() => {
-    setDisplayedImageUrl(null);
-  }, [recipe.image]);
 
   const saveImageForSession = useCallback((sessionId: number, image: string) => {
     const recipeId = sessionRecipeIdMapRef.current.get(sessionId);
@@ -340,6 +347,10 @@ export default function RecipeDetailScreen() {
 
   const handleImageError = useCallback(() => {
     setLoadingImage(false);
+    if (usesBackendManagedImage) {
+      setRecipe((prev) => ({ ...prev, image: '' }));
+      return;
+    }
     if (imageErrorFallbackTriedRef.current) {
       setRecipe((prev) => ({ ...prev, image: '' }));
       return;
@@ -362,7 +373,7 @@ export default function RecipeDetailScreen() {
     }).catch(() => {
       setRecipe((prev) => ({ ...prev, image: '' }));
     });
-  }, [recipe, fetchUniqueImage, recipeImageContext]);
+  }, [recipe, fetchUniqueImage, recipeImageContext, usesBackendManagedImage]);
 
   const applyStreamSnapshot = useCallback((snapshot: { recipe: any; steps: any[]; isFirstGeneration?: boolean; isDone: boolean; error?: string; imageResolved?: boolean }, sessionId?: number) => {
     const r = snapshot.recipe || {};
@@ -590,13 +601,22 @@ export default function RecipeDetailScreen() {
   // Charger la recette via API quand on a seulement l'ID (évite la limite de taille des params)
   useEffect(() => {
     if (!recipeIdParam || isStreaming) return;
+    let active = true;
     apiService.getRecipeById(recipeIdParam)
-      .then((response) => {
-        if (response.data?.recipe) {
-          const fullRecipe = {
+      .then(async (response) => {
+        if (active && response.data?.recipe) {
+          let fullRecipe = {
             ...response.data.recipe,
             id: response.data.recipe.id || recipeIdParam,
           };
+          if (isPlannedMeal && mealPlanId && mealSlotId) {
+            const userId = await AsyncStorage.getItem('userId');
+            if (!userId) throw new Error(t('planning.errors.user'));
+            const planned = await apiService.getMealPlanById(mealPlanId, userId);
+            if (!planned.data?.plan) throw new Error(planned.error || t('planning.errors.load'));
+            fullRecipe = applyPlannedMealPortion(fullRecipe, planned.data.plan, mealSlotId);
+          }
+          if (!active) return;
           setRecipe(fullRecipe);
           setLoadingRecipe(false);
           setLoadingSteps(!(fullRecipe.steps?.length));
@@ -606,62 +626,18 @@ export default function RecipeDetailScreen() {
         }
       })
       .catch((error) => {
+        if (!active) return;
         console.error('Erreur lors du chargement de la recette:', error);
         setLoadingRecipe(false);
         Alert.alert(t('recipeDetail.error'), t('recipeDetail.unableToGenerateRecipe'));
       });
-  }, [recipeIdParam, isStreaming]);
+    return () => { active = false; };
+  }, [recipeIdParam, isStreaming, i18n.language, isPlannedMeal, mealPlanId, mealSlotId, t]);
 
   useEffect(() => {
     if (params.showGenerateButton === 'false')
       analytics.track('recipe_detail_viewed');
   }, []);
-
-  useEffect(() => {
-    const isCompleteRecipe =
-      Boolean(recipe.id && recipe.title) &&
-      (isGenericRecipeImage(recipe.image) || displayedImageUrl === recipe.image) &&
-      Boolean(recipe.steps?.length) &&
-      !loadingRecipe &&
-      !loadingSteps &&
-      !loadingImage &&
-      !streamingTitleAndIngredients &&
-      !streamingSteps &&
-      !isGeneratingNewRecipe;
-
-    if (!isCompleteRecipe) return;
-    if (reviewRequestedForRecipeRef.current === recipe.id) return;
-
-    reviewRequestedForRecipeRef.current = recipe.id;
-    const timer = setTimeout(async () => {
-      try {
-        if (AppState.currentState !== 'active') return;
-        if (await StoreReview.hasAction()) {
-          analytics.track('recipe_review_requested', {
-            recipe_id: recipe.id,
-            during_onboarding: isOnboarding,
-          });
-          await StoreReview.requestReview();
-        }
-      } catch (e) {
-        console.warn('Store review request skipped:', e);
-      }
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [
-    isOnboarding,
-    recipe.id,
-    recipe.title,
-    recipe.image,
-    displayedImageUrl,
-    recipe.steps,
-    loadingRecipe,
-    loadingSteps,
-    loadingImage,
-    streamingTitleAndIngredients,
-    streamingSteps,
-    isGeneratingNewRecipe,
-  ]);
 
   useEffect(() => {
     // En mode streaming, on attend les données complètes via WS
@@ -714,7 +690,7 @@ export default function RecipeDetailScreen() {
     if (loadingImage) return;
     if (streamingTitleAndIngredients || streamingSteps) return;
     if (isGeneratingNewRecipe) return;
-    if (savedRecipeIdRef.current === recipe.id) return;
+    if (isPlannedMeal || savedRecipeIdRef.current === recipe.id) return;
 
     savedRecipeIdRef.current = recipe.id;
 
@@ -729,7 +705,7 @@ export default function RecipeDetailScreen() {
       .catch((error) => {
         console.error('Erreur lors de la sauvegarde de la recette:', error);
       });
-  }, [recipe, loadingImage, streamingTitleAndIngredients, streamingSteps, isGeneratingNewRecipe, params.ingredients]);
+  }, [recipe, loadingImage, streamingTitleAndIngredients, streamingSteps, isGeneratingNewRecipe, params.ingredients, isPlannedMeal]);
 
   useEffect(() => {
     if (!recipe.id) return;
@@ -859,6 +835,7 @@ export default function RecipeDetailScreen() {
   };
 
   const handleLikeRecipe = () => {
+    feedback.selection();
     if (!recipe._id) {
       Alert.alert(t('common.error'), t('recipeDetail.likeError'));
       return;
@@ -879,23 +856,27 @@ export default function RecipeDetailScreen() {
       if (await favoritesStorageService.isFavorite(recipe.id)) {
         await favoritesStorageService.removeFromFavorites(recipe.id);
         setIsFavorite(false);
+        feedback.selection();
         return;
       }
       else {
         await favoritesStorageService.addToFavorites(recipe);
         setIsFavorite(true);
+        feedback.success();
         analytics.track('recipe_saved', {
           recipe_id: recipe.id
         });
         Alert.alert(t('recipeDetail.success'), t('recipeDetail.recipeAddedToFavorites'));
       }
     } catch (error) {
+      feedback.error();
       console.error('❌ Erreur lors de l\'ajout aux favoris:', error);
       Alert.alert(t('recipeDetail.error'), t('recipeDetail.unableToAddToFavorites'));
     }
   };
 
   const handleShare = async () => {
+    feedback.light();
     try {
       // const recipeUrl = 'https://cookeat.ai';
       const ingredientLines = (recipe.ingredients || [])
@@ -946,7 +927,59 @@ export default function RecipeDetailScreen() {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
 
+  const handleChangePlannedMeal = async () => {
+    if (!mealPlanId || !mealSlotId || isReplacingPlannedMeal || loadingRecipe) return;
+    setIsReplacingPlannedMeal(true);
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      if (!userId) throw new Error(t('planning.errors.user'));
+      const replacement = await apiService.replaceMeal(mealPlanId, mealSlotId, userId);
+      if (!replacement.data?.plan) throw new Error(replacement.error || t('planning.errors.replace'));
+      invalidatePlanning();
+      let nextRecipeId = readyPlannedRecipeId(replacement.data.plan, mealSlotId);
+      if (!nextRecipeId) {
+        const materialized = await apiService.materializeMeal(mealPlanId, mealSlotId, userId);
+        if (!materialized.data?.recipeId) throw new Error(materialized.error || t('planning.errors.generateRecipe'));
+        nextRecipeId = materialized.data.recipeId;
+      }
+      analytics.track('meal_plan_meal_replaced', {
+        plan_id: mealPlanId,
+        slot_id: mealSlotId,
+        previous_recipe_id: recipe.id,
+        recipe_id: nextRecipeId,
+      });
+      setLoadingRecipe(true);
+      setLoadingSteps(true);
+      setLoadingImage(true);
+      firstTimeImage.current = true;
+      savedRecipeIdRef.current = null;
+      imageErrorFallbackTriedRef.current = false;
+      setIsLiked(false);
+      setIsFavorite(false);
+      setRecipe({ id: nextRecipeId, title: '', difficulty: '', cooking_time: '',
+        icon: '', image: '', calories: '', lipids: '', proteins: '', ingredients: [], steps: [] });
+      recipeScrollRef.current?.scrollTo({ y: 0, animated: false });
+      setStatusBarStyle('light');
+      // Update this route's recipe: keep the mounted screen and its back destination.
+      router.setParams(plannedMealRecipeParams(
+        mealPlanId, mealSlotId, nextRecipeId, isWeeklyPlanPreview ? 'onboarding_week_preview' : 'meal_plan',
+      ));
+    } catch (changeError) {
+      Alert.alert(
+        t('recipeDetail.changePlannedMealErrorTitle'),
+        changeError instanceof Error ? changeError.message : t('planning.errors.replace'),
+      );
+    } finally {
+      setIsReplacingPlannedMeal(false);
+    }
+  };
+
   const handleGenerateRecipe = async () => {
+    const ingredientsParam = params.ingredients as string;
+    if (!ingredientsParam) {
+      Alert.alert(t('recipeDetail.error'), t('recipeDetail.unableToGetIngredients'));
+      return;
+    }
     await revenueCatService.invalidateCache();
     if (!(await revenueCatService.getSubscriptionStatus()).isSubscribed) {
       const canGenerate = await revenueCatService.useFreeGeneration();
@@ -1002,13 +1035,6 @@ export default function RecipeDetailScreen() {
         ingredients: [],
         steps: [],
       });
-
-      const ingredientsParam = params.ingredients as string;
-      if (!ingredientsParam) {
-        Alert.alert(t('recipeDetail.error'), t('recipeDetail.unableToGetIngredients'));
-        setIsGeneratingNewRecipe(false);
-        return;
-      }
 
       const preferencesParam = params.preferences as string;
       let preferences = {
@@ -1128,19 +1154,19 @@ export default function RecipeDetailScreen() {
   };
 
   const handleCaloriesPress = async () => {
-    if (params.isOnboarding !== 'true' && !isFirstGeneration && !isSubscribed) {
+    if (!canViewNutrition) {
       router.push({ pathname: '/paywall', params: { source: 'recipe_calories' } });
     }
   };
 
   const handleProteinsPress = async () => {
-    if (params.isOnboarding !== 'true' && !isFirstGeneration && !isSubscribed) {
+    if (!canViewNutrition) {
       router.push({ pathname: '/paywall', params: { source: 'recipe_proteins' } });
     }
   };
 
   const handleLipidsPress = async () => {
-    if (params.isOnboarding !== 'true' && !isFirstGeneration && !isSubscribed) {
+    if (!canViewNutrition) {
       router.push({ pathname: '/paywall', params: { source: 'recipe_lipids' } });
     }
   };
@@ -1176,16 +1202,31 @@ export default function RecipeDetailScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar style={statusBarStyle} />
+      <StatusBar style={imageViewerVisible ? 'light' : statusBarStyle} />
+      <Modal visible={imageViewerVisible} animationType="fade" presentationStyle="fullScreen" onRequestClose={() => setImageViewerVisible(false)}>
+        <View style={{ flex: 1, backgroundColor: '#000' }}>
+          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+            minimumZoomScale={1} maximumZoomScale={3} bouncesZoom centerContent showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+            <Image source={getRecipeImageSource(recipe.image)} contentFit="contain" transition={0}
+              accessibilityLabel={recipe.title} style={{ width, height }} />
+          </ScrollView>
+          <TouchableOpacity accessibilityRole="button" accessibilityLabel={t('common.close')}
+            onPress={() => setImageViewerVisible(false)}
+            style={{ position: 'absolute', top: insets.top + 12, right: 20, width: 44, height: 44, borderRadius: 22, backgroundColor: '#333B', alignItems: 'center', justifyContent: 'center' }}>
+            <Ionicons name="close" size={28} color="white" />
+          </TouchableOpacity>
+        </View>
+      </Modal>
       {/* <View
         style={[
           styles.fixedHeader,
           { paddingTop: insets.top, height: HEADER_HEIGHT + insets.top }
         ]}
       >
-        <Text style={styles.brandTitle}>CookEat Ai</Text>
+        <Text style={styles.brandTitle}>CookEat</Text>
       </View> */}
       <ScrollView
+        ref={recipeScrollRef}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingTop: 0 }}
         onScroll={handleScroll}
@@ -1194,18 +1235,19 @@ export default function RecipeDetailScreen() {
         {/* Section Image avec boutons overlay */}
         <View style={[styles.imageContainer, { height: heroHeight }]}>
           {!isGenericRecipeImage(recipe.image) && (
+            <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} disabled={loadingImage}
+              accessibilityRole="button" accessibilityLabel={t('recipeDetail.viewPhoto')}
+              onPress={() => { feedback.light(); setImageViewerVisible(true); }}>
             <Image
-              source={{
-                uri: recipe.image,
-              }}
+              source={getRecipeImageSource(recipe.image)}
               style={styles.recipeImage}
               contentFit="cover"
               onLoad={() => {
-                setDisplayedImageUrl(recipe.image);
                 setLoadingImage(false);
               }}
               onError={handleImageError}
             />
+            </TouchableOpacity>
           )}
           {loadingImage && (
             <View style={StyleSheet.absoluteFill}>
@@ -1220,79 +1262,77 @@ export default function RecipeDetailScreen() {
             />
           )}
 
-          <View style={[styles.illustrationBadge, __DEV__ && styles.illustrationBadgeWithReload]}>
+          <TouchableOpacity
+            style={[
+              styles.illustrationBadge,
+              __DEV__ && !usesBackendManagedImage && styles.illustrationBadgeWithReload,
+            ]}
+            disabled={!recipe.imageAttribution?.sourceUrl}
+            onPress={() => {
+              if (recipe.imageAttribution?.sourceUrl) Linking.openURL(recipe.imageAttribution.sourceUrl);
+            }}
+          >
             <Text style={{ fontSize: 10, fontWeight: 'bold', color: 'white' }}>
-              {t('recipeDetail.illustration')}
+              {recipe.imageAttribution?.provider === 'themealdb'
+                ? 'Photo · TheMealDB'
+                : recipe.imageAttribution?.provider === 'wikimedia-commons'
+                  ? 'Photo · Wikimedia Commons'
+                  : recipe.imageAttribution?.provider === 'owned'
+                    ? 'Photo · CookEat'
+                    : t('recipeDetail.illustration')}
             </Text>
-          </View>
+          </TouchableOpacity>
 
           {/* Overlay sombre pour les boutons */}
-          <View style={styles.imageOverlay} />
+          <View pointerEvents="none" style={styles.imageOverlay} />
 
           {/* Marque */}
           <View style={[styles.brandContainer, { top: Platform.OS === 'android' ? insets.top + 10 : insets.top }]}>
-            <Text style={styles.brandText}>CookEat Ai</Text>
+            <Text style={styles.brandText}>CookEat</Text>
           </View>
 
           {/* Bouton retour */}
           {!isOnboarding && (params.showGenerateButton !== 'false' || params.isHistory === 'true') &&
-            <TouchableOpacity
+            <NavigationIconButton
               style={[styles.backButton, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top }]}
               onPress={handleBackPress}
-            >
-              <Ionicons name="arrow-back" size={24} color="#000" />
-            </TouchableOpacity>}
+             />}
 
-          {/* Bouton Partage */}
-          <TouchableOpacity
+          <NavigationIconButton
+            icon="share-outline"
+            accessibilityLabel={t('recipeDetail.share')}
             style={[styles.shareButton, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top }]}
             onPress={handleShare}
-          >
-            <Ionicons name="share-outline" size={24} color="#000" />
-          </TouchableOpacity>
+          />
 
-          {/* Bouton favorite */}
-          <TouchableOpacity
-            activeOpacity={0.8}
+          <NavigationIconButton
+            icon={isFavorite ? 'heart' : 'heart-outline'}
+            iconColor={isFavorite ? Colors.light.button : undefined}
+            accessibilityLabel={t(isFavorite ? 'recipeDetail.removeFromFavorites' : 'recipeDetail.addToFavorites')}
+            accessibilityState={{ selected: isFavorite }}
             style={[styles.likeButton, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top }]}
             onPress={handleAddToFavorites}
-          >
-            <Ionicons
-              name={isFavorite ? "heart" : "heart-outline"}
-              size={24}
-              color={isFavorite ? Colors.light.button : "#000"}
+          />
+
+          {!usesBackendManagedImage && (
+            <NavigationIconButton
+              icon="camera-outline"
+              accessibilityLabel={t('recipeDetail.changePhoto')}
+              style={styles.editImageButton}
+              onPress={handleChangeImage}
+              loading={isUpdatingImage}
             />
-          </TouchableOpacity>
+          )}
 
-          {/* Bouton Modifier Image */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={[styles.editImageButton]}
-            onPress={handleChangeImage}
-            disabled={isUpdatingImage}
-          >
-            {isUpdatingImage ? (
-              <ActivityIndicator size="small" color="#000" />
-            ) : (
-              <Ionicons name="camera-outline" size={20} color="#000" />
-            )}
-          </TouchableOpacity>
-
-          {__DEV__ && (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              accessibilityRole="button"
+          {__DEV__ && !usesBackendManagedImage && (
+            <NavigationIconButton
+              icon="reload"
               accessibilityLabel={t('recipeDetail.reloadImage')}
               style={styles.reloadImageButton}
               onPress={handleReloadRecipeImage}
-              disabled={isReloadingImage || !recipe.title}
-            >
-              {isReloadingImage ? (
-                <ActivityIndicator size="small" color="#000" />
-              ) : (
-                <Ionicons name="reload" size={20} color="#000" />
-              )}
-            </TouchableOpacity>
+              loading={isReloadingImage}
+              disabled={!recipe.title}
+            />
           )}
         </View>
 
@@ -1353,7 +1393,7 @@ export default function RecipeDetailScreen() {
             {recipe.calories ? (
               <FadeInView style={styles.metricCard}>
                 <TouchableOpacity
-                  activeOpacity={(isSubscribed || isFirstGeneration || params.isOnboarding === 'true') ? 1 : 0.3}
+                  activeOpacity={canViewNutrition ? 1 : 0.3}
                   onPress={handleCaloriesPress}
                   style={{ alignItems: 'center', flex: 1, justifyContent: 'space-between' }}
                 >
@@ -1361,9 +1401,9 @@ export default function RecipeDetailScreen() {
                     <Ionicons name="flame-outline" size={24} color="#666" />
                     <Text style={styles.metricLabel}>{t('recipeDetail.calories')}</Text>
                   </View>
-                  {isSubscribed || isFirstGeneration || params.isOnboarding === 'true'
+                  {canViewNutrition
                     ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>
-                      {recipe.calories.toString().replace(/\s*(per serving|par portion|par personne|per person|\/p|\/portion|\/serving)\s*/gi, '').trim() + t('recipeDetail.perServing')}
+                      {formatRoundedNutrition(recipe.calories.toString().replace(/\s*(per serving|par portion|par personne|per person|\/p|\/portion|\/serving)\s*/gi, '').trim()) + t('recipeDetail.perServing')}
                     </Text>
                     : <Ionicons name="lock-closed-outline" size={24} color="black" />
                   }
@@ -1376,7 +1416,7 @@ export default function RecipeDetailScreen() {
             {recipe.proteins ? (
               <FadeInView style={styles.metricCard} delay={100}>
                 <TouchableOpacity
-                  activeOpacity={(isSubscribed || isFirstGeneration || params.isOnboarding === 'true') ? 1 : 0.3}
+                  activeOpacity={canViewNutrition ? 1 : 0.3}
                   onPress={handleProteinsPress}
                   style={{ alignItems: 'center', flex: 1, justifyContent: 'space-between' }}
                 >
@@ -1384,8 +1424,8 @@ export default function RecipeDetailScreen() {
                     <Ionicons name="fitness-outline" size={24} color="#666" />
                     <Text style={styles.metricLabel}>{t('recipeDetail.proteins')}</Text>
                   </View>
-                  {isSubscribed || isFirstGeneration || params.isOnboarding === 'true'
-                    ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{recipe.proteins}</Text>
+                  {canViewNutrition
+                    ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{formatRoundedNutrition(recipe.proteins)}</Text>
                     : <Ionicons name="lock-closed-outline" size={24} color="black" />
                   }
                 </TouchableOpacity>
@@ -1397,7 +1437,7 @@ export default function RecipeDetailScreen() {
             {recipe.lipids ? (
               <FadeInView style={styles.metricCard} delay={200}>
                 <TouchableOpacity
-                  activeOpacity={(isSubscribed || isFirstGeneration || params.isOnboarding === 'true') ? 1 : 0.3}
+                  activeOpacity={canViewNutrition ? 1 : 0.3}
                   onPress={handleLipidsPress}
                   style={{ alignItems: 'center', flex: 1, justifyContent: 'space-between' }}
                 >
@@ -1405,8 +1445,8 @@ export default function RecipeDetailScreen() {
                     <Ionicons name="water-outline" size={24} color="#666" />
                     <Text style={styles.metricLabel}>{t('recipeDetail.lipids')}</Text>
                   </View>
-                  {isSubscribed || isFirstGeneration || params.isOnboarding === 'true'
-                    ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{recipe.lipids}</Text>
+                  {canViewNutrition
+                    ? <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{formatRoundedNutrition(recipe.lipids)}</Text>
                     : <Ionicons name="lock-closed-outline" size={24} color="black" />
                   }
                 </TouchableOpacity>
@@ -1437,6 +1477,8 @@ export default function RecipeDetailScreen() {
 
           {/* Section Ingrédients */}
           <View style={styles.ingredientsSection}>
+            {isPlannedMeal && recipe.portionScale && Math.abs(recipe.portionScale - 1) > 0.001
+              ? <Text style={{ fontFamily: 'CronosPro', fontSize: 15, color: '#746C56', marginBottom: 12 }}>{t('planningNutrition.adjustedPortion')}</Text> : null}
             <View style={styles.sectionTitleRow}>
               <Text style={styles.ingredientsTitle}>{t('recipeDetail.ingredients')} {!streamingTitleAndIngredients && recipe.ingredients?.length ? `(${recipe.ingredients.length})` : ''}</Text>
               {streamingTitleAndIngredients && <ActivityIndicator size="small" color={Colors.light.button} />}
@@ -1447,11 +1489,7 @@ export default function RecipeDetailScreen() {
                 {recipe.ingredients.map((ingredient: any, index: number) => (
                   ingredient.name ? (
                     <FadeInView key={`ing-${index}`} style={styles.ingredientItem}>
-                      {ingredient.icon ? (
-                        <Text style={{ fontSize: 24, marginRight: 8 }}>{ingredient.icon}</Text>
-                      ) : (
-                        <Skeleton width={40} height={40} borderRadius={20} />
-                      )}
+                      <Text style={{ fontSize: 24, marginRight: 8 }}>{getIngredientIcon(ingredient.name, ingredient.icon)}</Text>
 
                       <View style={styles.ingredientInfo}>
                         <TypewriterText text={ingredient.name} style={styles.ingredientName} animate={false} />
@@ -1505,13 +1543,13 @@ export default function RecipeDetailScreen() {
 
             {/* Chef's Tip */}
             {recipe.chef_tip && (
-              <View style={styles.chefTipContainer}>
+              <EntranceView entranceIndex={0} style={styles.chefTipContainer}>
                 <View style={styles.chefTipHeader}>
                   <Ionicons name="bulb-outline" size={20} color={Colors.light.button} />
                   <Text style={styles.chefTipTitle}>{t('recipeDetail.chef_tip')}</Text>
                 </View>
                 <Text style={styles.chefTipText}>{recipe.chef_tip}</Text>
-              </View>
+              </EntranceView>
             )}
           </View>
 
@@ -1574,7 +1612,34 @@ export default function RecipeDetailScreen() {
             </Text>
           </TouchableOpacity>
         </View>
-      ) : params.showGenerateButton !== 'false' && (
+      ) : isPlannedMeal ? (
+        <View style={[styles.bottomButtonContainer, { paddingBottom: Math.max(insets.bottom, 45) + 15 }]}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={[styles.favoriteButton, (isReplacingPlannedMeal || loadingRecipe) && styles.favoriteButtonDisabled]}
+            onPress={() => void handleChangePlannedMeal()}
+            disabled={isReplacingPlannedMeal || loadingRecipe}
+          >
+            {isReplacingPlannedMeal
+              ? <ActivityIndicator size="small" color="white" />
+              : <FontAwesome name="rotate-right" size={20} color="white" />}
+            <Text style={appStyles.buttonText}>
+              {t(isReplacingPlannedMeal ? 'recipeDetail.changingPlannedMeal' : 'recipeDetail.changePlannedMeal')}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : isMealLibrary ? (
+        <View style={[styles.bottomButtonContainer, { paddingBottom: Math.max(insets.bottom, 45) + 15 }]}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.favoriteButton}
+            onPress={() => router.push({ pathname: '/planning/add-recipe', params: { recipeId: recipe.id } })}
+          >
+            <Ionicons name="calendar-outline" size={20} color="white" />
+            <Text style={appStyles.buttonText}>{t('recipeDetail.addToPlan')}</Text>
+          </TouchableOpacity>
+        </View>
+      ) : !isWeeklyPlanPreview && params.showGenerateButton !== 'false' && (
         <View style={[styles.bottomButtonContainer, { paddingBottom: Math.max(insets.bottom, 45) + 15 }]}>
           <TouchableOpacity
             activeOpacity={0.8}
@@ -1583,7 +1648,7 @@ export default function RecipeDetailScreen() {
             disabled={isGeneratingNewRecipe}
           >
             <Ionicons name={isGeneratingNewRecipe ? "time" : "sparkles"} size={20} color="white" />
-            <Text style={styles.rateButtonText}>
+            <Text style={appStyles.buttonText}>
               {isGeneratingNewRecipe ? t('recipeDetail.generatingRecipe') : t('recipeDetail.generateAnotherRecipe')}
             </Text>
           </TouchableOpacity>
@@ -1667,49 +1732,16 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     left: 20,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
     zIndex: 1001,
   },
   shareButton: {
     position: 'absolute',
     right: 75,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
     zIndex: 1001,
   },
   likeButton: {
     position: 'absolute',
     right: 20,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
     zIndex: 1001,
   },
   fixedHeader: {
@@ -1867,11 +1899,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  rateButtonText: {
-    color: 'white',
-    fontFamily: 'CronosProBold',
-    fontSize: 18
-  },
   favoriteButtonDisabled: {
     backgroundColor: '#ccc',
   },
@@ -2020,34 +2047,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 20,
     bottom: 20,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
     zIndex: 1001,
   },
   reloadImageButton: {
     position: 'absolute',
     left: 20,
     bottom: 20,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
     zIndex: 1001,
   },
   illustrationBadge: {

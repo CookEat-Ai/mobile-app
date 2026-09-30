@@ -1,10 +1,10 @@
+import { NavigationIconButton } from '../../components/NavigationIconButton';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   Animated,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   Platform,
 } from 'react-native';
@@ -39,17 +39,6 @@ export default function ReminderScreen() {
   const trial = useOnboardingTrialEligibility();
   const hasFreeTrial = trial.status === 'eligible' && Boolean(trial.days);
   const reminderDay = Math.max(1, Math.ceil((trial.days ?? 7) / 2));
-  const product = trial.package?.product;
-  const annualPriceLine = product
-    ? product.pricePerMonthString
-      ? t('onboarding.offerTrial.annualPriceLine', {
-        price: product.priceString,
-        monthly: product.pricePerMonthString,
-      })
-      : t('onboarding.offerTrial.annualPriceLineWithoutMonthly', {
-        price: product.priceString,
-      })
-    : null;
 
   useEffect(() => {
     Animated.parallel([
@@ -86,7 +75,7 @@ export default function ReminderScreen() {
         source: params.source || 'onboarding_reminder',
         completion_method: 'subscription',
       });
-      router.replace('/(tabs)');
+      router.replace('/(tabs)' as any);
     }
   }, [loadSubscriptionStatus, params.source]);
 
@@ -155,15 +144,13 @@ export default function ReminderScreen() {
         ]}
       >
         <View style={styles.header}>
-          <TouchableOpacity
+          <NavigationIconButton
             accessibilityRole="button"
             accessibilityLabel={t('onboarding.reminder.backButton')}
             hitSlop={10}
             style={styles.backButton}
             onPress={handleBack}
-          >
-            <Ionicons name="chevron-back" size={30} color={Colors.light.text} />
-          </TouchableOpacity>
+           />
         </View>
 
         <View style={styles.mainSection}>
@@ -213,7 +200,6 @@ export default function ReminderScreen() {
             primaryLabel={t('onboarding.reminder.button')}
             onPrimaryPress={handleEnableReminder}
             loading={isRequestingPermission}
-            footnote={annualPriceLine}
           />
         </View>
       </Animated.View>

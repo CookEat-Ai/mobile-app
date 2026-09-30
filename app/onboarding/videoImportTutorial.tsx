@@ -16,7 +16,7 @@ import { Asset } from 'expo-asset';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../../services/haptics';
 import { Colors } from '../../constants/Colors';
 import { rw } from '../../constants/Layout';
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
@@ -24,18 +24,6 @@ import { useTranslation } from 'react-i18next';
 import analytics, { EntryFeature } from '../../services/analytics';
 import { ImportLinkSheet } from '../../components/ImportLinkSheet';
 import { clipboardMayHoldLink } from '../../services/videoLink';
-
-/**
- * Après l'aha moment d'import, on reprend le questionnaire à ses questions
- * propres : la branche import n'a fait que les questions communes avant de
- * sortir vivre son import. Elles sont posées ici et pas avant parce que
- * l'utilisateur vient de voir une vidéo devenir une recette — parler de ses
- * recettes éparpillées est alors concret. Suivent la fin de tunnel commune
- * (attribution, engagement, projection et preuve sociale). Le consentement aux
- * notifications est réservé plus tard au vrai rappel d’essai.
- */
-const ONBOARDING_NEXT_AFTER_IMPORT = '/onboarding/formQuestion?initialStep=intro_import';
-
 
 const TUTORIAL_IMAGES_IOS = [
   require('../../assets/images/tuto/ios/tuto-import-tiktok-1.png'),
@@ -141,7 +129,7 @@ export default function VideoImportTutorialScreen() {
   const canPasteLink = isImportFirst || entryFeature === 'generate' || clipboardHasLink;
 
   const handleOpenImportSheet = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    feedback.confirm();
     analytics.track('import_tutorial_paste_cta_pressed', {
       entry_feature: entryFeature,
       is_primary_cta: isImportFirst || entryFeature === 'generate',
@@ -158,7 +146,7 @@ export default function VideoImportTutorialScreen() {
   };
 
   const handleContinue = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    feedback.confirm();
 
     if (isExternalCall) {
       analytics.track('import_tutorial_closed');
@@ -183,18 +171,7 @@ export default function VideoImportTutorialScreen() {
       });
     }
 
-    // Branche import : qu'il ait importé ou passé l'étape, la suite du tunnel
-    // est la même (preuve sociale → promo → paywall).
-    if (entryFeature === 'import') {
-      router.replace(ONBOARDING_NEXT_AFTER_IMPORT as any);
-      return;
-    }
-
-    if (variant === 'E' || variant === 'F') {
-      router.replace('/onboarding/reviewRequest');
-    } else {
-      router.replace('/onboarding/promoCode');
-    }
+    router.replace('/onboarding/weeklyPlanPreview' as any);
   };
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -203,7 +180,7 @@ export default function VideoImportTutorialScreen() {
     const roundIndex = Math.round(index);
     if (roundIndex !== activeIndex) {
       setActiveIndex(roundIndex);
-      Haptics.selectionAsync();
+      feedback.selection();
     }
   };
 
@@ -354,9 +331,7 @@ export default function VideoImportTutorialScreen() {
         isOnboarding={!isExternalCall}
         onboardingNext={isExternalCall
           ? undefined
-          : entryFeature === 'import'
-            ? ONBOARDING_NEXT_AFTER_IMPORT
-            : '/onboarding/promoCode'}
+          : '/onboarding/weeklyPlanPreview'}
       />
     </View>
   );

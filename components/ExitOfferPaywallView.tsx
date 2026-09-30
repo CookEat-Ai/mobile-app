@@ -1,3 +1,4 @@
+import { NavigationIconButton } from './NavigationIconButton';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -31,6 +32,9 @@ import {
   AnimatedChevron,
   PAYWALL_CTA_HORIZONTAL_INSET,
 } from './onboarding/TrialConversionFooter';
+
+const PLAN_CARD_TOP_INSET = 12;
+const PLAN_CARD_BORDER_WIDTH = 3;
 
 type Props = {
   /** Offering remisé : c'est lui qui est acheté. */
@@ -113,6 +117,7 @@ export function ExitOfferPaywallView({
   const closeTopInset = getPaywallCloseTopInset(insets.top);
   const hasCloseAction = onClose !== undefined;
   const [canClose, setCanClose] = useState(hasCloseAction && closeDelayMs === 0);
+  const [planRibbonHeight, setPlanRibbonHeight] = useState(0);
   const closeOpacity = useRef(
     new Animated.Value(hasCloseAction && closeDelayMs === 0 ? 1 : 0)
   ).current;
@@ -280,15 +285,13 @@ export function ExitOfferPaywallView({
               { marginTop: closeTopInset, opacity: closeOpacity },
             ]}
           >
-            <TouchableOpacity
+            <NavigationIconButton kind="close"
               style={styles.closeButton}
               onPress={onClose}
               hitSlop={16}
               accessibilityRole="button"
               accessibilityLabel={t('common.cancel')}
-            >
-              <Ionicons name="close" size={28} color={Colors.light.text} />
-            </TouchableOpacity>
+             />
           </Animated.View>
         ) : null}
 
@@ -314,7 +317,7 @@ export function ExitOfferPaywallView({
                 { width: badgeWidth, height: badgeWidth * (isShortScreen ? 0.42 : 0.46) },
               ]}
             >
-              <Text style={styles.badgeText} numberOfLines={1} adjustsFontSizeToFit>
+              <Text style={styles.badgeText} numberOfLines={1} maxFontSizeMultiplier={1}>
                 −{shownDiscountPercent}%
               </Text>
             </LinearGradient>
@@ -350,7 +353,19 @@ export function ExitOfferPaywallView({
                 L'essai prime quand il existe, sinon le badge reprend la remise
                 réellement calculée depuis les produits du Store. */}
             {planBadgeLabel ? (
-              <View style={[styles.planRibbon, hasTrialBadge && styles.planRibbonTrial]}>
+              <View
+                onLayout={({ nativeEvent }) => setPlanRibbonHeight(nativeEvent.layout.height)}
+                style={[
+                  styles.planRibbon,
+                  hasTrialBadge && styles.planRibbonTrial,
+                  {
+                    // Le centre du badge suit le milieu de la bordure, quelle
+                    // que soit sa hauteur (essai, remise ou taille du texte).
+                    transform: [{ translateY: -planRibbonHeight / 2 }],
+                    opacity: planRibbonHeight > 0 ? 1 : 0,
+                  },
+                ]}
+              >
                 <Text
                   style={[
                     styles.planRibbonText,
@@ -508,10 +523,17 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   badgeText: {
+    width: '100%',
+    textAlign: 'center',
     color: 'white',
     fontSize: font(60),
     lineHeight: font(66),
     fontFamily: 'Degular',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+    // Degular's numeral ink sits above its line box centre. Compensate at
+    // the same scale as the type so the visible percentage is centred too.
+    transform: [{ translateY: font(4) }],
   },
   priceLine: {
     flexDirection: 'row',
@@ -550,12 +572,12 @@ const styles = StyleSheet.create({
   },
   planWrapper: {
     position: 'relative',
-    paddingTop: 12,
+    paddingTop: PLAN_CARD_TOP_INSET,
     marginTop: 2,
   },
   planRibbon: {
     position: 'absolute',
-    top: 0,
+    top: PLAN_CARD_TOP_INSET + PLAN_CARD_BORDER_WIDTH / 2,
     alignSelf: 'center',
     zIndex: 2,
     maxWidth: '86%',
@@ -564,6 +586,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     backgroundColor: Colors.light.button,
     alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: Colors.light.button,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
@@ -574,9 +597,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: font(16),
     fontFamily: 'CronosProBold',
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   // Géométrie reprise du badge d'essai Dhikr Me, recolorée avec les tokens
-  // CookEat Ai : petite pastille attachée à la carte, lisible sans la dominer.
+  // CookEat : petite pastille attachée à la carte, lisible sans la dominer.
   planRibbonTrial: {
     paddingHorizontal: 10,
     paddingVertical: 3,
@@ -585,7 +610,6 @@ const styles = StyleSheet.create({
     elevation: 0,
   },
   planRibbonTrialText: {
-    color: Colors.light.text,
     fontSize: font(11),
   },
   planCard: {
@@ -596,7 +620,7 @@ const styles = StyleSheet.create({
     minHeight: 86,
     backgroundColor: '#FFF8EC',
     borderRadius: 26,
-    borderWidth: 3,
+    borderWidth: PLAN_CARD_BORDER_WIDTH,
     borderColor: Colors.light.button,
     paddingTop: 19,
     paddingBottom: 12,

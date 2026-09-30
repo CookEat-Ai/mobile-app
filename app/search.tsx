@@ -1,3 +1,4 @@
+import { EntranceView } from '../components/motion/Entrance';
 import { router } from "expo-router";
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -276,7 +277,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
   const handleRecipePress = (recipe: any) => {
     router.push({
       pathname: '/recipe-detail',
-      params: { id: recipe.id }
+      params: { id: recipe.id, source: 'meal_library', showGenerateButton: 'false' }
     });
   };
 
@@ -340,8 +341,8 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.recipesList}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <RecipeCard
+              renderItem={({ item, index }) => (
+                <EntranceView entranceIndex={index}><RecipeCard
                   item={{
                     id: item.id,
                     title: item.title,
@@ -349,7 +350,7 @@ export default function SearchScreen({ navigation }: { navigation: any }) {
                     cooking_time: `${item.cookingTime} min`,
                   }}
                   onPress={() => handleRecipePress(item)}
-                />
+                /></EntranceView>
               )}
             />
           </View>

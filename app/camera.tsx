@@ -1,3 +1,4 @@
+import { NavigationIconButton } from '../components/NavigationIconButton';
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
   Platform,
@@ -25,7 +26,7 @@ import { router, useGlobalSearchParams, useNavigation } from 'expo-router';
 import { Colors } from '../constants/Colors';
 import { rw } from '../constants/Layout';
 import { contentColumn } from '../hooks/useResponsive';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../services/haptics';
 import apiService from '../services/api';
 import analytics from '../services/analytics';
 import { useTranslation } from 'react-i18next';
@@ -210,7 +211,7 @@ export default function CameraScreen() {
       pantry_preserved: true,
       mode: params.mode === 'append' ? 'append' : 'replace',
     });
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
+    feedback.light().catch(() => undefined);
 
     if (params.mode === 'append') {
       // La liste est encore montée sous la caméra : revenir en arrière conserve
@@ -334,7 +335,7 @@ export default function CameraScreen() {
   const takePicture = async () => {
     if (isCapturing || capturedImages.length >= MAX_PHOTOS) {
       if (capturedImages.length >= MAX_PHOTOS) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        feedback.error();
       }
       return;
     }
@@ -369,7 +370,7 @@ export default function CameraScreen() {
         ]),
       ]).start();
 
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      feedback.confirm();
 
       try {
         const photo = await cameraRef.current.takePictureAsync({
@@ -380,7 +381,7 @@ export default function CameraScreen() {
 
         if (photo) {
           setCapturedImages(prev => [...prev, photo.uri]);
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          feedback.success();
         }
       } catch (error) {
         console.error('Failed to take picture:', error);
@@ -395,7 +396,7 @@ export default function CameraScreen() {
       cameraRef.current?.stopRecording();
       setIsRecording(false);
       videoProgress.stopAnimation();
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      feedback.confirm();
     } else {
       if (cameraRef.current) {
         try {
@@ -411,11 +412,11 @@ export default function CameraScreen() {
           }).start(({ finished }) => {
             if (finished) {
               setIsRecording(false);
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+              feedback.warning();
             }
           });
 
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+          feedback.heavy();
           const video = await cameraRef.current.recordAsync({
             maxDuration: MAX_VIDEO_DURATION,
           });
@@ -436,12 +437,12 @@ export default function CameraScreen() {
   const handleClose = () => {
     if (recordedVideoUri) {
       setRecordedVideoUri(null);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      feedback.light();
       return;
     }
     if (capturedImages.length > 0) {
       setCapturedImages([]);
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      feedback.light();
       return;
     }
     router.back();
@@ -473,7 +474,7 @@ export default function CameraScreen() {
     ]).start(() => {
       setFocusPulsePoint(null);
     });
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
+    feedback.light().catch(() => undefined);
   };
 
   const finishCapture = async () => {
@@ -481,7 +482,7 @@ export default function CameraScreen() {
     if (mode === 'video' && !recordedVideoUri) return;
 
     setIsLoading(true);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    feedback.confirm();
 
     try {
       let response;
@@ -632,9 +633,7 @@ export default function CameraScreen() {
         <View style={{ ...styles.topBar, paddingTop: Platform.OS === 'android' ? insets.top + 10 : 20 }}>
           {!isRecording && (
             <>
-              <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-                <IconSymbol name="close" size={30} color="white" />
-              </TouchableOpacity>
+              <NavigationIconButton kind="close" style={styles.closeButton} onPress={handleClose} />
 
               <View style={styles.headerLogo}>
                 <Image
@@ -642,7 +641,7 @@ export default function CameraScreen() {
                   style={styles.headerMascot}
                   contentFit="contain"
                 />
-                <Text style={styles.headerText}>CookEat Ai</Text>
+                <Text style={styles.headerText}>CookEat</Text>
               </View>
 
               <TouchableOpacity style={styles.helpButton} onPress={showOnboarding}>
@@ -659,7 +658,7 @@ export default function CameraScreen() {
                 style={[styles.modeButton, mode === 'photo' && styles.modeButtonActive]}
                 onPress={() => {
                   setMode('photo');
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  feedback.light();
                 }}
               >
                 <Text style={[styles.modeText, mode === 'photo' && styles.modeTextActive]}>{t('camera.modes.photo')}</Text>
@@ -668,7 +667,7 @@ export default function CameraScreen() {
                 style={[styles.modeButton, mode === 'video' && styles.modeButtonActive]}
                 onPress={() => {
                   setMode('video');
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  feedback.light();
                 }}
               >
                 <Text style={[styles.modeText, mode === 'video' && styles.modeTextActive]}>{t('camera.modes.video')}</Text>

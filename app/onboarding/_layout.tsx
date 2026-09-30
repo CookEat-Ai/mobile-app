@@ -14,10 +14,13 @@ export default function OnboardingLayout() {
         <Stack.Screen name="videoDemo" options={{ headerShown: false }} />
         <Stack.Screen name="generationDemo" options={{ headerShown: false }} />
         <Stack.Screen name="videoImportTutorial" options={{ headerShown: false }} />
+        <Stack.Screen name="weeklyPlanPreview" options={{ headerShown: false }} />
         <Stack.Screen name="promoCode" options={{ headerShown: false }} />
         <Stack.Screen name="offerTrial" options={{ headerShown: false }} />
         <Stack.Screen name="reminder" options={{ headerShown: false }} />
         <Stack.Screen name="onboardingProfileReady" options={{ headerShown: false }} />
+        <Stack.Screen name="trajectory" options={{ headerShown: false }} />
+        <Stack.Screen name="commitment" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider >
   );

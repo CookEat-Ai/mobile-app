@@ -17,7 +17,7 @@ import { IconSymbol } from "./ui/IconSymbol";
 import { useVoice, resetVoiceCompletely } from '../hooks/useVoice';
 import { ExpoSpeechRecognitionModule } from 'expo-speech-recognition';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../services/haptics';
 
 
 
@@ -245,7 +245,7 @@ export default function Micro({
   // Fonctions wrapper pour gérer les animations et la tabbar
   const handleStartRecording = async () => {
     try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      feedback.light();
       // Vérifier les permissions avant de commencer
       const hasPermissions = await checkVoicePermissions();
       if (!hasPermissions) {
@@ -263,7 +263,7 @@ export default function Micro({
 
   const handleStopRecording = async () => {
     try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      feedback.light();
       await stopRecording();
       if (timeout) {
         clearTimeout(timeout);

@@ -1,33 +1,22 @@
-import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useRef } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../../services/haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../../constants/Colors';
 import { ONBOARDING_CTA_BOTTOM_GAP, rw } from '../../constants/Layout';
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import analytics from '../../services/analytics';
+import { FITNESS_GOALS, type FitnessGoal } from '../../services/nutritionModel';
 import { useOnboardingTrialEligibility } from '../../hooks/useOnboardingTrialEligibility';
 import {
   TrialConversionFooter,
   TRIAL_CONVERSION_FOOTER_RESERVED_HEIGHT,
 } from '../../components/onboarding/TrialConversionFooter';
-
-function formatZeroPrice(currencyCode: string | undefined, language: string, fallback: string): string {
-  if (!currencyCode) return fallback;
-  try {
-    return new Intl.NumberFormat(language, {
-      style: 'currency',
-      currency: currencyCode,
-      minimumFractionDigits: 2,
-    }).format(0);
-  } catch {
-    return fallback;
-  }
-}
 
 /**
  * Écran d'entrée dans la fin de tunnel : « on aimerait que tu essaies ».
@@ -42,36 +31,26 @@ function formatZeroPrice(currencyCode: string | undefined, language: string, fal
  *    ici. `onboarding_completed` n'est donc jamais posé sans abonnement, et une
  *    relance de l'app repasse par la même boucle.
  *
- * Volontairement générique : contrairement au paywall, il s'adresse aux deux
- * branches avec le même message, puisqu'il parle de l'essai et non d'une
- * fonctionnalité.
+ * Le message reflète l'objectif déclaré dans les deux branches. Sans réponse
+ * enregistrée, il conserve la présentation générique de l'offre.
  */
 export default function OfferTrialScreen() {
   const insets = useSafeAreaInsets();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { layoutWidth, height, isShortScreen } = useResponsive();
   const params = useLocalSearchParams<{ source?: string }>();
+  const [goal, setGoal] = useState<FitnessGoal | null>(null);
+
+  useFocusEffect(useCallback(() => {
+    let active = true;
+    void AsyncStorage.getItem('fitnessGoal').then(value => {
+      if (active) setGoal(FITNESS_GOALS.includes(value as FitnessGoal) ? value as FitnessGoal : null);
+    }).catch(() => { if (active) setGoal(null); });
+    return () => { active = false; };
+  }, []));
   const trial = useOnboardingTrialEligibility();
-  const trialDays = trial.days ?? 7;
-  const product = trial.package?.product;
-
-  const zeroPrice = formatZeroPrice(
-    product?.currencyCode,
-    i18n.language,
-    t('onboarding.offerTrial.zeroPriceFallback'),
-  );
-
-  const annualPriceLine = product
-    ? product.pricePerMonthString
-      ? t('onboarding.offerTrial.annualPriceLine', {
-        price: product.priceString,
-        monthly: product.pricePerMonthString,
-      })
-      : t('onboarding.offerTrial.annualPriceLineWithoutMonthly', {
-        price: product.priceString,
-      })
-    : null;
-
+  const hasTrial = !trial.loading && trial.status === 'eligible' && (trial.days ?? 0) > 0;
+  const trialDays = trial.days;
   const mascotSize = Math.min(layoutWidth * 0.34, height * (isShortScreen ? 0.13 : 0.17));
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -128,9 +107,9 @@ export default function OfferTrialScreen() {
   const handleContinue = () => {
     if (trial.loading) return;
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    // La source traverse tout le tunnel de fin pour rester lisible dans les
-    // funnels : c'est elle qui distingue la branche import de la branche generate.
+    feedback.light();
+    // La source traverse tout le tunnel de fin pour isoler la conversion du
+    // parcours de planification hebdomadaire.
     router.push({
       pathname: '/onboarding/reminder',
       params: params.source ? { source: params.source } : {},
@@ -158,9 +137,10 @@ export default function OfferTrialScreen() {
         <Animated.View
           style={[styles.header, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}
         >
-          <Text style={styles.title}>{t('onboarding.offerTrial.title')}</Text>
+          <Text style={styles.title}>{t('auditFixes.offerTitle')}</Text>
           <Text style={styles.subtitle}>
-            {t('onboarding.offerTrial.subtitle', { count: trialDays })}
+            {goal ? t(`onboarding.offerTrial.personalized.${goal}.subtitle`)
+              : hasTrial ? t('onboarding.offerTrial.subtitle', { count: trialDays ?? 0 }) : t('onboarding.offerTrial.standardSubtitle')}
           </Text>
         </Animated.View>
 
@@ -169,15 +149,15 @@ export default function OfferTrialScreen() {
             <View style={styles.cardHeaderCopy}>
               <View style={styles.offerPill}>
                 <Ionicons
-                  name="gift"
+                  name={hasTrial ? "gift" : "sparkles"}
                   size={15}
                   color={Colors.light.button}
                 />
                 <Text style={styles.offerPillText}>
-                  {t('onboarding.offerTrial.trialPill', { count: trialDays })}
+                  {hasTrial ? t('onboarding.offerTrial.trialPill', { count: trialDays ?? 0 }) : t('auditFixes.offerPill')}
                 </Text>
               </View>
-              <Text style={styles.includedTitle}>{t('onboarding.offerTrial.includedTitle')}</Text>
+              <Text style={styles.includedTitle}>{t(goal ? `onboarding.offerTrial.personalized.${goal}.includedTitle` : 'onboarding.offerTrial.includedTitle')}</Text>
             </View>
             <Animated.View style={{ transform: [{ translateY: floatAnim }] }}>
               <Image
@@ -196,9 +176,9 @@ export default function OfferTrialScreen() {
 
           <View style={styles.features}>
             {[
-              ['sparkles', t('paywall.features.unlimited')],
-              ['phone-portrait', t('paywall.features.import')],
-              ['heart', t('paywall.features.favorites')],
+              ['calendar', t('paywall.features.fullDay')],
+              ['fitness', t(goal ? `onboarding.offerTrial.personalized.${goal}.nutrition` : 'paywall.features.macros')],
+              ['cart', t('paywall.features.shopping')],
             ].map(([icon, label]) => (
               <View key={label} style={styles.featureRow}>
                 <View style={styles.featureIcon}>
@@ -220,11 +200,10 @@ export default function OfferTrialScreen() {
       >
         <View style={styles.bottomSection}>
           <TrialConversionFooter
-            reassurance={t('paywall.noPaymentDueNow')}
-            primaryLabel={t('onboarding.offerTrial.button', { price: zeroPrice })}
+            reassurance={hasTrial ? t('paywall.noPaymentDueNow') : trial.loading ? null : t('onboarding.offerTrial.standardReassurance')}
+            primaryLabel={t(hasTrial ? 'onboarding.offerTrial.button' : 'onboarding.offerTrial.standardButton')}
             onPrimaryPress={handleContinue}
             loading={trial.loading}
-            footnote={annualPriceLine}
           />
         </View>
       </Animated.View>

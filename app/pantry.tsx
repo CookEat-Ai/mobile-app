@@ -1,3 +1,5 @@
+import { EntranceView } from '../components/motion/Entrance';
+import { NavigationIconButton } from '../components/NavigationIconButton';
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -9,7 +11,7 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../services/haptics';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router'
 import { Colors } from '../constants/Colors';
@@ -34,7 +36,6 @@ const STORAGE_KEY = 'pantry_ingredients';
 
 export default function PantryScreen() {
   const { t } = useTranslation();
-  const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const [pantryItems, setPantryItems] = useState<PantryItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -79,7 +80,7 @@ export default function PantryScreen() {
 
       // Remplacer la liste existante
       setPantryItems(newItems);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      feedback.success();
       await savePantryItems(newItems);
     } catch (error) {
       console.error('Erreur lors du traitement vocal:', error);
@@ -140,7 +141,7 @@ export default function PantryScreen() {
 
     const updatedItems = [...pantryItems, newItem];
     setPantryItems(updatedItems);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    feedback.success();
     await savePantryItems(updatedItems);
   };
 
@@ -173,7 +174,7 @@ export default function PantryScreen() {
           text: t('pantry.delete'),
           style: 'destructive',
           onPress: async () => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            feedback.confirm();
             const updatedItems = pantryItems.filter(item => item.id !== itemId);
             setPantryItems(updatedItems);
             await savePantryItems(updatedItems);
@@ -202,12 +203,10 @@ export default function PantryScreen() {
     >
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity
+        <NavigationIconButton
           style={styles.backButton}
           onPress={() => router.back()}
-        >
-          <IconSymbol name="chevron.left" size={24} color={colors.text} weight="bold" />
-        </TouchableOpacity>
+         />
         <Text style={styles.headerTitle}>{t('pantry.title')}</Text>
         <View style={styles.headerSpacer} />
       </View>
@@ -258,7 +257,7 @@ export default function PantryScreen() {
               </Text>
             </View>
           ) : (
-            pantryItems.map((item) => <View key={item.id} style={styles.pantryItem}>
+            pantryItems.map((item, index) => <EntranceView entranceIndex={index} key={item.id} style={styles.pantryItem}>
               <View style={styles.itemInfo}>
                 <Text style={styles.itemName}>{item.name}</Text>
               </View>
@@ -268,7 +267,7 @@ export default function PantryScreen() {
               >
                 <IconSymbol name="trash" size={24} color='gray' weight="bold" />
               </TouchableOpacity>
-            </View>)
+            </EntranceView>)
           )}
         </View>
 

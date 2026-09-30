@@ -7,17 +7,16 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Platform,
   ActivityIndicator,
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../../services/haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '../../constants/Colors';
-import { rw } from '../../constants/Layout';
+import { ONBOARDING_CTA_BOTTOM_GAP, rw } from '../../constants/Layout';
 import { useTranslation } from 'react-i18next';
 import analytics from '../../services/analytics';
 import apiService from '../../services/api';
@@ -26,7 +25,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 
 export default function PromoCodeScreen() {
-  const { generationDemoCompleted } = useLocalSearchParams<{ generationDemoCompleted?: string }>();
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
@@ -56,7 +54,7 @@ export default function PromoCodeScreen() {
               source: 'onboarding_promo_code',
               completion_method: 'subscription',
             });
-            router.replace('/(tabs)');
+            router.replace('/(tabs)' as any);
           }
         })();
       }
@@ -127,7 +125,7 @@ export default function PromoCodeScreen() {
       const response = await apiService.validatePromoCode(code.trim());
 
       if (response.data?.isValid && response.data.discountPercentage) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        feedback.success();
         setSuccess(true);
         setDiscountPercentage(response.data.discountPercentage);
 
@@ -147,7 +145,7 @@ export default function PromoCodeScreen() {
             source: 'onboarding_promo_code',
             completion_method: 'promo_code',
           });
-          setTimeout(() => router.replace('/(tabs)'), 1500);
+          setTimeout(() => router.replace('/(tabs)' as any), 1500);
           return;
         }
 
@@ -158,7 +156,7 @@ export default function PromoCodeScreen() {
         // remisé plutôt que sur la suite du tunnel.
         setTimeout(() => goToDiscountedPaywall(discount), 1500);
       } else {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        feedback.error();
         setError(response.error || t('onboardingPromoCode.invalid'));
         analytics.track('onboarding_promo_code_invalid');
       }
@@ -170,16 +168,6 @@ export default function PromoCodeScreen() {
   };
 
   const navigateNext = async () => {
-    const variant = await analytics.getOnboardingVariant();
-    const entryFeature = await analytics.getEntryFeature();
-
-    // Aucun chemin (promo, code 100 %, variante expérimentale) ne peut éviter
-    // la recette test de la branche import.
-    if (entryFeature === 'import' && generationDemoCompleted !== 'true') {
-      router.replace('/onboarding/generationDemo');
-      return;
-    }
-
     // Vérifier si un code promo premium a déjà été activé
     const isPremium = await revenueCatService.isPromoCodeActivated();
     if (isPremium) {
@@ -187,46 +175,18 @@ export default function PromoCodeScreen() {
         source: 'onboarding_promo_code',
         completion_method: 'promo_code',
       });
-      router.replace('/(tabs)');
+      router.replace('/(tabs)' as any);
       return;
     }
 
-    if (variant === 'E') {
-      setHasShownPaywall(true);
-      const pendingDiscount = await AsyncStorage.getItem('pending_promo_discount');
-      if (pendingDiscount) {
-        router.push({
-          pathname: '/paywall',
-          params: { source: 'onboarding_variant_e', initialState: 'PROMO_DISCOUNTED', promoDiscount: pendingDiscount },
-        });
-      } else {
-        router.push({ pathname: '/paywall', params: { source: 'onboarding_variant_e' } });
-      }
-    } else if (variant === 'F') {
-      router.replace('/onboarding/personalizedRecipes');
-    } else if (variant === 'C' || variant === 'D') {
-      // Chaque branche a déjà vécu son aha moment principal. Juste avant
-      // l'offre, on présente l'autre capacité comme un bonus facultatif :
-      // génération réelle pour la branche import, import guidé pour la branche
-      // génération.
-      if (entryFeature === 'import') {
-        router.replace({
-          pathname: '/onboarding/offerTrial',
-          params: { source: 'onboarding_import_branch' },
-        });
-      } else {
-        router.replace({
-          pathname: '/onboarding/offerTrial',
-          params: { source: 'onboarding_generate_branch' },
-        });
-      }
-    } else {
-      router.replace('/onboarding/ahaMoment');
-    }
+    router.replace({
+      pathname: '/onboarding/offerTrial',
+      params: { source: 'onboarding_weekly_planning' },
+    });
   };
 
   const handleSkip = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    feedback.light();
     analytics.track('onboarding_promo_code_skipped', { had_code: restoredCode });
 
     // Renoncer au code le retire du stockage : sans ça, `reminder` le relirait
@@ -296,7 +256,7 @@ export default function PromoCodeScreen() {
           </Animated.View>
         </View>
 
-        <Animated.View style={[styles.bottomSection, { opacity: fadeAnim }]}>
+        <Animated.View style={[styles.bottomSection, { opacity: fadeAnim, bottom: insets.bottom + ONBOARDING_CTA_BOTTOM_GAP }]}>
           {/* `success` sans `restoredCode` = validation en cours, la navigation
               part toute seule après 1,5 s : on masque les boutons. Au retour du
               paywall en revanche, il faut de quoi repartir ou renoncer. */}
@@ -443,7 +403,6 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 40 : 70,
     left: 24,
     right: 24,
     gap: 12,

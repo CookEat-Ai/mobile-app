@@ -13,7 +13,7 @@ export type RecipePreferences = {
 export const DEFAULT_RECIPE_PREFERENCES: RecipePreferences = {
   dishType: 'all',
   duration: 'all',
-  servings: 2,
+  servings: 1,
   cuisineStyle: ['all'],
   diet: 'none',
   allowOtherIngredients: false,
@@ -23,23 +23,17 @@ export const DEFAULT_RECIPE_PREFERENCES: RecipePreferences = {
 };
 
 export const ONBOARDING_RECIPE_PREFERENCE_KEYS = [
-  'cookingForWho',
   'cookingTime',
   'equipments',
   'favoriteDishType',
   'favoriteCuisineStyle',
   'diet',
   'avoidIngredients',
+  'fitnessGoal',
 ] as const;
 
 export type OnboardingRecipePreferenceKey = typeof ONBOARDING_RECIPE_PREFERENCE_KEYS[number];
 export type OnboardingRecipeAnswers = Record<OnboardingRecipePreferenceKey, string | null>;
-
-const SERVINGS_MAP: Record<string, number> = {
-  myself: 1,
-  myself_and_another_person: 2,
-  my_family: 4,
-};
 
 const DURATION_MAP: Record<string, string> = {
   less_than_30_minutes: 'fast',
@@ -55,15 +49,15 @@ const EQUIPMENT_MAP: Record<string, string> = {
   equipment_robot: 'robot',
 };
 
-const CUISINE_STYLE_MAP: Record<string, string> = {
-  cuisine_mediterranean: 'mediterranean',
-  cuisine_french: 'french',
-  cuisine_italian: 'italian',
-  cuisine_middle_eastern: 'middle_eastern',
-  cuisine_indian: 'indian',
-  cuisine_asian: 'asian',
-  cuisine_american: 'american',
-  cuisine_spicy: 'spicy',
+const CUISINE_STYLE_MAP: Record<string, string[]> = {
+  cuisine_mediterranean: ['mediterranean'],
+  cuisine_french: ['french'],
+  cuisine_italian: ['italian'],
+  cuisine_middle_eastern: ['middle-eastern'],
+  cuisine_indian: ['indian'],
+  cuisine_asian: ['japanese', 'chinese', 'thai'],
+  cuisine_american: ['american'],
+  cuisine_spicy: ['mexican', 'indian', 'thai'],
 };
 
 const ALLERGY_MAP: Record<string, string> = {
@@ -133,9 +127,7 @@ export function getOnboardingRecipePreferenceOverrides(
 ): Partial<RecipePreferences> {
   const overrides: Partial<RecipePreferences> = {};
 
-  if (answers.cookingForWho && SERVINGS_MAP[answers.cookingForWho]) {
-    overrides.servings = SERVINGS_MAP[answers.cookingForWho];
-  }
+  overrides.servings = 1;
 
   if (answers.cookingTime && DURATION_MAP[answers.cookingTime]) {
     overrides.duration = DURATION_MAP[answers.cookingTime];
@@ -154,7 +146,7 @@ export function getOnboardingRecipePreferenceOverrides(
   if (answers.favoriteCuisineStyle !== null) {
     const styles = unique(
       parseMulti(answers.favoriteCuisineStyle)
-        .map((item) => CUISINE_STYLE_MAP[item])
+        .flatMap((item) => CUISINE_STYLE_MAP[item] || [])
         .filter(Boolean),
     );
     overrides.cuisineStyle = styles.length > 0 ? styles : ['all'];
@@ -173,6 +165,8 @@ export function getOnboardingRecipePreferenceOverrides(
     );
   }
 
+  if (answers.fitnessGoal) overrides.goal = answers.fitnessGoal;
+
   return overrides;
 }
 
@@ -189,5 +183,5 @@ export function mergeRecipePreferences(
 export function getOnboardingRecipeAnswersSignature(answers: OnboardingRecipeAnswers): string {
   // La version fait réappliquer proprement le mapping après une évolution de
   // sa sémantique (v2 : le type de plat d'onboarding ne devient plus un filtre).
-  return JSON.stringify(['v3', ...ONBOARDING_RECIPE_PREFERENCE_KEYS.map((key) => answers[key])]);
+  return JSON.stringify(['v5', ...ONBOARDING_RECIPE_PREFERENCE_KEYS.map((key) => answers[key])]);
 }

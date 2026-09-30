@@ -1,3 +1,4 @@
+import { NavigationIconButton } from './NavigationIconButton';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated,
@@ -63,6 +64,7 @@ type Props = {
 
 /** L'annuel reste le choix recommandé, le mensuel l'alternative principale. */
 const PACKAGE_ORDER: string[] = [PACKAGE_TYPE.ANNUAL, PACKAGE_TYPE.MONTHLY, PACKAGE_TYPE.WEEKLY];
+const PLAN_BORDER_COLOR = '#EDE7CE';
 
 function sortPackages(packages: PurchasesPackage[]): PurchasesPackage[] {
   return [...packages].sort((a, b) => {
@@ -71,6 +73,28 @@ function sortPackages(packages: PurchasesPackage[]): PurchasesPackage[] {
     // Les types hors liste (custom, lifetime) sont renvoyés en fin de rangée.
     return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
   });
+}
+
+function PlanBadge({ label, selected, borderWidth }: {
+  label: string;
+  selected: boolean;
+  borderWidth: number;
+}) {
+  const [height, setHeight] = useState(0);
+  return (
+    <View
+      pointerEvents="none"
+      onLayout={({ nativeEvent }) => setHeight(nativeEvent.layout.height)}
+      style={[
+        styles.planBadgeAnchor,
+        { top: borderWidth / 2, transform: [{ translateY: -height / 2 }], opacity: height ? 1 : 0 },
+      ]}
+    >
+      <View style={[styles.planBadge, { backgroundColor: selected ? Colors.light.button : PLAN_BORDER_COLOR }]}>
+        <Text style={[styles.planBadgeText, { color: selected ? 'white' : Colors.light.text }]} numberOfLines={1} adjustsFontSizeToFit>{label}</Text>
+      </View>
+    </View>
+  );
 }
 
 export function PaywallView({
@@ -273,86 +297,80 @@ export function PaywallView({
     const perMonth = isAnnual ? pack.product.pricePerMonthString : null;
     const days = trialDays(pack);
     const showSavings = isAnnual && annualSavingsPercent !== null;
+    const badgeDiscount = discountPercent || (showSavings ? annualSavingsPercent : null);
+    const badgeLabel = [
+      days ? t('paywall.trialBadge', { count: days }) : null,
+      badgeDiscount ? t('paywall.discountBadge', { percent: badgeDiscount }) : null,
+    ].filter(Boolean).join(' · ') || (pack.identifier === badgedPackageId ? t('paywall.bestOffer') : null);
 
     return (
-      <TouchableOpacity
-        key={pack.identifier}
-        style={[
-          styles.planCard,
-          isAnnual && styles.annualPlanCard,
-          isSelected && styles.planCardSelected,
-        ]}
-        onPress={() => setSelectedId(pack.identifier)}
-        activeOpacity={0.9}
-        accessibilityRole="radio"
-        accessibilityState={{ selected: isSelected }}
-      >
-        <View style={styles.planCopyColumn}>
-          {/* L'essai offert prime sur « Meilleure offre » : c'est l'argument le
-              plus fort, et deux pastilles sur la même carte se neutralisent. */}
-          {days ? (
-            <View style={[styles.planBadge, styles.planBadgeTrial]}>
-              <Text style={styles.planBadgeText} numberOfLines={1}>
-                {t('paywall.trialBadge', { count: days })}
-              </Text>
-            </View>
-          ) : discountPercent ? (
-            <View style={[styles.planBadge, styles.planBadgeDiscount]}>
-              <Text style={styles.planBadgeText} numberOfLines={1}>
-                {t('paywall.discountBadge', { percent: discountPercent })}
-              </Text>
-            </View>
-          ) : pack.identifier === badgedPackageId ? (
-            <View style={styles.planBadge}>
-              <Text style={styles.planBadgeText} numberOfLines={1}>
-                {t('paywall.bestOffer')}
-              </Text>
-            </View>
-          ) : null}
-
-          <Text
-            style={[
-              styles.planTitle,
-              isAnnual && styles.annualPlanTitle,
-              isSelected && styles.planTitleSelected,
-            ]}
-            numberOfLines={1}
-          >
-            {t(`paywall.plans.${pack.packageType.toLowerCase()}`, { defaultValue: pack.product.title })}
-          </Text>
-          {showSavings ? (
-            <Text style={styles.planSavings} numberOfLines={1}>
-              {t('paywall.savePercent', { percent: annualSavingsPercent })}
+      <View key={pack.identifier} style={styles.planWrapper}>
+        <TouchableOpacity
+          style={[
+            styles.planCard,
+            isAnnual && styles.annualPlanCard,
+            isSelected && styles.planCardSelected,
+          ]}
+          onPress={() => setSelectedId(pack.identifier)}
+          activeOpacity={0.9}
+          accessibilityRole="radio"
+          accessibilityState={{ selected: isSelected }}
+        >
+          <View style={styles.planCopyColumn}>
+            <Text
+              style={[
+                styles.planTitle,
+                isAnnual && styles.annualPlanTitle,
+                isSelected && styles.planTitleSelected,
+              ]}
+              numberOfLines={1}
+            >
+              {t(`paywall.plans.${pack.packageType.toLowerCase()}`, { defaultValue: pack.product.title })}
             </Text>
-          ) : null}
-        </View>
-
-        <View style={styles.planPriceColumn}>
-          <View style={[styles.planRadio, isSelected && styles.planRadioSelected]}>
-            {isSelected ? <Ionicons name="checkmark" size={16} color="white" /> : null}
+            {showSavings ? (
+              <Text
+                style={styles.planSavings}
+                numberOfLines={1}
+                accessibilityLabel={`${t('paywall.savePercent', { percent: annualSavingsPercent })} ${t('paywall.annualSavingsReference')}`}
+              >
+                {t('paywall.savePercent', { percent: annualSavingsPercent })}
+              </Text>
+            ) : null}
           </View>
-          <Text
-            style={[
-              styles.planPrice,
-              isAnnual && styles.annualPlanPrice,
-              isSelected && styles.planPriceSelected,
-            ]}
-            numberOfLines={1}
-            adjustsFontSizeToFit
-          >
-            {pack.product.priceString}
-          </Text>
-          {perMonth ? (
-            <Text style={styles.planPerMonth} numberOfLines={1}>
-              {t('paywall.perMonthEquivalent', { price: perMonth })}
-            </Text>
-          ) : (
-            <Text style={styles.planPerMonth} numberOfLines={1}>
-              {t(`paywall.per.${pack.packageType.toLowerCase()}`, { defaultValue: '' })}
-            </Text>
-          )}
-        </View>
-      </TouchableOpacity>
+
+          <View style={styles.planPriceColumn}>
+            <View style={[styles.planRadio, isSelected && styles.planRadioSelected]}>
+              {isSelected ? <Ionicons name="checkmark" size={16} color="white" /> : null}
+            </View>
+            {/* Keep the amount at its intended size. iOS auto-fitting with
+                Degular and a mixed-font suffix can collapse it to a few pixels. */}
+            <View style={styles.planPriceRow}>
+              <Text
+                style={[
+                  styles.planPrice,
+                  isAnnual && styles.annualPlanPrice,
+                  isSelected && styles.planPriceSelected,
+                ]}
+              >
+                {pack.product.priceString}
+              </Text>
+              {isAnnual ? <Text style={styles.pricePeriod}>{t('paywall.per.annual')}</Text> : null}
+            </View>
+            {perMonth ? (
+              <Text style={styles.planPerMonth}>
+                {t('paywall.perMonthEquivalent', { price: perMonth })}
+              </Text>
+            ) : !isAnnual ? (
+              <Text style={styles.planPerMonth} numberOfLines={1}>
+                {t(`paywall.per.${pack.packageType.toLowerCase()}`, { defaultValue: '' })}
+              </Text>
+            ) : null}
+          </View>
+        </TouchableOpacity>
+        {badgeLabel ? (
+          <PlanBadge label={badgeLabel} selected={isSelected} borderWidth={isAnnual ? 3 : 2} />
+        ) : null}
+      </View>
     );
   };
 
@@ -379,15 +397,13 @@ export function PaywallView({
               { marginTop: overlayHeaderInset, opacity: closeOpacity },
             ]}
           >
-            <TouchableOpacity
+            <NavigationIconButton kind="close"
               style={styles.closeButton}
               onPress={onClose}
               hitSlop={16}
               accessibilityRole="button"
               accessibilityLabel={t('common.cancel')}
-            >
-              <Ionicons name="close" size={28} color={Colors.light.text} />
-            </TouchableOpacity>
+             />
           </Animated.View>
         ) : null}
 
@@ -546,7 +562,11 @@ const styles = StyleSheet.create({
   },
   plans: {
     width: '100%',
+    paddingTop: 18,
     gap: 12,
+  },
+  planWrapper: {
+    width: '100%',
   },
   planCard: {
     width: '100%',
@@ -555,7 +575,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 26,
     borderWidth: 2,
-    borderColor: '#EDE7CE',
+    borderColor: PLAN_BORDER_COLOR,
     paddingVertical: 14,
     paddingHorizontal: 18,
     alignItems: 'center',
@@ -577,25 +597,25 @@ const styles = StyleSheet.create({
     borderColor: Colors.light.button,
     backgroundColor: '#FFF8EC',
   },
+  planBadgeAnchor: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    zIndex: 2,
+    elevation: 5,
+  },
   planBadge: {
-    alignSelf: 'flex-start',
+    maxWidth: '86%',
     backgroundColor: Colors.light.button,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
+    paddingHorizontal: 14,
+    paddingVertical: 5,
     borderRadius: 100,
-    marginBottom: 5,
-  },
-  // L'essai offert est l'argument le plus fort de l'écran : la pastille passe en
-  // contraste maximal pour se distinguer d'un simple « Meilleure offre ».
-  planBadgeTrial: {
-    backgroundColor: Colors.light.text,
-  },
-  planBadgeDiscount: {
-    backgroundColor: Colors.light.text,
   },
   planBadgeText: {
     color: 'white',
-    fontSize: font(11),
+    fontSize: font(14),
+    lineHeight: font(18),
     fontFamily: 'CronosProBold',
   },
   planSavings: {
@@ -610,10 +630,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   planPriceColumn: {
-    minWidth: 114,
-    maxWidth: '44%',
+    minWidth: 128,
+    width: '48%',
     alignItems: 'flex-end',
     justifyContent: 'center',
+  },
+  planPriceRow: {
+    width: '100%',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'baseline',
+    justifyContent: 'flex-end',
+    columnGap: 4,
   },
   planRadio: {
     width: 24,
@@ -647,13 +675,14 @@ const styles = StyleSheet.create({
     fontSize: font(20),
     fontFamily: 'Degular',
     color: Colors.light.text,
+    flexShrink: 1,
+    textAlign: 'right',
   },
   planPriceSelected: {
     color: Colors.light.button,
   },
   annualPlanPrice: {
-    fontSize: font(24),
-    lineHeight: font(28),
+    fontSize: font(29),
   },
   planPerMonth: {
     fontSize: font(12),
@@ -661,6 +690,11 @@ const styles = StyleSheet.create({
     color: '#8E8E93',
     marginTop: 4,
     textAlign: 'right',
+  },
+  pricePeriod: {
+    fontFamily: 'CronosProBold',
+    fontSize: font(12),
+    color: Colors.light.textSecondary,
   },
   viewAllPlansButton: {
     alignSelf: 'center',

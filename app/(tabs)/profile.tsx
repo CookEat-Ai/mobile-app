@@ -1,3 +1,9 @@
+import { feedback } from '../../services/haptics';
+import { EntranceView } from '../../components/motion/Entrance';
+import { AppScreenHeading } from '../../components/AppScreenHeading';
+import { SettingsRow } from '../../components/SettingsRow';
+import { Ionicons } from '@expo/vector-icons';
+import { NavigationIconButton } from '../../components/NavigationIconButton';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -17,13 +23,10 @@ import {
   TouchableWithoutFeedback,
   Keyboard
 } from 'react-native';
-import Reanimated, { FadeInDown } from 'react-native-reanimated';
-import { LinearGradient } from 'expo-linear-gradient';
 import { router, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../../components/ui/IconSymbol';
-import { Colors } from '../../constants/Colors';
-import { font, getTabBarHeight } from '../../constants/Layout';
+import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { useSubscription } from '../../hooks/useSubscription';
 import * as WebBrowser from "expo-web-browser";
@@ -47,7 +50,6 @@ const LANGUAGE_OPTIONS: readonly { value: SupportedLanguage; label: string }[] =
 
 export default function ProfileScreen() {
 
-  const colors = Colors.light;
   const insets = useSafeAreaInsets();
   const { t, i18n } = useTranslation();
   const { subscriptionStatus, isLoading: subscriptionLoading, loadSubscriptionStatus, cancelSubscription } = useSubscription();
@@ -60,7 +62,7 @@ export default function ProfileScreen() {
   const [promoError, setPromoError] = useState('');
   // `useResponsive` suit la rotation / le Split View ; l'ancienne lecture de
   // `Dimensions` était figée au premier import du module.
-  const { width, height: screenHeight } = useResponsive();
+  const { height: screenHeight, gutter } = useResponsive();
   const slideAnim = useRef(new Animated.Value(screenHeight)).current;
   const promoSlideAnim = useRef(new Animated.Value(screenHeight)).current;
 
@@ -276,6 +278,7 @@ export default function ProfileScreen() {
   };
 
   const selectLanguage = async (newLanguage: SupportedLanguage) => {
+    if (newLanguage !== currentLanguage) feedback.selection();
     setCurrentLanguage(newLanguage);
     await i18n.changeLanguage(newLanguage);
     await AsyncStorage.setItem('app_language', newLanguage);
@@ -390,217 +393,48 @@ export default function ProfileScreen() {
   };
 
   return (
-    <LinearGradient
-      colors={['#F6EEE9', '#FFFFFF']}
-      start={{ x: 1, y: 0 }}
-      end={{ x: 0, y: 1 }}
-      locations={[0, 0.3]}
-      style={styles.container}
-    >
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{
-          paddingTop: insets.top + 60,
-          paddingBottom: getTabBarHeight(width, screenHeight) + insets.bottom + 32,
-          ...contentColumn(),
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-
-        {/* Section Plan */}
-        {subscriptionLoading ? (
-          <Reanimated.View entering={FadeInDown.duration(400).delay(50)} style={styles.card}>
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="small" color={colors.button} />
-              <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
-                {t('profile.loadingSubscription')}
-              </Text>
-            </View>
-          </Reanimated.View>
-        ) : (subscriptionStatus.isSubscribed) ? (
-          // Utilisateur avec abonnement - Style Premium
-          <Reanimated.View entering={FadeInDown.duration(400).delay(50)}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
-              {t('profile.plan')}
-            </Text>
-            <View style={styles.card}>
-              <View style={styles.subscriptionInfo}>
-                <View style={styles.currentPlanInfo}>
-                  <View style={styles.planBadge}>
-                    <IconSymbol name="crown.fill" size={16} color={colors.button} />
-                    <Text style={[styles.planBadgeText, { color: colors.button }]}>
-                      {t('profile.premium')}
-                    </Text>
-                  </View>
-                  <Text style={[styles.planName, { color: colors.text }]}>
-                    {t('profile.premiumPlan')}
-                  </Text>
-                  {subscriptionStatus.expirationDate && (
-                    <Text style={[styles.planExpiration, { color: colors.textSecondary }]}>
-                      {t('profile.expiresOn')} {subscriptionStatus.expirationDate.toLocaleDateString(getLanguageLocale(i18n.language))}
-                    </Text>
-                  )}
-                </View>
-                <TouchableOpacity
-                  style={styles.manageButton}
-                  onPress={() => setIsSubscriptionModalVisible(true)}
-                >
-                  <Text style={styles.manageButtonText}>{t('profile.manage')}</Text>
-                  <IconSymbol name="chevron-forward" size={14} color="#8E8E93" />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Reanimated.View>
-        ) : (
-          // Utilisateur sans abonnement - Card Upsell style Accueil, ou mode dev
-          <Reanimated.View entering={FadeInDown.duration(400).delay(50)}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
-              {t('profile.plan')}
-            </Text>
-            <TouchableOpacity
-              style={styles.premiumCard}
-              onPress={() => router.push({ pathname: '/paywall', params: { source: 'profile_banner' } })}
-              activeOpacity={0.9}
-            >
-              <LinearGradient
-                colors={['#FFD700', '#FDB931']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.premiumGradient}
-              >
-                <View style={styles.premiumContent}>
-                  <View style={{ flex: 1 }}>
-                    <View style={styles.proBadge}>
-                      <Text style={styles.proBadgeText}>PREMIUM</Text>
-                    </View>
-                    <Text style={styles.premiumTitle}>{t('profile.premiumTitle')}</Text>
-                    <Text style={styles.premiumDescription}>
-                      {t('profile.premiumPrice')}
-                    </Text>
-                  </View>
-                  <View style={styles.premiumIconContainer}>
-                    <IconSymbol name="crown.fill" size={40} color="white" />
-                  </View>
-                </View>
-              </LinearGradient>
-            </TouchableOpacity>
-          </Reanimated.View>
-        )}
-
-        {/* Section Paramètres */}
-        <Reanimated.View entering={FadeInDown.duration(400).delay(100)}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            {t('profile.generalSettings')}
-          </Text>
-          <View style={styles.card}>
-            <TouchableOpacity style={styles.settingItem} onPress={handleNotificationsPress}>
-              <IconSymbol name={Platform.OS === 'ios' ? "bell" : "notifications"} size={20} color={colors.button} />
-              <Text style={[styles.settingText, { color: colors.text }]}>
-                {t('profile.notifications')}
-              </Text>
-              <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
-            </TouchableOpacity>
-
+    <View style={appStyles.screen}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ ...contentColumn(), paddingTop: insets.top + 8, paddingHorizontal: gutter, paddingBottom: theme.bottomSpace }} showsVerticalScrollIndicator={false}>
+        <AppScreenHeading title={t('tabs.profile')} />
+        <Text style={styles.sectionTitle}>{t('profile.generalSettings')}</Text>
+        <EntranceView entranceIndex={0} style={styles.card}>
+          <SettingsRow icon="notifications-outline" title={t('profile.notifications')} onPress={handleNotificationsPress} />
+          <View style={styles.separator} />
+          <SettingsRow icon="language-outline" title={t('profile.language')} description={getLanguageText()} onPress={() => setIsLanguageModalVisible(true)} />
+          <View style={styles.separator} />
+          <SettingsRow icon="mail-outline" title={t('profile.feedback')} description={t('profile.feedbackDescription')} onPress={handleFeedbackPress} />
+          {!subscriptionStatus.isSubscribed && <>
             <View style={styles.separator} />
+            <SettingsRow icon="pricetag-outline" title={t('profile.promoCode')} description={t('profile.promoCodeDescription')} onPress={() => setIsPromoModalVisible(true)} />
+          </>}
+        </EntranceView>
 
-            <TouchableOpacity style={styles.settingItem} onPress={handleFeedbackPress}>
-              <IconSymbol name="envelope" size={20} color={colors.button} />
-              <View style={styles.settingInfo}>
-                <Text style={[styles.settingText, { marginLeft: 0, marginBottom: 5, color: colors.text }]}>
-                  {t('profile.feedback')}
-                </Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  {t('profile.feedbackDescription')}
-                </Text>
-              </View>
-              <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
-            </TouchableOpacity>
-
-            <View style={styles.separator} />
-
-            <TouchableOpacity style={styles.settingItem} onPress={() => setIsLanguageModalVisible(true)}>
-              <IconSymbol name="globe" size={20} color={colors.button} />
-              <View style={styles.settingInfo}>
-                <Text style={[styles.settingText, { marginLeft: 0, marginBottom: 5, color: colors.text }]}>
-                  {t('profile.language')}
-                </Text>
-                <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                  {getLanguageText()}
-                </Text>
-              </View>
-              <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
-            </TouchableOpacity>
-
-            {!subscriptionStatus.isSubscribed && (
-              <>
-                <View style={styles.separator} />
-
-                <TouchableOpacity style={styles.settingItem} onPress={() => setIsPromoModalVisible(true)}>
-                  <IconSymbol name="pricetag" size={20} color={colors.button} />
-                  <View style={styles.settingInfo}>
-                    <Text style={[styles.settingText, { marginLeft: 0, marginBottom: 5, color: colors.text }]}>
-                      {t('profile.promoCode')}
-                    </Text>
-                    <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
-                      {t('profile.promoCodeDescription')}
-                    </Text>
-                  </View>
-                  <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
-                </TouchableOpacity>
-              </>
-            )}
-
-            <View style={styles.separator} />
-
-            <TouchableOpacity style={styles.settingItem} onPress={handleDeleteAccount}>
-              <IconSymbol name="trash" size={20} color="#FF3B30" />
-              <View style={styles.settingInfo}>
-                <Text style={[styles.settingText, { marginLeft: 0, color: "#FF3B30" }]}>
-                  {t('profile.deleteAccount')}
-                </Text>
-              </View>
-              <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color="#FF3B30" />
-            </TouchableOpacity>
+        <Text style={styles.sectionTitle}>{t('profile.plan')}</Text>
+        <EntranceView entranceIndex={1}>
+        {subscriptionLoading ? <View style={styles.card}><View style={styles.loadingContainer}>
+          <ActivityIndicator color={theme.yellow} /><Text style={styles.loadingText}>{t('profile.loadingSubscription')}</Text>
+        </View></View> : <TouchableOpacity accessibilityRole="button" accessibilityLabel={t(subscriptionStatus.isSubscribed ? 'profile.manage' : 'dailyApp.subscriptionDetails')} style={styles.subscriptionCard}
+          onPress={() => { feedback.light(); if (subscriptionStatus.isSubscribed) setIsSubscriptionModalVisible(true); else router.push({ pathname: '/paywall', params: { source: 'profile_banner' } }); }} activeOpacity={0.8}>
+          <View style={styles.planIcon}><Ionicons name="sparkles-outline" size={23} color={theme.yellow} /></View>
+          <View style={styles.currentPlanInfo}>
+            <Text style={styles.planName}>{t('profile.premiumPlan')}</Text>
+            <Text style={styles.planExpiration}>{subscriptionStatus.isSubscribed
+              ? (subscriptionStatus.expirationDate ? `${t('profile.expiresOn')} ${subscriptionStatus.expirationDate.toLocaleDateString(getLanguageLocale(i18n.language))}` : t('profile.premium'))
+              : t('dailyApp.subscriptionDetails')}</Text>
+            {subscriptionStatus.isSubscribed && <Text style={styles.manageText}>{t('profile.manage')}</Text>}
           </View>
-        </Reanimated.View>
+          <Ionicons name="chevron-forward" size={20} color={theme.muted} />
+        </TouchableOpacity>}
+        </EntranceView>
 
-        {__DEV__ && (
-          <Reanimated.View entering={FadeInDown.duration(400).delay(150)}>
-            <TouchableOpacity
-              style={styles.devResetButton}
-              onPress={handleResetOnboardingDev}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.devResetButtonText}>Reset onboarding (dev)</Text>
-            </TouchableOpacity>
-          </Reanimated.View>
-        )}
-
-        {/* Section Mentions légales */}
-        <Reanimated.View entering={FadeInDown.duration(400).delay(200)}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>
-            {t('profile.legal')}
-          </Text>
-          <View style={styles.card}>
-            <TouchableOpacity style={styles.settingItem} onPress={handlePrivacyPolicyPress}>
-              <IconSymbol name="doc.text" size={20} color={colors.button} />
-              <Text style={[styles.settingText, { color: colors.text }]}>
-                {t('profile.privacyPolicy')}
-              </Text>
-              <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
-            </TouchableOpacity>
-
-            <View style={styles.separator} />
-
-            <TouchableOpacity style={styles.settingItem} onPress={handleTermsOfServicePress}>
-              <IconSymbol name="doc.text" size={20} color={colors.button} />
-              <Text style={[styles.settingText, { color: colors.text }]}>
-                {t('profile.termsOfService')}
-              </Text>
-              <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={colors.button} />
-            </TouchableOpacity>
-          </View>
-        </Reanimated.View>
+        <Text style={styles.sectionTitle}>{t('profile.legal')}</Text>
+        <EntranceView entranceIndex={3} style={styles.card}>
+          <SettingsRow icon="shield-checkmark-outline" title={t('profile.privacyPolicy')} onPress={handlePrivacyPolicyPress} />
+          <View style={styles.separator} />
+          <SettingsRow icon="document-text-outline" title={t('profile.termsOfService')} onPress={handleTermsOfServicePress} />
+        </EntranceView>
+        <EntranceView entranceIndex={4} style={styles.card}><SettingsRow icon="trash-outline" title={t('profile.deleteAccount')} onPress={handleDeleteAccount} destructive /></EntranceView>
+        {__DEV__ && <TouchableOpacity accessibilityRole="button" style={styles.devResetButton} onPress={handleResetOnboardingDev}><Text style={styles.devResetButtonText}>Reset onboarding (dev)</Text></TouchableOpacity>}
       </ScrollView>
 
       {/* Modal de gestion d'abonnement */}
@@ -626,17 +460,12 @@ export default function ProfileScreen() {
                     }
                   ]}
                 >
-                  <View style={styles.modalHeader}>
-                    <Text style={styles.modalTitle}>{t('profile.mySubscription')}</Text>
-                    <TouchableOpacity
+                  <AppScreenHeading title={t('profile.mySubscription')} action={<NavigationIconButton kind="close"
                       style={styles.modalCloseButton}
                       onPress={closeSubscriptionModal}
                       accessibilityRole="button"
                       accessibilityLabel={t('common.close')}
-                    >
-                      <IconSymbol name="close" size={24} color="#000" />
-                    </TouchableOpacity>
-                  </View>
+                     />} />
 
                   <ScrollView
                     style={styles.modalScrollView}
@@ -647,8 +476,8 @@ export default function ProfileScreen() {
                     <View style={styles.modalBody}>
                       <View style={styles.modalPlanCard}>
                         <View style={styles.planBadge}>
-                          <IconSymbol name="crown.fill" size={20} color={colors.button} />
-                          <Text style={[styles.planBadgeText, { color: colors.button, fontSize: 16 }]}>
+                          <IconSymbol name="crown.fill" size={20} color={theme.yellow} />
+                          <Text style={styles.planBadgeText}>
                             {t('profile.premium')}
                           </Text>
                         </View>
@@ -664,11 +493,11 @@ export default function ProfileScreen() {
                       </View>
 
                       <TouchableOpacity
-                        style={[styles.closeModalButton, { backgroundColor: colors.button }]}
+                        style={[styles.closeModalButton, { backgroundColor: theme.yellow }]}
                         onPress={closeSubscriptionModal}
                         activeOpacity={0.8}
                       >
-                        <Text style={styles.closeModalButtonText}>{t('profile.continueCooking')}</Text>
+                        <Text style={styles.subscriptionModalButtonText}>{t('profile.continueCooking')}</Text>
                       </TouchableOpacity>
 
                       <TouchableOpacity
@@ -706,21 +535,17 @@ export default function ProfileScreen() {
                 <View
                   style={[
                     styles.modalContent,
-                    { paddingBottom: Math.max(insets.bottom, 16) + 16 },
+                    { paddingBottom: Math.max(insets.bottom, 16) + 16, maxHeight: screenHeight - insets.top - 24 },
                   ]}
                 >
-                  <View style={styles.modalHeader}>
-                    <Text style={styles.modalTitle}>{t('profile.language')}</Text>
-                    <TouchableOpacity
+                  <AppScreenHeading title={t('profile.language')} action={<NavigationIconButton kind="close"
                       style={styles.modalCloseButton}
                       onPress={() => setIsLanguageModalVisible(false)}
                       accessibilityRole="button"
                       accessibilityLabel={t('common.close')}
-                    >
-                      <IconSymbol name="close" size={24} color="#000" />
-                    </TouchableOpacity>
-                  </View>
+                     />} />
 
+                  <ScrollView showsVerticalScrollIndicator={false}>
                   {LANGUAGE_OPTIONS.map((option) => {
                     const selected = option.value === currentLanguage;
                     return (
@@ -731,13 +556,13 @@ export default function ProfileScreen() {
                         accessibilityRole="radio"
                         accessibilityState={{ checked: selected }}
                       >
-                        <Text style={[styles.languageOptionText, selected && { color: colors.button }]}>
+                        <Text style={[styles.languageOptionText, selected && styles.languageOptionSelectedText]}>
                           {option.label}
                         </Text>
-                        {selected && <IconSymbol name="checkmark" size={22} color={colors.button} />}
                       </TouchableOpacity>
                     );
                   })}
+                  </ScrollView>
                 </View>
               </TouchableWithoutFeedback>
             </View>
@@ -765,28 +590,25 @@ export default function ProfileScreen() {
                     styles.modalContent,
                     {
                       transform: [{ translateY: promoSlideAnim }],
+                      maxHeight: screenHeight - insets.top - 24,
                       paddingBottom: Math.max(insets.bottom, 16) + 16,
                     },
                   ]}
                 >
-                  <View style={styles.modalHeader}>
-                    <Text style={styles.modalTitle}>{t('profile.promoCodeTitle')}</Text>
-                    <TouchableOpacity onPress={closePromoModal}>
-                      <IconSymbol name="close" size={24} color="#000" />
-                    </TouchableOpacity>
-                  </View>
+                  <AppScreenHeading title={t('profile.promoCodeTitle')} action={<NavigationIconButton kind="close" onPress={closePromoModal} />} />
 
-                  <View style={styles.modalBody}>
+                  <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={styles.modalBody}>
                     <View style={styles.promoInputContainer}>
                       <TextInput
                         style={styles.promoInput}
+                        accessibilityLabel={t('profile.promoCodeTitle')}
                         value={promoCode}
                         onChangeText={(text) => {
                           setPromoCode(text.toUpperCase());
                           setPromoError('');
                         }}
                         placeholder={t('profile.promoCodePlaceholder')}
-                        placeholderTextColor="#AEAEB2"
+                        placeholderTextColor={theme.muted}
                         autoCapitalize="characters"
                         autoCorrect={false}
                         returnKeyType="done"
@@ -795,13 +617,13 @@ export default function ProfileScreen() {
                     </View>
 
                     {promoError ? (
-                      <Text style={styles.promoErrorText}>{promoError}</Text>
+                      <Text accessibilityRole="alert" style={styles.promoErrorText}>{promoError}</Text>
                     ) : null}
 
                     <TouchableOpacity
                       style={[
                         styles.closeModalButton,
-                        { backgroundColor: colors.button },
+                        { backgroundColor: theme.yellow },
                         (!promoCode.trim() || promoLoading) && { opacity: 0.5 },
                       ]}
                       onPress={handleValidatePromoCode}
@@ -809,375 +631,61 @@ export default function ProfileScreen() {
                       activeOpacity={0.8}
                     >
                       {promoLoading ? (
-                        <ActivityIndicator color="#fff" />
+                        <ActivityIndicator color={theme.ink} />
                       ) : (
                         <Text style={styles.closeModalButtonText}>
                           {t('profile.promoCodeValidate')}
                         </Text>
                       )}
                     </TouchableOpacity>
-                  </View>
+                  </ScrollView>
                 </Animated.View>
               </TouchableWithoutFeedback>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
       </Modal>
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 24,
-    padding: 20,
-    marginHorizontal: 20,
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 15,
-    elevation: 2,
-  },
-  section: {
-    paddingVertical: 10,
-  },
-  sectionTitle: {
-    fontSize: font(24),
-    marginBottom: 16,
-    marginHorizontal: 20,
-    marginTop: 8,
-    fontFamily: 'Degular'
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#F2F2F7',
-    marginVertical: 4,
-  },
-  premiumCard: {
-    borderRadius: 24,
-    overflow: 'hidden',
-    elevation: 8,
-    shadowColor: '#FDB931',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    marginHorizontal: 20,
-    marginBottom: 20,
-  },
-  premiumGradient: {
-    padding: 24,
-  },
-  premiumContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  proBadge: {
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    marginBottom: 8,
-  },
-  proBadgeText: {
-    color: 'white',
-    fontSize: 12,
-    letterSpacing: 1,
-    fontFamily: 'Degular'
-  },
-  premiumTitle: {
-    fontSize: font(22),
-    color: 'white',
-    marginBottom: 4,
-    fontFamily: 'Degular'
-  },
-  premiumDescription: {
-    fontFamily: 'CronosPro',
-    fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.9)',
-  },
-  premiumIconContainer: {
-    width: 60,
-    height: 60,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  preferenceItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-  },
-  preferenceInfo: {
-    flex: 1,
-    marginRight: 16,
-  },
-  preferenceLabel: {
-    fontSize: 18,
-    marginBottom: 4,
-    fontFamily: 'CronosProBold'
-  },
-  preferenceDescription: {
-    fontFamily: 'CronosPro',
-    fontSize: 18,
-  },
-  subscriptionInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  currentPlanInfo: {
-    flex: 1,
-  },
-  planBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 4,
-    gap: 6,
-  },
-  planBadgeText: {
-    fontSize: 14,
-    letterSpacing: 0.5,
-    fontFamily: 'CronosProBold'
-  },
-  planName: {
-    fontSize: 20,
-    marginBottom: 2,
-    fontFamily: 'Degular'
-  },
-  planExpiration: {
-    fontFamily: 'CronosPro',
-    fontSize: 14,
-  },
-  cancelButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFF5F5',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
-    gap: 6,
-  },
-  cancelButtonText: {
-    fontSize: 13,
-    color: '#FF3B30',
-    fontFamily: 'CronosProBold'
-  },
-  manageButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F2F2F7',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
-    gap: 6,
-  },
-  manageButtonText: {
-    fontSize: 14,
-    color: '#8E8E93',
-    fontFamily: 'CronosProBold'
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  modalOverlayInner: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    width: '100%',
-    maxWidth: 640,
-    alignSelf: 'center',
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    padding: 24,
-    overflow: 'hidden',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  modalTitle: {
-    fontSize: font(24),
-    fontFamily: 'Degular'
-  },
-  modalCloseButton: {
-    width: 44,
-    height: 44,
-    marginRight: -10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 22,
-  },
-  modalScrollView: {
-    width: '100%',
-  },
-  modalScrollContent: {
-    paddingBottom: 2,
-  },
-  modalBody: {
-    alignItems: 'center',
-  },
-  languageOption: {
-    minHeight: 52,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: 16,
-    marginBottom: 6,
-  },
-  languageOptionSelected: {
-    backgroundColor: '#FFF8E6',
-  },
-  languageOptionText: {
-    fontFamily: 'CronosProBold',
-    fontSize: 17,
-    color: '#081A10',
-  },
-  modalPlanCard: {
-    width: '100%',
-    backgroundColor: '#F8F8FD',
-    borderRadius: 24,
-    padding: 24,
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  modalPlanName: {
-    fontSize: 22,
-    marginTop: 12,
-    marginBottom: 8,
-    fontFamily: 'Degular'
-  },
-  modalPlanDescription: {
-    fontFamily: 'CronosPro',
-    fontSize: 16,
-    color: '#8E8E93',
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  modalExpirationText: {
-    fontFamily: 'CronosPro',
-    fontSize: 14,
-    color: '#AEAEB2',
-  },
-  closeModalButton: {
-    width: '100%',
-    borderRadius: 25,
-    paddingVertical: 18,
-    alignItems: 'center',
-    marginBottom: 20,
-    shadowColor: '#FEB50A',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  closeModalButtonText: {
-    fontSize: 18,
-    color: 'white',
-    fontFamily: 'Degular'
-  },
-  hiddenCancelButton: {
-    minHeight: 44,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  hiddenCancelButtonText: {
-    fontFamily: 'CronosPro',
-    fontSize: 15,
-    color: '#6B7280',
-    textDecorationLine: 'underline',
-  },
-  settingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-  },
-  settingText: {
-    flex: 1,
-    marginLeft: 12,
-    fontSize: 18,
-    fontFamily: 'CronosProBold'
-  },
-  settingInfo: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  settingDescription: {
-    fontFamily: 'CronosPro',
-    fontSize: 16,
-    marginTop: 2,
-  },
-  preferenceActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  // Styles pour la gestion d'abonnement
-  loadingContainer: {
-    alignItems: 'center',
-    paddingVertical: 10,
-  },
-  loadingText: {
-    fontFamily: 'CronosPro',
-    fontSize: 14,
-    marginTop: 8,
-  },
-  devResetButton: {
-    marginHorizontal: 20,
-    marginBottom: 20,
-    backgroundColor: '#FFF1F0',
-    borderColor: '#FFB3AE',
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  devResetButtonText: {
-    fontSize: 16,
-    color: '#D9382A',
-    fontFamily: 'CronosProBold'
-  },
-  promoInputContainer: {
-    width: '100%',
-    backgroundColor: '#F8F8FD',
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: '#F2F2F7',
-    paddingHorizontal: 16,
-    marginBottom: 12,
-  },
-  promoInput: {
-    fontSize: 18,
-    fontFamily: 'Degular',
-    color: '#081A10',
-    paddingVertical: 16,
-    letterSpacing: 2,
-    textAlign: 'center',
-  },
-  promoErrorText: {
-    color: '#FF3B30',
-    fontSize: 14,
-    fontFamily: 'CronosPro',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
+  card: { ...appStyles.card, paddingHorizontal: 16, paddingVertical: 2, marginBottom: 24 },
+  sectionTitle: { ...appStyles.section, marginBottom: 12 },
+  separator: { height: 1, backgroundColor: theme.line, marginLeft: 52 },
+  subscriptionCard: { ...appStyles.card, borderColor: theme.yellow, flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 24 },
+  planIcon: { width: 44, height: 44, borderRadius: 16, backgroundColor: theme.yellowSoft, alignItems: 'center', justifyContent: 'center' },
+  currentPlanInfo: { flex: 1, minWidth: 0 },
+  planBadge: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  planBadgeText: { fontFamily: 'CronosProBold', fontSize: 14, color: theme.ink },
+  planName: { fontFamily: 'Degular', fontSize: 21, lineHeight: 25, color: theme.ink },
+  planExpiration: { fontFamily: 'CronosPro', fontSize: 14, lineHeight: 20, marginTop: 4, color: theme.muted },
+  manageText: { ...appStyles.textAction, marginTop: 8 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(8,26,16,0.38)', justifyContent: 'flex-end', alignItems: 'center' },
+  modalOverlayInner: { flex: 1, width: '100%', justifyContent: 'flex-end', alignItems: 'center' },
+  modalContent: { backgroundColor: theme.background, width: '100%', maxWidth: 560, alignSelf: 'center', borderTopLeftRadius: theme.radius, borderTopRightRadius: theme.radius, padding: 20, overflow: 'hidden' },
+  modalCloseButton: {},
+  modalScrollView: { width: '100%', flexShrink: 1 },
+  modalScrollContent: { paddingBottom: 8 },
+  modalBody: { alignItems: 'stretch' },
+  languageOption: { minHeight: 58, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, borderRadius: 17, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, marginBottom: 10 },
+  languageOptionSelected: { backgroundColor: theme.yellow, borderColor: theme.yellow },
+  languageOptionText: { flex: 1, fontFamily: 'Degular', fontSize: 19, color: theme.ink },
+  languageOptionSelectedText: { color: appStyles.buttonText.color },
+  modalPlanCard: { ...appStyles.card, marginBottom: 20 },
+  modalPlanName: { ...appStyles.section, marginTop: 12, marginBottom: 8 },
+  modalPlanDescription: { fontFamily: 'CronosPro', fontSize: 16, lineHeight: 23, color: theme.muted, marginBottom: 16 },
+  modalExpirationText: { fontFamily: 'CronosPro', fontSize: 14, lineHeight: 20, color: theme.muted },
+  closeModalButton: { ...appStyles.button, width: '100%', marginBottom: 12 },
+  closeModalButtonText: { ...appStyles.buttonText, color: theme.ink, textAlign: 'center' },
+  subscriptionModalButtonText: { ...appStyles.buttonText, textAlign: 'center' },
+  hiddenCancelButton: { minHeight: 48, paddingHorizontal: 16, justifyContent: 'center', alignItems: 'center' },
+  hiddenCancelButtonText: { ...appStyles.textAction, textAlign: 'center', textDecorationLine: 'underline' },
+  loadingContainer: { alignItems: 'center', gap: 10, paddingVertical: 24 },
+  loadingText: { fontFamily: 'CronosPro', fontSize: 14, color: theme.muted },
+  devResetButton: { minHeight: 44, justifyContent: 'center', alignItems: 'center' },
+  devResetButtonText: { fontFamily: 'CronosPro', fontSize: 13, color: theme.muted },
+  promoInputContainer: { width: '100%', backgroundColor: theme.surface, borderRadius: 17, borderWidth: 1, borderColor: theme.line, paddingHorizontal: 16, marginBottom: 16 },
+  promoInput: { minHeight: 60, fontFamily: 'Degular', fontSize: 23, color: theme.ink, paddingVertical: 16, textAlign: 'center' },
+  promoErrorText: { ...appStyles.error, textAlign: 'center' },
 });

@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import * as Haptics from 'expo-haptics';
+import { feedback } from '../../services/haptics';
 import { Colors } from '../../constants/Colors';
 import { font, rw } from '../../constants/Layout';
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
@@ -127,7 +127,7 @@ export default function WelcomeScreen() {
   }, [buttonOpacity, descriptionOpacity, imageOpacity, imageScale, imageTranslate, socialOpacity, titleOpacity]);
 
   const handleMascotPress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    feedback.confirm();
     pressScale.setValue(1);
     pressRotate.setValue(0);
 
@@ -162,7 +162,7 @@ export default function WelcomeScreen() {
     // fois la zone sûre haute sur iOS. On applique les insets une seule fois.
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <View style={styles.topSection}>
-        <Text style={styles.brand}>CookEat Ai</Text>
+        <Text style={styles.brand}>CookEat</Text>
         <View style={styles.illustrationWrapper}>
           <Animated.View
             style={{
@@ -241,7 +241,7 @@ export default function WelcomeScreen() {
             activeOpacity={0.8}
             style={styles.continueButton}
             onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              feedback.light();
               router.replace('/onboarding/formQuestion');
             }}
           >

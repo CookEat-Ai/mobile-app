@@ -21,6 +21,7 @@ import analytics from '../services/analytics';
 import revenueCatService from '../config/revenuecat';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUniqueDeviceId } from '../services/deviceStorage';
+import { savePendingOnboardingPlanImport } from '../services/weeklyPlanning';
 
 
 export default function ShareIntentScreen() {
@@ -33,6 +34,7 @@ export default function ShareIntentScreen() {
     source?: string;
     isOnboarding?: string;
     onboardingNext?: string;
+    isPlanImport?: string;
   }>();
   const importSource = params.source || 'share_sheet';
   const isOnboarding = params.isOnboarding === 'true';
@@ -171,6 +173,7 @@ export default function ShareIntentScreen() {
             isHistory: 'true',
             isOnboarding: 'true',
             ...(params.onboardingNext ? { onboardingNext: params.onboardingNext } : {}),
+            ...(params.isPlanImport === 'true' ? { isPlanImport: 'true' } : {}),
           },
         });
       }, 1500);
@@ -191,7 +194,7 @@ export default function ShareIntentScreen() {
       }, 100);
     }, 1500);
     return () => clearTimeout(timer);
-  }, [status, recipe, router, isOnboarding, params.onboardingNext]);
+  }, [status, recipe, router, isOnboarding, params.onboardingNext, params.isPlanImport]);
 
   useEffect(() => {
     if (hasStarted.current) return;
@@ -258,6 +261,12 @@ export default function ShareIntentScreen() {
         setIsDataReady(true);
 
         recipeStorageService.saveGeneratedRecipe(response.data.recipe, []);
+        if (isOnboarding && params.isPlanImport === 'true') {
+          await savePendingOnboardingPlanImport(response.data.recipe.id);
+          analytics.track('onboarding_weekly_plan_import_ready', {
+            source: importSource,
+          });
+        }
         analytics.track('import_completed', {
           source: importSource,
           during_onboarding: isOnboarding,
@@ -274,7 +283,7 @@ export default function ShareIntentScreen() {
         });
       }
     })();
-  }, [params.url, router]);
+  }, [params.url, params.isPlanImport, router]);
 
   const handleGoHome = () => {
     // Un import raté pendant l'onboarding ne doit pas éjecter vers les onglets :
