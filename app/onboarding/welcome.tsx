@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
-import React, { useEffect, useRef, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Easing,
@@ -41,6 +41,9 @@ export default function WelcomeVideoScreen() {
   const curveLeft = -(curveWidth - width) / 2;
 
   const [isStarting, setIsStarting] = useState(false);
+  useFocusEffect(useCallback(() => {
+    setIsStarting(false);
+  }, []));
 
   const mascotTranslateY = useRef(new Animated.Value(height * 0.25)).current;
   const mascotOpacity = useRef(new Animated.Value(0)).current;
@@ -157,7 +160,7 @@ export default function WelcomeVideoScreen() {
       } catch { }
     })();
 
-    router.replace('/onboarding/formQuestion');
+    router.push('/onboarding/formQuestion');
   };
 
   return (

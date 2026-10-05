@@ -1,0 +1,17 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const vm = require('node:vm');
+const ts = require('typescript');
+const loaded = {};
+const source = fs.readFileSync(require.resolve('../services/planningReveal.ts'), 'utf8');
+vm.runInNewContext(ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: loaded });
+const { markPlanningReveal: mark, consumePlanningReveal: consume } = loaded;
+assert.equal(consume('existing'), false, 'existing plans never animate automatically');
+mark('new');
+assert.equal(consume('other'), false);
+assert.equal(consume('new'), true, 'generation grants the first reveal');
+assert.equal(consume('new'), false, 'focus or remount cannot replay it');
+mark('new');
+assert.equal(consume('new'), true, 'explicit regeneration grants a new reveal');
+assert.equal(consume('new'), false);
+console.log('Planning reveal once: existing, generated, consumed and regenerated plans passed.');

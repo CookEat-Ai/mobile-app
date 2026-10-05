@@ -43,6 +43,7 @@ function loadService({ failConfigure = false, failInvalidate = false } = {}) {
   vm.runInNewContext(code, {
     exports, console: { log() {}, warn() {}, error() {} }, Date,
     require: id => {
+      if (id === './storeCompliance') return { CREATOR_PROMO_CODES_ENABLED: false };
       if (id === 'react-native-purchases') return purchases;
       if (id === 'react-native') return { Platform: { OS: 'ios' } };
       if (id === '@react-native-async-storage/async-storage') return {

@@ -1,3 +1,5 @@
+import { IngredientCategoryAddModal } from '../components/IngredientCategoryAddModal';
+import { ingredientCategories as getIngredientCategories } from '../services/ingredientCategories';
 import { EntranceView } from '../components/motion/Entrance';
 import { NavigationIconButton } from '../components/NavigationIconButton';
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
@@ -57,244 +59,7 @@ const MIN_INGREDIENTS = 5;
 
 export default function RecipeSummaryScreen() {
   const { t } = useTranslation();
-  const ingredientCategories = useMemo(() => [
-    {
-      id: 'legumes',
-      title: t('home.categories.vegetables.title'),
-      icon: '🥬',
-      ingredients: [
-        { id: 'carotte', name: t('home.categories.vegetables.carrot'), icon: '🥕' },
-        { id: 'tomate', name: t('home.categories.vegetables.tomato'), icon: '🍅' },
-        { id: 'oignon', name: t('home.categories.vegetables.onion'), icon: '🧅' },
-        { id: 'poivron', name: t('home.categories.vegetables.pepper'), icon: '🫑' },
-        { id: 'courgette', name: t('home.categories.vegetables.courgette'), icon: '🥒' },
-        { id: 'brocoli', name: t('home.categories.vegetables.broccoli'), icon: '🥦' },
-        { id: 'epinard', name: t('home.categories.vegetables.spinach'), icon: '🥬' },
-        { id: 'poireau', name: t('home.categories.vegetables.leek'), icon: '🧄' },
-        { id: 'ail', name: t('home.categories.vegetables.garlic'), icon: '🧄' },
-        { id: 'champignon', name: t('home.categories.vegetables.mushroom'), icon: '🍄' },
-        { id: 'concombre', name: t('home.categories.vegetables.cucumber'), icon: '🥒' },
-        { id: 'chou-fleur', name: t('home.categories.vegetables.cauliflower'), icon: '🥬' },
-        { id: 'pomme-de-terre', name: t('home.categories.vegetables.potato'), icon: '🥔' },
-        { id: 'patate-douce', name: t('home.categories.vegetables.sweetPotato'), icon: '🍠' },
-        { id: 'aubergine', name: t('home.categories.vegetables.eggplant'), icon: '🍆' },
-        { id: 'salade', name: t('home.categories.vegetables.lettuce'), icon: '🥗' },
-        { id: 'haricot-vert', name: t('home.categories.vegetables.greenBeans'), icon: '🫛' },
-        { id: 'petits-pois', name: t('home.categories.vegetables.peas'), icon: '🫛' },
-        { id: 'mais', name: t('home.categories.vegetables.corn'), icon: '🌽' },
-        { id: 'potiron', name: t('home.categories.vegetables.pumpkin'), icon: '🎃' },
-        { id: 'butternut', name: t('home.categories.vegetables.butternut'), icon: '🎃' },
-        { id: 'chou', name: t('home.categories.vegetables.cabbage'), icon: '🥬' },
-        { id: 'chou-de-bruxelles', name: t('home.categories.vegetables.brusselsSprouts'), icon: '🥬' },
-        { id: 'radis', name: t('home.categories.vegetables.radish'), icon: '🥬' },
-        { id: 'betterave', name: t('home.categories.vegetables.beetroot'), icon: '🥬' },
-        { id: 'navet', name: t('home.categories.vegetables.turnip'), icon: '🥬' },
-        { id: 'celeri', name: t('home.categories.vegetables.celery'), icon: '🥬' },
-        { id: 'fenouil', name: t('home.categories.vegetables.fennel'), icon: '🥬' },
-        { id: 'asperge', name: t('home.categories.vegetables.asparagus'), icon: '🥬' },
-        { id: 'artichaut', name: t('home.categories.vegetables.artichoke'), icon: '🥬' },
-        { id: 'avocat', name: t('home.categories.vegetables.avocado'), icon: '🥑' },
-        { id: 'echalote', name: t('home.categories.vegetables.shallot'), icon: '🧅' },
-        { id: 'endive', name: t('home.categories.vegetables.endive'), icon: '🥬' },
-        { id: 'olive', name: t('home.categories.vegetables.olive'), icon: '🫒' },
-      ]
-    },
-    {
-      id: 'viandes',
-      title: t('home.categories.meats.title'),
-      icon: '🍖',
-      ingredients: [
-        { id: 'poulet', name: t('home.categories.meats.chicken'), icon: '🍗' },
-        { id: 'boeuf', name: t('home.categories.meats.beef'), icon: '🥩' },
-        { id: 'porc', name: t('home.categories.meats.pork'), icon: '🥓' },
-        { id: 'agneau', name: t('home.categories.meats.lamb'), icon: '🐑' },
-        { id: 'dinde', name: t('home.categories.meats.turkey'), icon: '🦃' },
-        { id: 'veau', name: t('home.categories.meats.veal'), icon: '🐄' },
-        { id: 'canard', name: t('home.categories.meats.duck'), icon: '🦆' },
-        { id: 'lapin', name: t('home.categories.meats.rabbit'), icon: '🐇' },
-        { id: 'jambon', name: t('home.categories.meats.ham'), icon: '🍖' },
-        { id: 'lardon', name: t('home.categories.meats.bacon'), icon: '🥓' },
-        { id: 'saucisse', name: t('home.categories.meats.sausage'), icon: '🌭' },
-        { id: 'chorizo', name: t('home.categories.meats.chorizo'), icon: '🌭' },
-        { id: 'merguez', name: t('home.categories.meats.merguez'), icon: '🌭' },
-        { id: 'steak-hache', name: t('home.categories.meats.mincedBeef'), icon: '🥩' },
-        { id: 'blanc-de-poulet', name: t('home.categories.meats.chickenBreast'), icon: '🍗' },
-        { id: 'cuisse-de-poulet', name: t('home.categories.meats.chickenThigh'), icon: '🍗' },
-        { id: 'cote-de-porc', name: t('home.categories.meats.porkChop'), icon: '🍖' },
-        { id: 'boulette', name: t('home.categories.meats.meatballs'), icon: '🍖' },
-      ]
-    },
-    {
-      id: 'poissons',
-      title: t('home.categories.fish.title'),
-      icon: '🐟',
-      ingredients: [
-        { id: 'saumon', name: t('home.categories.fish.salmon'), icon: '🐟' },
-        { id: 'thon', name: t('home.categories.fish.tuna'), icon: '🐠' },
-        { id: 'cabillaud', name: t('home.categories.fish.cod'), icon: '🐡' },
-        { id: 'sardine', name: t('home.categories.fish.sardine'), icon: '🐟' },
-        { id: 'maquereau', name: t('home.categories.fish.maquereau'), icon: '🐠' },
-        { id: 'bar', name: t('home.categories.fish.bar'), icon: '🐡' },
-        { id: 'truite', name: t('home.categories.fish.trout'), icon: '🐟' },
-        { id: 'colin', name: t('home.categories.fish.hake'), icon: '🐟' },
-        { id: 'sole', name: t('home.categories.fish.sole'), icon: '🐟' },
-        { id: 'dorade', name: t('home.categories.fish.seabream'), icon: '🐠' },
-        { id: 'haddock', name: t('home.categories.fish.haddock'), icon: '🐟' },
-        { id: 'anchois', name: t('home.categories.fish.anchovy'), icon: '🐟' },
-        { id: 'crevette', name: t('home.categories.fish.shrimp'), icon: '🍤' },
-        { id: 'moule', name: t('home.categories.fish.mussels'), icon: '🦪' },
-        { id: 'calamar', name: t('home.categories.fish.squid'), icon: '🦑' },
-        { id: 'crabe', name: t('home.categories.fish.crab'), icon: '🦀' },
-        { id: 'homard', name: t('home.categories.fish.lobster'), icon: '🦞' },
-        { id: 'saint-jacques', name: t('home.categories.fish.scallop'), icon: '🦪' },
-        { id: 'surimi', name: t('home.categories.fish.surimi'), icon: '🍥' },
-      ]
-    },
-    {
-      id: 'necessites',
-      title: t('home.categories.essentials.title'),
-      icon: '🍚',
-      ingredients: [
-        { id: 'pates', name: t('home.categories.essentials.pasta'), icon: '🍝' },
-        { id: 'riz', name: t('home.categories.essentials.rice'), icon: '🍚' },
-        { id: 'semoule', name: t('home.categories.essentials.semolina'), icon: '🍚' },
-        { id: 'creme', name: t('home.categories.essentials.cream'), icon: '🥛' },
-        { id: 'lait', name: t('home.categories.essentials.milk'), icon: '🥛' },
-        { id: 'huile', name: t('home.categories.essentials.oil'), icon: '🫒' },
-        { id: 'beurre', name: t('home.categories.essentials.butter'), icon: '🧈' },
-        { id: 'oeufs', name: t('home.categories.essentials.eggs'), icon: '🥚' },
-        { id: 'farine', name: t('home.categories.essentials.flour'), icon: '🌾' },
-        { id: 'pain', name: t('home.categories.essentials.bread'), icon: '🍞' },
-        { id: 'chapelure', name: t('home.categories.essentials.breadcrumbs'), icon: '🍞' },
-        { id: 'quinoa', name: t('home.categories.essentials.quinoa'), icon: '🌾' },
-        { id: 'boulgour', name: t('home.categories.essentials.bulgur'), icon: '🌾' },
-        { id: 'avoine', name: t('home.categories.essentials.oats'), icon: '🌾' },
-        { id: 'lentille', name: t('home.categories.essentials.lentils'), icon: '🫘' },
-        { id: 'pois-chiche', name: t('home.categories.essentials.chickpeas'), icon: '🫛' },
-        { id: 'haricot-rouge', name: t('home.categories.essentials.redBeans'), icon: '🫘' },
-        { id: 'haricot-blanc', name: t('home.categories.essentials.whiteBeans'), icon: '🫘' },
-        { id: 'sucre', name: t('home.categories.essentials.sugar'), icon: '🍬' },
-        { id: 'levure', name: t('home.categories.essentials.yeast'), icon: '🫙' },
-        { id: 'yaourt', name: t('home.categories.essentials.yogurt'), icon: '🥛' },
-        { id: 'lait-de-coco', name: t('home.categories.essentials.coconutMilk'), icon: '🥥' },
-        { id: 'sauce-tomate', name: t('home.categories.essentials.tomatoSauce'), icon: '🥫' },
-        { id: 'tomate-concassee', name: t('home.categories.essentials.cannedTomatoes'), icon: '🥫' },
-        { id: 'pate-feuilletee', name: t('home.categories.essentials.puffPastry'), icon: '🥐' },
-        { id: 'pate-brisee', name: t('home.categories.essentials.shortcrustPastry'), icon: '🥧' },
-        { id: 'bouillon', name: t('home.categories.essentials.stock'), icon: '🫙' },
-        { id: 'huile-tournesol', name: t('home.categories.essentials.sunflowerOil'), icon: '🌻' },
-        { id: 'tofu', name: t('home.categories.essentials.tofu'), icon: '🍢' },
-        { id: 'noix', name: t('home.categories.essentials.walnut'), icon: '🌰' },
-        { id: 'amande', name: t('home.categories.essentials.almond'), icon: '🌰' },
-        { id: 'noisette', name: t('home.categories.essentials.hazelnut'), icon: '🌰' },
-        { id: 'pignon', name: t('home.categories.essentials.pineNuts'), icon: '🌰' },
-      ]
-    },
-    {
-      id: 'fromages',
-      title: t('home.categories.cheeses.title'),
-      icon: '🧀',
-      ingredients: [
-        { id: 'emmental', name: t('home.categories.cheeses.emmental'), icon: '🧀' },
-        { id: 'cheddar', name: t('home.categories.cheeses.cheddar'), icon: '🧀' },
-        { id: 'mozzarella', name: t('home.categories.cheeses.mozzarella'), icon: '🧀' },
-        { id: 'parmesan', name: t('home.categories.cheeses.parmesan'), icon: '🧀' },
-        { id: 'brie', name: t('home.categories.cheeses.brie'), icon: '🧀' },
-        { id: 'camembert', name: t('home.categories.cheeses.camembert'), icon: '🧀' },
-        { id: 'roquefort', name: t('home.categories.cheeses.roquefort'), icon: '🧀' },
-        { id: 'feta', name: t('home.categories.cheeses.feta'), icon: '🧀' },
-        { id: 'chevre', name: t('home.categories.cheeses.goat'), icon: '🧀' },
-        { id: 'gruyere', name: t('home.categories.cheeses.gruyere'), icon: '🧀' },
-        { id: 'comte', name: t('home.categories.cheeses.comte'), icon: '🧀' },
-        { id: 'raclette', name: t('home.categories.cheeses.raclette'), icon: '🧀' },
-        { id: 'reblochon', name: t('home.categories.cheeses.reblochon'), icon: '🧀' },
-        { id: 'ricotta', name: t('home.categories.cheeses.ricotta'), icon: '🧀' },
-        { id: 'mascarpone', name: t('home.categories.cheeses.mascarpone'), icon: '🧀' },
-        { id: 'burrata', name: t('home.categories.cheeses.burrata'), icon: '🧀' },
-        { id: 'bleu', name: t('home.categories.cheeses.blueCheese'), icon: '🧀' },
-        { id: 'gorgonzola', name: t('home.categories.cheeses.gorgonzola'), icon: '🧀' },
-        { id: 'fromage-frais', name: t('home.categories.cheeses.creamCheese'), icon: '🧀' },
-        { id: 'halloumi', name: t('home.categories.cheeses.halloumi'), icon: '🧀' },
-      ]
-    },
-    {
-      id: 'epices',
-      title: t('home.categories.spices.title'),
-      icon: '🌶️',
-      ingredients: [
-        { id: 'sel', name: t('home.categories.spices.salt'), icon: '🧂' },
-        { id: 'poivre', name: t('home.categories.spices.pepper'), icon: '🫙' },
-        { id: 'paprika', name: t('home.categories.spices.paprika'), icon: '🌶️' },
-        { id: 'cumin', name: t('home.categories.spices.cumin'), icon: '🌿' },
-        { id: 'curry', name: t('home.categories.spices.curry'), icon: '🫙' },
-        { id: 'herbes', name: t('home.categories.spices.herbes'), icon: '🌿' },
-        { id: 'basilic', name: t('home.categories.spices.basil'), icon: '🌿' },
-        { id: 'persil', name: t('home.categories.spices.parsley'), icon: '🌿' },
-        { id: 'coriandre', name: t('home.categories.spices.coriander'), icon: '🌿' },
-        { id: 'cannelle', name: t('home.categories.spices.cinnamon'), icon: '🫙' },
-        { id: 'gingembre', name: t('home.categories.spices.ginger'), icon: '🫚' },
-        { id: 'moutarde', name: t('home.categories.spices.mustard'), icon: '🫙' },
-        { id: 'vinaigre', name: t('home.categories.spices.vinegar'), icon: '🫙' },
-        { id: 'miel', name: t('home.categories.spices.honey'), icon: '🍯' },
-        { id: 'citron', name: t('home.categories.spices.lemon'), icon: '🍋' },
-        { id: 'origan', name: t('home.categories.spices.oregano'), icon: '🌿' },
-        { id: 'thym', name: t('home.categories.spices.thyme'), icon: '🌿' },
-        { id: 'piment', name: t('home.categories.spices.chili'), icon: '🌶️' },
-        { id: 'curcuma', name: t('home.categories.spices.turmeric'), icon: '🌿' },
-        { id: 'muscade', name: t('home.categories.spices.nutmeg'), icon: '🫙' },
-        { id: 'romarin', name: t('home.categories.spices.rosemary'), icon: '🌿' },
-        { id: 'laurier', name: t('home.categories.spices.bayLeaf'), icon: '🌿' },
-        { id: 'menthe', name: t('home.categories.spices.mint'), icon: '🌿' },
-        { id: 'ciboulette', name: t('home.categories.spices.chives'), icon: '🌿' },
-        { id: 'aneth', name: t('home.categories.spices.dill'), icon: '🌿' },
-        { id: 'estragon', name: t('home.categories.spices.tarragon'), icon: '🌿' },
-        { id: 'sesame', name: t('home.categories.spices.sesame'), icon: '🌰' },
-        { id: 'sauce-soja', name: t('home.categories.spices.soySauce'), icon: '🫙' },
-        { id: 'ketchup', name: t('home.categories.spices.ketchup'), icon: '🍅' },
-        { id: 'mayonnaise', name: t('home.categories.spices.mayonnaise'), icon: '🥫' },
-        { id: 'harissa', name: t('home.categories.spices.harissa'), icon: '🌶️' },
-        { id: 'ras-el-hanout', name: t('home.categories.spices.rasElHanout'), icon: '🫙' },
-        { id: 'garam-masala', name: t('home.categories.spices.garamMasala'), icon: '🫙' },
-        { id: 'cayenne', name: t('home.categories.spices.cayenne'), icon: '🌶️' },
-        { id: 'vanille', name: t('home.categories.spices.vanilla'), icon: '🫙' },
-        { id: 'cacao', name: t('home.categories.spices.cocoa'), icon: '🍫' },
-        { id: 'capre', name: t('home.categories.spices.capers'), icon: '🫒' },
-        { id: 'cornichon', name: t('home.categories.spices.pickles'), icon: '🥒' },
-        { id: 'balsamique', name: t('home.categories.spices.balsamic'), icon: '🫙' },
-      ]
-    },
-    {
-      id: 'fruits',
-      title: t('home.categories.fruits.title'),
-      icon: '🍎',
-      ingredients: [
-        { id: 'pomme', name: t('home.categories.fruits.apple'), icon: '🍎' },
-        { id: 'banane', name: t('home.categories.fruits.banana'), icon: '🍌' },
-        { id: 'orange', name: t('home.categories.fruits.orange'), icon: '🍊' },
-        { id: 'fraise', name: t('home.categories.fruits.strawberry'), icon: '🍓' },
-        { id: 'raisin', name: t('home.categories.fruits.raisin'), icon: '🍇' },
-        { id: 'kiwi', name: t('home.categories.fruits.kiwi'), icon: '🥝' },
-        { id: 'ananas', name: t('home.categories.fruits.pineapple'), icon: '🍍' },
-        { id: 'mangue', name: t('home.categories.fruits.mango'), icon: '🥭' },
-        { id: 'poire', name: t('home.categories.fruits.pear'), icon: '🍐' },
-        { id: 'peche', name: t('home.categories.fruits.peach'), icon: '🍑' },
-        { id: 'abricot', name: t('home.categories.fruits.apricot'), icon: '🍑' },
-        { id: 'prune', name: t('home.categories.fruits.plum'), icon: '🍑' },
-        { id: 'cerise', name: t('home.categories.fruits.cherry'), icon: '🍒' },
-        { id: 'framboise', name: t('home.categories.fruits.raspberry'), icon: '🫐' },
-        { id: 'myrtille', name: t('home.categories.fruits.blueberry'), icon: '🫐' },
-        { id: 'mure', name: t('home.categories.fruits.blackberry'), icon: '🫐' },
-        { id: 'pasteque', name: t('home.categories.fruits.watermelon'), icon: '🍉' },
-        { id: 'melon', name: t('home.categories.fruits.melon'), icon: '🍈' },
-        { id: 'citron-vert', name: t('home.categories.fruits.lime'), icon: '🍋' },
-        { id: 'pamplemousse', name: t('home.categories.fruits.grapefruit'), icon: '🍊' },
-        { id: 'noix-de-coco', name: t('home.categories.fruits.coconut'), icon: '🥥' },
-        { id: 'figue', name: t('home.categories.fruits.fig'), icon: '🍈' },
-        { id: 'datte', name: t('home.categories.fruits.date'), icon: '🌴' },
-        { id: 'clementine', name: t('home.categories.fruits.clementine'), icon: '🍊' },
-      ]
-    }
-  ], []);
+  const ingredientCategories = useMemo(() => getIngredientCategories(t), [t]);
 
   const DISH_TYPES = useMemo(() => [
     { id: 'all', label: t('recipeSummary.any') },
@@ -384,8 +149,6 @@ export default function RecipeSummaryScreen() {
   const [isAddingIngredient, setIsAddingIngredient] = useState(false);
   const [categoryAddModalCategoryId, setCategoryAddModalCategoryId] = useState<string | null>(null);
   const [isCategoryAddModalVisible, setIsCategoryAddModalVisible] = useState(false);
-  const [selectedIngredientsForCategoryModal, setSelectedIngredientsForCategoryModal] = useState<string[]>([]);
-  const [categoryAddModalSearch, setCategoryAddModalSearch] = useState('');
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   // `useResponsive` suit la rotation et le Split View, contrairement à l'ancien
   // `Dimensions.get('window')` figé à l'import.
@@ -394,7 +157,6 @@ export default function RecipeSummaryScreen() {
   // pastille cesse de grandir et la grille passe simplement à plus de colonnes.
   const chipWidth = (Math.min(windowWidth, 480) - 125) / 3;
   const filterSlideAnim = useRef(new Animated.Value(screenHeight)).current;
-  const categoryAddSlideAnim = useRef(new Animated.Value(screenHeight)).current;
 
   const [preferences, setPreferences] = useState<RecipePreferences>({
     ...DEFAULT_RECIPE_PREFERENCES,
@@ -525,56 +287,7 @@ export default function RecipeSummaryScreen() {
   const openCategoryAddModal = (categoryId: string) => {
     Keyboard.dismiss();
     setCategoryAddModalCategoryId(categoryId);
-    setSelectedIngredientsForCategoryModal([]);
-    setCategoryAddModalSearch('');
     setIsCategoryAddModalVisible(true);
-  };
-
-  const closeCategoryAddModal = () => {
-    Keyboard.dismiss();
-    Animated.timing(categoryAddSlideAnim, {
-      toValue: screenHeight,
-      duration: 300,
-      useNativeDriver: false,
-    }).start(() => {
-      setIsCategoryAddModalVisible(false);
-      setCategoryAddModalCategoryId(null);
-      setSelectedIngredientsForCategoryModal([]);
-      setCategoryAddModalSearch('');
-    });
-  };
-
-  const toggleCategoryModalIngredient = (ingredientName: string) => {
-    setSelectedIngredientsForCategoryModal(prev => {
-      const normalized = normalizeIngredientName(ingredientName);
-      const isSelected = prev.some(n => normalizeIngredientName(n) === normalized);
-      if (isSelected) return prev.filter(n => normalizeIngredientName(n) !== normalized);
-      return [...prev, ingredientName];
-    });
-  };
-
-  const confirmCategoryAddModal = () => {
-    if (!categoryAddModalCategoryId) return;
-    const toAdd: Ingredient[] = [];
-    for (const name of selectedIngredientsForCategoryModal) {
-      const normalized = normalizeIngredientName(name);
-      const alreadyThere = ingredients.some(i => normalizeIngredientName(i.name) === normalized);
-      if (!alreadyThere) {
-        toAdd.push({
-          id: Date.now().toString() + Math.random(),
-          name: name.charAt(0).toUpperCase() + name.slice(1).toLowerCase(),
-          category: categoryAddModalCategoryId,
-        });
-      }
-    }
-    if (toAdd.length > 0) {
-      setIngredients(prev => {
-        const updated = [...prev, ...toAdd];
-        saveIngredientsToPantry(updated);
-        return updated;
-      });
-    }
-    closeCategoryAddModal();
   };
 
   useEffect(() => {
@@ -589,20 +302,6 @@ export default function RecipeSummaryScreen() {
       filterSlideAnim.setValue(screenHeight);
     }
   }, [isFilterModalVisible, filterSlideAnim, screenHeight]);
-
-  useEffect(() => {
-    if (isCategoryAddModalVisible) {
-      categoryAddSlideAnim.setValue(screenHeight);
-      Animated.spring(categoryAddSlideAnim, {
-        toValue: 0,
-        useNativeDriver: false,
-        tension: 50,
-        friction: 8,
-      }).start();
-    } else {
-      categoryAddSlideAnim.setValue(screenHeight);
-    }
-  }, [isCategoryAddModalVisible]);
 
   const saveIngredientsToPantry = async (items: Ingredient[]) => {
     try {
@@ -1218,121 +917,13 @@ export default function RecipeSummaryScreen() {
       </ScrollView>
 
       {/* Modal ajout par catégorie (ouverture type modale abonnement) */}
-      <Modal
-        visible={isCategoryAddModalVisible}
-        transparent={true}
-        animationType="fade"
-        statusBarTranslucent={true}
-        onRequestClose={closeCategoryAddModal}
-      >
-        <View
-          style={styles.modalOverlay}
-          onTouchEnd={(e) => {
-            if (e.target === e.currentTarget) closeCategoryAddModal();
-          }}
-        >
-          <Animated.View
-            style={[
-              styles.modalContent,
-              styles.categoryAddModalContent,
-              {
-                // Le clavier de la recherche recouvrirait le bouton "Ajouter" : on
-                // remonte la carte et on réduit sa hauteur max de la même quantité.
-                maxHeight: (screenHeight - keyboardHeight) * 0.85,
-                marginBottom: keyboardHeight,
-                transform: [{ translateY: categoryAddSlideAnim }],
-                paddingBottom: 0,
-              },
-            ]}
-          >
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>
-                {categoryAddModalCategoryId ? (CATEGORY_META[categoryAddModalCategoryId]?.title ?? categoryAddModalCategoryId) : ''}
-              </Text>
-              <NavigationIconButton kind="close" onPress={closeCategoryAddModal} style={styles.modalCloseButton} />
-            </View>
-            <View style={styles.categoryAddModalSearchBar}>
-              <IconSymbol name="search" size={18} color="#9A9A9A" />
-              <TextInput
-                style={styles.categoryAddModalSearchInput}
-                placeholder={t('recipeSummary.searchIngredientPlaceholder')}
-                placeholderTextColor="#9A9A9A"
-                value={categoryAddModalSearch}
-                onChangeText={setCategoryAddModalSearch}
-                autoCorrect={false}
-                autoCapitalize="none"
-                returnKeyType="search"
-                onSubmitEditing={Keyboard.dismiss}
-              />
-              {categoryAddModalSearch.length > 0 && (
-                <TouchableOpacity onPress={() => setCategoryAddModalSearch('')} hitSlop={10}>
-                  <IconSymbol name="close" size={18} color="#9A9A9A" />
-                </TouchableOpacity>
-              )}
-            </View>
-            <ScrollView
-              style={styles.categoryAddModalBody}
-              contentContainerStyle={styles.categoryAddModalBodyContent}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps="always"
-              keyboardDismissMode="on-drag"
-            >
-              {categoryAddModalCategoryId && (() => {
-                const category = ingredientCategories.find(c => c.id === categoryAddModalCategoryId);
-                if (!category) return null;
-                const search = deburr(categoryAddModalSearch);
-                const availableIngredients = category.ingredients.filter(
-                  (ing: { name: string }) => !ingredients.some(i => normalizeIngredientName(i.name) === normalizeIngredientName(ing.name))
-                    && (!search || deburr(ing.name).includes(search))
-                );
-                if (availableIngredients.length === 0) {
-                  return (
-                    <Text style={styles.categoryAddModalEmptyText}>
-                      {search ? t('recipeSummary.noIngredientFound') : t('recipeSummary.allIngredientsAdded')}
-                    </Text>
-                  );
-                }
-                return (
-                  <View style={styles.categoryAddModalGrid}>
-                    {availableIngredients.map((ingredient: { id: string; name: string; icon: string }) => {
-                      const isSelected = selectedIngredientsForCategoryModal.some(
-                        n => normalizeIngredientName(n) === normalizeIngredientName(ingredient.name)
-                      );
-                      return (
-                        <Pressable
-                          key={ingredient.id}
-                          style={({ pressed }) => [
-                            styles.manualIngredientItem,
-                            { width: chipWidth },
-                            isSelected && styles.ingredientItemSelected,
-                            pressed && { opacity: 0.7 }
-                          ]}
-                          onPress={() => toggleCategoryModalIngredient(ingredient.name)}
-                          hitSlop={8}
-                        >
-                          <Text style={styles.ingredientIcon}>{ingredient.icon}</Text>
-                          <Text style={[styles.manualIngredientName, isSelected && styles.ingredientNameSelected]}>
-                            {ingredient.name}
-                          </Text>
-                        </Pressable>
-                      );
-                    })}
-                  </View>
-                );
-              })()}
-            </ScrollView>
-            <View style={[styles.categoryAddModalFooter, { paddingBottom: keyboardHeight > 0 ? 16 : Math.max(insets.bottom, 16) + 8 }]}>
-              <TouchableOpacity
-                style={[styles.categoryAddModalButton, selectedIngredientsForCategoryModal.length === 0 && styles.categoryAddModalButtonDisabled]}
-                onPress={confirmCategoryAddModal}
-                disabled={selectedIngredientsForCategoryModal.length === 0}
-              >
-                <Text style={styles.categoryAddModalButtonText}>{t('recipeSummary.add')}</Text>
-              </TouchableOpacity>
-            </View>
-          </Animated.View>
-        </View>
-      </Modal>
+      <IngredientCategoryAddModal visible={isCategoryAddModalVisible} initialCategoryId={categoryAddModalCategoryId || undefined} ingredients={ingredients} onClose={() => { setIsCategoryAddModalVisible(false); setCategoryAddModalCategoryId(null); }} onAdd={items => {
+        setIngredients(prev => {
+          const updated = [...prev, ...items.filter(item => !prev.some(existing => normalizeIngredientName(existing.name) === normalizeIngredientName(item.name))).map(item => ({ ...item, id: Date.now().toString() + Math.random() }))];
+          void saveIngredientsToPantry(updated);
+          return updated;
+        });
+      }} />
 
       {/* Modal des filtres */}
       <Modal

@@ -31,6 +31,7 @@ export function roundNutritionValue(value: unknown): number {
 }
 
 export type PlanningGenerationSettings = {
+  servings?: number;
   cookingDays: number[];
   includeSnack: boolean;
   duration: 'all' | 'fast' | 'medium';
@@ -38,11 +39,14 @@ export type PlanningGenerationSettings = {
   cuisineIds: string[];
   diet: 'none' | 'vegetarian' | 'vegan';
   excludedIngredients: string[];
+  pantryIngredients?: string[];
+  pantryMode?: 'priority' | 'strict';
 };
 
 export const DEFAULT_PLANNING_GENERATION_SETTINGS: PlanningGenerationSettings = {
+  servings: 1,
   cookingDays: [...DEFAULT_COOKING_DAYS],
-  includeSnack: false,
+  includeSnack: true,
   duration: 'all',
   mealsByDay: dailyMealsForDays([...DEFAULT_COOKING_DAYS]),
   cuisineIds: [],
@@ -53,7 +57,7 @@ export const DEFAULT_PLANNING_GENERATION_SETTINGS: PlanningGenerationSettings = 
 const REQUIRED_MEAL_TYPES = ['breakfast', 'lunch', 'dinner'] as const;
 
 export function dailyMealsForDays(cookingDays: number[]): Record<string, PlanningMealType[]> {
-  return Object.fromEntries(normalizeCookingDays(cookingDays).map(day => [String(day), ['breakfast', 'lunch', 'dinner']]));
+  return Object.fromEntries(normalizeCookingDays(cookingDays).map(day => [String(day), ['breakfast', 'lunch', 'snack', 'dinner']]));
 }
 
 /**
@@ -153,7 +157,10 @@ export async function loadPlanningGenerationSettings(): Promise<PlanningGenerati
     const cookingDays = normalizeCookingDays(parsed.cookingDays);
     return {
       cookingDays,
-      includeSnack: false,
+      servings: Math.min(20, Math.max(1, Math.trunc(Number(parsed.servings) || 1))),
+      pantryIngredients: Array.isArray(parsed.pantryIngredients) ? parsed.pantryIngredients.map(String).map(item => item.trim()).filter(Boolean).slice(0, 100) : [],
+      pantryMode: parsed.pantryMode === 'strict' ? 'strict' : 'priority',
+      includeSnack: true,
       duration: parsed.duration === 'fast' || parsed.duration === 'medium' ? parsed.duration : 'all',
       mealsByDay: dailyMealsForDays(cookingDays),
       cuisineIds: Array.isArray(parsed.cuisineIds) ? [...new Set(parsed.cuisineIds.map(String).filter(Boolean))] : [],
@@ -175,12 +182,15 @@ export async function loadPlanningGenerationSettings(): Promise<PlanningGenerati
 
 export async function savePlanningGenerationSettings(settings: PlanningGenerationSettings): Promise<void> {
   await AsyncStorage.setItem(PLANNING_GENERATION_SETTINGS_KEY, JSON.stringify({
+    servings: Math.min(20, Math.max(1, Math.trunc(Number(settings.servings) || 1))),
     cookingDays: normalizeCookingDays(settings.cookingDays),
-    includeSnack: false,
+    includeSnack: true,
     duration: settings.duration,
     mealsByDay: dailyMealsForDays(settings.cookingDays),
     cuisineIds: [...new Set(settings.cuisineIds.map(String).filter(Boolean))],
     diet: settings.diet,
+    pantryIngredients: settings.pantryIngredients || [],
+    pantryMode: settings.pantryMode || 'priority',
     excludedIngredients: [...new Set(settings.excludedIngredients.map(String).map((item) => item.trim()).filter(Boolean))],
   }));
 }

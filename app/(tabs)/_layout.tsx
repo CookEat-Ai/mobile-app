@@ -1,6 +1,7 @@
+import { createSettingsTapDetector, requestPresentationModePrompt } from '../../services/presentationModeTrigger';
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import React from 'react';
+import React, { useRef } from 'react';
 import { Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +11,7 @@ import { getTabBarHeight } from '../../constants/Layout';
 import { useResponsive } from '../../hooks/useResponsive';
 
 export default function TabLayout() {
+  const settingsTaps = useRef(createSettingsTapDetector());
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const { width, height, isTablet, isShortScreen, font } = useResponsive();
@@ -19,6 +21,11 @@ export default function TabLayout() {
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <Tabs
+        screenListeners={({ route }) => ({
+          tabPress: () => {
+            if (__DEV__ && settingsTaps.current(route.name === 'profile', Date.now())) requestPresentationModePrompt();
+          },
+        })}
         screenOptions={{
           headerShown: false,
           tabBarButton: HapticTab,

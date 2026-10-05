@@ -1,3 +1,4 @@
+import { CREATOR_PROMO_CODES_ENABLED } from '../../config/storeCompliance';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -11,7 +12,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
+import { Redirect, router, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { feedback } from '../../services/haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -25,6 +26,11 @@ import { Ionicons } from '@expo/vector-icons';
 
 
 export default function PromoCodeScreen() {
+  if (!CREATOR_PROMO_CODES_ENABLED) return <Redirect href="/onboarding/offerTrial?source=onboarding_weekly_planning" />;
+  return <CreatorPromoCodeScreen />;
+}
+
+function CreatorPromoCodeScreen() {
   const insets = useSafeAreaInsets();
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
@@ -287,7 +293,9 @@ export default function PromoCodeScreen() {
 
           {(!success || restoredCode) && (
             <TouchableOpacity
-              activeOpacity={0.6}
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: loading }}
               style={[styles.skipButton, loading && { opacity: 0.5 }]}
               onPress={handleSkip}
               disabled={loading}
@@ -430,13 +438,21 @@ const styles = StyleSheet.create({
     fontFamily: 'Degular',
   },
   skipButton: {
-    paddingVertical: 8,
+    width: '100%',
+    minHeight: 56,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 100,
+    borderWidth: 1.5,
+    borderColor: '#BDB49C',
+    backgroundColor: '#FFFDF5',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   skipButtonText: {
-    color: '#8C8C8C',
-    fontSize: 16,
-    fontFamily: 'CronosPro',
-    textDecorationLine: 'underline',
+    color: Colors.light.text,
+    fontSize: 19,
+    fontFamily: 'Degular',
+    textAlign: 'center',
   },
 });

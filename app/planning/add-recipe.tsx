@@ -1,3 +1,4 @@
+import { compatiblePlanningSlots } from '../../services/planningDisplay';
 import { invalidatePlanning } from '../../services/planningUpdates';
 import { EntranceView } from '../../components/motion/Entrance';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
@@ -57,9 +58,7 @@ export default function AddRecipeToPlanScreen() {
     return () => { active = false; };
   }, [recipeId, t]);
 
-  const meals = useMemo(() => (plan?.meals || [])
-    .filter(meal => !!meal.mealType && recipe?.replacementMealTypes?.includes(meal.mealType))
-    .sort((a, b) => ((a.dayIndex || 0) - (b.dayIndex || 0)) || a.position - b.position), [plan?.meals, recipe]);
+  const slots = useMemo(() => plan && recipe ? compatiblePlanningSlots(plan, recipe.replacementMealTypes || []) : [], [plan, recipe]);
   const day = (dayIndex = 0) => {
     if (!plan) return '';
     const date = new Date(`${plan.weekStart}T12:00:00`);
@@ -69,17 +68,20 @@ export default function AddRecipeToPlanScreen() {
   };
 
   const replace = async (slotId: string) => {
-    if (!plan || !recipeId || replacing || !meals.some(meal => meal.slotId === slotId)) return;
+    const slot = slots.find(item => item.slotId === slotId);
+    if (!plan || !recipeId || replacing || !slot) return;
     setReplacing(slotId);
     setError(null);
     try {
       const userId = await AsyncStorage.getItem('userId');
       if (!userId) throw new Error(t('planning.errors.user'));
-      const response = await apiService.setPlannedMealRecipe(plan._id, slotId, userId, recipeId);
+      const response = slot.meal
+        ? await apiService.setPlannedMealRecipe(plan._id, slotId, userId, recipeId)
+        : await apiService.addPlannedMeal(plan._id, userId, slot.dayIndex, slot.mealType, recipeId);
       if (!response.data?.plan) throw new Error(response.error || t('planning.errors.replace'));
       invalidatePlanning();
       void feedback.success().catch(() => {});
-      router.dismissTo(replacedMealPlanningRoute(response.data.plan, slotId));
+      router.dismissTo(replacedMealPlanningRoute(response.data.plan, slot.meal ? slotId : response.data.plan.meals.find(meal => meal.dayIndex === slot.dayIndex && meal.mealType === slot.mealType)!.slotId));
     } catch (replaceError) {
       feedback.error();
       setError(replaceError instanceof Error ? replaceError.message : t('planning.errors.replace'));
@@ -101,8 +103,8 @@ export default function AddRecipeToPlanScreen() {
       {!loading && !error && !plan ? <View style={styles.center}><Ionicons name="calendar-outline" size={40} color={Colors.light.button} /><Text style={styles.empty}>{t('addRecipe.noPlan')}</Text><TouchableOpacity style={styles.button} onPress={() => router.replace('/planning/configure')}><Text style={styles.buttonText}>{t('planning.generation.cta')}</Text></TouchableOpacity></View> : null}
       {!loading && plan && recipe ? <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ ...contentColumn(), paddingHorizontal: gutter, paddingBottom: insets.bottom + 30 }}>
         {error ? <Text style={styles.error}>{error}</Text> : null}
-        {!meals.length && <Text style={styles.empty}>{t('addRecipe.noCompatibleMeals')}</Text>}
-        <View style={styles.list}>{meals.map((meal, index) => <EntranceView key={meal.slotId} entranceIndex={index}><PlanMealCard meal={meal} day={day(meal.dayIndex)} loading={replacing === meal.slotId} disabled={!!replacing} onPress={() => void replace(meal.slotId)} /></EntranceView>)}</View>
+        {!slots.length && <Text style={styles.empty}>{t('addRecipe.noCompatibleMeals')}</Text>}
+        <View style={styles.list}>{slots.map((slot, index) => <EntranceView key={slot.slotId} entranceIndex={index}>{slot.meal ? <PlanMealCard meal={slot.meal} day={day(slot.dayIndex)} loading={replacing === slot.slotId} disabled={!!replacing} onPress={() => void replace(slot.slotId)} /> : <TouchableOpacity accessibilityRole="button" disabled={!!replacing} style={styles.emptySlot} onPress={() => void replace(slot.slotId)}><Ionicons name="add-circle-outline" size={26} color={Colors.light.button} /><View style={{ flex: 1 }}><Text style={styles.slotTitle}>{day(slot.dayIndex)} · {t(`planningConfig.meals.${slot.mealType}`)}</Text><Text style={styles.slotHelp}>{t('planningSlots.add')}</Text></View>{replacing === slot.slotId && <ActivityIndicator color={Colors.light.button} />}</TouchableOpacity>}</EntranceView>)}</View>
       </ScrollView> : null}
     </LinearGradient>
   );
@@ -118,5 +120,6 @@ const styles = StyleSheet.create({
   button: { minHeight: 54, alignSelf: 'stretch', borderRadius: 22, backgroundColor: Colors.light.button, alignItems: 'center', justifyContent: 'center' },
   buttonText: { fontFamily: 'Degular', fontSize: 20, color: 'white' },
   error: { fontFamily: 'CronosPro', color: '#82342D', marginBottom: 10 },
+  emptySlot: { minHeight: 80, padding: 16, borderWidth: 1, borderStyle: 'dashed', borderColor: Colors.light.button, borderRadius: 18, flexDirection: 'row', alignItems: 'center', gap: 12 }, slotTitle: { fontFamily: 'CronosProBold', fontSize: 18, color: Colors.light.text }, slotHelp: { fontFamily: 'CronosPro', fontSize: 15, color: Colors.light.text },
   list: { gap: 12 },
 });

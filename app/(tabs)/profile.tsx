@@ -1,3 +1,4 @@
+import { CREATOR_PROMO_CODES_ENABLED } from '../../config/storeCompliance';
 import { feedback } from '../../services/haptics';
 import { EntranceView } from '../../components/motion/Entrance';
 import { AppScreenHeading } from '../../components/AppScreenHeading';
@@ -405,7 +406,7 @@ export default function ProfileScreen() {
           <SettingsRow icon="mail-outline" title={t('profile.feedback')} description={t('profile.feedbackDescription')} onPress={handleFeedbackPress} />
           {!subscriptionStatus.isSubscribed && <>
             <View style={styles.separator} />
-            <SettingsRow icon="pricetag-outline" title={t('profile.promoCode')} description={t('profile.promoCodeDescription')} onPress={() => setIsPromoModalVisible(true)} />
+            {CREATOR_PROMO_CODES_ENABLED && <SettingsRow icon="pricetag-outline" title={t('profile.promoCode')} description={t('profile.promoCodeDescription')} onPress={() => setIsPromoModalVisible(true)} />}
           </>}
         </EntranceView>
 

@@ -27,7 +27,7 @@
         "NSSpeechRecognitionUsageDescription": "CookEat uses voice recognition to understand your ingredients and suggest recipes tailored to what you have at home.",
         "NSUserNotificationsUsageDescription": "Recevez des rappels et des suggestions de recettes personnalisées.",
         "NSUserTrackingUsageDescription": "Your data allows us to offer you recipes and advertisements that truly match your tastes.",
-        "NSMotionUsageDescription": "CookEat detects device motion so you can shake your phone to enter a promo code."
+        "NSMotionUsageDescription": "CookEat detects device motion to open its presentation mode settings."
       },
       "appleTeamId": "P48MLLHB99"
     },
@@ -68,6 +68,7 @@
       "./plugins/withAndroidLaunchMode",
       "./plugins/withSentryXcodeEnv",
       "./plugins/withFmtPodfileFix",
+      "./plugins/withCocoaPodsBashFix",
       "./plugins/withRevenueCatSwiftFix",
       "./plugins/withNativePatches",
       "expo-router",

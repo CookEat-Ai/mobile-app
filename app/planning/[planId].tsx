@@ -16,8 +16,21 @@ import { PlanWeekContent } from '../../components/planning/PlanWeekContent';
 
 export default function PlanDetailScreen() {
   const { planId } = useLocalSearchParams<{ planId: string }>();
+  const scrollRef = useRef<ScrollView>(null);
+  const scrollOffset = useRef(0);
   const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
+  const alignPlanningDays = useCallback((anchor: View) => {
+    const scroll = scrollRef.current;
+    if (!scroll) return;
+    scroll.getNativeScrollRef()?.measureInWindow((_x: number, viewportY: number) => {
+      anchor.measureInWindow((_anchorX, anchorY) => {
+        const y = Math.max(0, scrollOffset.current + anchorY - viewportY - 8);
+        scrollOffset.current = y;
+        scroll.scrollTo({ y, animated: false });
+      });
+    });
+  }, []);
   const { gutter, font } = useResponsive();
   const [plan, setPlan] = useState<MealPlan | null>(null);
   const [loading, setLoading] = useState(true);
@@ -45,11 +58,11 @@ export default function PlanDetailScreen() {
       <NavigationIconButton style={appStyles.iconButton} onPress={() => router.back()} accessibilityRole="button" accessibilityLabel={t('common.back')} />
       <Text style={[appStyles.headerTitle, { fontSize: font(29) }]}>{t('tabs.planning')}</Text><View style={{ width: 44 }} />
     </View>
-    <ScrollView contentContainerStyle={{ ...contentColumn(), paddingHorizontal: gutter, paddingBottom: 32 + insets.bottom }} showsVerticalScrollIndicator={false}>
+    <ScrollView ref={scrollRef} scrollEventThrottle={16} onScroll={event => { scrollOffset.current = event.nativeEvent.contentOffset.y; }} contentContainerStyle={{ ...contentColumn(), paddingHorizontal: gutter, paddingBottom: 32 + insets.bottom }} showsVerticalScrollIndicator={false}>
       {loading && <ActivityIndicator style={styles.loader} color={theme.ink} />}
       {error && <View><Text style={appStyles.error}>{error}</Text><TouchableOpacity style={appStyles.button} onPress={() => void loadPlan()}><Text style={appStyles.buttonText}>{t('mealLibrary.retry')}</Text></TouchableOpacity></View>}
       {plan && <><Text style={styles.week}>{formatPlanRange(plan, i18n.resolvedLanguage || 'fr')}</Text>
-        <PlanWeekContent key={plan._id} plan={plan} onPlanChange={setPlan} />
+        <PlanWeekContent key={plan._id} plan={plan} onPlanChange={setPlan} onRevealStart={alignPlanningDays} />
         {!isPastPlan(plan) && <TouchableOpacity accessibilityRole="button" style={styles.regenerate} onPress={() => {
           if (isPastPlan(plan)) return;
           router.push({ pathname: '/planning/configure', params: { replace: 'true' } });
@@ -62,5 +75,5 @@ const styles = StyleSheet.create({
   topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 24 },
   week: { fontFamily: 'Degular', fontSize: 32, lineHeight: 37, color: theme.ink },
   loader: { marginVertical: 60 },
-  regenerate: { marginTop: 28, minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  regenerate: { marginTop: 0, minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
 });

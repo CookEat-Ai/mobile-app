@@ -1,3 +1,5 @@
+import { PresentationScanOverlay } from '../../components/planning/PresentationScanOverlay';
+import { finishPresentationScan } from '../../services/presentationScan';
 import { invalidatePlanning } from '../../services/planningUpdates';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -18,11 +20,14 @@ import { loadFitnessProfile, fitnessProfileToPlanningPreferences } from '../../s
 import { dailyMealsForDays, isCompleteWeeklyPlan, normalizeCookingDays, startOfWeekMondayKey } from '../../services/weeklyPlanning';
 
 type Config = {
+  servings?: number;
   cookingDays: number[];
   duration: string;
   cuisineIds?: string[];
   diet?: 'none' | 'vegetarian' | 'vegan';
   excludedIngredients?: string[];
+  pantryIngredients?: string[];
+  pantryMode?: 'priority' | 'strict';
 };
 
 export default function PlanningLoadingScreen() {
@@ -37,6 +42,7 @@ export default function PlanningLoadingScreen() {
   useEffect(() => {
     if (subscriptionLoading || started.current) return;
     if (!subscriptionStatus.isSubscribed) {
+      finishPresentationScan();
       router.replace({ pathname: '/paywall', params: { source: 'meal_planner_generation' } });
       return;
     }
@@ -57,13 +63,16 @@ export default function PlanningLoadingScreen() {
           replaceExisting: replace === 'true',
           preferences: {
             ...profilePreferences,
+            servings: config.servings || 1,
             cookingDays,
             mealsByDay: dailyMealsForDays(cookingDays),
-            includeSnack: false,
+            includeSnack: true,
             duration: config.duration || 'all',
             cuisineStyle: config.cuisineIds ?? profilePreferences.cuisineStyle,
             diet: config.diet ?? profilePreferences.diet,
             excludedIngredients: config.excludedIngredients || [],
+            pantryIngredients: config.pantryIngredients || [],
+            pantryMode: config.pantryMode || 'priority',
           },
         });
         if (!isCompleteWeeklyPlan(response.data?.plan)) throw new Error(response.error || t('planning.errors.create'));
@@ -76,15 +85,17 @@ export default function PlanningLoadingScreen() {
         } else {
           router.replace({ pathname: '/planning/[planId]', params: { planId: response.data.plan._id } });
         }
+        finishPresentationScan();
         schedulePlanningReview(response.data.plan._id);
       } catch (generationError) {
+        finishPresentationScan();
         setError(generationError instanceof Error ? generationError.message : t('planning.errors.create'));
         await feedback.error();
       }
     })();
   }, [rawConfig, replace, subscriptionLoading, subscriptionStatus.isSubscribed, t, finishLoadingBar, resetLoadingBar]);
 
-  if (!error) return <PlanningLoadingView ready={loadingReady} onComplete={completeLoadingBar} />;
+  if (!error) return <View style={{ flex: 1 }}><PlanningLoadingView ready={loadingReady} onComplete={completeLoadingBar} /><PresentationScanOverlay /></View>;
 
   return (
     <LinearGradient colors={['#FDF9E2', '#FFFFFF']} style={[styles.fill, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>

@@ -1,5 +1,8 @@
+import { CREATOR_PROMO_CODES_ENABLED } from '../config/storeCompliance';
+import { markPlanningReveal } from './planningReveal';
 import { getAnonymousSessionToken, invalidateAnonymousSession } from './anonymousSession';
 import * as Localization from 'expo-localization';
+import { File } from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EventSource from 'react-native-sse';
 import { API_BASE_URL, WS_URL } from '../config/api';
@@ -87,6 +90,8 @@ export type RecipeIdentity = {
 };
 
 export type MealPlanMeal = {
+  pantryOwned?: number;
+  pantryRequired?: number;
   portionScale?: number;
   calorieFit?: 'standard' | 'closest_available';
   slotId: string;
@@ -162,6 +167,7 @@ export type CatalogRecipe = {
 };
 
 export type ShoppingListItem = {
+  manual?: boolean;
   id: string;
   name: string;
   canonicalName: string;
@@ -169,6 +175,7 @@ export type ShoppingListItem = {
   category: string;
   quantities: { amount?: number; unit?: string; display: string }[];
   recipeIds: string[];
+  pantryAvailable?: boolean;
   checked: boolean;
   excluded: boolean;
 };
@@ -318,7 +325,10 @@ class ApiService {
       const url = `${API_BASE_URL}${endpoint}`;
 
       const headers: Record<string, string> = { ...this.getHeaders() } as Record<string, string>;
-      if (/^\/(?:meal-plans|user(?:s)?\/|recipe(?:\/|$)|promo-code\/(?:validate|mark-used))/.test(endpoint)) {
+      // Extraction routes are public and rate-limited on the API. A failed
+      // account/session registration must not prevent uploading an image.
+      const publicExtraction = /^\/recipe\/process-(?:image|video|voice)-ingredients$/.test(endpoint);
+      if (!publicExtraction && /^\/(?:meal-plans|user(?:s)?\/|recipe(?:\/|$)|promo-code\/(?:validate|mark-used))/.test(endpoint)) {
         headers.Authorization = 'Bearer ' + await getAnonymousSessionToken();
       }
 
@@ -334,7 +344,9 @@ class ApiService {
         signal: controller.signal,
       });
 
-      const data = await response.json();
+      let data: any;
+      try { data = await response.json(); }
+      catch { return { error: i18n.t('common.requestError'), status: response.ok ? 502 : response.status }; }
 
       if (!response.ok) {
         if (response.status === 401) invalidateAnonymousSession();
@@ -570,16 +582,9 @@ class ApiService {
     const formData = new FormData();
     formData.append('language', this.getCurrentLanguage());
 
-    imageUris.forEach((uri, index) => {
-      const filename = uri.split('/').pop() || `image_${index}.jpg`;
-      const match = /\.(\w+)$/.exec(filename);
-      const type = match ? `image/${match[1]}` : `image/jpeg`;
-
-      formData.append('images', {
-        uri,
-        name: filename,
-        type,
-      } as any);
+    // Expo's fetch serializes Blob/File contents, not React Native URI objects.
+    imageUris.forEach((uri) => {
+      formData.append('images', new File(uri));
     });
 
     return this.request<{ ingredients: { name: string; category: string }[] }>('/recipe/process-image-ingredients', {
@@ -592,15 +597,7 @@ class ApiService {
     const formData = new FormData();
     formData.append('language', this.getCurrentLanguage());
 
-    const filename = videoUri.split('/').pop() || 'video.mp4';
-    const match = /\.(\w+)$/.exec(filename);
-    const type = match ? `video/${match[1]}` : `video/mp4`;
-
-    formData.append('video', {
-      uri: videoUri,
-      name: filename,
-      type,
-    } as any);
+    formData.append('video', new File(videoUri));
 
     return this.request<{ ingredients: { name: string; category: string }[] }>('/recipe/process-video-ingredients', {
       method: 'POST',
@@ -663,12 +660,6 @@ class ApiService {
     return this.request<{ success: boolean; recipes: CatalogRecipe[]; page: number; limit: number; total: number; pages: number }>(`/catalog/recipes?${params.toString()}`, { method: 'GET' }, 12000);
   }
 
-  async likeRecipe(recipeId: string) {
-    return this.request<{ success: boolean; message: string; recipe: any }>(`/recipe/like/${recipeId}`, {
-      method: 'POST',
-    });
-  }
-
   async getRecipeHistory(userId: string, page: number = 1, limit: number = 30, options?: { isImported?: boolean }) {
     const params = new URLSearchParams({
       page: String(page),
@@ -689,9 +680,10 @@ class ApiService {
     });
   }
 
-  async getMealPlan(userId: string, weekStart?: string) {
+  async getMealPlan(userId: string, weekStart?: string, preview = false) {
     const params = new URLSearchParams({ language: this.getCurrentLanguage() });
     if (weekStart) params.set('weekStart', weekStart);
+    if (preview) params.set('preview', 'true');
     const query = `?${params.toString()}`;
     return this.request<{ success: boolean; plan: MealPlan | null }>(`/meal-plans/user/${userId}${query}`, { method: 'GET' }, 12000);
   }
@@ -701,6 +693,9 @@ class ApiService {
   }
 
   async getMealPlanById(planId: string, userId: string) {
+    if (!planId || planId === 'undefined' || planId === 'null') {
+      return { error: i18n.t('planning.errors.load'), status: 400 } as ApiResponse<{ success: boolean; plan: MealPlan }>;
+    }
     return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}?userId=${encodeURIComponent(userId)}&language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000);
   }
 
@@ -713,45 +708,59 @@ class ApiService {
     preview?: boolean;
     replaceExisting?: boolean;
   }) {
-    return this.request<{ success: boolean; plan: MealPlan }>('/meal-plans/draft', {
+    const response = await this.request<{ success: boolean; plan: MealPlan; restored?: boolean }>('/meal-plans/draft', {
       method: 'POST',
-      body: JSON.stringify({ ...input, language: this.getCurrentLanguage() }),
+      body: JSON.stringify({ ...input, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage() }),
+    }, 90000);
+    if (response.data?.plan?._id && !response.data.restored) markPlanningReveal(response.data.plan._id);
+    return response;
+  }
+
+  async addPlannedMeal(planId: string, userId: string, dayIndex: number, mealType: string, recipeId?: string) {
+    return this.request<{ success: boolean; plan: MealPlan; slotId: string }>(`/meal-plans/${planId}/meals`, {
+      method: 'POST', body: JSON.stringify({ userId, dayIndex, mealType, recipeId, language: this.getCurrentLanguage(), timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone }),
     }, 90000);
   }
 
   async replaceMeal(planId: string, slotId: string, userId: string) {
     return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/meals/${slotId}/replace`, {
-      method: 'POST', body: JSON.stringify({ language: this.getCurrentLanguage(), userId }),
+      method: 'POST', body: JSON.stringify({ timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage(), userId }),
     }, 90000);
   }
 
   async setPlannedMealRecipe(planId: string, slotId: string, userId: string, recipeId: string) {
     return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/meals/${slotId}/recipe`, {
-      method: 'PUT', body: JSON.stringify({ language: this.getCurrentLanguage(), userId, recipeId }),
+      method: 'PUT', body: JSON.stringify({ timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage(), userId, recipeId }),
     }, 15000);
   }
 
   async materializeMeal(planId: string, slotId: string, userId: string) {
     return this.request<{ success: boolean; plan: MealPlan; recipeId: string }>(`/meal-plans/${planId}/meals/${slotId}/materialize`, {
-      method: 'POST', body: JSON.stringify({ language: this.getCurrentLanguage(), userId }),
+      method: 'POST', body: JSON.stringify({ timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage(), userId }),
     }, 90000);
   }
 
   async updatePlannedMeal(planId: string, slotId: string, userId: string, patch: { locked?: boolean; servings?: number; image?: string }) {
     return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/meals/${slotId}`, {
-      method: 'PATCH', body: JSON.stringify({ language: this.getCurrentLanguage(), userId, ...patch }),
+      method: 'PATCH', body: JSON.stringify({ timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage(), userId, ...patch }),
     });
   }
 
   async deletePlannedMeal(planId: string, slotId: string, userId: string) {
     return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/meals/${slotId}`, {
-      method: 'DELETE', body: JSON.stringify({ language: this.getCurrentLanguage(), userId }),
+      method: 'DELETE', body: JSON.stringify({ timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage(), userId }),
     });
   }
 
   async reorderPlannedMeals(planId: string, userId: string, orderedSlotIds: string[]) {
     return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/meals/reorder`, {
-      method: 'PATCH', body: JSON.stringify({ language: this.getCurrentLanguage(), userId, orderedSlotIds }),
+      method: 'PATCH', body: JSON.stringify({ timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage(), userId, orderedSlotIds }),
+    });
+  }
+
+  async movePlannedMeals(planId: string, userId: string, placements: { slotId: string; dayIndex: number; mealType: string }[], updatedAt: string, removedSlotIds: string[] = []) {
+    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/meals/reorder`, {
+      method: 'PATCH', body: JSON.stringify({ timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage(), userId, placements, updatedAt, removedSlotIds }),
     });
   }
 
@@ -759,6 +768,10 @@ class ApiService {
     return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/shopping-list`, {
       method: 'POST', body: JSON.stringify({ language: this.getCurrentLanguage(), userId, preview }),
     }, 15000);
+  }
+
+  async addShoppingItem(planId: string, userId: string, name: string, quantity: string, preview = false) {
+    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/shopping-list/items`, { method: 'POST', body: JSON.stringify({ userId, name, quantity, preview, language: this.getCurrentLanguage() }) });
   }
 
   async updateShoppingItem(planId: string, itemId: string, userId: string, patch: { checked?: boolean; excluded?: boolean }, preview = false) {
@@ -799,6 +812,7 @@ class ApiService {
   }
 
   async validatePromoCode(code: string, mobileId?: string) {
+    if (!CREATOR_PROMO_CODES_ENABLED) return { data: { isValid: false } };
     return this.request<{ isValid: boolean; discountPercentage?: number; message?: string }>('/promo-code/validate', {
       method: 'POST',
       body: JSON.stringify({ code, mobileId, language: this.getCurrentLanguage() }),
@@ -937,15 +951,7 @@ class ApiService {
 
     // Si c'est une URI locale (commence par file:// ou /)
     if (imageUri.startsWith('file://') || imageUri.startsWith('/')) {
-      const filename = imageUri.split('/').pop() || 'recipe.jpg';
-      const match = /\.(\w+)$/.exec(filename);
-      const type = match ? `image/${match[1]}` : `image/jpeg`;
-
-      formData.append('image', {
-        uri: imageUri,
-        name: filename,
-        type,
-      } as any);
+      formData.append('image', new File(imageUri));
     } else {
       // Sinon on envoie l'URL (pour compatibilité)
       formData.append('imageUrl', imageUri);

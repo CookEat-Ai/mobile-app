@@ -1,0 +1,14 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const ts = require('typescript');
+const vm = require('node:vm');
+const e = {}; let now = 1000, notify = 0;
+vm.runInNewContext(ts.transpileModule(fs.readFileSync('services/presentationScan.ts','utf8'), {compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText, {exports:e,Date:{now:()=>now},require:()=>({useSyncExternalStore:(subscribe,snapshot)=>{subscribe(()=>notify++);return snapshot();}})});
+assert.equal(e.usePresentationScanPhotos().length,0);
+const input=['photo-a','photo-b','photo-c'];e.startPresentationScan(input);input.pop();
+assert.equal(e.usePresentationScanPhotos().length,3,'photos remain in memory throughout navigation');
+for(let step=0;step<8;step++)assert.equal(e.presentationScanPhotoIndex(3,1000+step*2600),step%3);
+assert.equal(e.presentationScanPhotoIndex(0),0);
+e.finishPresentationScan();assert.equal(e.usePresentationScanPhotos().length,0,'success and error release photos');
+assert(notify>0);
+console.log('Presentation scan: photo order, repeated cycles, navigation continuity and cleanup passed.');

@@ -6,7 +6,7 @@ import * as Clipboard from 'expo-clipboard';
 import { feedback } from '../../../services/haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Share, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Share, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../../../constants/Colors';
@@ -15,7 +15,7 @@ import { contentColumn, useResponsive } from '../../../hooks/useResponsive';
 import { apiService, MealPlan, ShoppingListItem } from '../../../services/api';
 
 function quantity(item: ShoppingListItem) {
-  return item.quantities.map((entry) => entry.display).join(' + ');
+  return item.quantities.map((entry) => entry.display).join(' · ');
 }
 
 export default function ShoppingListScreen() {
@@ -29,8 +29,13 @@ export default function ShoppingListScreen() {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [requiresPremium, setRequiresPremium] = useState(false);
-  const mutationPending = useRef(false);
-  const [updating, setUpdating] = useState(false);
+  const writes = useRef(Promise.resolve());
+  const planRef = useRef(plan); planRef.current = plan;
+  const confirmed = useRef(new Map<string, boolean>());
+  const versions = useRef(new Map<string, number>());
+  const [ingredientName, setIngredientName] = useState('');
+  const [ingredientQuantity, setIngredientQuantity] = useState('');
+  const [adding, setAdding] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -42,7 +47,7 @@ export default function ShoppingListScreen() {
         const response = await apiService.getMealPlanById(planId, userId);
         let next = response.data?.plan;
         if (!next) throw new Error(response.error || t('planning.errors.load'));
-        if (!next.shoppingList.length) {
+        if (!next.shoppingList.some(item => !item.manual)) {
           const generated = await apiService.generateShoppingList(planId, userId, isOnboardingPreview);
           next = generated.data?.plan;
           if (!next) {
@@ -63,21 +68,43 @@ export default function ShoppingListScreen() {
   const done = items.filter((item) => item.checked).length;
   const listText = items.map((item) => `${item.checked ? '✓' : '☐'} ${item.name} — ${quantity(item)}`).join('\n');
 
-  const toggle = async (item: ShoppingListItem) => {
-    if (!plan || mutationPending.current) return;
-    mutationPending.current = true;
-    setUpdating(true);
-    const previous = plan;
+  const toggle = (item: ShoppingListItem) => {
+    const current = planRef.current; if (!current) return;
+    const existing = current.shoppingList.find(entry => entry.id === item.id); if (!existing) return;
+    if (!confirmed.current.has(item.id)) confirmed.current.set(item.id, existing.checked);
+    const checked = !existing.checked;
+    const version = (versions.current.get(item.id) || 0) + 1; versions.current.set(item.id, version);
+    const next = { ...current, shoppingList: current.shoppingList.map(entry => entry.id === item.id ? { ...entry, checked } : entry) };
+    planRef.current = next; setPlan(next); void feedback.selection();
+    writes.current = writes.current.catch(() => undefined).then(async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId'); if (!userId) throw new Error(t('planning.errors.user'));
+        const response = await apiService.updateShoppingItem(current._id, item.id, userId, { checked }, isOnboardingPreview);
+        if (!response.data?.plan) throw new Error(response.error || t('planning.errors.update'));
+        confirmed.current.set(item.id, checked);
+      } catch (e) {
+        if (versions.current.get(item.id) === version) {
+          const latest = planRef.current;
+          if (latest) { const reverted = { ...latest, shoppingList: latest.shoppingList.map(entry => entry.id === item.id ? { ...entry, checked: confirmed.current.get(item.id) ?? !checked } : entry) }; planRef.current = reverted; setPlan(reverted); }
+        }
+        setError(e instanceof Error ? e.message : t('planning.errors.update')); void feedback.error();
+      }
+    });
+  };
+  const addIngredient = async () => {
+    if (!plan || !ingredientName.trim() || adding) return;
+    setAdding(true); setError(null);
     try {
-    setPlan({ ...plan, shoppingList: plan.shoppingList.map((entry) => entry.id === item.id ? { ...entry, checked: !entry.checked } : entry) });
-    await feedback.selection();
-    const userId = await AsyncStorage.getItem('userId');
-    if (!userId) { setPlan(previous); setError(t('planning.errors.user')); return; }
-    const response = await apiService.updateShoppingItem(plan._id, item.id, userId, { checked: !item.checked }, isOnboardingPreview);
-    if (response.data?.plan) { setPlan(response.data.plan); if (!item.checked && done + 1 === items.length) feedback.success(); }
-    else { feedback.error(); setPlan(previous); setError(response.error || t('planning.errors.update')); }
-    } catch { feedback.error(); setPlan(previous); setError(t('planning.errors.update')); }
-    finally { mutationPending.current = false; setUpdating(false); }
+      await writes.current;
+      const userId = await AsyncStorage.getItem('userId'); if (!userId) throw new Error(t('planning.errors.user'));
+      const response = await apiService.addShoppingItem(plan._id, userId, ingredientName.trim(), ingredientQuantity.trim(), isOnboardingPreview);
+      if (!response.data?.plan) throw new Error(response.error || t('planning.errors.update'));
+      // Preserve taps made while the addition was in flight.
+      const current = new Map(planRef.current?.shoppingList.map(item => [item.id, item]));
+      const next = { ...response.data.plan, shoppingList: response.data.plan.shoppingList.map(item => current.get(item.id) || item) };
+      planRef.current = next; setPlan(next); setIngredientName(''); setIngredientQuantity('');
+    } catch (e) { setError(e instanceof Error ? e.message : t('planning.errors.update')); }
+    finally { setAdding(false); }
   };
 
   const copyList = async () => {
@@ -106,10 +133,17 @@ export default function ShoppingListScreen() {
               <TouchableOpacity style={styles.actionButton} onPress={() => { feedback.light(); void Share.share({ title: t('shoppingList.title'), message: listText }).catch(() => { feedback.error(); }); }}><Ionicons name="share-outline" size={20} color={theme.ink} /><Text style={styles.actionText}>{t('shoppingList.share')}</Text></TouchableOpacity>
             </View>
           </EntranceView>
+          <View style={styles.progressCard}>
+            <Text style={styles.itemName}>{t('shoppingList.addIngredient')}</Text>
+            <TextInput value={ingredientName} onChangeText={setIngredientName} placeholder={t('planningPantry.placeholder')} accessibilityLabel={t('shoppingList.addIngredient')} style={styles.field} />
+            <TextInput value={ingredientQuantity} onChangeText={setIngredientQuantity} placeholder={t('shoppingList.quantityPlaceholder')} accessibilityLabel={t('shoppingList.quantityPlaceholder')} style={styles.field} />
+            <TouchableOpacity style={styles.actionButton} disabled={adding || !ingredientName.trim()} onPress={() => void addIngredient()}>{adding ? <ActivityIndicator /> : <Text style={styles.actionText}>{t('planningPantry.add')}</Text>}</TouchableOpacity>
+          </View>
           {error ? <Text style={styles.inlineError}>{error}</Text> : null}
+          {items.some(item => item.pantryAvailable) && <Text style={appStyles.subtitle}>{t('planningPantry.shoppingHelp')}</Text>}
           <EntranceView entranceIndex={1} style={styles.list}>
-            {items.map((item) => (
-              <TouchableOpacity key={item.id} style={[styles.item, item.checked && styles.itemDone]} disabled={updating} onPress={() => void toggle(item)} accessibilityRole="checkbox" accessibilityState={{ checked: item.checked, disabled: updating }} activeOpacity={0.8}>
+            {items.slice().sort((a, b) => Number(a.pantryAvailable && a.checked) - Number(b.pantryAvailable && b.checked)).map((item) => (
+              <TouchableOpacity key={item.id} style={[styles.item, item.checked && styles.itemDone]} onPress={() => void toggle(item)} accessibilityRole="checkbox" accessibilityState={{ checked: item.checked }} activeOpacity={0.8}>
                 <Ionicons name={item.checked ? 'checkmark-circle' : 'ellipse-outline'} size={27} color={item.checked ? Colors.light.button : '#B7B2A4'} />
                 <Text style={styles.emoji}>{item.icon || '🛒'}</Text>
                 <View style={styles.itemCopy}><Text style={[styles.itemName, item.checked && styles.struck]}>{item.name}</Text><Text style={styles.itemQuantity}>{quantity(item)}</Text></View>
@@ -123,6 +157,7 @@ export default function ShoppingListScreen() {
 }
 
 const styles = StyleSheet.create({
+  field: { minHeight: 48, borderWidth: 1, borderColor: theme.line, borderRadius: 12, padding: 12, marginVertical: 8, fontFamily: 'CronosPro', fontSize: 16 },
   fill: { flex: 1 },
   topBar: { paddingBottom: 12 },
   iconButton: { width: 44, height: 44, borderRadius: 16, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },

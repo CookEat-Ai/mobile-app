@@ -15,3 +15,5 @@ metadata/
 *.key
 *.mobileprovision
 .DS_Store
+
+.local/

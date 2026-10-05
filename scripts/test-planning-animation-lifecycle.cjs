@@ -19,6 +19,7 @@ function harness() {
     useRef: value => {const h = slot(); return h.ref ??= {current: value};},
     useCallback: (fn, deps) => {const h = slot(); if (!same(h.deps, deps)) {h.deps = deps; h.value = fn;} return h.value;},
     useEffect: effect,
+    useLayoutEffect: effect,
   };
   const shared = initial => {
     const h = slot();

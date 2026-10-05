@@ -1,3 +1,4 @@
+import { CREATOR_PROMO_CODES_ENABLED } from '../../config/storeCompliance';
 import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -104,7 +105,8 @@ export default function FastOnboardingScreen() {
   // dans le flux après une excursion hors écran (caméra → ingredient-list → recipe-detail).
   const [step, setStep] = useState(() => {
     const parsed = Number(params.initialStep);
-    return Number.isInteger(parsed) && parsed >= 0 && parsed < STEP_COUNT ? parsed : 0;
+    return Number.isInteger(parsed) && parsed >= 0 && parsed < STEP_COUNT
+      ? (!CREATOR_PROMO_CODES_ENABLED && parsed === 3 ? 4 : parsed) : 0;
   });
   const [totalSteps, setTotalSteps] = useState(STEP_COUNT);
 
@@ -179,7 +181,7 @@ export default function FastOnboardingScreen() {
     const variant = await analytics.getOnboardingVariant();
 
     // Logic for branching between E and F
-    if (step === 3 && variant === 'E') {
+    if ((step === 3 || (!CREATOR_PROMO_CODES_ENABLED && step === 2)) && variant === 'E') {
       // Variant E skips Personalized and Reminder
       finishOnboarding();
       return;
@@ -197,7 +199,7 @@ export default function FastOnboardingScreen() {
         duration: 200,
         useNativeDriver: true,
       }).start(() => {
-        setStep(step + 1);
+        setStep(!CREATOR_PROMO_CODES_ENABLED && step === 2 ? 4 : step + 1);
         fadeAnim.setValue(0);
         Animated.timing(fadeAnim, {
           toValue: 1,
@@ -227,7 +229,7 @@ export default function FastOnboardingScreen() {
       return;
     }
 
-    const pendingDiscount = await AsyncStorage.getItem('pending_promo_discount');
+    const pendingDiscount = CREATOR_PROMO_CODES_ENABLED ? await AsyncStorage.getItem('pending_promo_discount') : null;
 
     if (pendingDiscount) {
       router.push({
@@ -616,8 +618,9 @@ export default function FastOnboardingScreen() {
                   )}
                 </TouchableOpacity>
               )}
+
               {!promoSuccess && (
-                <TouchableOpacity style={styles.skipButton} onPress={nextStep}>
+                <TouchableOpacity activeOpacity={0.8} accessibilityRole="button" accessibilityState={{ disabled: isPromoLoading }} style={[styles.skipButton, isPromoLoading && { opacity: 0.5 }]} disabled={isPromoLoading} onPress={nextStep}>
                   <Text style={styles.skipButtonText}>{t('onboardingPromoCode.skip')}</Text>
                 </TouchableOpacity>
               )}
@@ -750,14 +753,22 @@ const styles = StyleSheet.create({
     fontFamily: 'Degular',
   },
   skipButton: {
-    paddingVertical: 8,
+    width: '100%',
+    minHeight: 56,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderRadius: 100,
+    borderWidth: 1.5,
+    borderColor: '#BDB49C',
+    backgroundColor: '#FFFDF5',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   skipButtonText: {
-    color: '#8C8C8C',
-    fontSize: font(16),
-    fontFamily: 'CronosPro',
-    textDecorationLine: 'underline',
+    color: Colors.light.text,
+    fontSize: font(19),
+    fontFamily: 'Degular',
+    textAlign: 'center',
   },
   disabledButton: {
     backgroundColor: '#E0E0E0',

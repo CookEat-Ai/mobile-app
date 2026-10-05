@@ -1,6 +1,7 @@
 {
   "planningReveal": {
-    "replay": "Rejouer l’animation"
+    "replay": "Revoir la semaine",
+    "skip": "Passer l’animation"
   },
   "fitnessOnboarding": {
     "required": "Choisis une réponse pour continuer.",
@@ -659,7 +660,7 @@
       "subtitle": "Ta semaine ira toujours du lundi au dimanche.",
       "daysTitle": "Jours de cuisine",
       "summary": "Jours sélectionnés : {{days}} · Repas : {{meals}}",
-      "cta": "Générer mon planning"
+      "cta": "Générer le planning"
     },
     "settings": {
       "title": "Réglages du planning",
@@ -703,7 +704,8 @@
       "unlock": "Libérer",
       "manage": "Options du repas",
       "up": "Monter",
-      "down": "Descendre"
+      "down": "Descendre",
+      "shoppingAccess": "Tous les ingrédients de tes repas réunis dans une liste à cocher."
     },
     "delete": {
       "title": "Supprimer ce repas ?",
@@ -775,7 +777,7 @@
     "subtitle": "Si un créateur t'a partagé un code promo, entre-le ici pour bénéficier d'une réduction exclusive.",
     "placeholder": "TON CODE PROMO",
     "validate": "Valider",
-    "skip": "Je n'ai pas de code",
+    "skip": "Continuer sans code",
     "invalid": "Ce code promo n'est pas valide",
     "error": "Impossible de vérifier le code promo",
     "success": "-{{discount}}% de réduction activée !",
@@ -944,6 +946,9 @@
     "processing": "Traitement de ta liste..."
   },
   "paywall": {
+    "reviewerAccessTitle": "Accès de vérification",
+    "reviewerAccessDescription": "Saisis le code réservé à la vérification de l’app.",
+    "reviewerAccessPlaceholder": "Code d’accès",
     "billedAnnually": "facturé {{price}} par an",
     "weeklyPlanning": {
       "headline": "Mange mieux, à ton rythme.",
@@ -1712,7 +1717,7 @@
       "importCta": "Essayer",
       "editable": "Tu pourras déplacer, remplacer ou verrouiller chaque repas.",
       "cta": "Voir comment débloquer ma semaine",
-      "shoppingAccess": "Ta liste à cocher, incluse avec CookEat Premium."
+      "shoppingAccess": "Tous les ingrédients de tes repas réunis dans une liste à cocher."
     },
     "activation": {
       "loadingTitle": "On ouvre ta semaine…",
@@ -1732,6 +1737,7 @@
     }
   },
   "recipeSummary": {
+    "other": "Autres",
     "ingredients": "Ingrédients",
     "summary": "Récapitulatif",
     "dishType": "Type de plat",
@@ -1841,7 +1847,6 @@
     "changePlannedMeal": "Changer ce repas",
     "changingPlannedMeal": "Création du nouveau repas…",
     "changePlannedMealErrorTitle": "Impossible de changer ce repas",
-    "likeError": "Impossible de liker la recette",
     "nutritionalInfoTitle": "Informations Nutritionnelles",
     "nutritionalInfoContent": "Ces valeurs sont des estimations basées sur les ingrédients et les portions indiqués.",
     "illustration": "Image d'illustration",
@@ -1858,7 +1863,6 @@
     "chef_tip": "Le secret du Chef 👨‍🍳",
     "enjoy": "Bon appétit !",
     "addToFavorites": "Ajouter aux favoris",
-    "iLikedThisRecipe": "J'ai aimé cette recette",
     "generatingRecipe": "Génération...",
     "generateAnotherRecipe": "Générer une autre recette",
     "error": "Erreur",
@@ -1882,7 +1886,9 @@
     "viewOnYouTube": "Voir sur YouTube",
     "unableToOpenVideo": "Impossible d'ouvrir la vidéo",
     "imageUpdateError": "Erreur lors de la mise à jour de l'image",
-    "imagePickError": "Erreur lors du choix de l'image"
+    "imagePickError": "Erreur lors du choix de l'image",
+    "chooseReplacement": "Choisir dans les repas",
+    "automaticReplacement": "Choisir automatiquement"
   },
   "planningHistory": {
     "empty": "Aucun planning pour le moment",
@@ -1890,7 +1896,7 @@
   },
   "planningConfig": {
     "title": "Personnalise ton planning",
-    "dailyMeals": "Petit-déjeuner, déjeuner et dîner sont inclus pour chaque jour sélectionné.",
+    "dailyMeals": "Petit-déjeuner, déjeuner, collation et dîner sont inclus pour chaque jour sélectionné.",
     "meals": {
       "breakfast": "Petit-déj.",
       "lunch": "Déjeuner",
@@ -1908,7 +1914,10 @@
     "duration": "Temps de préparation",
     "exclude": "Ingrédients à exclure",
     "excludeHelp": "Sépare plusieurs ingrédients par une virgule.",
-    "excludePlaceholder": "Ex. porc, cacahuète, coriandre"
+    "excludePlaceholder": "Ex. porc, cacahuète, coriandre",
+    "people": "Personnes",
+    "fewerPeople": "Moins de personnes",
+    "morePeople": "Plus de personnes"
   },
   "planningLoading": {
     "title": "Ton planning se prépare",
@@ -1929,7 +1938,9 @@
     "progress": "{{done}}/{{total}} faits",
     "copy": "Copier",
     "copied": "Copié",
-    "share": "Partager"
+    "share": "Partager",
+    "addIngredient": "Ajouter un ingrédient",
+    "quantityPlaceholder": "Quantité (facultative)"
   },
   "mealLibrary": {
     "types": {
@@ -2214,6 +2225,7 @@
     "retry": "Réessayer"
   },
   "planningNutrition": {
+    "dayTotal": "Total des repas de la journée",
     "adjustedPortion": "Quantités adaptées à ton objectif pour une personne.",
     "closestAvailable": "{{day}} : {{actual}} / {{target}} kcal. Écart de {{percent}} % après ajustement des portions, au plus proche de ton objectif.",
     "planned": "Repas prévus",
@@ -2268,5 +2280,86 @@
     "goalSubtitle": "Vos progrès, un jour après l’autre.",
     "profileEyebrow": "Vos préférences",
     "subscriptionDetails": "Découvrir mon abonnement"
+  },
+  "planningOrganize": {
+    "removed": "Repas supprimé",
+    "action": "Modifier",
+    "title": "Modifier",
+    "hint": "Déplacez les repas ou supprimez-les avec la corbeille. Enregistrez vos changements avec « Terminé ».",
+    "moveTo": "Déplacer vers…",
+    "destinationHint": "Sur un créneau occupé, les deux repas échangent leur place.",
+    "empty": "Emplacement vide",
+    "portions_one": "{{count}} portion",
+    "portions_other": "{{count}} portions",
+    "swapped": "Repas échangés",
+    "moved": "Repas déplacé",
+    "undo": "Annuler",
+    "done": "Terminer",
+    "saveError": "Impossible d’enregistrer. Vos changements sont conservés ici : réessayez.",
+    "ended": "Ce planning est terminé et ne peut plus être réorganisé.",
+    "discardTitle": "Quitter sans enregistrer ?",
+    "discardBody": "Les changements de cette session seront perdus.",
+    "keepEditing": "Continuer à modifier",
+    "discard": "Quitter sans enregistrer"
+  },
+  "planningPantry": {
+    "allowShopping": "Autoriser quelques achats",
+    "title": "Partir de ce que j’ai",
+    "help": "Facultatif : ajoute les aliments que tu veux utiliser cette semaine.",
+    "photo": "Scanner mon frigo",
+    "gallery": "Galerie",
+    "photoHelp": "Tes ingrédients deviennent le point de départ de ta semaine protéinée.",
+    "placeholder": "Ex. poulet, riz, tomates",
+    "manual": "Ajouter des ingrédients",
+    "add": "Ajouter",
+    "remove": "Supprimer",
+    "review": "Corrige la liste si nécessaire. Touche un aliment pour le retirer.",
+    "priority": "Autoriser d’autres ingrédients",
+    "strict": "Uniquement mes ingrédients",
+    "basics": "Basiques autorisés : eau, sel, poivre et huile.",
+    "quantities": "Les quantités ne sont pas connues : vérifie que tes stocks suffisent.",
+    "scanError": "La photo n’a pas pu être analysée. Réessaie ou saisis les aliments.",
+    "saveError": "La liste n’a pas pu être enregistrée.",
+    "owned": "Déjà chez toi",
+    "shoppingHelp": "Les aliments déjà chez toi sont cochés. Décoche-les si tu dois compléter les quantités.",
+    "coverage": "Tu as {{owned}} ingrédients sur {{required}}",
+    "categories": "Choisir par catégorie"
+  },
+  "planningSlots": {
+    "add": "Ajouter un repas",
+    "past": "Journée passée"
+  },
+  "pantryScan": {
+    "scanning": "ANALYSE EN COURS",
+    "found": "INGRÉDIENTS RECONNUS",
+    "title": "Du frigo à ta semaine.",
+    "subtitle": "CookEat reconnaît ce que tu as déjà.",
+    "resultTitle": "Voilà ton point de départ.",
+    "review": "Touche un ingrédient pour le retirer si la reconnaissance se trompe.",
+    "count_one": "{{count}} ingrédient reconnu",
+    "count_other": "{{count}} ingrédients reconnus",
+    "ingredients": "Tes ingrédients",
+    "next": "Prochaine étape : ta semaine",
+    "empty": "Aucun ingrédient reconnu. Reprends une photo plus proche, avec davantage de lumière.",
+    "planningHelp": "Ces ingrédients seront privilégiés dans ton planning protéiné. CookEat complétera ce qu’il manque.",
+    "confirm": "Utiliser ces ingrédients",
+    "saving": "Enregistrement…",
+    "retake": "Reprendre une photo",
+    "weekEyebrow": "TON FRIGO → TA SEMAINE",
+    "weekTitle": "Ta semaine prend forme.",
+    "weekReady": "Ta semaine est prête.",
+    "weekSubtitle": "Tes ingrédients, un planning protéiné et les courses à compléter.",
+    "weekWorking": "Assemblage des repas en cours…",
+    "weekHelp": "Les repas et leurs protéines apparaissent ensuite dans ton planning.",
+    "analyzing": "Analyse en cours…"
+  },
+  "presentationMode": {
+    "title": "Mode présentation",
+    "code": "Code d’accès",
+    "activate": "Activer",
+    "deactivate": "Désactiver",
+    "invalid": "Code incorrect",
+    "enabled": "Mode présentation activé. Le scan lance directement le planning.",
+    "disabled": "Mode présentation désactivé."
   }
 }

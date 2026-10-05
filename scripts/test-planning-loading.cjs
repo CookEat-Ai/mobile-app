@@ -41,27 +41,27 @@ const tick = async target => {
   for (let i = 0; i < 10; i++) await Promise.resolve();
 };
 (async () => {
-  const expectThreeMeals = settings => {
-    assert.equal(settings.includeSnack, false);
+  const expectFourMeals = settings => {
+    assert.equal(settings.includeSnack, true);
     assert.equal(Object.keys(settings.mealsByDay).length, settings.cookingDays.length);
     for (const day of settings.cookingDays) {
-      assert.deepEqual(Array.from(settings.mealsByDay[String(day)]), ['breakfast', 'lunch', 'dinner']);
+      assert.deepEqual(Array.from(settings.mealsByDay[String(day)]), ['breakfast', 'lunch', 'snack', 'dinner']);
     }
   };
-  expectThreeMeals(await exportsObject.loadPlanningGenerationSettings());
+  expectFourMeals(await exportsObject.loadPlanningGenerationSettings());
   storedSettings = JSON.stringify({ cookingDays: [1, 5], mealsByDay: { 1: ['dinner'], 5: ['snack'] }, includeSnack: true,
     duration: 'fast', cuisineIds: ['italian'], diet: 'vegetarian', excludedIngredients: ['peanut'] });
   const migrated = await exportsObject.loadPlanningGenerationSettings();
-  expectThreeMeals(migrated);
+  expectFourMeals(migrated);
   assert.deepEqual(Array.from(migrated.cookingDays), [1, 5]);
   assert.equal(migrated.duration, 'fast');
   assert.equal(migrated.diet, 'vegetarian');
   assert.deepEqual(Array.from(migrated.cuisineIds), ['italian']);
   assert.deepEqual(Array.from(migrated.excludedIngredients), ['peanut']);
   await exportsObject.savePlanningGenerationSettings({ ...migrated, cookingDays: [0, 6], mealsByDay: { 0: ['dinner'] }, includeSnack: true });
-  expectThreeMeals(JSON.parse(storedSettings));
+  expectFourMeals(JSON.parse(storedSettings));
   storedSettings = '{invalid';
-  expectThreeMeals(await exportsObject.loadPlanningGenerationSettings());
+  expectFourMeals(await exportsObject.loadPlanningGenerationSettings());
   assert.equal(exportsObject.PLANNING_MINIMUM_LOADING_MS, 5000);
   for (const responseTime of [0, 1200, 4999, 5000, 8000, 60000]) {
     now = responseTime; timers = [];
@@ -189,9 +189,10 @@ const tick = async target => {
       '../../constants/Colors': { Colors: { light: {} } },
       '../../hooks/useSubscription': { useSubscription: () => ({ subscriptionStatus: { isSubscribed: true }, isLoading: false }) },
       '../../services/analytics': { track() {} },
+      '../../services/presentationScan': { finishPresentationScan() {} },
       '../../services/planningReview': { schedulePlanningReview: planId => reviewRequests.push(planId) },
       '../../services/api': { apiService: { createMealPlan: async input => {
-        expectThreeMeals(input.preferences);
+        expectFourMeals(input.preferences);
         return { data: { plan: scenario.valid ? { ...plan, _id: 'new-plan' } : null } };
       } } },
       '../../services/fitnessProfile': { loadFitnessProfile: async () => ({}), fitnessProfileToPlanningPreferences: () => ({}) },

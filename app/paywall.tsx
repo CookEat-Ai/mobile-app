@@ -1,3 +1,6 @@
+// Future admin access (disabled):
+// import { activateReviewerAccess } from '../services/reviewerAccess';
+import { CREATOR_PROMO_CODES_ENABLED } from '../config/storeCompliance';
 import { NavigationIconButton } from '../components/NavigationIconButton';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
@@ -10,7 +13,7 @@ import { PaywallView } from '../components/PaywallView';
 import { ExitOfferPaywallView } from '../components/ExitOfferPaywallView';
 import { resolvePaywallCopy } from '../services/paywallCopy';
 import type { EntryFeature } from '../services/analytics';
-import { Accelerometer } from 'expo-sensors';
+// import { Accelerometer } from 'expo-sensors';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { G, Path } from 'react-native-svg';
 import analytics from '../services/analytics';
@@ -109,7 +112,7 @@ export default function PaywallScreen() {
     // paywall plein tarif plutôt que sur un écran vide.
     if (s === 'WHEEL') return LUCKY_WHEEL_ENABLED ? 'WHEEL' : 'STANDARD';
     if (s === 'DISCOUNTED') return 'DISCOUNTED';
-    if (s === 'PROMO_DISCOUNTED') return 'PROMO_DISCOUNTED';
+    if (s === 'PROMO_DISCOUNTED' && CREATOR_PROMO_CODES_ENABLED) return 'PROMO_DISCOUNTED';
     return 'STANDARD';
   }, [params.initialState]);
 
@@ -181,119 +184,100 @@ export default function PaywallScreen() {
   const [isRestoring, setIsRestoring] = useState(false);
   const [hasOfferingsError, setHasOfferingsError] = useState(false);
   const [reloadToken, setReloadToken] = useState(0);
-  /**
-   * Saisie de code cachée, réservée au contournement du paywall.
-   *
-   * Sert d'abord aux relecteurs Apple et Google : le paywall est une boucle
-   * fermée, et un relecteur qui passe l'écran promo du tunnel n'a plus aucun
-   * moyen d'entrer dans l'app. Ce raccourci reste accessible depuis le paywall
-   * lui-même, quoi qu'il ait fait avant.
-   *
-   * Déclenché en secouant l'appareil, plutôt que par un lien « J'ai un code
-   * promo » : un lien apprendrait à tous les utilisateurs qu'une remise existe,
-   * avant même qu'ils aient vu le prix plein.
-   */
-  const [showCodeModal, setShowCodeModal] = useState(false);
-  const [codeInput, setCodeInput] = useState('');
-  const [codeLoading, setCodeLoading] = useState(false);
-  const [codeError, setCodeError] = useState('');
-
-  const openSecretCodeEntry = useCallback((trigger: string) => {
-    feedback.success();
-    analytics.track('paywall_secret_code_opened', {
-      ...paywallAnalyticsProperties,
-      trigger,
-    });
-    setCodeError('');
-    setShowCodeModal(true);
-  }, [paywallAnalyticsProperties]);
-
-  /**
-   * Détection de secousse.
-   *
-   * L'accéléromètre renvoie des g : au repos la norme du vecteur vaut ~1. On
-   * exige plusieurs franchissements de seuil rapprochés — un choc isolé (poser
-   * le téléphone, un pas un peu sec) ne doit pas ouvrir la saisie.
-   */
-  useEffect(() => {
-    if (showCodeModal) return;
-
-    const SHAKE_FORCE = 1.8;
-    const SHAKE_HITS_REQUIRED = 3;
-    const SHAKE_WINDOW_MS = 1200;
-
-    let hits: number[] = [];
-    let cancelled = false;
-
-    Accelerometer.setUpdateInterval(80);
-    const subscription = Accelerometer.addListener(({ x, y, z }) => {
-      if (cancelled) return;
-      const force = Math.sqrt(x * x + y * y + z * z);
-      if (force < SHAKE_FORCE) return;
-
-      const now = Date.now();
-      hits = [...hits.filter((at) => now - at < SHAKE_WINDOW_MS), now];
-      if (hits.length >= SHAKE_HITS_REQUIRED) {
-        hits = [];
-        cancelled = true;
-        openSecretCodeEntry('shake');
-      }
-    });
-
-    return () => {
-      cancelled = true;
-      subscription.remove();
-    };
-  }, [showCodeModal, openSecretCodeEntry]);
-
-  const handleSubmitSecretCode = async () => {
-    const trimmed = codeInput.trim();
-    if (!trimmed) return;
-    Keyboard.dismiss();
-    setCodeError('');
-    setCodeLoading(true);
-    try {
-      const response = await apiService.validatePromoCode(trimmed);
-      const discount = response.data?.discountPercentage;
-      if (!response.data?.isValid || !discount) {
-        setCodeError(response.error || t('paywall.promoCodeInvalidMessage'));
-        return;
-      }
-
-      // 100 % = accès complet immédiat, sans repasser par le paywall.
-      if (discount === 100) {
-        await revenueCatService.activatePromoCode(trimmed);
-        await analytics.completeOnboarding({
-          ...paywallAnalyticsProperties,
-          completion_method: 'promo_code',
-        });
-        analytics.track('paywall_secret_code_premium', paywallAnalyticsProperties);
-        setShowCodeModal(false);
-        router.replace('/(tabs)' as any);
-        return;
-      }
-
-      // Code partiel : on réutilise le circuit remisé existant.
-      await AsyncStorage.multiSet([
-        ['pending_promo_code', trimmed.toUpperCase()],
-        ['pending_promo_discount', String(discount)],
-      ]);
-      analytics.track('paywall_secret_code_discount', { discount });
-      setShowCodeModal(false);
-      // Met à jour la modale existante sans remplacer sa route : remplacer le
-      // paywall risquerait de perdre son contexte de présentation.
-      router.setParams({
-        source: 'paywall_code_entry',
-        initialState: 'PROMO_DISCOUNTED',
-        promoDiscount: String(discount),
-      });
-    } catch {
-      setCodeError(t('paywall.promoCodeError'));
-    } finally {
-      setCodeLoading(false);
-    }
-  };
-
+  // Disabled for Store delivery. Retained for a future authenticated admin flow.
+//   /**
+//    * Saisie de code cachée, réservée au contournement du paywall.
+//    *
+//    * Sert d'abord aux relecteurs Apple et Google : le paywall est une boucle
+//    * fermée, et un relecteur qui passe l'écran promo du tunnel n'a plus aucun
+//    * moyen d'entrer dans l'app. Ce raccourci reste accessible depuis le paywall
+//    * lui-même, quoi qu'il ait fait avant.
+//    *
+//    * Déclenché en secouant l'appareil, plutôt que par un lien « J'ai un code
+//    * promo » : un lien apprendrait à tous les utilisateurs qu'une remise existe,
+//    * avant même qu'ils aient vu le prix plein.
+//    */
+//   const [showCodeModal, setShowCodeModal] = useState(false);
+//   const [codeInput, setCodeInput] = useState('');
+//   const [codeLoading, setCodeLoading] = useState(false);
+//   const [codeError, setCodeError] = useState('');
+//
+//   const openSecretCodeEntry = useCallback((trigger: string) => {
+//     feedback.success();
+//     analytics.track('paywall_secret_code_opened', {
+//       ...paywallAnalyticsProperties,
+//       trigger,
+//     });
+//     setCodeError('');
+//     setShowCodeModal(true);
+//   }, [paywallAnalyticsProperties]);
+//
+//   /**
+//    * Détection de secousse.
+//    *
+//    * L'accéléromètre renvoie des g : au repos la norme du vecteur vaut ~1. On
+//    * exige plusieurs franchissements de seuil rapprochés — un choc isolé (poser
+//    * le téléphone, un pas un peu sec) ne doit pas ouvrir la saisie.
+//    */
+//   useEffect(() => {
+//     if (showCodeModal) return;
+//
+//     const SHAKE_FORCE = 1.8;
+//     const SHAKE_HITS_REQUIRED = 3;
+//     const SHAKE_WINDOW_MS = 1200;
+//
+//     let hits: number[] = [];
+//     let cancelled = false;
+//
+//     Accelerometer.setUpdateInterval(80);
+//     const subscription = Accelerometer.addListener(({ x, y, z }) => {
+//       if (cancelled) return;
+//       const force = Math.sqrt(x * x + y * y + z * z);
+//       if (force < SHAKE_FORCE) return;
+//
+//       const now = Date.now();
+//       hits = [...hits.filter((at) => now - at < SHAKE_WINDOW_MS), now];
+//       if (hits.length >= SHAKE_HITS_REQUIRED) {
+//         hits = [];
+//         cancelled = true;
+//         openSecretCodeEntry('shake');
+//       }
+//     });
+//
+//     return () => {
+//       cancelled = true;
+//       subscription.remove();
+//     };
+//   }, [showCodeModal, openSecretCodeEntry]);
+//
+//   const handleSubmitSecretCode = async () => {
+//     const trimmed = codeInput.trim();
+//     if (!trimmed) return;
+//     Keyboard.dismiss();
+//     setCodeError('');
+//     setCodeLoading(true);
+//     try {
+//       if (!await activateReviewerAccess(trimmed)) {
+//         setCodeError(t('paywall.promoCodeInvalidMessage'));
+//         return;
+//       }
+//       if (shouldCompleteOnPurchase) {
+//         await analytics.completeOnboarding({
+//           ...paywallAnalyticsProperties,
+//           completion_method: 'reviewer_access',
+//         });
+//       }
+//       analytics.track('paywall_reviewer_access_activated', paywallAnalyticsProperties);
+//       setShowCodeModal(false);
+//       setCodeInput('');
+//       router.replace('/(tabs)' as any);
+//     } catch {
+//       setCodeError(t('paywall.promoCodeError'));
+//     } finally {
+//       setCodeLoading(false);
+//     }
+//   };
+//
   const [isSpinning, setIsSpinning] = useState(false);
   const [spinResult, setSpinResult] = useState<number | null>(null);
   const [wheelVariant, setWheelVariant] = useState<'A' | 'B'>('A');
@@ -902,10 +886,7 @@ export default function PaywallScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Repli à l'appui long (2s), invisible, en haut à droite pour ne pas
-          concurrencer la croix de fermeture. Un émulateur n'a pas
-          d'accéléromètre : sans ce repli, la secousse ne déclencherait rien lors
-          d'une relecture menée sur émulateur. Supprimable si tu n'en veux pas. */}
+      {/* Future admin access: gesture and access-code modal disabled.
       <Pressable
         onLongPress={() => openSecretCodeEntry('long_press')}
         delayLongPress={2000}
@@ -922,16 +903,16 @@ export default function PaywallScreen() {
       >
         <Pressable style={styles.codeBackdrop} onPress={() => setShowCodeModal(false)}>
           <Pressable style={styles.codeCard} onPress={() => { }}>
-            <Text style={styles.codeTitle}>{t('paywall.promoCodeTitle')}</Text>
-            <Text style={styles.codeDescription}>{t('paywall.promoCodeDescription')}</Text>
+            <Text style={styles.codeTitle}>{t('paywall.reviewerAccessTitle')}</Text>
+            <Text style={styles.codeDescription}>{t('paywall.reviewerAccessDescription')}</Text>
 
             <TextInput
               style={styles.codeInput}
               value={codeInput}
-              onChangeText={(text) => { setCodeInput(text.toUpperCase()); setCodeError(''); }}
-              placeholder={t('paywall.promoCodePlaceholder')}
+              onChangeText={(text) => { setCodeInput(text); setCodeError(''); }}
+              placeholder={t('paywall.reviewerAccessPlaceholder')}
               placeholderTextColor="#AEAEB2"
-              autoCapitalize="characters"
+              autoCapitalize="none"
               autoCorrect={false}
               autoFocus
               returnKeyType="done"
@@ -958,6 +939,7 @@ export default function PaywallScreen() {
           </Pressable>
         </Pressable>
       </Modal>
+      */}
 
       {viewState === 'WHEEL' ? (
         <Animated.View style={[styles.container, styles.wheelContainer, { opacity: fadeAnim }]}>

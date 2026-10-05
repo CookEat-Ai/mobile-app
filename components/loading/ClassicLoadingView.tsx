@@ -20,6 +20,7 @@ export function ClassicLoadingView({ messageKey, durationMs = 7000, mode = 'inde
   const insets = useSafeAreaInsets();
   const [messageIndex, setMessageIndex] = useState(0);
   const [percent, setPercent] = useState(0);
+  const [messageHeights, setMessageHeights] = useState<Record<number, number>>({});
   const progress = useRef(new Animated.Value(0)).current;
   const messageOpacity = useRef(new Animated.Value(1)).current;
   const mascotScale = useRef(new Animated.Value(1)).current;
@@ -43,6 +44,7 @@ export function ClassicLoadingView({ messageKey, durationMs = 7000, mode = 'inde
 
   useEffect(() => {
     setMessageIndex(0);
+    messageOpacity.setValue(1);
     progress.setValue(0);
     const listenerId = progress.addListener(({ value }) => {
       const maximum = mode === 'timed' ? 100 : 99;
@@ -65,10 +67,13 @@ export function ClassicLoadingView({ messageKey, durationMs = 7000, mode = 'inde
     if (!reduceMotion) pulseAnimation.start();
 
     const transitionCount = Math.max(1, messages.length - 1);
+    let nextMessageIndex = 0;
     const messageInterval = messages.length > 1 ? setInterval(() => {
+      nextMessageIndex += 1;
+      if (nextMessageIndex >= messages.length - 1) clearInterval(messageInterval);
       Animated.timing(messageOpacity, { toValue: 0, duration: 180, useNativeDriver: true }).start(({ finished }) => {
         if (!finished) return;
-        setMessageIndex((current) => Math.min(current + 1, messages.length - 1));
+        setMessageIndex(nextMessageIndex);
         Animated.timing(messageOpacity, { toValue: 1, duration: 220, useNativeDriver: true }).start();
       });
     }, Math.max(900, durationMs / transitionCount)) : undefined;
@@ -89,8 +94,19 @@ export function ClassicLoadingView({ messageKey, durationMs = 7000, mode = 'inde
           <Image source={require('../../assets/images/mascot.png')} contentFit="contain" style={styles.mascot} />
         </Animated.View>
         {mode !== 'request' && <View style={styles.percentPill}><Text style={styles.percent}>{percent}%</Text></View>}
-        <View style={styles.messageWrapper}>
-          <Animated.Text style={[styles.message, { opacity: messageOpacity }]}>{messages[messageIndex]}</Animated.Text>
+        <View style={[styles.messageWrapper, { minHeight: Math.max(60, ...Object.values(messageHeights)) }]}>
+          {/* Measure every phrase at the same width and font scale before it appears. */}
+          {messages.map((message, index) => (
+            <Text key={`${index}:${message}`} style={[styles.message, styles.messageMeasurement]}
+              accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants"
+              onLayout={({ nativeEvent }) => {
+                const height = Math.ceil(nativeEvent.layout.height);
+                setMessageHeights((current) => current[index] === height ? current : { ...current, [index]: height });
+              }}>
+              {message}
+            </Text>
+          ))}
+          <Animated.Text style={[styles.message, styles.messageVisible, { opacity: messageOpacity }]}>{messages[messageIndex]}</Animated.Text>
         </View>
         <View style={styles.progressTrack} accessibilityRole="progressbar" accessibilityLabel={messages[messageIndex]}
           accessibilityState={{ busy: mode === 'request' && !ready }}
@@ -110,8 +126,10 @@ const styles = StyleSheet.create({
   mascot: { width: rw(0.5), height: rw(0.5), transform: [{ rotate: '20deg' }] },
   percentPill: { borderRadius: 100, paddingHorizontal: 20, paddingVertical: 10, backgroundColor: 'rgba(254, 181, 10, 0.1)' },
   percent: { fontFamily: 'Degular', fontSize: 24, color: Colors.light.button },
-  messageWrapper: { height: 60, alignItems: 'center', justifyContent: 'center' },
-  message: { fontFamily: 'Degular', fontSize: rw(0.06), lineHeight: rw(0.07), color: Colors.light.text, textAlign: 'center' },
+  messageWrapper: { width: '100%', minHeight: 60, alignItems: 'center', justifyContent: 'center' },
+  message: { width: '100%', fontFamily: 'Degular', fontSize: rw(0.06), lineHeight: rw(0.07), color: Colors.light.text, textAlign: 'center' },
+  messageMeasurement: { position: 'absolute', opacity: 0, pointerEvents: 'none' },
+  messageVisible: { position: 'absolute' },
   progressTrack: { width: '100%', height: 10, borderRadius: 5, backgroundColor: '#F1EACB', overflow: 'hidden' },
   progressFill: { height: '100%', borderRadius: 5, backgroundColor: Colors.light.button },
 });

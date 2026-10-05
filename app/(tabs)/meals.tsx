@@ -153,9 +153,9 @@ export default function MealsScreen() {
             <TouchableOpacity style={[appStyles.iconButton, cuisine !== 'all' && { backgroundColor: theme.yellow }]} accessibilityRole="button" accessibilityLabel={t('dailyApp.filters')} accessibilityState={{ selected: cuisine !== 'all' }} onPress={() => { feedback.light(); setFiltersVisible(true); }}><Ionicons name="options-outline" size={24} color={theme.ink} /></TouchableOpacity>
           } />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
-            {FILTERS.map((item) => <TouchableOpacity key={item} accessibilityRole="button" accessibilityState={{ selected: item === type }} onPress={() => { if (item !== type) feedback.selection(); setType(item); }} style={[styles.filter, item === type && styles.filterActive]}><Text style={[styles.filterText, item === type && styles.filterTextActive]}>{t(`mealLibrary.types.${item}`)}</Text></TouchableOpacity>)}
+            {FILTERS.map((item) => <TouchableOpacity key={item} accessibilityRole="button" accessibilityState={{ selected: item === type }} onPress={() => { if (item !== type) feedback.selection(); pageRef.current = 0; setType(item); }} style={[styles.filter, item === type && styles.filterActive]}><Text style={[styles.filterText, item === type && styles.filterTextActive]}>{t(`mealLibrary.types.${item}`)}</Text></TouchableOpacity>)}
           </ScrollView>
-          {type !== 'favorites' && cuisine !== 'all' && <TouchableOpacity accessibilityRole="button" style={styles.appliedFilter} onPress={() => { feedback.selection(); setCuisine('all'); }} accessibilityLabel={t('dailyApp.clearFilters')}><Text style={styles.filterText}>{cuisineChoices.find(item => item.id === cuisine)?.label}</Text><Ionicons name="close" size={16} color={theme.ink} /></TouchableOpacity>}
+          {type !== 'favorites' && cuisine !== 'all' && <TouchableOpacity accessibilityRole="button" style={styles.appliedFilter} onPress={() => { feedback.selection(); pageRef.current = 0; setCuisine('all'); }} accessibilityLabel={t('dailyApp.clearFilters')}><Text style={styles.filterText}>{cuisineChoices.find(item => item.id === cuisine)?.label}</Text><Ionicons name="close" size={16} color={theme.ink} /></TouchableOpacity>}
         </>}
         ListEmptyComponent={loading
           ? <ActivityIndicator style={styles.loader} size="large" color={Colors.light.button} />
@@ -176,7 +176,7 @@ export default function MealsScreen() {
         <View style={appStyles.screen}>
           <View style={{ ...contentColumn(), paddingHorizontal: gutter, paddingTop: 24 }}><AppScreenHeading title={t('dailyApp.cuisines')} action={<NavigationIconButton kind="close" onPress={() => setFiltersVisible(false)} />} /></View>
           <ScrollView contentContainerStyle={{ ...contentColumn(), paddingHorizontal: gutter, paddingBottom: insets.bottom + 32 }}>
-            {cuisineChoices.map(item => <TouchableOpacity key={item.id} style={[styles.cuisineRow, cuisine === item.id && styles.cuisineSelected]} accessibilityRole="radio" accessibilityState={{ checked: cuisine === item.id }} onPress={() => { if (cuisine !== item.id) feedback.selection(); setCuisine(item.id); setFiltersVisible(false); }}><Text style={styles.cuisineText}>{item.label}</Text>{cuisine === item.id && <Ionicons name="checkmark-circle" size={23} color={theme.yellow} />}</TouchableOpacity>)}
+            {cuisineChoices.map(item => <TouchableOpacity key={item.id} style={[styles.cuisineRow, cuisine === item.id && styles.cuisineSelected]} accessibilityRole="radio" accessibilityState={{ checked: cuisine === item.id }} onPress={() => { if (cuisine !== item.id) feedback.selection(); pageRef.current = 0; setCuisine(item.id); setFiltersVisible(false); }}><Text style={styles.cuisineText}>{item.label}</Text>{cuisine === item.id && <Ionicons name="checkmark-circle" size={23} color={theme.yellow} />}</TouchableOpacity>)}
           </ScrollView>
         </View>
       </Modal>

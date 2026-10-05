@@ -22,7 +22,7 @@ export function selectedPlanDays(plan: MealPlan) {
   const selected = Array.isArray(configured)
     ? configured.filter((day): day is number => Number.isInteger(day) && day >= 0 && day < 7)
     : [];
-  const dayIndexes = new Set(selected.length ? selected : plan.meals.map(meal => meal.dayIndex ?? 0));
+  const dayIndexes = new Set([...selected, ...plan.meals.map(meal => meal.dayIndex ?? 0)]);
   return planDays(plan.weekStart).filter(day => dayIndexes.has(day.dayIndex));
 }
 
@@ -40,4 +40,30 @@ export function formatPlanRange(plan: Pick<MealPlan, 'weekStart' | 'weekEnd'>, l
   const formatter = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short' });
   const lastDay = plan.weekEnd || planDays(plan.weekStart)[6].key;
   return `${formatter.format(new Date(`${plan.weekStart}T12:00:00`))} – ${formatter.format(new Date(`${lastDay}T12:00:00`))}`;
+}
+
+/** Home only displays the current calendar week; older plans stay in history. */
+export function displayedPlan(plans: MealPlan[], weekStart: string): MealPlan | undefined {
+  return plans.find(plan => plan.weekStart === weekStart);
+}
+
+export function isPastPlanDay(weekStart: string, dayIndex: number, today = localDateKey()): boolean {
+  return !Number.isInteger(dayIndex) || !planDays(weekStart)[dayIndex] || planDays(weekStart)[dayIndex].key < today;
+}
+
+/** Occupied and empty slots share the same chronological order. */
+export function planningDaySlots(plan: MealPlan, dayIndex: number) {
+  const types = ['breakfast', 'lunch', 'snack', 'dinner'] as const;
+  return types.map(mealType => {
+    const meal = plan.meals.find(item => (item.dayIndex ?? 0) === dayIndex && item.mealType === mealType);
+    return { slotId: meal?.slotId ?? `empty:${dayIndex}:${mealType}`, mealType, meal };
+  });
+}
+
+/** Catalogue additions may fill an empty slot or replace an occupied one. */
+export function compatiblePlanningSlots(plan: MealPlan, mealTypes: string[], today = localDateKey()) {
+  const configured = Array.isArray(plan.preferences?.cookingDays) ? plan.preferences.cookingDays as number[] : [];
+  const days = new Set([...configured, ...plan.meals.map(meal => meal.dayIndex ?? 0)]);
+  return planDays(plan.weekStart).filter(day => days.has(day.dayIndex) && !isPastPlanDay(plan.weekStart, day.dayIndex, today))
+    .flatMap(day => planningDaySlots(plan, day.dayIndex).filter(slot => mealTypes.includes(slot.mealType)).map(slot => ({ ...slot, dayIndex: day.dayIndex })));
 }

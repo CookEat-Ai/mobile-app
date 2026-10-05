@@ -1,3 +1,6 @@
+import { PresentationScanOverlay } from '../../components/planning/PresentationScanOverlay';
+import { finishPresentationScan } from '../../services/presentationScan';
+import { PlanningPantry, type PlanningPantryValue } from '../../components/planning/PlanningPantry';
 import { PlanMealCard } from '../../components/planning/PlanMealCard';
 import { PlanningDayPicker } from '../../components/planning/PlanningDayPicker';
 import { PlanningNutritionSummary } from '../../components/planning/PlanningNutritionSummary';
@@ -20,6 +23,7 @@ import { Colors } from '../../constants/Colors';
 import analytics from '../../services/analytics';
 import { schedulePlanningReview } from '../../services/planningReview';
 import { apiService, MealPlan, MealPlanMeal } from '../../services/api';
+import { getAnonymousUserId } from '../../services/anonymousSession';
 import { fitnessProfileToPlanningPreferences, loadFitnessProfile } from '../../services/fitnessProfile';
 import { plannedMealRecipeParams } from '../../services/plannedMealNavigation';
 import {
@@ -42,13 +46,17 @@ export default function WeeklyPlanPreviewScreen() {
   const [plan, setPlan] = useState<MealPlan | null>(null);
   const [selectedDay, setSelectedDay] = useState(0);
   const [cookingDays, setCookingDays] = useState<number[]>([...DEFAULT_COOKING_DAYS]);
+  const [pantry, setPantry] = useState<PlanningPantryValue>({ pantryIngredients: [], pantryMode: 'priority' });
+  const [pantryBusy, setPantryBusy] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [networkError, setNetworkError] = useState(false);
   const [opening, setOpening] = useState<string | null>(null);
   const interactionVersion = useRef(0);
 
-  const generate = useCallback(async () => {
+  const generate = useCallback(async (pantryOverride?: PlanningPantryValue) => {
+    const selectedPantry = pantryOverride || pantry;
+    if (pantryBusy) return;
     interactionVersion.current += 1;
     feedback.confirm();
     resetLoadingBar();
@@ -57,15 +65,20 @@ export default function WeeklyPlanPreviewScreen() {
     setError(null);
     setNetworkError(false);
     try {
-      const [userId, profile] = await Promise.all([AsyncStorage.getItem('userId'), loadFitnessProfile()]);
-      if (!userId) throw new Error(t('planning.errors.user'));
-      const existing = await apiService.getMealPlan(userId, weekStart);
+      const [userId, profile] = await Promise.all([
+        getAnonymousUserId().catch(() => {
+          setNetworkError(true);
+          throw new Error(t('weeklyOnboarding.preview.networkErrorSubtitle'));
+        }),
+        loadFitnessProfile(),
+      ]);
+      const existing = await apiService.getMealPlan(userId, weekStart, true);
       const existingPlan = existing.data?.plan || null;
       const selectedCookingDays = normalizeCookingDays(cookingDays);
       analytics.track('onboarding_weekly_plan_generation_started', { planning_horizon_days: 7, cooking_days: selectedCookingDays.join(',') });
       const settings = await loadPlanningGenerationSettings();
       const profilePreferences = fitnessProfileToPlanningPreferences(profile);
-      const preferences = { ...profilePreferences, cookingDays: selectedCookingDays, includeSnack: false };
+      const preferences = { ...profilePreferences, ...selectedPantry, servings: settings.servings || 1, cookingDays: selectedCookingDays, includeSnack: true };
       const response = await apiService.createMealPlan({
         userId,
         weekStart,
@@ -82,15 +95,18 @@ export default function WeeklyPlanPreviewScreen() {
         saveOnboardingWeeklyPlanId(nextPlan._id),
         savePlanningGenerationSettings({
           ...settings,
+          ...selectedPantry,
           cookingDays: selectedCookingDays,
-          includeSnack: false,
+          includeSnack: true,
           duration: profilePreferences.duration === 'fast' || profilePreferences.duration === 'medium' ? profilePreferences.duration : 'all',
         }),
       ]);
       if (!await finishLoadingBar(generationStartedAt)) return;
       feedback.success();
       setPlan(nextPlan);
-      setSelectedDay(selectedCookingDays[0]);
+      const restoredDays = normalizeCookingDays(nextPlan.preferences?.cookingDays);
+      setCookingDays(restoredDays);
+      setSelectedDay(restoredDays[0]);
       schedulePlanningReview(nextPlan._id, true);
       analytics.track('onboarding_weekly_plan_generation_completed', { plan_id: nextPlan._id, meal_count: nextPlan.meals.length, cooking_days: selectedCookingDays.join(',') });
     } catch (generationError) {
@@ -98,9 +114,10 @@ export default function WeeklyPlanPreviewScreen() {
       setError(generationError instanceof Error ? generationError.message : t('planning.errors.create'));
       analytics.track('onboarding_weekly_plan_generation_failed', { reason: generationError instanceof Error ? generationError.message : 'unknown' });
     } finally {
+      finishPresentationScan();
       setLoading(false);
     }
-  }, [cookingDays, weekStart, finishLoadingBar, resetLoadingBar, t]);
+  }, [pantry, pantryBusy, cookingDays, weekStart, finishLoadingBar, resetLoadingBar, t]);
 
   useFocusEffect(useCallback(() => {
     let active = true;
@@ -113,7 +130,7 @@ export default function WeeklyPlanPreviewScreen() {
         if (!canRestore()) return;
         setCookingDays(settings.cookingDays);
         if (!userId) return;
-        const response = await apiService.getMealPlan(userId, weekStart);
+        const response = await apiService.getMealPlan(userId, weekStart, true);
         if (canRestore() && isCompleteWeeklyPlan(response.data?.plan)) {
           const existingPlan = response.data.plan;
           setPlan(existingPlan);
@@ -131,7 +148,7 @@ export default function WeeklyPlanPreviewScreen() {
   }, [weekStart, i18n.language]));
 
   const days = useMemo(() => Array.from({ length: 7 }, (_, dayIndex) => {
-    const key = addDays(weekStart, dayIndex);
+    const key = addDays(plan?.weekStart || weekStart, dayIndex);
     const date = new Date(`${key}T12:00:00`);
     return {
       key,
@@ -140,13 +157,14 @@ export default function WeeklyPlanPreviewScreen() {
       label: new Intl.DateTimeFormat(i18n.language, { weekday: 'long' }).format(date),
       number: date.getDate(),
     };
-  }), [i18n.language, weekStart]);
+  }), [i18n.language, weekStart, plan?.weekStart]);
   const visibleDays = useMemo(() => days.filter((day) => (plan?.meals || []).some((meal) => meal.dayIndex === day.dayIndex)), [days, plan?.meals]);
   const meals = useMemo(() => (plan?.meals || []).filter((meal) => (meal.dayIndex ?? 0) === selectedDay).sort((a, b) => a.position - b.position), [plan?.meals, selectedDay]);
-  const { animationKey, replayButton } = usePlanningReveal(!loading && Boolean(plan) && meals.length > 0);
+  const { animationKey, replayButton, stopReveal, visibleDayCount, dayAnimationKey } = usePlanningReveal(!loading && Boolean(plan?.meals.length), visibleDays.map(day => day.dayIndex), setSelectedDay, plan?._id || '');
   const selectedDayLabel = days.find((day) => day.dayIndex === selectedDay)?.label || '';
 
   const openMeal = async (meal: MealPlanMeal) => {
+    stopReveal();
     if (!plan || opening) return;
     setOpening(meal.slotId);
     try {
@@ -182,12 +200,20 @@ export default function WeeklyPlanPreviewScreen() {
     });
   };
 
-  if (loading) return <PlanningLoadingView ready={loadingReady} onComplete={completeLoadingBar} />;
+  if (loading) return <View style={{ flex: 1 }}><PlanningLoadingView ready={loadingReady} onComplete={completeLoadingBar} /><PresentationScanOverlay /></View>;
   if (error) return (
     <View style={styles.state}>
       <View style={styles.sparkle}><Ionicons name="alert-circle-outline" size={48} color={Colors.light.button} /></View>
       <Text style={styles.stateTitle}>{t(networkError ? 'weeklyOnboarding.preview.networkErrorTitle' : 'weeklyOnboarding.preview.errorTitle')}</Text>
       <Text style={styles.stateSubtitle}>{error}</Text>
+      {!networkError && pantry.pantryMode === 'strict' && pantry.pantryIngredients.length > 0 && <TouchableOpacity accessibilityRole="button" activeOpacity={0.82} onPress={() => {
+        const next: PlanningPantryValue = { ...pantry, pantryMode: 'priority' };
+        setPantry(next);
+        void AsyncStorage.setItem('cookeat_planning_pantry_v1', JSON.stringify(next)).catch(() => undefined);
+        void generate(next);
+      }} style={styles.retry}>
+        <Text style={styles.retryText}>{t('planningPantry.allowShopping')}</Text>
+      </TouchableOpacity>}
       <TouchableOpacity accessibilityRole="button" activeOpacity={0.82} onPress={() => void generate()} style={styles.retry}>
         <Text style={styles.retryText}>{t('weeklyOnboarding.preview.retry')}</Text>
       </TouchableOpacity>
@@ -201,7 +227,7 @@ export default function WeeklyPlanPreviewScreen() {
   );
 
   if (!plan) return <View style={[styles.root, { paddingTop: insets.top + 8 }]}>
-    <OnboardingScrollView stepKey="configuration" contentContainerStyle={[styles.configurationContent, { paddingBottom: 132 + insets.bottom }]} showsVerticalScrollIndicator={false}>
+    <OnboardingScrollView stepKey="configuration" keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerStyle={[styles.configurationContent, { paddingBottom: 132 + insets.bottom }]} showsVerticalScrollIndicator={false}>
       <View style={styles.configurationIcon}><Ionicons name="calendar" size={34} color={Colors.light.button} /></View>
       <Text style={styles.configurationTitle}>{t('planning.generation.title')}</Text>
       <Text style={styles.configurationSubtitle}>{t('planning.generation.subtitle')}</Text>
@@ -213,16 +239,17 @@ export default function WeeklyPlanPreviewScreen() {
           return <TouchableOpacity key={day.key} onPress={() => toggleCookingDay(dayIndex)} style={[styles.configurationDay, selected && styles.configurationDayActive]} accessibilityRole="checkbox" accessibilityState={{ checked: selected }}><Text style={[styles.configurationDayText, selected && styles.configurationDayTextActive]}>{day.short.replace('.', '')}</Text></TouchableOpacity>;
         })}
       </View>
+      <PlanningPantry onChange={setPantry} onBusy={setPantryBusy} useDisabled={loading} onUseIngredients={value => void generate(value)} />
     </OnboardingScrollView>
-    <OnboardingFooter label={t('planning.generation.cta')} onPress={() => void generate()} />
+    <OnboardingFooter disabled={pantryBusy} label={t('planning.generation.cta')} onPress={() => void generate()} />
   </View>;
 
   return <View style={[styles.root, { paddingTop: insets.top + 8 }]}>
     <OnboardingScrollView stepKey="preview" contentContainerStyle={[styles.content, { paddingBottom: 132 + insets.bottom }]} showsVerticalScrollIndicator={false}>
       <View style={styles.heroRow}><View style={styles.heroCopy}><View style={styles.badge}><Ionicons name="sparkles" size={14} color={Colors.light.button} /><Text style={styles.badgeText}>{t('weeklyOnboarding.preview.badge')}</Text></View><Text style={styles.title}>{t('fitnessOnboarding.preview.title')}</Text><View style={styles.weekCount}><Text style={styles.weekCountValue}>{plan?.meals.length || 0}</Text><Text style={styles.weekCountLabel}>{t('fitnessOnboarding.interstitials.facts.meals')}</Text></View></View></View>
       {replayButton}
-      <PlanningDayPicker days={visibleDays} selectedDay={selectedDay} onSelect={setSelectedDay} />
-      <PlanningNutritionSummary key={`nutrition:${plan._id}:${selectedDay}`} meals={meals} dailyCalories={plan.nutritionTargets?.dailyCalories} />
+      <PlanningDayPicker visibleCount={visibleDayCount} revealKey={dayAnimationKey} days={visibleDays} selectedDay={selectedDay} onSelect={day => { stopReveal(); setSelectedDay(day); }} />
+      <PlanningNutritionSummary key={`nutrition:${plan._id}:${selectedDay}`} meals={meals} />
       <PlanningCalorieNotice plan={plan} dayIndex={selectedDay} />
       <View style={styles.sectionRow}><Text style={styles.sectionTitle}>{t('planning.dayMeals', { day: selectedDayLabel })}</Text></View>
       <AnimatedPlanningMeals key={`meals:${plan._id}:${selectedDay}`} meals={meals} animationKey={animationKey} renderMeal={meal => <PlanMealCard meal={meal} loading={opening === meal.slotId} disabled={Boolean(opening)} onPress={() => void openMeal(meal)} />} />

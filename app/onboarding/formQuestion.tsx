@@ -67,6 +67,7 @@ export default function FitnessOnboardingScreen() {
     ...(Number(answers.trainingDays) > 0 ? [{ id: 'trainingDurationMinutes', kind: 'single' as const, title: t('nutritionEstimate.durationTitle'), subtitle: t('nutritionEstimate.durationSubtitle'), options: [20, 45, 75].map(minutes => ({ value: String(minutes), emoji: '⏱️', label: t(`nutritionEstimate.durations.${minutes}`) })) }] : []),
     { id: 'profileReflection', kind: 'interstitial', hideProgress: true, title: t('fitnessOnboarding.interstitials.profile.title'), subtitle: t('fitnessOnboarding.interstitials.profile.subtitle') },
     { id: 'cookingTime', kind: 'single', title: t('fitnessOnboarding.cookingTime.title'), subtitle: t('fitnessOnboarding.cookingTime.subtitle'), options: [option('cookingTime', 'less_than_30_minutes', '⏱️'), option('cookingTime', 'between_30_minutes_and_1_hour', '⏲️'), option('cookingTime', 'more_than_1_hour', '👨‍🍳')] },
+    { id: 'equipments', kind: 'multi', optional: true, title: t('onboarding.equipmentQuestion'), options: [['equipment_oven', '🔥'], ['equipment_airfryer', '🍟'], ['equipment_microwave', '📡'], ['equipment_blender', '🥤'], ['equipment_robot', '🤖'], ['equipment_none', '🙅']].map(([value, emoji]) => ({ value, emoji, label: t(`onboarding.formQuestions.${value}`) })) },
     { id: 'diet', kind: 'single', title: t('fitnessOnboarding.diet.title'), subtitle: t('fitnessOnboarding.diet.subtitle'), options: [option('diet', 'none', '🍽️'), option('diet', 'vegetarian', '🥬'), option('diet', 'vegan', '🌱'), option('diet', 'pescatarian', '🐟'), option('diet', 'halal', '🌙')] },
     { id: 'avoidIngredients', kind: 'multi', optional: true, title: t('fitnessOnboarding.avoid.title'), subtitle: t('fitnessOnboarding.avoid.subtitle'), options: [option('avoid', 'avoid_pork', '🥓'), option('avoid', 'avoid_alcohol', '🍷'), option('avoid', 'avoid_beef', '🥩'), option('avoid', 'avoid_fish', '🐟'), option('avoid', 'avoid_dairy', '🥛'), option('avoid', 'avoid_gluten', '🌾'), option('avoid', 'avoid_egg', '🥚'), option('avoid', 'avoid_peanut', '🥜')] },
     { id: 'favoriteCuisineStyle', kind: 'multi', optional: true, title: t('fitnessOnboarding.cuisine.title'), subtitle: t('fitnessOnboarding.cuisine.subtitle'), options: [option('cuisine', 'cuisine_mediterranean', '🫒'), option('cuisine', 'cuisine_french', '🥖'), option('cuisine', 'cuisine_italian', '🍝'), option('cuisine', 'cuisine_middle_eastern', '🧆'), option('cuisine', 'cuisine_indian', '🍛'), option('cuisine', 'cuisine_asian', '🥢')] },
@@ -94,6 +95,7 @@ export default function FitnessOnboardingScreen() {
       avoidIngredients: Array.isArray(answers.avoidIngredients) ? answers.avoidIngredients : [],
       cookingTime: String(answers.cookingTime || 'less_than_30_minutes'),
       favoriteCuisineStyle: Array.isArray(answers.favoriteCuisineStyle) ? answers.favoriteCuisineStyle : [],
+      equipments: Array.isArray(answers.equipments) ? answers.equipments.filter((item) => item !== 'equipment_none') : [],
     };
     return base;
   }, [answers]);
@@ -178,7 +180,10 @@ export default function FitnessOnboardingScreen() {
     setError('');
     if (step.kind === 'multi') {
       const current = Array.isArray(value) ? value : [];
-      setAnswers((old) => ({ ...old, [step.id]: current.includes(next) ? current.filter((item) => item !== next) : [...current, next] }));
+      const selected = current.includes(next) ? current.filter((item) => item !== next)
+        : step.id === 'equipments' ? (next === 'equipment_none' ? [next] : [...current.filter((item) => item !== 'equipment_none'), next])
+        : [...current, next];
+      setAnswers((old) => ({ ...old, [step.id]: selected }));
       return;
     }
     setAnswers((old) => ({ ...old, [step.id]: next }));
@@ -191,7 +196,11 @@ export default function FitnessOnboardingScreen() {
   return (
     <KeyboardAvoidingView style={styles.root} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <View style={[styles.progressHeader, { paddingTop: insets.top + 5 }, step.hideProgress && { display: 'none' }]}>
-        <NavigationIconButton onPress={() => index > 0 ? moveTo(index - 1) : router.back()} style={styles.backButton} />
+        <NavigationIconButton onPress={() => {
+          if (index > 0) moveTo(index - 1);
+          else if (router.canGoBack()) router.back();
+          else router.replace('/onboarding/welcome');
+        }} style={styles.backButton} />
         <View style={styles.progressTrackContainer}><OnboardingProgressBar progress={(index + 1) / steps.length} /></View>
       </View>
       <OnboardingScrollView stepKey={step.id} contentContainerStyle={[styles.scrollContent, { paddingTop: step.hideProgress ? insets.top + 18 : 0, paddingBottom: showContinue ? 140 + insets.bottom : 30 + insets.bottom }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} scrollEnabled>

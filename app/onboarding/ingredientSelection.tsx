@@ -1,3 +1,4 @@
+import { CREATOR_PROMO_CODES_ENABLED } from '../../config/storeCompliance';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
 import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
 import React, { useState, useRef, useMemo } from 'react';
@@ -172,7 +173,7 @@ export default function IngredientSelectionScreen() {
     const variant = await analytics.getOnboardingVariant();
 
     if (variant === 'B') {
-      const pendingDiscount = await AsyncStorage.getItem('pending_promo_discount');
+      const pendingDiscount = CREATOR_PROMO_CODES_ENABLED ? await AsyncStorage.getItem('pending_promo_discount') : null;
       if (pendingDiscount) {
         router.push({
           pathname: '/paywall',

@@ -1,6 +1,7 @@
 {
   "planningReveal": {
-    "replay": "Replay animation"
+    "replay": "Replay the week",
+    "skip": "Skip animation"
   },
   "fitnessOnboarding": {
     "required": "Choose an answer to continue.",
@@ -700,7 +701,8 @@
       "unlock": "Unlock",
       "manage": "Meal options",
       "up": "Move up",
-      "down": "Move down"
+      "down": "Move down",
+      "shoppingAccess": "All the ingredients for your meals in one handy checklist."
     },
     "delete": {
       "title": "Remove this meal?",
@@ -772,7 +774,7 @@
     "subtitle": "If a creator shared a promo code with you, enter it here to get an exclusive discount.",
     "placeholder": "YOUR PROMO CODE",
     "validate": "Validate",
-    "skip": "I don't have a code",
+    "skip": "Continue without a code",
     "invalid": "This promo code is not valid",
     "error": "Unable to verify the promo code",
     "success": "-{{discount}}% discount activated!",
@@ -938,6 +940,9 @@
     "processing": "Processing your list..."
   },
   "paywall": {
+    "reviewerAccessTitle": "App review access",
+    "reviewerAccessDescription": "Enter the access code provided for app review.",
+    "reviewerAccessPlaceholder": "Access code",
     "billedAnnually": "billed {{price}} yearly",
     "weeklyPlanning": {
       "headline": "Eat better, at your own pace.",
@@ -1706,7 +1711,7 @@
       "importCta": "Try it",
       "editable": "You can move, replace, or lock every meal.",
       "cta": "See how to unlock my week",
-      "shoppingAccess": "Your checklist, included with CookEat Premium."
+      "shoppingAccess": "All the ingredients for your meals in one handy checklist."
     },
     "activation": {
       "loadingTitle": "Opening your week…",
@@ -1726,6 +1731,7 @@
     }
   },
   "recipeSummary": {
+    "other": "Other",
     "ingredients": "Ingredients",
     "summary": "Summary",
     "dishType": "Dish type",
@@ -1835,7 +1841,6 @@
     "changePlannedMeal": "Change this meal",
     "changingPlannedMeal": "Creating your new meal…",
     "changePlannedMealErrorTitle": "Unable to change this meal",
-    "likeError": "Unable to like the recipe",
     "nutritionalInfoTitle": "Nutritional Information",
     "nutritionalInfoContent": "These values are estimates based on the provided ingredients and servings.",
     "illustration": "Illustration",
@@ -1852,7 +1857,6 @@
     "chef_tip": "Chef's Secret 👨‍🍳",
     "enjoy": "Enjoy!",
     "addToFavorites": "Add to favorites",
-    "iLikedThisRecipe": "I liked this recipe",
     "generatingRecipe": "Generating...",
     "generateAnotherRecipe": "Generate another recipe",
     "error": "Error",
@@ -1876,7 +1880,9 @@
     "viewOnYouTube": "View on YouTube",
     "unableToOpenVideo": "Unable to open video",
     "imageUpdateError": "Error updating image",
-    "imagePickError": "Error picking image"
+    "imagePickError": "Error picking image",
+    "chooseReplacement": "Choose from recipes",
+    "automaticReplacement": "Choose automatically"
   },
   "planningHistory": {
     "empty": "No meal plans yet",
@@ -1884,7 +1890,7 @@
   },
   "planningConfig": {
     "title": "Customize your plan",
-    "dailyMeals": "Breakfast, lunch and dinner are included for every selected day.",
+    "dailyMeals": "Breakfast, lunch, a snack and dinner are included for every selected day.",
     "meals": {
       "breakfast": "Breakfast",
       "lunch": "Lunch",
@@ -1902,7 +1908,10 @@
     "duration": "Preparation time",
     "exclude": "Exclude ingredients",
     "excludeHelp": "Separate multiple ingredients with commas.",
-    "excludePlaceholder": "E.g. pork, peanuts, cilantro"
+    "excludePlaceholder": "E.g. pork, peanuts, cilantro",
+    "people": "People",
+    "fewerPeople": "Fewer people",
+    "morePeople": "More people"
   },
   "planningLoading": {
     "title": "Building your meal plan",
@@ -1923,7 +1932,9 @@
     "progress": "{{done}}/{{total}} done",
     "copy": "Copy",
     "copied": "Copied",
-    "share": "Share"
+    "share": "Share",
+    "addIngredient": "Add an ingredient",
+    "quantityPlaceholder": "Quantity (optional)"
   },
   "mealLibrary": {
     "types": {
@@ -2208,6 +2219,7 @@
     "retry": "Try again"
   },
   "planningNutrition": {
+    "dayTotal": "Total for the day’s planned meals",
     "adjustedPortion": "Quantities adjusted to your goal for one person.",
     "closestAvailable": "{{day}}: {{actual}} / {{target}} kcal. {{percent}}% difference after adjusting portions, as close to your goal as possible.",
     "planned": "Planned meals",
@@ -2262,5 +2274,86 @@
     "goalSubtitle": "Your progress, one day at a time.",
     "profileEyebrow": "Your preferences",
     "subscriptionDetails": "Explore my subscription"
+  },
+  "planningOrganize": {
+    "removed": "Meal removed",
+    "action": "Edit",
+    "title": "Edit",
+    "hint": "Drag a meal by its handle, or tap it to choose a new spot. Tap Done to save your changes.",
+    "moveTo": "Move to…",
+    "destinationHint": "If the spot is occupied, the two meals swap places.",
+    "empty": "Empty spot",
+    "portions_one": "{{count}} serving",
+    "portions_other": "{{count}} servings",
+    "swapped": "Meals swapped",
+    "moved": "Meal moved",
+    "undo": "Undo",
+    "done": "Done",
+    "saveError": "Could not save. Your changes are kept here: try again.",
+    "ended": "This plan has ended and can no longer be reorganized.",
+    "discardTitle": "Leave without saving?",
+    "discardBody": "Changes from this session will be lost.",
+    "keepEditing": "Keep organizing",
+    "discard": "Leave without saving"
+  },
+  "planningPantry": {
+    "allowShopping": "Allow a few extra groceries",
+    "title": "Use what I have",
+    "help": "Optional: add foods you want to use this week.",
+    "photo": "Take a photo",
+    "gallery": "Gallery",
+    "photoHelp": "Fridge, pantry or receipt: check the detected foods.",
+    "placeholder": "E.g. chicken, rice, tomatoes",
+    "manual": "Add ingredients",
+    "add": "Add",
+    "remove": "Remove",
+    "review": "Check the list. Tap a food to remove it.",
+    "priority": "Allow other ingredients",
+    "strict": "Only my ingredients",
+    "basics": "Basics allowed: water, salt, pepper and oil.",
+    "quantities": "Quantities are unknown: check that you have enough.",
+    "scanError": "The photo could not be analyzed. Retry or type your foods.",
+    "saveError": "The list could not be saved.",
+    "owned": "Already at home",
+    "shoppingHelp": "Foods you have are checked. Uncheck them if you need more.",
+    "coverage": "You have {{owned}} of {{required}} ingredients",
+    "categories": "Choose by category"
+  },
+  "planningSlots": {
+    "add": "Add a meal",
+    "past": "Past day"
+  },
+  "pantryScan": {
+    "scanning": "SCANNING",
+    "found": "INGREDIENTS FOUND",
+    "title": "From fridge to week.",
+    "subtitle": "CookEat recognises what you already have.",
+    "resultTitle": "Here’s your starting point.",
+    "review": "Tap an ingredient to remove it if the scan got it wrong.",
+    "count_one": "{{count}} ingredient found",
+    "count_other": "{{count}} ingredients found",
+    "ingredients": "Your ingredients",
+    "next": "Next: your week",
+    "empty": "No ingredients found. Take a closer photo with more light.",
+    "planningHelp": "Your protein meal plan will prioritise these ingredients. CookEat will add what’s missing.",
+    "confirm": "Use these ingredients",
+    "saving": "Saving…",
+    "retake": "Retake photo",
+    "weekEyebrow": "YOUR FRIDGE → YOUR WEEK",
+    "weekTitle": "Your week is taking shape.",
+    "weekReady": "Your week is ready.",
+    "weekSubtitle": "Your ingredients, a protein meal plan and the groceries to complete it.",
+    "weekWorking": "Putting your meals together…",
+    "weekHelp": "Your meals and their protein amounts will appear in your plan.",
+    "analyzing": "Analyzing…"
+  },
+  "presentationMode": {
+    "title": "Presentation mode",
+    "code": "Access code",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "invalid": "Incorrect code",
+    "enabled": "Presentation mode enabled. Scanning starts the plan directly.",
+    "disabled": "Presentation mode disabled."
   }
 }

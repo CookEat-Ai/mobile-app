@@ -1,3 +1,6 @@
+// Future admin access (disabled):
+// import { hasReviewerAccess } from '../services/reviewerAccess';
+import { CREATOR_PROMO_CODES_ENABLED } from './storeCompliance';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform, Linking } from 'react-native';
 import Purchases, { PurchasesOffering } from 'react-native-purchases';
@@ -148,6 +151,9 @@ class RevenueCatService {
     // }
 
     try {
+//       if (await hasReviewerAccess()) {
+//         return { isSubscribed: true, currentPlan: 'reviewer_access', expirationDate: null, freeGenerationsRemaining: 999 };
+//       }
       // Vérifier d'abord si un code promo a été activé
       const isPromoCodeActivated = await this.isPromoCodeActivated();
 
@@ -309,6 +315,8 @@ class RevenueCatService {
       const raw = await AsyncStorage.getItem(LAST_SUBSCRIPTION_STATUS_KEY);
       if (!raw) return null;
       const parsed = JSON.parse(raw);
+      if (parsed.currentPlan === 'reviewer_access') return null;
+      if (!CREATOR_PROMO_CODES_ENABLED && parsed.currentPlan === 'promo_code') return null;
       return {
         isSubscribed: Boolean(parsed.isSubscribed),
         currentPlan: parsed.currentPlan ?? null,
@@ -443,13 +451,14 @@ class RevenueCatService {
 
   // Méthodes pour gérer les codes promo
   async activatePromoCode(code: string): Promise<boolean> {
+    if (!CREATOR_PROMO_CODES_ENABLED) return false;
     try {
       // Valider le code promo via l'API
       const response = await apiService.validatePromoCode(code.trim());
 
       if (response.data?.isValid) {
         await AsyncStorage.setItem(PROMO_CODE_STORAGE_KEY, 'true');
-        
+
         // Mettre à jour le cache immédiatement
         await this.persistLastSubscriptionStatus({
           isSubscribed: true,
@@ -471,6 +480,7 @@ class RevenueCatService {
   }
 
   async isPromoCodeActivated(): Promise<boolean> {
+    if (!CREATOR_PROMO_CODES_ENABLED) return false;
     try {
       const isActivated = await AsyncStorage.getItem(PROMO_CODE_STORAGE_KEY);
       return isActivated === 'true';

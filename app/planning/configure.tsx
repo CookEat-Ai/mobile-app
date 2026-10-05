@@ -1,3 +1,6 @@
+import { finishPresentationScan } from '../../services/presentationScan';
+import { ServingsControl } from '../../components/ServingsControl';
+import { PlanningPantry, type PlanningPantryValue } from '../../components/planning/PlanningPantry';
 import { EntranceView } from '../../components/motion/Entrance';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
 import { Ionicons } from '@expo/vector-icons';
@@ -26,12 +29,15 @@ export default function ConfigurePlanningScreen() {
   const insets = useSafeAreaInsets();
   const { gutter, font } = useResponsive();
   const [selectedDays, setSelectedDays] = useState<number[]>([...DEFAULT_COOKING_DAYS]);
+  const [servings, setServings] = useState(1);
   const [duration, setDuration] = useState<'all' | 'fast' | 'medium'>('all');
   const [cuisines, setCuisines] = useState<CatalogCuisine[]>([]);
   const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
   const [diet, setDiet] = useState<'none' | 'vegetarian' | 'vegan'>('none');
   const [excludedIngredients, setExcludedIngredients] = useState('');
   const [ready, setReady] = useState(false);
+  const [pantry, setPantry] = useState<PlanningPantryValue>({ pantryIngredients: [], pantryMode: 'priority' });
+  const [pantryBusy, setPantryBusy] = useState(true);
   const [saving, setSaving] = useState(false);
   const savingRef = useRef(false);
   const [error, setError] = useState('');
@@ -44,6 +50,7 @@ export default function ConfigurePlanningScreen() {
       if (!active) return;
       setSelectedDays(settings.cookingDays);
       setDuration(settings.duration);
+      setServings(settings.servings || 1);
       setSelectedCuisines(settings.cuisineIds);
       setDiet(settings.diet);
       setExcludedIngredients(settings.excludedIngredients.join(', '));
@@ -80,17 +87,17 @@ export default function ConfigurePlanningScreen() {
       setSelectedDays(current => [...current, dayIndex].sort((a, b) => a - b));
     }
   };
-  const continueFlow = async () => {
-    if (!ready || savingRef.current) return;
+  const continueFlow = async (pantryOverride?: PlanningPantryValue) => {
+    if (!ready || pantryBusy || savingRef.current) return;
     savingRef.current = true; setSaving(true); setError('');
     try {
       const normalizedMeals = dailyMealsForDays(selectedDays);
       const excluded = [...new Set(excludedIngredients.split(',').map(item => item.trim()).filter(Boolean))];
-      const settings = { cookingDays: selectedDays, mealsByDay: normalizedMeals, includeSnack: false, duration, cuisineIds: selectedCuisines, diet, excludedIngredients: excluded };
+      const settings = { ...(pantryOverride || pantry), servings, cookingDays: selectedDays, mealsByDay: normalizedMeals, includeSnack: true, duration, cuisineIds: selectedCuisines, diet, excludedIngredients: excluded };
       await savePlanningGenerationSettings(settings);
       void feedback.confirm();
       router.push({ pathname: '/planning/loading', params: { config: JSON.stringify(settings), replace: replace || 'false' } });
-    } catch { feedback.error(); setError(t('planning.errors.update')); }
+    } catch { finishPresentationScan(); feedback.error(); setError(t('planning.errors.update')); }
     finally { savingRef.current = false; setSaving(false); }
   };
 
@@ -115,6 +122,7 @@ export default function ConfigurePlanningScreen() {
             </TouchableOpacity>;
           })}
         </ScrollView>
+        <PlanningPantry presentationConfig={JSON.stringify({ servings, cookingDays: selectedDays, mealsByDay: dailyMealsForDays(selectedDays), includeSnack: true, duration, cuisineIds: selectedCuisines, diet, excludedIngredients: [...new Set(excludedIngredients.split(',').map(item => item.trim()).filter(Boolean))] })} presentationReplace={replace} onChange={setPantry} onBusy={setPantryBusy} useDisabled={!ready || saving} onUseIngredients={value => void continueFlow(value)} />
         <EntranceView entranceIndex={0} style={styles.preferencesCard}>
           <Text style={appStyles.section}>{t('planningConfig.duration')}</Text>
           <Text style={styles.sectionHelp}>{t('planning.settings.durationHelp')}</Text>
@@ -140,6 +148,7 @@ export default function ConfigurePlanningScreen() {
             })}
           </View>}
         </EntranceView>
+        <View style={styles.preferencesCard}><Text style={appStyles.section}>{t('planningConfig.people')}</Text><ServingsControl value={servings} onChange={setServings} disabled={!ready || saving} /></View>
         <EntranceView entranceIndex={3} style={styles.preferencesCard}>
           <Text style={appStyles.section}>{t('planningConfig.exclude')}</Text>
           <Text style={styles.sectionHelp}>{t('planningConfig.excludeHelp')}</Text>
@@ -148,7 +157,7 @@ export default function ConfigurePlanningScreen() {
       </>}
     </ScrollView>
     <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 24), paddingHorizontal: gutter }]}>
-      <TouchableOpacity style={[appStyles.button, styles.continueButton, (!ready || saving) && styles.disabled]} disabled={!ready || saving} accessibilityRole="button" accessibilityState={{ disabled: !ready || saving, busy: saving }} onPress={() => void continueFlow()} activeOpacity={0.82}>
+      <TouchableOpacity style={[appStyles.button, styles.continueButton, (!ready || saving || pantryBusy) && styles.disabled]} disabled={!ready || saving || pantryBusy} accessibilityRole="button" accessibilityState={{ disabled: !ready || saving || pantryBusy, busy: saving }} onPress={() => void continueFlow()} activeOpacity={0.82}>
         {saving ? <ActivityIndicator color="white" /> : <Text style={[appStyles.buttonText, styles.continueText]}>{t(replace === 'true' ? 'planningDetail.regenerate' : 'planning.generation.cta')}</Text>}
       </TouchableOpacity>
     </View>

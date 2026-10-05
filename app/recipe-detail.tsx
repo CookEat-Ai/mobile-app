@@ -1,3 +1,6 @@
+import { ServingsControl } from '../components/ServingsControl';
+import { recipeForServings } from '../services/recipeServings';
+import { isPastPlanDay } from '../services/planningDisplay';
 import { invalidatePlanning } from '../services/planningUpdates';
 import { feedback } from '../services/haptics';
 import { EntranceView } from '../components/motion/Entrance';
@@ -5,8 +8,7 @@ import { NavigationIconButton } from '../components/NavigationIconButton';
 import { applyPlannedMealPortion, isPlannedMealContext, plannedMealRecipeParams, readyPlannedRecipeId } from '../services/plannedMealNavigation';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import * as Linking from 'expo-linking';
@@ -119,7 +121,6 @@ export default function RecipeDetailScreen() {
   const insets = useSafeAreaInsets();
 
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [statusBarStyle, setStatusBarStyle] = useState<'light' | 'dark'>('light');
   const [variant, setVariant] = useState<'A' | 'B' | 'C' | 'D' | 'E' | 'F'>('A');
@@ -247,12 +248,16 @@ export default function RecipeDetailScreen() {
   const [isUpdatingImage, setIsUpdatingImage] = useState(false);
   const [isReloadingImage, setIsReloadingImage] = useState(false);
   const [isGeneratingNewRecipe, setIsGeneratingNewRecipe] = useState(false);
+  const [plannedDayEditable, setPlannedDayEditable] = useState(false);
   const [isReplacingPlannedMeal, setIsReplacingPlannedMeal] = useState(false);
   const [isModalActive, setIsModalActive] = useState(false);
   const firstTime = useRef(true);
   const firstTimeImage = useRef(true);
   const sseCloseRef = useRef<(() => void) | null>(null);
   const streamSessionIdRef = useRef(0);
+  const servingsBaseRef = useRef<Recipe | null>(null);
+  const servingsBusyRef = useRef(false);
+  const [savingServings, setSavingServings] = useState(false);
   const savedRecipeIdRef = useRef<string | null>(null);
   const sessionRecipeIdMapRef = useRef<Map<number, string>>(new Map());
   const pendingImagesBySessionRef = useRef<Map<number, string>>(new Map());
@@ -609,11 +614,15 @@ export default function RecipeDetailScreen() {
             ...response.data.recipe,
             id: response.data.recipe.id || recipeIdParam,
           };
+          servingsBaseRef.current = fullRecipe;
+          if (isMealLibrary) fullRecipe = recipeForServings(fullRecipe, 1);
           if (isPlannedMeal && mealPlanId && mealSlotId) {
             const userId = await AsyncStorage.getItem('userId');
             if (!userId) throw new Error(t('planning.errors.user'));
             const planned = await apiService.getMealPlanById(mealPlanId, userId);
             if (!planned.data?.plan) throw new Error(planned.error || t('planning.errors.load'));
+            const plannedMeal = planned.data.plan.meals.find(meal => meal.slotId === mealSlotId);
+            if (active) setPlannedDayEditable(!!plannedMeal && !isPastPlanDay(planned.data.plan.weekStart, plannedMeal.dayIndex ?? 0));
             fullRecipe = applyPlannedMealPortion(fullRecipe, planned.data.plan, mealSlotId);
           }
           if (!active) return;
@@ -690,7 +699,7 @@ export default function RecipeDetailScreen() {
     if (loadingImage) return;
     if (streamingTitleAndIngredients || streamingSteps) return;
     if (isGeneratingNewRecipe) return;
-    if (isPlannedMeal || savedRecipeIdRef.current === recipe.id) return;
+    if (isMealLibrary || isPlannedMeal || savedRecipeIdRef.current === recipe.id) return;
 
     savedRecipeIdRef.current = recipe.id;
 
@@ -834,23 +843,6 @@ export default function RecipeDetailScreen() {
     }
   };
 
-  const handleLikeRecipe = () => {
-    feedback.selection();
-    if (!recipe._id) {
-      Alert.alert(t('common.error'), t('recipeDetail.likeError'));
-      return;
-    }
-    else {
-      apiService.likeRecipe(recipe._id)
-        .then((response) => {
-          setIsLiked(true);
-        })
-        .catch((error) => {
-          console.error('Erreur lors du like de la recette:', error);
-        });
-    };
-  }
-
   const handleAddToFavorites = async () => {
     try {
       if (await favoritesStorageService.isFavorite(recipe.id)) {
@@ -927,8 +919,27 @@ export default function RecipeDetailScreen() {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
 
+  const handleServingsChange = async (servings: number) => {
+    if (servingsBusyRef.current || loadingRecipe || (isPlannedMeal && !plannedDayEditable)) return;
+    const base = servingsBaseRef.current || recipe;
+    if (!isPlannedMeal) { setRecipe(recipeForServings(base, servings)); return; }
+    if (!mealPlanId || !mealSlotId) return;
+    servingsBusyRef.current = true;
+    setSavingServings(true);
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      if (!userId) throw new Error(t('planning.errors.user'));
+      const response = await apiService.updatePlannedMeal(mealPlanId, mealSlotId, userId, { servings });
+      if (!response.data?.plan) throw new Error(response.error || t('planning.errors.load'));
+      setRecipe(applyPlannedMealPortion(base, response.data.plan, mealSlotId));
+      invalidatePlanning();
+    } catch (error) {
+      Alert.alert(t('recipeDetail.error'), error instanceof Error ? error.message : t('planning.errors.load'));
+    } finally { servingsBusyRef.current = false; setSavingServings(false); }
+  };
+
   const handleChangePlannedMeal = async () => {
-    if (!mealPlanId || !mealSlotId || isReplacingPlannedMeal || loadingRecipe) return;
+    if (!plannedDayEditable || !mealPlanId || !mealSlotId || isReplacingPlannedMeal || loadingRecipe) return;
     setIsReplacingPlannedMeal(true);
     try {
       const userId = await AsyncStorage.getItem('userId');
@@ -954,7 +965,6 @@ export default function RecipeDetailScreen() {
       firstTimeImage.current = true;
       savedRecipeIdRef.current = null;
       imageErrorFallbackTriedRef.current = false;
-      setIsLiked(false);
       setIsFavorite(false);
       setRecipe({ id: nextRecipeId, title: '', difficulty: '', cooking_time: '',
         icon: '', image: '', calories: '', lipids: '', proteins: '', ingredients: [], steps: [] });
@@ -996,7 +1006,6 @@ export default function RecipeDetailScreen() {
       setStreamingTitleAndIngredients(true);
       setStreamingSteps(true);
       setLoadingImage(true);
-      setIsLiked(false);
       setIsFavorite(false);
       setIsModalActive(true);
       const streamSessionId = ++streamSessionIdRef.current;
@@ -1100,7 +1109,6 @@ export default function RecipeDetailScreen() {
             setStreamingTitleAndIngredients(false);
             setIsGeneratingNewRecipe(false);
             setIsFirstGeneration(data.isFirstGeneration);
-            setIsLiked(false);
             setIsFavorite(false);
             firstTime.current = true;
             if (Array.isArray(data.recipe.steps) && data.recipe.steps.length > 0) {
@@ -1202,7 +1210,7 @@ export default function RecipeDetailScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar style={imageViewerVisible ? 'light' : statusBarStyle} />
+      <Stack.Screen options={{ statusBarStyle: imageViewerVisible ? 'light' : statusBarStyle }} />
       <Modal visible={imageViewerVisible} animationType="fade" presentationStyle="fullScreen" onRequestClose={() => setImageViewerVisible(false)}>
         <View style={{ flex: 1, backgroundColor: '#000' }}>
           <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
@@ -1287,8 +1295,11 @@ export default function RecipeDetailScreen() {
           <View pointerEvents="none" style={styles.imageOverlay} />
 
           {/* Marque */}
-          <View style={[styles.brandContainer, { top: Platform.OS === 'android' ? insets.top + 10 : insets.top }]}>
-            <Text style={styles.brandText}>CookEat</Text>
+          <View style={[styles.brandContainer, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top }]}>
+            <View style={styles.brandBadge}>
+              <Text style={styles.brandText}>CookEat</Text>
+              <Image source={require('../assets/images/mascot.png')} style={styles.brandLogo} contentFit="contain" accessible={false} />
+            </View>
           </View>
 
           {/* Bouton retour */}
@@ -1376,12 +1387,12 @@ export default function RecipeDetailScreen() {
             )}
 
             {recipe.servings ? (
-              <FadeInView style={styles.metricCard} delay={200}>
+              <FadeInView style={[styles.metricCard, { paddingHorizontal: 0 }]} delay={200}>
                 <View style={{ alignItems: 'center' }}>
                   <Ionicons name="people-outline" size={24} color="#666" />
                   <Text style={styles.metricLabel}>{t('recipeDetail.servings')}</Text>
                 </View>
-                <Text style={styles.metricValue} numberOfLines={1} adjustsFontSizeToFit={true}>{recipe.servings}</Text>
+                <ServingsControl compact value={recipe.servings} onChange={handleServingsChange} disabled={loadingRecipe || savingServings || (isPlannedMeal && !plannedDayEditable)} />
               </FadeInView>
             ) : (
               <Skeleton width="30%" height={90} borderRadius={12} />
@@ -1563,7 +1574,7 @@ export default function RecipeDetailScreen() {
 
             <View style={{ flex: 1, alignItems: 'center', gap: 10 }}>
               <TouchableOpacity
-                style={styles.likeRecipeButton}
+                style={styles.favoriteRecipeButton}
                 onPress={handleAddToFavorites}
                 activeOpacity={0.8}
               >
@@ -1572,25 +1583,12 @@ export default function RecipeDetailScreen() {
                   size={24}
                   color={isFavorite ? Colors.light.button : "#666"}
                 />
-                <Text style={[styles.likeRecipeText, { color: isFavorite ? Colors.light.button : "#666" }]}>
+                <Text style={[styles.favoriteRecipeText, { color: isFavorite ? Colors.light.button : "#666" }]}>
                   {t('recipeDetail.addToFavorites')}
                 </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.likeRecipeButton}
-                onPress={handleLikeRecipe}
-                activeOpacity={0.8}
-              >
-                <Ionicons
-                  name={isLiked ? "star" : "star-outline"}
-                  size={24}
-                  color={isLiked ? Colors.light.button : "#666"}
-                />
-                <Text style={[styles.likeRecipeText, { color: isLiked ? Colors.light.button : "#666" }]}>
-                  {t('recipeDetail.iLikedThisRecipe')}
-                </Text>
-              </TouchableOpacity>
+
             </View>
           </View>
 
@@ -1616,15 +1614,19 @@ export default function RecipeDetailScreen() {
         <View style={[styles.bottomButtonContainer, { paddingBottom: Math.max(insets.bottom, 45) + 15 }]}>
           <TouchableOpacity
             activeOpacity={0.8}
-            style={[styles.favoriteButton, (isReplacingPlannedMeal || loadingRecipe) && styles.favoriteButtonDisabled]}
-            onPress={() => void handleChangePlannedMeal()}
-            disabled={isReplacingPlannedMeal || loadingRecipe}
+            style={[styles.favoriteButton, (!plannedDayEditable || isReplacingPlannedMeal || loadingRecipe) && styles.favoriteButtonDisabled]}
+            onPress={() => Alert.alert(t('recipeDetail.changePlannedMeal'), undefined, [
+              { text: t('recipeDetail.chooseReplacement'), onPress: () => router.push({ pathname: '/planning/choose-recipe', params: { planId: mealPlanId, slotId: mealSlotId } }) },
+              { text: t('recipeDetail.automaticReplacement'), onPress: () => void handleChangePlannedMeal() },
+              { text: t('common.cancel'), style: 'cancel' },
+            ])}
+            disabled={!plannedDayEditable || isReplacingPlannedMeal || loadingRecipe}
           >
             {isReplacingPlannedMeal
               ? <ActivityIndicator size="small" color="white" />
               : <FontAwesome name="rotate-right" size={20} color="white" />}
             <Text style={appStyles.buttonText}>
-              {t(isReplacingPlannedMeal ? 'recipeDetail.changingPlannedMeal' : 'recipeDetail.changePlannedMeal')}
+              {t(isReplacingPlannedMeal ? 'recipeDetail.changingPlannedMeal' : !plannedDayEditable ? 'planningSlots.past' : 'recipeDetail.changePlannedMeal')}
             </Text>
           </TouchableOpacity>
         </View>
@@ -1720,11 +1722,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     zIndex: 1000,
   },
-  brandText: {
+  brandBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: 10,
+    height: appStyles.iconButton.height,
+    borderRadius: appStyles.iconButton.borderRadius,
+  },
+  brandLogo: {
+    width: 32,
+    height: 32,
+    transform: [{ rotate: '20deg' }, { scale: 1.25 }],
+  },
+  brandText: {
     fontSize: 16,
     color: '#000',
     fontFamily: 'Degular'
@@ -2015,7 +2027,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontFamily: 'Degular'
   },
-  likeRecipeButton: {
+  favoriteRecipeButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -2028,7 +2040,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  likeRecipeText: {
+  favoriteRecipeText: {
     fontSize: 16,
     fontFamily: 'CronosProBold',
     marginLeft: 8,

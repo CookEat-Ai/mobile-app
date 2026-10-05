@@ -39,3 +39,15 @@ export async function getAnonymousSessionToken(): Promise<string> {
 }
 
 export function invalidateAnonymousSession(): void { ready = null; }
+
+/** Recover identity when onboarding continued while the API was unavailable. */
+export async function getAnonymousUserId(): Promise<string> {
+  const existing = await AsyncStorage.getItem('userId');
+  if (existing) return existing;
+  // A cached token alone cannot restore an AsyncStorage entry that was removed.
+  invalidateAnonymousSession();
+  await getAnonymousSessionToken();
+  const userId = await AsyncStorage.getItem('userId');
+  if (!userId) throw new Error('session_unavailable');
+  return userId;
+}

@@ -15,11 +15,13 @@
     "update:production": "sh ./scripts/eas-update-with-sentry.sh production production",
     "update:preview": "sh ./scripts/eas-update-with-sentry.sh preview preview",
     "test:goal-timeline": "node scripts/test-goal-timeline.cjs",
+    "test:planning-organization": "node scripts/test-planning-organization.cjs && node scripts/test-planning-display.cjs",
     "test:planning-loading": "node scripts/test-planning-loading.cjs",
     "test:planned-meal-navigation": "node scripts/test-planned-meal-navigation.cjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
+    "@noble/hashes": "1.8.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/netinfo": "12.0.1",
     "@sentry/react-native": "~7.11.0",

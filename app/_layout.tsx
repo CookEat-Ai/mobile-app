@@ -1,3 +1,4 @@
+import { PresentationModeControl } from '../components/PresentationModeControl';
 import { MotionPreferencesProvider } from '../contexts/MotionPreferences';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
@@ -423,7 +424,8 @@ function RootLayout() {
             <QuickActionHandler revenueCatReady={revenueCatReady} />
             <TrialReminderLifecycle revenueCatReady={revenueCatReady} />
             <DevOnboardingResetButton />
-            <Stack screenOptions={{ headerShown: false }}>
+            <PresentationModeControl />
+            <Stack screenOptions={{ headerShown: false, statusBarStyle: 'dark', statusBarHidden: false }}>
               <Stack.Screen name="index" options={{ headerShown: false, animation: 'none' }} />
               <Stack.Screen name="onboarding" options={{ headerShown: false, animation: 'none' }} />
               <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'none', statusBarStyle: 'dark', statusBarHidden: false }} />
@@ -432,6 +434,7 @@ function RootLayout() {
               <Stack.Screen name="share-intent" options={{ headerShown: false, animation: 'fade' }} />
               <Stack.Screen name="recipe-loading" options={{ headerShown: false, animation: 'fade' }} />
               <Stack.Screen name="recipe-loading-modal" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+              <Stack.Screen name="planning/loading" options={{ animation: 'none', gestureEnabled: false }} />
               <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
               {/* Tous les points d'entrée poussent cette route au-dessus d'un
                   écran valide, mais le contrat visuel reste plein écran : le

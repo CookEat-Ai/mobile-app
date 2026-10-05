@@ -1,7 +1,7 @@
 import { MealType, mealNutritionAllocation } from './meal-nutrition-allocation';
 
 export const MAX_PLANNING_CALORIE_DEVIATION = 0.05;
-export type BudgetMeal = { dayIndex: number; mealType: MealType; calories: number; portionScale?: number; calorieFit?: 'standard' | 'closest_available' };
+export type BudgetMeal = { dayIndex: number; mealType: MealType; calories: number; proteins?: number; portionScale?: number; calorieFit?: 'standard' | 'closest_available' };
 
 export function dailyPlannedCalorieTarget(dayIndex: number, meals: Pick<BudgetMeal, 'dayIndex' | 'mealType'>[], dailyCalories: number, preferences: Record<string, unknown>): number {
   const dayMeals = meals.filter(meal => meal.dayIndex === dayIndex);

@@ -24,6 +24,7 @@ export type FitnessProfile = {
   avoidIngredients: string[];
   cookingTime: string;
   favoriteCuisineStyle: string[];
+  equipments?: string[];
 };
 
 export type FitnessProjection = {
@@ -47,7 +48,7 @@ export type FitnessProjection = {
 export const FITNESS_PROFILE_KEYS = [
   'fitnessGoal', 'sex', 'age', 'heightCm', 'currentWeightKg', 'targetChangeKg', 'targetWeightKg',
   'goalDurationWeeks', 'activityLevel', 'trainingDays', 'trainingDurationMinutes', 'nutritionWeightKg', 'dailyCalorieAdjustment', 'includeSnack', 'diet',
-  'avoidIngredients', 'cookingTime', 'favoriteCuisineStyle',
+  'avoidIngredients', 'cookingTime', 'favoriteCuisineStyle', 'equipments',
 ] as const;
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -89,6 +90,7 @@ export async function loadFitnessProfile(): Promise<FitnessProfile> {
     avoidIngredients: parseMulti(values.avoidIngredients),
     cookingTime: values.cookingTime || 'less_than_30_minutes',
     favoriteCuisineStyle: parseMulti(values.favoriteCuisineStyle),
+    equipments: values.equipments === null ? undefined : parseMulti(values.equipments).filter((item) => item !== 'equipment_none'),
   };
   return profile;
 }
@@ -124,6 +126,9 @@ export function fitnessProfileToPlanningPreferences(profile: FitnessProfile) {
     duration: durationMap[profile.cookingTime] || 'fast',
     cuisineStyle: [...new Set(profile.favoriteCuisineStyle.flatMap((item) => cuisineMap[item] || []))],
     diet: profile.diet,
+    equipments: profile.equipments === undefined ? [] : ['standard-kitchen', ...profile.equipments
+      .filter((item) => item !== 'equipment_none')
+      .map((item) => item.replace(/^equipment_/, ''))],
     allergies: profile.avoidIngredients.map((item) => allergyMap[item] || item).filter(Boolean),
     goal: normalizeFitnessGoal(profile.goal),
     includeSnack: profile.includeSnack,

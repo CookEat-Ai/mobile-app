@@ -1,3 +1,9 @@
+import { savePlanningGenerationSettings, type PlanningGenerationSettings } from '../services/weeklyPlanning';
+import { PresentationScanOverlay } from '../components/planning/PresentationScanOverlay';
+import { startPresentationScan, finishPresentationScan } from '../services/presentationScan';
+import { usePresentationMode } from '../services/presentationMode';
+import { createPantryScanHandoff, PANTRY_SCAN_HANDOFF_KEY } from '../services/pantryScanHandoff';
+import { PantryScanView } from '../components/planning/PantryScanView';
 import { NavigationIconButton } from '../components/NavigationIconButton';
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import {
@@ -10,7 +16,6 @@ import {
   Easing,
   PanResponder,
   GestureResponderEvent,
-  StatusBar,
   Alert,
   Linking,
 } from 'react-native';
@@ -22,7 +27,7 @@ import Svg, { Circle } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../components/ui/IconSymbol';
-import { router, useGlobalSearchParams, useNavigation } from 'expo-router';
+import { Stack, router, useGlobalSearchParams, useNavigation } from 'expo-router';
 import { Colors } from '../constants/Colors';
 import { rw } from '../constants/Layout';
 import { contentColumn } from '../hooks/useResponsive';
@@ -47,6 +52,7 @@ export default function CameraScreen() {
   const insets = useSafeAreaInsets();
   const params = useGlobalSearchParams();
   const navigation = useNavigation<CameraTransitionNavigation>();
+  const presentationMode = usePresentationMode();
   const isOnboarding = params.isOnboarding === 'true';
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<'back' | 'front'>('back');
@@ -60,7 +66,9 @@ export default function CameraScreen() {
   const [isRecording, setIsRecording] = useState(false);
   const [recordedVideoUri, setRecordedVideoUri] = useState<string | null>(null);
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(params.planningPantry === 'true' && params.skipCapture === 'true');
+  const [scanResult, setScanResult] = useState<string[] | null>(params.planningPantry === 'true' && params.skipCapture === 'true' ? [] : null);
+  const [scanSaving, setScanSaving] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const [zoom, setZoom] = useState(0);
   const [focusPulsePoint, setFocusPulsePoint] = useState<{ x: number; y: number } | null>(null);
@@ -177,10 +185,10 @@ export default function CameraScreen() {
   }, [mode, t]);
 
   useEffect(() => {
-    if (!permission) {
+    if (!permission && !isLoading) {
       requestPermission();
     }
-  }, [permission, requestPermission]);
+  }, [permission, requestPermission, isLoading]);
 
   // Ce rappel s'affiche à chaque ouverture de la caméra, pas une seule fois :
   // savoir quoi cadrer reste utile même après plusieurs utilisations.
@@ -213,6 +221,13 @@ export default function CameraScreen() {
     });
     feedback.light().catch(() => undefined);
 
+    if (params.planningPantry === 'true') {
+      setCapturedImages([]);
+      setScanResult([]);
+      setIsLoading(true);
+      return;
+    }
+
     if (params.mode === 'append') {
       // La liste est encore montée sous la caméra : revenir en arrière conserve
       // exactement son état courant, sans rechargement ni remplacement.
@@ -223,7 +238,7 @@ export default function CameraScreen() {
     // Sans paramètre `ingredients`, ingredient-list recharge le garde-manger
     // existant depuis AsyncStorage au lieu de le remplacer par une liste vide.
     router.replace('/ingredient-list');
-  }, [isOnboarding, params.mode]);
+  }, [isOnboarding, params.mode, params.planningPantry]);
 
   useEffect(() => {
     // `transitionEnd` est émis par le native stack depuis `onAppear`, donc après
@@ -307,13 +322,36 @@ export default function CameraScreen() {
     }
   }, [isLoading, loadingMessages.length, loadingProgress, loadingTextOpacity, scaleAnim]);
 
+  if (isLoading && presentationMode && params.planningPantry === 'true' && mode === 'photo') {
+    return <View style={{ flex: 1 }}><PresentationScanOverlay /></View>;
+  }
+  if (isLoading && params.planningPantry === 'true') {
+    return <PantryScanView photoUris={capturedImages} ingredients={scanResult} saving={scanSaving}
+      onRetake={() => { setScanResult(null); setIsLoading(false); }}
+      onConfirm={async names => {
+        if (scanSaving) return;
+        setScanSaving(true);
+        try {
+          await AsyncStorage.setItem(PANTRY_SCAN_HANDOFF_KEY, createPantryScanHandoff(names, params.pantryMode === 'strict' ? 'strict' : 'priority'));
+          router.back();
+        } catch {
+          Alert.alert(t('camera.errorTitle'), t('planningPantry.saveError'));
+        } finally { setScanSaving(false); }
+      }} />;
+  }
+
   if (!permission) {
-    return <View style={styles.container} />;
+    return (
+      <View style={styles.container}>
+        <Stack.Screen options={{ statusBarStyle: 'dark' }} />
+      </View>
+    );
   }
 
   if (!permission.granted) {
     return (
       <View style={styles.container}>
+        <Stack.Screen options={{ statusBarStyle: 'dark' }} />
         <View style={styles.permissionContainer}>
           <Text style={styles.message}>{t('camera.permissionMessage')}</Text>
           <TouchableOpacity onPress={handleRequestPermission} style={styles.permissionButton}>
@@ -481,6 +519,8 @@ export default function CameraScreen() {
     if (mode === 'photo' && capturedImages.length === 0) return;
     if (mode === 'video' && !recordedVideoUri) return;
 
+    setScanResult(null);
+    if (presentationMode && params.planningPantry === 'true' && mode === 'photo') startPresentationScan(capturedImages);
     setIsLoading(true);
     feedback.confirm();
 
@@ -507,6 +547,26 @@ export default function CameraScreen() {
       }
 
       if (response.data?.ingredients) {
+        if (params.planningPantry === 'true') {
+          const names = response.data.ingredients.map((item: { name: string }) => item.name).filter((name: unknown) => typeof name === 'string' && name.trim());
+          if (presentationMode && names.length) {
+            if (typeof params.presentationConfig === 'string') {
+              const config = { ...JSON.parse(params.presentationConfig), pantryIngredients: names, pantryMode: 'priority' } as PlanningGenerationSettings;
+              await savePlanningGenerationSettings(config);
+              await AsyncStorage.setItem('cookeat_planning_pantry_v1', JSON.stringify({ pantryIngredients: names, pantryMode: 'priority' }));
+              await AsyncStorage.removeItem(PANTRY_SCAN_HANDOFF_KEY);
+              router.replace({ pathname: '/planning/loading', params: { config: JSON.stringify(config), replace: params.presentationReplace === 'true' ? 'true' : 'false' } });
+              return;
+            }
+            await AsyncStorage.setItem(PANTRY_SCAN_HANDOFF_KEY, createPantryScanHandoff(names, 'priority', true));
+            router.back();
+            return;
+          }
+          finishPresentationScan();
+          setScanResult(names);
+          feedback.success();
+          return;
+        }
         const ingredientsString = JSON.stringify(response.data.ingredients);
 
         loadingTextIndexRef.current = loadingMessages.length - 1;
@@ -520,7 +580,10 @@ export default function CameraScreen() {
           useNativeDriver: false,
         }).start(() => {
           setTimeout(async () => {
-            if (params.mode === 'append') {
+            if (params.planningPantry === 'true') {
+              await AsyncStorage.setItem('cookeat_planning_pantry_scan', ingredientsString);
+              router.back();
+            } else if (params.mode === 'append') {
               // Depuis la modale d'ajout : on revient à l'écran existant et on lui passe les ingrédients via AsyncStorage
               await AsyncStorage.setItem('cookeat_camera_ingredients_append', ingredientsString);
               router.back();
@@ -540,19 +603,22 @@ export default function CameraScreen() {
         throw new Error(response.error || t('camera.extractionError'));
       }
     } catch (error) {
+      finishPresentationScan();
       console.error('Erreur extraction ingrédients:', error);
+      setIsLoading(false);
       Alert.alert(
         t('camera.errorTitle'),
-        t('camera.errorDescription'),
-        [{ text: t('common.ok'), onPress: () => setIsLoading(false) }]
+        error instanceof Error && error.message ? error.message : t('camera.errorDescription'),
+        [{ text: t('common.ok') }]
       );
     }
   };
 
+
   if (isLoading) {
     return (
       <View style={[styles.container, styles.loadingContainer]}>
-        <StatusBar barStyle="dark-content" />
+        <Stack.Screen options={{ statusBarStyle: 'dark' }} />
         <View style={styles.loadingContent}>
           <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
             <Image
@@ -590,7 +656,7 @@ export default function CameraScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <Stack.Screen options={{ statusBarStyle: 'light' }} />
       <CameraView
         style={styles.camera}
         facing={facing}
@@ -634,16 +700,10 @@ export default function CameraScreen() {
           {!isRecording && (
             <>
               <NavigationIconButton kind="close" style={styles.closeButton} onPress={handleClose} />
-
-              <View style={styles.headerLogo}>
-                <Image
-                  source={require('../assets/images/mascot.png')}
-                  style={styles.headerMascot}
-                  contentFit="contain"
-                />
+              <View style={styles.headerLogo} pointerEvents="none">
                 <Text style={styles.headerText}>CookEat</Text>
+                <Image source={require('../assets/images/mascot.png')} style={styles.headerMascot} contentFit="contain" accessible={false} />
               </View>
-
               <TouchableOpacity style={styles.helpButton} onPress={showOnboarding}>
                 <IconSymbol name="help" size={30} color="white" />
               </TouchableOpacity>
@@ -740,9 +800,13 @@ export default function CameraScreen() {
                   style={styles.thumbnailWrapper}
                   activeOpacity={0.8}
                 >
-                  <View style={styles.thumbnailImageContainer}>
-                    <Image source={{ uri: lastImage }} style={styles.thumbnail} />
-                  </View>
+                  {capturedImages.map((uri, index) => {
+                    const depth = capturedImages.length - 1 - index;
+                    return <View key={`${uri}-${index}`} style={[styles.thumbnailImageContainer, {
+                      position: 'absolute', left: -depth * 9, top: -depth * 3,
+                      transform: [{ rotate: `${-depth * 9}deg` }],
+                    }]}><Image source={{ uri }} style={styles.thumbnail} /></View>;
+                  })}
                   <View style={styles.badge}>
                     <Text style={styles.badgeText}>{capturedImages.length}</Text>
                   </View>
@@ -788,7 +852,7 @@ const styles = StyleSheet.create({
   topBar: {
     paddingHorizontal: Platform.OS === 'android' ? 10 : 20,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    gap: 12,
     alignItems: 'center',
     width: '100%',
   },
@@ -813,6 +877,8 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   headerLogo: {
+    flex: 1,
+    gap: 4,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -820,7 +886,6 @@ const styles = StyleSheet.create({
   headerMascot: {
     width: 52,
     height: 52,
-    marginRight: 2,
     transform: [{ rotate: '20deg' }],
   },
   headerText: {

@@ -1,3 +1,4 @@
+import { CREATOR_PROMO_CODES_ENABLED } from '../../config/storeCompliance';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
@@ -100,7 +101,7 @@ export default function ReminderScreen() {
       (Array.isArray(params.source) ? params.source[0] : params.source) ||
       `onboarding_variant_${variant.toLowerCase()}`;
 
-    const pendingDiscount = await AsyncStorage.getItem('pending_promo_discount');
+    const pendingDiscount = CREATOR_PROMO_CODES_ENABLED ? await AsyncStorage.getItem('pending_promo_discount') : null;
     if (pendingDiscount) {
       router.push({
         pathname: '/paywall',
