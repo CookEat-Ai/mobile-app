@@ -1940,6 +1940,7 @@
   },
   "mealLibrary": {
     "types": {
+      "light": "Comidas ligeras",
       "all": "Todas",
       "protein": "Proteicas",
       "favorites": "Favoritos",
@@ -1953,6 +1954,7 @@
     "cuisines": {
       "all": "Todas las cocinas"
     },
+    "lightDescription": "Platillos de hasta 500 kcal por porción.",
     "empty": "Ninguna comida coincide con estos filtros.",
     "retry": "Reintentar",
     "loadMore": "Ver más comidas"

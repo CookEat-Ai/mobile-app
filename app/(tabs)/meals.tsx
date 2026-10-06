@@ -16,10 +16,10 @@ import { Colors } from '../../constants/Colors';
 import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { apiService, CatalogCuisine } from '../../services/api';
-import { fitnessProfileToPlanningPreferences, loadFitnessProfile } from '../../services/fitnessProfile';
+import { calculateFitnessProjection, fitnessProfileToPlanningPreferences, loadFitnessProfile } from '../../services/fitnessProfile';
 
-type Filter = 'all' | 'favorites' | 'protein' | 'express' | 'breakfast' | 'main';
-const FILTERS: Filter[] = ['all', 'breakfast', 'main', 'protein', 'express', 'favorites'];
+type Filter = 'all' | 'favorites' | 'light' | 'protein' | 'express' | 'breakfast' | 'main';
+const FILTERS: Filter[] = ['all', 'breakfast', 'main', 'light', 'protein', 'express', 'favorites'];
 
 function cuisineName(cuisine: CatalogCuisine, language: string) {
   const short = language.toLowerCase().split(/[-_]/)[0];
@@ -80,14 +80,20 @@ export default function MealsScreen() {
       }
       const profile = await loadFitnessProfile();
       const preferences = fitnessProfileToPlanningPreferences(profile);
+      const nutritionTargets = calculateFitnessProjection(profile);
       const [catalogResponse, cuisinesResponse] = await Promise.all([
         apiService.getRecipeCatalog({
           page,
           limit: 50,
           cuisineId: cuisine,
-          mealType: type === 'breakfast' || type === 'main' ? type : undefined,
+          mealType: type === 'light' ? 'main' : type === 'breakfast' || type === 'main' ? type : undefined,
           express: type === 'express',
           highProtein: type === 'protein',
+          light: type === 'light',
+          goal: profile.goal,
+          dailyCalories: nutritionTargets.dailyCalories,
+          dailyProteinGrams: nutritionTargets.dailyProteinGrams,
+          includeSnack: profile.includeSnack,
           diet: preferences.diet,
           allergies: preferences.allergies,
         }),
@@ -155,6 +161,7 @@ export default function MealsScreen() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
             {FILTERS.map((item) => <TouchableOpacity key={item} accessibilityRole="button" accessibilityState={{ selected: item === type }} onPress={() => { if (item !== type) feedback.selection(); pageRef.current = 0; setType(item); }} style={[styles.filter, item === type && styles.filterActive]}><Text style={[styles.filterText, item === type && styles.filterTextActive]}>{t(`mealLibrary.types.${item}`)}</Text></TouchableOpacity>)}
           </ScrollView>
+          {type === 'light' && <Text style={[styles.filterText, { marginBottom: 16 }]}>{t('mealLibrary.lightDescription')}</Text>}
           {type !== 'favorites' && cuisine !== 'all' && <TouchableOpacity accessibilityRole="button" style={styles.appliedFilter} onPress={() => { feedback.selection(); pageRef.current = 0; setCuisine('all'); }} accessibilityLabel={t('dailyApp.clearFilters')}><Text style={styles.filterText}>{cuisineChoices.find(item => item.id === cuisine)?.label}</Text><Ionicons name="close" size={16} color={theme.ink} /></TouchableOpacity>}
         </>}
         ListEmptyComponent={loading
@@ -163,7 +170,7 @@ export default function MealsScreen() {
             ? <View style={styles.state}><Ionicons name="cloud-offline-outline" size={34} color="#9B3B32" /><Text style={styles.stateText}>{error}</Text><TouchableOpacity style={styles.retry} onPress={() => void load(1, false)}><Text style={styles.retryText}>{t('mealLibrary.retry')}</Text></TouchableOpacity></View>
             : <View style={styles.state}><Ionicons name="restaurant-outline" size={36} color={Colors.light.button} /><Text style={styles.stateText}>{t(type === 'favorites' ? 'favorites.noFavorites' : 'mealLibrary.empty')}</Text></View>}
         renderItem={({ item: recipe, index }) => <EntranceView entranceIndex={index}><PlanMealCard
-          meal={catalogMealCardData(recipe, type === 'breakfast' || type === 'main' ? type : undefined)}
+          meal={catalogMealCardData(recipe, type === 'light' ? 'main' : type === 'breakfast' || type === 'main' ? type : undefined)}
           onPress={() => router.push({ pathname: '/recipe-detail', params: { recipeId: recipe.id, isHistory: 'true', source: type === 'favorites' ? 'favorites' : 'meal_library', ...(type === 'favorites' ? { showGenerateButton: 'false' } : {}) } })}
         /></EntranceView>}
         ListFooterComponent={loadingMore

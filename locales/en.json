@@ -1938,6 +1938,7 @@
   },
   "mealLibrary": {
     "types": {
+      "light": "Lighter meals",
       "all": "All",
       "protein": "High protein",
       "favorites": "Favorites",
@@ -1951,6 +1952,7 @@
     "cuisines": {
       "all": "All cuisines"
     },
+    "lightDescription": "Main meals up to 500 kcal per serving.",
     "empty": "No meals match these filters.",
     "retry": "Try again",
     "loadMore": "Show more meals"

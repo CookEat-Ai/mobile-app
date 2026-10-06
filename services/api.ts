@@ -639,6 +639,11 @@ class ApiService {
     mealType?: CatalogMealCategory | 'lunch' | 'dinner';
     express?: boolean;
     highProtein?: boolean;
+    light?: boolean;
+    goal?: 'lose_weight' | 'gain_muscle' | 'maintain' | 'balanced';
+    dailyCalories?: number;
+    dailyProteinGrams?: number;
+    includeSnack?: boolean;
     diet?: string;
     maxMinutes?: number;
     allergies?: string[];
@@ -653,6 +658,13 @@ class ApiService {
     if (options.mealType) params.set('mealType', options.mealType);
     if (options.express) params.set('express', 'true');
     if (options.highProtein) params.set('highProtein', 'true');
+    if (options.light) params.set('light', 'true');
+    if (options.goal && options.goal !== 'balanced' && Number.isFinite(options.dailyCalories)) {
+      params.set('goal', options.goal);
+      params.set('dailyCalories', String(options.dailyCalories));
+      if (Number.isFinite(options.dailyProteinGrams)) params.set('dailyProteinGrams', String(options.dailyProteinGrams));
+      params.set('includeSnack', String(options.includeSnack === true));
+    }
     if (options.diet && options.diet !== 'none') params.set('diet', options.diet);
     if (options.maxMinutes) params.set('maxMinutes', String(options.maxMinutes));
     if (options.allergies?.length) params.set('allergies', options.allergies.join(','));

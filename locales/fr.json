@@ -1944,6 +1944,7 @@
   },
   "mealLibrary": {
     "types": {
+      "light": "Repas légers",
       "all": "Tous",
       "protein": "Protéinées",
       "favorites": "Favoris",
@@ -1957,6 +1958,7 @@
     "cuisines": {
       "all": "Toutes les cuisines"
     },
+    "lightDescription": "Plats jusqu’à 500 kcal par portion.",
     "empty": "Aucun repas ne correspond à ces filtres.",
     "retry": "Réessayer",
     "loadMore": "Voir plus de repas"

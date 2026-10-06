@@ -1940,6 +1940,7 @@
   },
   "mealLibrary": {
     "types": {
+      "light": "Leichte Gerichte",
       "all": "Alle",
       "protein": "Proteinreich",
       "favorites": "Favoriten",
@@ -1953,6 +1954,7 @@
     "cuisines": {
       "all": "Alle Küchen"
     },
+    "lightDescription": "Hauptgerichte mit bis zu 500 kcal pro Portion.",
     "empty": "Keine Mahlzeiten entsprechen diesen Filtern.",
     "retry": "Erneut versuchen",
     "loadMore": "Mehr Mahlzeiten anzeigen"

@@ -1,0 +1,24 @@
+{
+  "version": "1.7.1",
+  "apiVersion": "1.9.3",
+  "profile": "testflight",
+  "environment": "production",
+  "backend": "https://cookeat.info/testflight/api",
+  "runtimePolicy": "fingerprint",
+  "checks": {
+    "doctor": "21/21",
+    "typeScript": "pass",
+    "mobileRegressions": "26/26",
+    "lint": "0 errors; existing warnings",
+    "exports": "iOS and Android production environment passed"
+  },
+  "notes": {
+    "fr-FR": "Nouveau filtre Repas légers : retrouvez les plats jusqu’à 500 kcal par portion. Les suggestions tiennent désormais compte de vos objectifs de calories et de protéines, tout en respectant votre régime et vos allergies.",
+    "en-US": "New Lighter meals filter: find main meals up to 500 kcal per serving. Suggestions now take both your calorie and protein targets into account, while respecting your diet and allergies.",
+    "en-GB": "New Lighter meals filter: find main meals up to 500 kcal per serving. Suggestions now take both your calorie and protein targets into account, while respecting your diet and allergies.",
+    "de-DE": "Neuer Filter für leichte Gerichte: Hauptgerichte mit bis zu 500 kcal pro Portion. Vorschläge berücksichtigen jetzt Ihre Kalorien- und Proteinziele sowie Ihre Ernährung und Allergien.",
+    "es-ES": "Nuevo filtro Comidas ligeras: platos de hasta 500 kcal por ración. Las sugerencias tienen en cuenta tus objetivos de calorías y proteínas, respetando tu dieta y alergias.",
+    "es-MX": "Nuevo filtro Comidas ligeras: platillos de hasta 500 kcal por porción. Las sugerencias consideran tus objetivos de calorías y proteínas, respetando tu dieta y alergias.",
+    "pt-BR": "Novo filtro Refeições leves: pratos com até 500 kcal por porção. As sugestões consideram suas metas de calorias e proteínas, respeitando sua dieta e alergias."
+  }
+}

@@ -1940,6 +1940,7 @@
   },
   "mealLibrary": {
     "types": {
+      "light": "Refeições leves",
       "all": "Todas",
       "protein": "Proteicas",
       "favorites": "Favoritos",
@@ -1953,6 +1954,7 @@
     "cuisines": {
       "all": "Todas as cozinhas"
     },
+    "lightDescription": "Pratos com até 500 kcal por porção.",
     "empty": "Nenhuma refeição corresponde a estes filtros.",
     "retry": "Tentar novamente",
     "loadMore": "Ver mais refeições"
