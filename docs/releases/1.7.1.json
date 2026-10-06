@@ -13,12 +13,23 @@
     "exports": "iOS and Android production environment passed"
   },
   "notes": {
-    "fr-FR": "Nouveau filtre Repas légers : retrouvez les plats jusqu’à 500 kcal par portion. Les suggestions tiennent désormais compte de vos objectifs de calories et de protéines, tout en respectant votre régime et vos allergies.",
-    "en-US": "New Lighter meals filter: find main meals up to 500 kcal per serving. Suggestions now take both your calorie and protein targets into account, while respecting your diet and allergies.",
-    "en-GB": "New Lighter meals filter: find main meals up to 500 kcal per serving. Suggestions now take both your calorie and protein targets into account, while respecting your diet and allergies.",
-    "de-DE": "Neuer Filter für leichte Gerichte: Hauptgerichte mit bis zu 500 kcal pro Portion. Vorschläge berücksichtigen jetzt Ihre Kalorien- und Proteinziele sowie Ihre Ernährung und Allergien.",
-    "es-ES": "Nuevo filtro Comidas ligeras: platos de hasta 500 kcal por ración. Las sugerencias tienen en cuenta tus objetivos de calorías y proteínas, respetando tu dieta y alergias.",
-    "es-MX": "Nuevo filtro Comidas ligeras: platillos de hasta 500 kcal por porción. Las sugerencias consideran tus objetivos de calorías y proteínas, respetando tu dieta y alergias.",
-    "pt-BR": "Novo filtro Refeições leves: pratos com até 500 kcal por porção. As sugestões consideram suas metas de calorias e proteínas, respeitando sua dieta e alergias."
-  }
+    "fr-FR": "Nouveau filtre Repas légers : retrouvez les plats jusqu’à 500 kcal par portion. Les suggestions tiennent désormais compte de vos objectifs de calories et de protéines, tout en respectant votre régime et vos allergies. Corrections de la caméra, du planning et de la modification des portions.",
+    "en-US": "New Lighter meals filter: find main meals up to 500 kcal per serving. Suggestions now take both your calorie and protein targets into account, while respecting your diet and allergies. Camera, meal planning and serving-size fixes.",
+    "en-GB": "New Lighter meals filter: find main meals up to 500 kcal per serving. Suggestions now take both your calorie and protein targets into account, while respecting your diet and allergies. Camera, meal planning and serving-size fixes.",
+    "de-DE": "Neuer Filter für leichte Gerichte: Hauptgerichte mit bis zu 500 kcal pro Portion. Vorschläge berücksichtigen jetzt Ihre Kalorien- und Proteinziele sowie Ihre Ernährung und Allergien. Verbesserungen bei Kamera, Wochenplan und Portionsgrößen.",
+    "es-ES": "Nuevo filtro Comidas ligeras: platos de hasta 500 kcal por ración. Las sugerencias tienen en cuenta tus objetivos de calorías y proteínas, respetando tu dieta y alergias. Correcciones de cámara, planificación y porciones.",
+    "es-MX": "Nuevo filtro Comidas ligeras: platillos de hasta 500 kcal por porción. Las sugerencias consideran tus objetivos de calorías y proteínas, respetando tu dieta y alergias. Correcciones de cámara, planificación y porciones.",
+    "pt-BR": "Novo filtro Refeições leves: pratos com até 500 kcal por porção. As sugestões consideram suas metas de calorias e proteínas, respeitando sua dieta e alergias. Correções na câmera, no planejamento e nas porções."
+  },
+  "scope": [
+    "all local mobile product changes",
+    "camera permission refresh",
+    "preserve planning days",
+    "four-meal count",
+    "onboarding household portion editing",
+    "localized continue copy",
+    "Android AppsFlyer autolinking",
+    "light meal filter",
+    "joint calorie/protein suggestions"
+  ]
 }

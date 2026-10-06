@@ -929,7 +929,7 @@ export default function RecipeDetailScreen() {
     try {
       const userId = await AsyncStorage.getItem('userId');
       if (!userId) throw new Error(t('planning.errors.user'));
-      const response = await apiService.updatePlannedMeal(mealPlanId, mealSlotId, userId, { servings });
+      const response = await apiService.updatePlannedMeal(mealPlanId, mealSlotId, userId, { servings, ...(isWeeklyPlanPreview ? { preview: true } : {}) });
       if (!response.data?.plan) throw new Error(response.error || t('planning.errors.load'));
       setRecipe(applyPlannedMealPortion(base, response.data.plan, mealSlotId));
       invalidatePlanning();

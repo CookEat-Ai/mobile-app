@@ -752,7 +752,7 @@ class ApiService {
     }, 90000);
   }
 
-  async updatePlannedMeal(planId: string, slotId: string, userId: string, patch: { locked?: boolean; servings?: number; image?: string }) {
+  async updatePlannedMeal(planId: string, slotId: string, userId: string, patch: { locked?: boolean; servings?: number; image?: string; preview?: boolean }) {
     return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/meals/${slotId}`, {
       method: 'PATCH', body: JSON.stringify({ timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage(), userId, ...patch }),
     });

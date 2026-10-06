@@ -18,6 +18,7 @@ import {
   GestureResponderEvent,
   Alert,
   Linking,
+  AppState,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -54,7 +55,7 @@ export default function CameraScreen() {
   const navigation = useNavigation<CameraTransitionNavigation>();
   const presentationMode = usePresentationMode();
   const isOnboarding = params.isOnboarding === 'true';
-  const [permission, requestPermission] = useCameraPermissions();
+  const [permission, requestPermission, getPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<'back' | 'front'>('back');
   const [mode, setMode] = useState<'photo' | 'video'>('photo');
 
@@ -190,6 +191,13 @@ export default function CameraScreen() {
     }
   }, [permission, requestPermission, isLoading]);
 
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', state => {
+      if (state === 'active') void getPermission().catch(() => {});
+    });
+    return () => subscription.remove();
+  }, [getPermission]);
+
   // Ce rappel s'affiche à chaque ouverture de la caméra, pas une seule fois :
   // savoir quoi cadrer reste utile même après plusieurs utilisations.
   const showOnboarding = useCallback(async () => {
@@ -202,7 +210,7 @@ export default function CameraScreen() {
   }, [mode, t]);
 
   const handleRequestPermission = async () => {
-    if (permission && !permission.granted) {
+    if (permission && !permission.granted && !permission.canAskAgain) {
       Linking.openSettings();
       return;
     }

@@ -128,14 +128,14 @@ export default function WeeklyPlanPreviewScreen() {
       try {
         const [userId, settings] = await Promise.all([AsyncStorage.getItem('userId'), loadPlanningGenerationSettings()]);
         if (!canRestore()) return;
-        setCookingDays(settings.cookingDays);
+        if (version === 0) setCookingDays(settings.cookingDays);
         if (!userId) return;
         const response = await apiService.getMealPlan(userId, weekStart, true);
         if (canRestore() && isCompleteWeeklyPlan(response.data?.plan)) {
           const existingPlan = response.data.plan;
           setPlan(existingPlan);
           const existingDays = normalizeCookingDays(existingPlan.preferences?.cookingDays);
-          setCookingDays(existingDays);
+          if (version === 0) setCookingDays(existingDays);
           setSelectedDay(current => existingDays.includes(current) ? current : existingDays[0]);
         }
       } catch {

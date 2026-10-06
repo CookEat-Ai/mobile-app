@@ -75,7 +75,7 @@ export default function ConfigurePlanningScreen() {
     label: new Intl.DateTimeFormat(i18n.resolvedLanguage, { weekday: 'long' }).format(day.date),
     short: new Intl.DateTimeFormat(i18n.resolvedLanguage, { weekday: 'short' }).format(day.date),
   })), [i18n.resolvedLanguage]);
-  const mealCount = selectedDays.length * 3;
+  const mealCount = selectedDays.length * 4;
 
   const toggleDay = (dayIndex: number) => {
     if (selectedDays.includes(dayIndex) && selectedDays.length === 1) return;
