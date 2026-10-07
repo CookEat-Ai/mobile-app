@@ -22,7 +22,8 @@ export function PresentationModeControl() {
     opening.current = true; setCode(''); setError(''); setVisible(true);
   }), []);
   useEffect(() => {
-    if (__DEV__ || pathname === '/paywall') return;
+    if (__DEV__) return;
+    if (pathname === '/paywall') return;
     let active = true;
     let subscription: ReturnType<typeof Accelerometer.addListener> | undefined;
     const detect = createShakeDetector();
