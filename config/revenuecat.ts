@@ -1,5 +1,4 @@
-// Future admin access (disabled):
-// import { hasReviewerAccess } from '../services/reviewerAccess';
+import { hasReviewerAccess } from '../services/reviewerAccess';
 import { CREATOR_PROMO_CODES_ENABLED } from './storeCompliance';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform, Linking } from 'react-native';
@@ -151,9 +150,9 @@ class RevenueCatService {
     // }
 
     try {
-//       if (await hasReviewerAccess()) {
-//         return { isSubscribed: true, currentPlan: 'reviewer_access', expirationDate: null, freeGenerationsRemaining: 999 };
-//       }
+      if (await hasReviewerAccess()) {
+        return { isSubscribed: true, currentPlan: 'admin_access', expirationDate: null, freeGenerationsRemaining: 999 };
+      }
       // Vérifier d'abord si un code promo a été activé
       const isPromoCodeActivated = await this.isPromoCodeActivated();
 
@@ -315,7 +314,7 @@ class RevenueCatService {
       const raw = await AsyncStorage.getItem(LAST_SUBSCRIPTION_STATUS_KEY);
       if (!raw) return null;
       const parsed = JSON.parse(raw);
-      if (parsed.currentPlan === 'reviewer_access') return null;
+      if (['reviewer_access', 'admin_access'].includes(parsed.currentPlan)) return null;
       if (!CREATOR_PROMO_CODES_ENABLED && parsed.currentPlan === 'promo_code') return null;
       return {
         isSubscribed: Boolean(parsed.isSubscribed),
@@ -349,6 +348,7 @@ class RevenueCatService {
   /** Consomme une génération offerte. `false` = allocation épuisée. */
   async useFreeGeneration(): Promise<boolean> {
     try {
+      if (await hasReviewerAccess()) return true;
       // Un code promo actif ouvre l'accès complet : aucune limite.
       if (await this.isPromoCodeActivated()) return true;
 

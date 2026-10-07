@@ -367,6 +367,15 @@ class ApiService {
     }
   }
 
+  async getAdminAccess() {
+    return this.request<{ active: boolean; expiresAt: string | null }>('/user/admin-access', {}, 8000);
+  }
+  async activateAdminAccess(code: string) {
+    return this.request<{ active: boolean; expiresAt: string | null }>('/user/admin-access', {
+      method: 'POST', body: JSON.stringify({ code }),
+    }, 8000);
+  }
+
   // Utilisateur
   async getCurrentUser(_mobileId: string) {
     return this.request<any>('/users/who-am-i');

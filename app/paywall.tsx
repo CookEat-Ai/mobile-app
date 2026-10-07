@@ -1,5 +1,4 @@
-// Future admin access (disabled):
-// import { activateReviewerAccess } from '../services/reviewerAccess';
+import { activateReviewerAccess } from '../services/reviewerAccess';
 import { CREATOR_PROMO_CODES_ENABLED } from '../config/storeCompliance';
 import { NavigationIconButton } from '../components/NavigationIconButton';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
@@ -13,7 +12,8 @@ import { PaywallView } from '../components/PaywallView';
 import { ExitOfferPaywallView } from '../components/ExitOfferPaywallView';
 import { resolvePaywallCopy } from '../services/paywallCopy';
 import type { EntryFeature } from '../services/analytics';
-// import { Accelerometer } from 'expo-sensors';
+import { Accelerometer } from 'expo-sensors';
+import { createShakeDetector } from '../services/shakeGesture';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { G, Path } from 'react-native-svg';
 import analytics from '../services/analytics';
@@ -184,99 +184,73 @@ export default function PaywallScreen() {
   const [isRestoring, setIsRestoring] = useState(false);
   const [hasOfferingsError, setHasOfferingsError] = useState(false);
   const [reloadToken, setReloadToken] = useState(0);
-  // Disabled for Store delivery. Retained for a future authenticated admin flow.
-//   /**
-//    * Saisie de code cachée, réservée au contournement du paywall.
-//    *
-//    * Sert d'abord aux relecteurs Apple et Google : le paywall est une boucle
-//    * fermée, et un relecteur qui passe l'écran promo du tunnel n'a plus aucun
-//    * moyen d'entrer dans l'app. Ce raccourci reste accessible depuis le paywall
-//    * lui-même, quoi qu'il ait fait avant.
-//    *
-//    * Déclenché en secouant l'appareil, plutôt que par un lien « J'ai un code
-//    * promo » : un lien apprendrait à tous les utilisateurs qu'une remise existe,
-//    * avant même qu'ils aient vu le prix plein.
-//    */
-//   const [showCodeModal, setShowCodeModal] = useState(false);
-//   const [codeInput, setCodeInput] = useState('');
-//   const [codeLoading, setCodeLoading] = useState(false);
-//   const [codeError, setCodeError] = useState('');
+  const [showCodeModal, setShowCodeModal] = useState(false);
+  const [codeInput, setCodeInput] = useState('');
+  const [codeLoading, setCodeLoading] = useState(false);
+  const [codeError, setCodeError] = useState('');
 //
-//   const openSecretCodeEntry = useCallback((trigger: string) => {
-//     feedback.success();
-//     analytics.track('paywall_secret_code_opened', {
-//       ...paywallAnalyticsProperties,
-//       trigger,
-//     });
-//     setCodeError('');
-//     setShowCodeModal(true);
-//   }, [paywallAnalyticsProperties]);
+  const openSecretCodeEntry = useCallback((trigger: string) => {
+    feedback.success();
+    analytics.track('paywall_secret_code_opened', {
+      ...paywallAnalyticsProperties,
+      trigger,
+    });
+    setCodeError('');
+    setShowCodeModal(true);
+  }, [paywallAnalyticsProperties]);
 //
-//   /**
-//    * Détection de secousse.
-//    *
-//    * L'accéléromètre renvoie des g : au repos la norme du vecteur vaut ~1. On
-//    * exige plusieurs franchissements de seuil rapprochés — un choc isolé (poser
-//    * le téléphone, un pas un peu sec) ne doit pas ouvrir la saisie.
-//    */
-//   useEffect(() => {
-//     if (showCodeModal) return;
+  /**
+   * Détection de secousse.
+   *
+   * L'accéléromètre renvoie des g : au repos la norme du vecteur vaut ~1. On
+   * exige plusieurs franchissements de seuil rapprochés — un choc isolé (poser
+   * le téléphone, un pas un peu sec) ne doit pas ouvrir la saisie.
+   */
+  useEffect(() => {
+    if (showCodeModal) return;
 //
-//     const SHAKE_FORCE = 1.8;
-//     const SHAKE_HITS_REQUIRED = 3;
-//     const SHAKE_WINDOW_MS = 1200;
+    const detect = createShakeDetector();
+    let cancelled = false;
+    Accelerometer.setUpdateInterval(80);
+    const subscription = Accelerometer.addListener(sample => {
+      if (cancelled || !detect(sample, Date.now())) return;
+      cancelled = true;
+      openSecretCodeEntry('shake');
+    });
+
+    return () => {
+      cancelled = true;
+      subscription.remove();
+    };
+  }, [showCodeModal, openSecretCodeEntry]);
 //
-//     let hits: number[] = [];
-//     let cancelled = false;
-//
-//     Accelerometer.setUpdateInterval(80);
-//     const subscription = Accelerometer.addListener(({ x, y, z }) => {
-//       if (cancelled) return;
-//       const force = Math.sqrt(x * x + y * y + z * z);
-//       if (force < SHAKE_FORCE) return;
-//
-//       const now = Date.now();
-//       hits = [...hits.filter((at) => now - at < SHAKE_WINDOW_MS), now];
-//       if (hits.length >= SHAKE_HITS_REQUIRED) {
-//         hits = [];
-//         cancelled = true;
-//         openSecretCodeEntry('shake');
-//       }
-//     });
-//
-//     return () => {
-//       cancelled = true;
-//       subscription.remove();
-//     };
-//   }, [showCodeModal, openSecretCodeEntry]);
-//
-//   const handleSubmitSecretCode = async () => {
-//     const trimmed = codeInput.trim();
-//     if (!trimmed) return;
-//     Keyboard.dismiss();
-//     setCodeError('');
-//     setCodeLoading(true);
-//     try {
-//       if (!await activateReviewerAccess(trimmed)) {
-//         setCodeError(t('paywall.promoCodeInvalidMessage'));
-//         return;
-//       }
-//       if (shouldCompleteOnPurchase) {
-//         await analytics.completeOnboarding({
-//           ...paywallAnalyticsProperties,
-//           completion_method: 'reviewer_access',
-//         });
-//       }
-//       analytics.track('paywall_reviewer_access_activated', paywallAnalyticsProperties);
-//       setShowCodeModal(false);
-//       setCodeInput('');
-//       router.replace('/(tabs)' as any);
-//     } catch {
-//       setCodeError(t('paywall.promoCodeError'));
-//     } finally {
-//       setCodeLoading(false);
-//     }
-//   };
+  const handleSubmitSecretCode = async () => {
+    const trimmed = codeInput.trim();
+    if (!trimmed) return;
+    Keyboard.dismiss();
+    setCodeError('');
+    setCodeLoading(true);
+    try {
+      if (!await activateReviewerAccess(trimmed)) {
+        setCodeError(t('paywall.promoCodeInvalidMessage'));
+        return;
+      }
+      if (shouldCompleteOnPurchase) {
+        await analytics.completeOnboarding({
+          ...paywallAnalyticsProperties,
+          completion_method: 'admin_access',
+        });
+      }
+      analytics.track('paywall_admin_access_activated', paywallAnalyticsProperties);
+      setShowCodeModal(false);
+      setCodeInput('');
+      router.replace('/(tabs)' as any);
+    } catch {
+      setCodeError(t('paywall.promoCodeError'));
+    } finally {
+      setCodeLoading(false);
+    }
+  };
 //
   const [isSpinning, setIsSpinning] = useState(false);
   const [spinResult, setSpinResult] = useState<number | null>(null);
@@ -886,7 +860,7 @@ export default function PaywallScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Future admin access: gesture and access-code modal disabled.
+      
       <Pressable
         onLongPress={() => openSecretCodeEntry('long_press')}
         delayLongPress={2000}
@@ -912,6 +886,7 @@ export default function PaywallScreen() {
               onChangeText={(text) => { setCodeInput(text); setCodeError(''); }}
               placeholder={t('paywall.reviewerAccessPlaceholder')}
               placeholderTextColor="#AEAEB2"
+              secureTextEntry
               autoCapitalize="none"
               autoCorrect={false}
               autoFocus
@@ -939,7 +914,6 @@ export default function PaywallScreen() {
           </Pressable>
         </Pressable>
       </Modal>
-      */}
 
       {viewState === 'WHEEL' ? (
         <Animated.View style={[styles.container, styles.wheelContainer, { opacity: fadeAnim }]}>

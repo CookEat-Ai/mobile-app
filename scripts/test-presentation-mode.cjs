@@ -45,7 +45,7 @@ const mode = load('services/presentationMode.ts', {
   await mode.disablePresentationMode();
   assert.equal(mode.usePresentationMode(), false);
   assert.equal(stored, null);
-  const reviewer = load('services/reviewerAccess.ts');
+  const reviewer = load('services/reviewerAccess.ts', { './api': { default: { getAdminAccess: async () => ({ data: { active: false } }), activateAdminAccess: async () => ({ data: { active: false } }) } } });
   assert.equal(await reviewer.hasReviewerAccess(), false);
   assert.equal(await reviewer.activateReviewerAccess(code), false);
   console.log('Presentation mode checks passed: shake, code, activation, deactivation, scan modes, unchanged reviewer access');

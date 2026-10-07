@@ -1,3 +1,4 @@
+import { usePathname } from 'expo-router';
 import { subscribePresentationModePrompt } from '../services/presentationModeTrigger';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, AppState, KeyboardAvoidingView, Modal, Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -9,6 +10,7 @@ import { AppTheme as theme, appStyles } from '../constants/AppTheme';
 
 export function PresentationModeControl() {
   const { t } = useTranslation();
+  const pathname = usePathname();
   const enabled = usePresentationMode();
   const [visible, setVisible] = useState(false);
   const [code, setCode] = useState('');
@@ -20,7 +22,7 @@ export function PresentationModeControl() {
     opening.current = true; setCode(''); setError(''); setVisible(true);
   }), []);
   useEffect(() => {
-    if (__DEV__) return;
+    if (__DEV__ || pathname === '/paywall') return;
     let active = true;
     let subscription: ReturnType<typeof Accelerometer.addListener> | undefined;
     const detect = createShakeDetector();
@@ -33,7 +35,7 @@ export function PresentationModeControl() {
       });
     }).catch(() => undefined);
     return () => { active = false; subscription?.remove(); };
-  }, []);
+  }, [pathname]);
   const close = () => { if (busy) return; opening.current = false; setVisible(false); setCode(''); };
   const submit = async () => {
     if (busy) return;
