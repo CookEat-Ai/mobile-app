@@ -946,8 +946,8 @@
     "processing": "Traitement de ta liste..."
   },
   "paywall": {
-    "reviewerAccessTitle": "Accès de vérification",
-    "reviewerAccessDescription": "Saisis le code réservé à la vérification de l’app.",
+    "reviewerAccessTitle": "Accès administrateur",
+    "reviewerAccessDescription": "Saisis ton code administrateur.",
     "reviewerAccessPlaceholder": "Code d’accès",
     "billedAnnually": "facturé {{price}} par an",
     "weeklyPlanning": {

@@ -940,8 +940,8 @@
     "processing": "Deine Liste wird verarbeitet ..."
   },
   "paywall": {
-    "reviewerAccessTitle": "Zugang zur App-Prüfung",
-    "reviewerAccessDescription": "Gib den Zugangscode für die App-Prüfung ein.",
+    "reviewerAccessTitle": "Administratorzugang",
+    "reviewerAccessDescription": "Gib deinen Administratorcode ein.",
     "reviewerAccessPlaceholder": "Zugangscode",
     "billedAnnually": "{{price}} jährlich abgerechnet",
     "weeklyPlanning": {

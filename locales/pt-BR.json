@@ -940,8 +940,8 @@
     "processing": "Processando sua lista..."
   },
   "paywall": {
-    "reviewerAccessTitle": "Acesso de revisão",
-    "reviewerAccessDescription": "Digite o código de acesso para revisar o app.",
+    "reviewerAccessTitle": "Acesso de administrador",
+    "reviewerAccessDescription": "Digite seu código de administrador.",
     "reviewerAccessPlaceholder": "Código de acesso",
     "billedAnnually": "cobrado {{price}} por ano",
     "weeklyPlanning": {

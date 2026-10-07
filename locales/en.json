@@ -940,8 +940,8 @@
     "processing": "Processing your list..."
   },
   "paywall": {
-    "reviewerAccessTitle": "App review access",
-    "reviewerAccessDescription": "Enter the access code provided for app review.",
+    "reviewerAccessTitle": "Administrator access",
+    "reviewerAccessDescription": "Enter your administrator code.",
     "reviewerAccessPlaceholder": "Access code",
     "billedAnnually": "billed {{price}} yearly",
     "weeklyPlanning": {
