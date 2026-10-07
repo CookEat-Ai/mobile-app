@@ -18,23 +18,15 @@
     "production": {
       "autoIncrement": true,
       "channel": "production",
-      "environment": "production"
-    },
-    "testflight": {
-      "extends": "production",
-      "channel": "testflight",
+      "environment": "production",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://cookeat.info/testflight/api"
+        "EXPO_PUBLIC_API_URL": "https://cookeat.info/api",
+        "EXPO_PUBLIC_APP_ENV": "production"
       }
     }
   },
   "submit": {
     "production": {
-      "ios": {
-        "ascAppId": "6748924011"
-      }
-    },
-    "testflight": {
       "ios": {
         "ascAppId": "6748924011"
       }
