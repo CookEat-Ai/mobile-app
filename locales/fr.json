@@ -680,7 +680,7 @@
     "weekSummary": "Jours : {{days}} · Repas : {{meals}}",
     "generation": {
       "title": "Quels jours vas-tu cuisiner ?",
-      "subtitle": "La semaine va du lundi au dimanche.",
+      "subtitle": "Choisis les jours où tu cuisineras pendant les sept prochains jours.",
       "daysTitle": "Jours de cuisine",
       "summary": "Jours sélectionnés : {{days}} · Repas : {{meals}}",
       "cta": "Générer le planning"

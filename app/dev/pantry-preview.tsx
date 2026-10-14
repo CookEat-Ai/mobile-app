@@ -10,5 +10,5 @@ export default function PantryPreview() {
   if (!__DEV__) return <Redirect href="/" />;
   const ingredients = ['Poulet', 'Œufs', 'Courgettes', 'Riz', 'Feta', 'Tomates'];
   if (week || state === 'week' || state === 'ready') return <PlanningLoadingView ready={state === 'ready'} onComplete={() => undefined} />;
-  return <PantryScanView photoUris={[]} ingredients={state === 'scan' ? null : state === 'empty' ? [] : ingredients} saving={false} onConfirm={() => setWeek(true)} onRetake={() => setWeek(false)} />;
+  return <PantryScanView photoUris={[]} ingredients={state === 'scan' ? null : state === 'empty' ? [] : ingredients} saving={false} onBack={() => setWeek(false)} onConfirm={() => setWeek(true)} onRetake={() => setWeek(false)} />;
 }

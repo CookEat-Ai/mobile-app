@@ -45,6 +45,9 @@
         "android.permission.WAKE_LOCK",
         "com.google.android.gms.permission.AD_ID"
       ],
+      "blockedPermissions": [
+        "android.permission.ACTIVITY_RECOGNITION"
+      ],
       "package": "com.gokugen.cookeat",
       "googleServicesFile": "./google-services.json"
     },

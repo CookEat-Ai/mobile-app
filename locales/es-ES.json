@@ -677,7 +677,7 @@
     "weekSummary": "Días: {{days}} · Comidas: {{meals}}",
     "generation": {
       "title": "¿Qué días vas a cocinar?",
-      "subtitle": "Tu semana siempre va de lunes a domingo.",
+      "subtitle": "Elige qué días cocinarás durante los próximos siete días.",
       "daysTitle": "Días de cocina",
       "summary": "Días seleccionados: {{days}} · Comidas: {{meals}}",
       "cta": "Generar mi planificación"

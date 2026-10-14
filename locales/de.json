@@ -677,7 +677,7 @@
     "weekSummary": "Tage: {{days}} · Mahlzeiten: {{meals}}",
     "generation": {
       "title": "An welchen Tagen kochst du?",
-      "subtitle": "Deine Woche läuft immer von Montag bis Sonntag.",
+      "subtitle": "Wähle, an welchen der nächsten sieben Tage du kochen möchtest.",
       "daysTitle": "Kochtage",
       "summary": "Ausgewählte Tage: {{days}} · Mahlzeiten: {{meals}}",
       "cta": "Meinen Plan erstellen"
