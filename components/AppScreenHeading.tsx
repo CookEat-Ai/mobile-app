@@ -5,11 +5,11 @@ import { appStyles } from '../constants/AppTheme';
 import { useResponsive } from '../hooks/useResponsive';
 
 /** Same title typography as Planning and the shopping list. */
-export function AppScreenHeading({ title, subtitle, action, showAppLogo = false }: {
-  title: string; subtitle?: string; action?: React.ReactNode; showAppLogo?: boolean;
+export function AppScreenHeading({ title, subtitle, action, showAppLogo = false, compact = false }: {
+  title: string; subtitle?: string; action?: React.ReactNode; showAppLogo?: boolean; compact?: boolean;
 }) {
   const { font } = useResponsive();
-  return <View style={styles.container}>
+  return <View style={[styles.container, compact && styles.compact]}>
     <View style={styles.row}>
       <View style={styles.titleGroup}>
         <Text accessibilityRole="header" style={[appStyles.headerTitle, styles.title, { fontSize: font(29) }]}>{title}</Text>
@@ -22,6 +22,7 @@ export function AppScreenHeading({ title, subtitle, action, showAppLogo = false 
 }
 const styles = StyleSheet.create({
   container: { marginBottom: 24 },
+  compact: { marginBottom: 0 },
   row: { minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 12 },
   titleGroup: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 2 },
   title: { flexShrink: 1 },

@@ -3,7 +3,7 @@ function load(path, mocks, globals={}){const exports={};vm.runInNewContext(ts.tr
 (async()=>{for(const os of ['ios','android']){let calls=0;const values=new Map([['promo_code_activated','true'],['rc_last_subscription_status',JSON.stringify({isSubscribed:true,currentPlan:'promo_code'})]]);const storage={getItem:async k=>values.get(k),setItem:async(k,v)=>values.set(k,v)};const policy=load('config/storeCompliance.ts',{'react-native':{Platform:{OS:os}}});const rc=load('config/revenuecat.ts',{'../services/reviewerAccess':{hasReviewerAccess:async()=>false},'./storeCompliance':policy,'@react-native-async-storage/async-storage':{default:storage,__esModule:true},'react-native':{Platform:{OS:os}},'react-native-purchases':{},'../services/api':{apiService:{validatePromoCode:async()=>{calls++;return {data:{isValid:true}};}}},'../services/analytics':{},'../services/appsflyer':{},'./env':{PUBLIC_ENV:{}}}).default;
 assert.equal(await rc.isPromoCodeActivated(),os!=='ios');assert.equal(await rc.activatePromoCode('CREATOR'),os!=='ios');assert.equal(calls,os==='ios'?0:1);if(os==='ios')assert.equal(await rc.getLastSubscriptionStatus(),null);console.log(os+': creator activation, persisted access and API calls verified');}
 let granted=false, unavailable=false;
-const access=load('services/reviewerAccess.ts',{'./api':{__esModule:true,default:{
+const access=load('services/reviewerAccess.ts',{'./presentationMode':{enablePresentationModeByDefault:async()=>{}},'./api':{__esModule:true,default:{
  activateAdminAccess:async code=>({data:{active:code==='test-admin'}}),
  getAdminAccess:async()=>{if(unavailable)throw Error('offline');return {data:{active:granted}};}
 }}});

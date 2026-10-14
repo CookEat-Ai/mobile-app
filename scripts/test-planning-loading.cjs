@@ -16,18 +16,20 @@ function loadBudgetModule(name) {
 let now = 0;
 let timers = [];
 let storedSettings = null;
+let profileDiet = 'vegetarian';
 const exportsObject = {};
 vm.runInNewContext(ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText, {
   exports: exportsObject,
   require: name => name === './planning-calorie-budget' ? loadBudgetModule('planning-calorie-budget')
+    : name === './planning-time' ? loadBudgetModule('planning-time')
     : name === '@react-native-async-storage/async-storage' ? {
       getItem: async () => storedSettings,
       setItem: async (_key, value) => { storedSettings = value; },
     } : name === './fitnessProfile' ? {
       loadFitnessProfile: async () => ({}),
-      fitnessProfileToPlanningPreferences: () => ({ cuisineStyle: ['italian'], diet: 'vegetarian' }),
+      fitnessProfileToPlanningPreferences: () => ({ cuisineStyle: ['italian'], diet: profileDiet }),
     } : {},
   performance: { now: () => now },
   setTimeout: (resolve, delay) => { timers.push({ resolve, at: now + delay }); },
@@ -49,6 +51,16 @@ const tick = async target => {
     }
   };
   expectFourMeals(await exportsObject.loadPlanningGenerationSettings());
+  for (const diet of ['none', 'vegetarian', 'vegan', 'pescatarian', 'halal']) {
+    storedSettings = null;
+    profileDiet = diet;
+    const inherited = await exportsObject.loadPlanningGenerationSettings();
+    assert.equal(inherited.diet, diet, 'planning inherits the full onboarding diet');
+    await exportsObject.savePlanningGenerationSettings({ ...inherited, diet });
+    assert.equal((await exportsObject.loadPlanningGenerationSettings()).diet, diet, 'planning diet survives save and reload');
+  }
+  storedSettings = JSON.stringify({ diet: 'unknown' });
+  assert.equal((await exportsObject.loadPlanningGenerationSettings()).diet, 'none');
   storedSettings = JSON.stringify({ cookingDays: [1, 5], mealsByDay: { 1: ['dinner'], 5: ['snack'] }, includeSnack: true,
     duration: 'fast', cuisineIds: ['italian'], diet: 'vegetarian', excludedIngredients: ['peanut'] });
   const migrated = await exportsObject.loadPlanningGenerationSettings();
@@ -62,19 +74,19 @@ const tick = async target => {
   expectFourMeals(JSON.parse(storedSettings));
   storedSettings = '{invalid';
   expectFourMeals(await exportsObject.loadPlanningGenerationSettings());
-  assert.equal(exportsObject.PLANNING_MINIMUM_LOADING_MS, 5000);
-  for (const responseTime of [0, 1200, 4999, 5000, 8000, 60000]) {
+  assert.equal(exportsObject.PLANNING_MINIMUM_LOADING_MS, 3000);
+  for (const responseTime of [0, 1200, 2999, 3000, 8000, 60000]) {
     now = responseTime; timers = [];
     let finished = false;
     const waiting = waitForPlanningMinimumDuration(0).then(() => { finished = true; });
     await Promise.resolve();
-    if (responseTime < 5000) {
+    if (responseTime < 3000) {
       assert.equal(finished, false, 'fast response must not reveal the plan immediately');
-      await tick(4999);
-      assert.equal(finished, false, 'the full five seconds are mandatory');
-      await tick(5000);
+      await tick(2999);
+      assert.equal(finished, false, 'the full three seconds are mandatory');
+      await tick(3000);
     } else {
-      assert.equal(timers.length, 0, 'a slow response must not add another five seconds');
+      assert.equal(timers.length, 0, 'a slow response must not add another three seconds');
     }
     await waiting;
     assert(finished);
@@ -83,8 +95,8 @@ const tick = async target => {
   now = 20000; timers = [];
   let retried = false;
   const retry = waitForPlanningMinimumDuration(20000).then(() => { retried = true; });
-  await tick(24999); assert(!retried);
-  await tick(25000); await retry; assert(retried);
+  await tick(22999); assert(!retried);
+  await tick(23000); await retry; assert(retried);
 
   const meal = { dayIndex: 0, mealType: 'dinner', source: 'catalog', status: 'ready',
     catalogRecipeId: 'dinner-a', title: 'Dîner', image: 'https://example.test/meal.jpg', calories: 600, proteins: 35 };
@@ -99,6 +111,11 @@ const tick = async target => {
   assert(isCompleteWeeklyPlan({ ...plan, meals: [{ ...meal, calories: 400, portionScale: 2, calorieFit: 'closest_available' }] }), 'explicit nearest fit must finish loading');
   assert(!isCompleteWeeklyPlan({ ...plan, meals: [{ ...meal, calories: 400 }] }), 'unmarked legacy miss remains invalid');
   assert(!isCompleteWeeklyPlan({ ...plan, meals: [{ ...meal, calories: 400, portionScale: 3, calorieFit: 'closest_available' }] }), 'fallback cannot justify extreme portion factors');
+  const evening = { ...plan, nutritionTargets: { dailyCalories: 2000 }, preferences: {
+    cookingDays: [0], mealsByDay: { 0: ['dinner'] }, includeSnack: true, partialStartDay: true,
+  }, meals: [{ ...meal, calories: 600 }] };
+  assert(isCompleteWeeklyPlan(evening), 'a planned dinner is a complete partial first day');
+  assert(!isCompleteWeeklyPlan({ ...evening, meals: [{ ...meal, calories: 2000 }] }), 'missing meals cannot be squeezed into the dinner');
   assert(!isCompleteWeeklyPlan(null));
   assert(!isCompleteWeeklyPlan({ ...plan, meals: [] }));
   assert(!isCompleteWeeklyPlan({ ...plan, meals: [meal, meal] }));
@@ -106,7 +123,7 @@ const tick = async target => {
     assert(!isCompleteWeeklyPlan({ ...plan, meals: [{ ...meal, status }] }), 'pending or failed meals must not end loading');
   }
   assert(!isCompleteWeeklyPlan({ ...plan, preferences: { cookingDays: [0, 1], mealsByDay: { 0: ['dinner'], 1: ['dinner'] } } }));
-  // Exercise the actual loading hook: receiving data and reaching 5s cannot
+  // Exercise the actual loading hook: receiving data and reaching 3s cannot
   // navigate until the bar's completion callback fires. Unmount cancels it.
   const hookPath = path.resolve(__dirname, '../components/loading/PlanningLoadingView.tsx');
   const hookModule = {};
@@ -128,9 +145,9 @@ const tick = async target => {
     const result = hook.finish(0).then(done => { revealed = done; });
     await Promise.resolve();
     assert(!revealed);
-    if (responseTime < 5000) {
-      await tick(4999); assert(!readyValues.includes(true));
-      await tick(5000);
+    if (responseTime < 3000) {
+      await tick(2999); assert(!readyValues.includes(true));
+      await tick(3000);
     }
     for (let i = 0; i < 10; i++) await Promise.resolve();
     assert.equal(readyValues.at(-1), true, 'bar may finish only after the real response and minimum time');
@@ -151,16 +168,21 @@ const tick = async target => {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, jsx: ts.JsxEmit.React },
   }).outputText;
   for (const scenario of [
+    { replace: 'false', valid: true, completed: true, goal: 'gain_muscle' },
     { replace: 'true', valid: true, completed: true },
     { replace: 'false', valid: true, completed: true },
+    { replace: undefined, valid: true, completed: true },
     { replace: 'true', valid: false, completed: true },
+    { replace: 'false', valid: false, completed: true },
     { replace: 'true', valid: true, completed: false },
+    { replace: 'false', valid: true, completed: false },
   ]) {
     const screenModule = {};
     const navigation = [];
     const effects = [];
     const errors = [];
     const reviewRequests = [];
+    let planningInvalidated = false;
     let completeBar;
     const barFinished = new Promise(resolve => { completeBar = resolve; });
     const react = {
@@ -175,15 +197,18 @@ const tick = async target => {
       'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) },
       'react-i18next': { useTranslation: () => ({ t: key => key }) },
       'expo-router': {
-        useLocalSearchParams: () => ({ replace: scenario.replace, config: JSON.stringify({ cookingDays: [0], mealsByDay: { 0: ['dinner'] }, includeSnack: true }) }),
+        useLocalSearchParams: () => ({ replace: scenario.replace, config: JSON.stringify({ goal: scenario.goal, cookingDays: [0], mealsByDay: { 0: ['dinner'] }, includeSnack: true }) }),
         router: {
-          dismissTo: route => navigation.push(['dismissTo', route]),
+          dismissTo: route => {
+            assert(planningInvalidated, 'home must reload the new planning on focus');
+            navigation.push(['dismissTo', route]);
+          },
           replace: route => navigation.push(['replace', route]),
         },
       },
       '@react-native-async-storage/async-storage': { getItem: async () => 'user' },
       '../../services/haptics': { feedback: { success: async () => {}, error: async () => {} } },
-      '../../services/planningUpdates': { invalidatePlanning() {} },
+      '../../services/planningUpdates': { invalidatePlanning() { planningInvalidated = true; } },
       'expo-haptics': { notificationAsync: async () => {}, NotificationFeedbackType: { Success: 'success', Error: 'error' } },
       '../../components/loading/PlanningLoadingView': { usePlanningLoading: () => ({ reset() {}, finish: () => barFinished }) },
       '../../constants/Colors': { Colors: { light: {} } },
@@ -193,10 +218,14 @@ const tick = async target => {
       '../../services/planningReview': { schedulePlanningReview: planId => reviewRequests.push(planId) },
       '../../services/api': { apiService: { createMealPlan: async input => {
         expectFourMeals(input.preferences);
+        assert.equal(input.weekStart, '2026-09-30', 'generation starts today, not Monday');
+        assert.equal(input.preferences.goal, scenario.goal || 'lose_weight', 'chosen demo goal reaches the API');
+        assert.equal(input.preferences.nutritionProfile.goal, input.preferences.goal);
         return { data: { plan: scenario.valid ? { ...plan, _id: 'new-plan' } : null } };
       } } },
-      '../../services/fitnessProfile': { loadFitnessProfile: async () => ({}), fitnessProfileToPlanningPreferences: () => ({}) },
-      '../../services/weeklyPlanning': { ...exportsObject, startOfWeekMondayKey: () => '2026-09-28' },
+      '../../services/fitnessProfile': { loadFitnessProfile: async () => ({ goal: 'lose_weight' }), fitnessProfileToPlanningPreferences: profile => ({ goal: profile.goal, nutritionProfile: { goal: profile.goal } }) },
+      '../../services/planningGoal': { profileForPlanningGoal: (profile, goal) => goal ? { ...profile, goal } : profile },
+      '../../services/weeklyPlanning': { ...exportsObject, planningStartKey: () => '2026-09-30' },
     };
     vm.runInNewContext(screenCode, {
       exports: screenModule, require: name => dependencies[name] || {}, performance: { now: () => 0 },
@@ -212,14 +241,10 @@ const tick = async target => {
       assert.equal(navigation.length, 0, 'failed or cancelled generation must not navigate');
       assert.equal(reviewRequests.length, 0, 'failed or cancelled generation must not request review');
       if (!scenario.valid) assert(errors.length > 0);
-    } else if (scenario.replace === 'true') {
-      assert.deepEqual(navigation, [['dismissTo', '/(tabs)']], 'regeneration returns to the existing Planning home');
     } else {
-      assert.equal(navigation[0][0], 'replace');
-      assert.equal(navigation[0][1].pathname, '/planning/[planId]');
-      assert.equal(navigation[0][1].params.planId, 'new-plan');
+      assert.deepEqual(navigation, [['dismissTo', '/(tabs)']], 'creation and regeneration close the configuration flow and show the planning on home');
     }
     if (scenario.valid && scenario.completed) assert.deepEqual(reviewRequests, ['new-plan']);
   }
-  console.log('Planning loading checks passed: 5s minimum, fast/slow responses, retry, 5% calorie bounds, complete ready meals, bar completion and unmount cancellation.');
+  console.log('Planning loading checks passed: 3s minimum, fast/slow responses, retry, 5% calorie bounds, complete ready meals, bar completion and unmount cancellation.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

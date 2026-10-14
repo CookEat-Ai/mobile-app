@@ -16,31 +16,18 @@ export function usePlanningReveal(hasMeals: boolean, dayIndices: number[], selec
   const allowed = useMotionAllowed();
   const [entrance, setEntrance] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [waiting, setWaiting] = useState(false);
   const [step, setStep] = useState(0);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const revealStartRef = useRef(onRevealStart);
   revealStartRef.current = onRevealStart;
   const selectRef = useRef(selectDay);
   selectRef.current = selectDay;
-  const playedRequest = useRef(0);
   const daysKey = dayIndices.join(',');
   const stop = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
     timer.current = null;
     setPlaying(false);
-    setWaiting(false);
   }, []);
-  const scheduleReplay = useCallback(() => {
-    stop();
-    revealStartRef.current?.();
-    setWaiting(true);
-    timer.current = setTimeout(() => {
-      timer.current = null;
-      setWaiting(false);
-      setEntrance(value => value + 1);
-    }, 5000);
-  }, [stop]);
   useFocusEffect(useCallback(() => {
     setFocused(true);
     return () => { setFocused(false); stop(); };
@@ -48,13 +35,12 @@ export function usePlanningReveal(hasMeals: boolean, dayIndices: number[], selec
   useLayoutEffect(() => {
     if (!focused || !hasMeals || !daysKey || !planId) { stop(); return; }
     const generated = consumePlanningReveal(planId);
-    const replay = __DEV__ && entrance > playedRequest.current;
-    playedRequest.current = entrance;
-    if (!allowed || (!generated && !replay)) { stop(); return; }
+    if (!allowed || !generated) { stop(); return; }
     const days = daysKey.split(',').map(Number);
     let index = 0;
-    // Reset the parent viewport only for a real reveal, including manual replay.
+    // Reset the viewport only when a newly generated plan is revealed.
     revealStartRef.current?.();
+    setEntrance(value => value + 1);
     setPlaying(true);
     setStep(0);
     selectRef.current(days[0]);
@@ -67,19 +53,18 @@ export function usePlanningReveal(hasMeals: boolean, dayIndices: number[], selec
     };
     timer.current = setTimeout(advance, days.length === 1 ? 500 : 360);
     return stop;
-  }, [allowed, daysKey, entrance, focused, hasMeals, planId, stop]);
+  }, [allowed, daysKey, focused, hasMeals, planId, stop]);
   return {
     visibleDayCount: playing ? step + 1 : dayIndices.length,
     dayAnimationKey: playing ? `${planId}:${entrance}` : undefined,
     animationKey: focused && allowed && hasMeals && playing ? entrance * 10 + step : null,
     stopReveal: stop,
-    replayButton: focused && allowed && hasMeals && (playing || __DEV__) ? <View style={styles.controls}>
-      <TouchableOpacity accessibilityRole="button" onPress={playing || waiting ? stop : scheduleReplay} style={styles.replay}>
-        <Ionicons name={waiting ? 'time-outline' : playing ? 'pause-outline' : 'play-outline'} size={18} color={theme.ink} />
-        <Text style={styles.replayText}>{t(waiting ? 'common.cancel' : playing ? 'planningReveal.skip' : 'planningReveal.replay')}</Text>
+    revealControls: focused && allowed && hasMeals && playing ? <View style={styles.controls}>
+      <TouchableOpacity accessibilityRole="button" onPress={stop} style={styles.replay}>
+        <Ionicons name="pause-outline" size={18} color={theme.ink} />
+        <Text style={styles.replayText}>{t('planningReveal.skip')}</Text>
       </TouchableOpacity>
-      {waiting && <Text style={styles.progress}>5 s</Text>}
-      {playing && <Text style={styles.progress}>{step + 1} / {dayIndices.length}</Text>}
+      <Text style={styles.progress}>{step + 1} / {dayIndices.length}</Text>
     </View> : null,
   };
 }

@@ -1,3 +1,4 @@
+import { planningGenerationWindow } from './planning-time';
 import { fitnessProfileToPlanningPreferences, loadFitnessProfile } from './fitnessProfile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { MealPlan } from './api';
@@ -13,7 +14,7 @@ export const PLANNING_GENERATION_SETTINGS_KEY = '@cookeat_planning_generation_se
 export const DEFAULT_WEEKLY_MEAL_COUNT = 21;
 export const WEEKLY_PLANNING_HORIZON_DAYS = 7;
 export const DEFAULT_COOKING_DAYS = [0, 1, 2, 3, 4] as const;
-export const PLANNING_MINIMUM_LOADING_MS = 5000;
+export const PLANNING_MINIMUM_LOADING_MS = 3000;
 
 /** Complète uniquement le temps restant avant de révéler un planning créé. */
 export async function waitForPlanningMinimumDuration(startedAt: number): Promise<void> {
@@ -30,6 +31,13 @@ export function roundNutritionValue(value: unknown): number {
   return Number.isFinite(numericValue) ? Math.round(numericValue) : 0;
 }
 
+export const PLANNING_DIETS = ['none', 'vegetarian', 'vegan', 'pescatarian', 'halal'] as const;
+export type PlanningDiet = typeof PLANNING_DIETS[number];
+
+export function normalizePlanningDiet(value: unknown): PlanningDiet {
+  return PLANNING_DIETS.includes(value as PlanningDiet) ? value as PlanningDiet : 'none';
+}
+
 export type PlanningGenerationSettings = {
   servings?: number;
   cookingDays: number[];
@@ -37,7 +45,7 @@ export type PlanningGenerationSettings = {
   duration: 'all' | 'fast' | 'medium';
   mealsByDay: Record<string, PlanningMealType[]>;
   cuisineIds: string[];
-  diet: 'none' | 'vegetarian' | 'vegan';
+  diet: PlanningDiet;
   excludedIngredients: string[];
   pantryIngredients?: string[];
   pantryMode?: 'priority' | 'strict';
@@ -109,6 +117,10 @@ export function localDateKey(date: Date = new Date()): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
+export function planningStartKey(date: Date = new Date()): string {
+  return planningGenerationWindow(undefined, date).weekStart;
+}
+
 export function startOfWeekMondayKey(date: Date = new Date()): string {
   const monday = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   const day = monday.getDay();
@@ -149,7 +161,7 @@ export async function loadPlanningGenerationSettings(): Promise<PlanningGenerati
       cookingDays: [...DEFAULT_COOKING_DAYS],
       mealsByDay: { ...DEFAULT_PLANNING_GENERATION_SETTINGS.mealsByDay },
       cuisineIds: preferences.cuisineStyle,
-      diet: preferences.diet === 'vegan' || preferences.diet === 'vegetarian' ? preferences.diet : 'none',
+      diet: normalizePlanningDiet(preferences.diet),
       excludedIngredients: [],
     };
     }
@@ -164,7 +176,7 @@ export async function loadPlanningGenerationSettings(): Promise<PlanningGenerati
       duration: parsed.duration === 'fast' || parsed.duration === 'medium' ? parsed.duration : 'all',
       mealsByDay: dailyMealsForDays(cookingDays),
       cuisineIds: Array.isArray(parsed.cuisineIds) ? [...new Set(parsed.cuisineIds.map(String).filter(Boolean))] : [],
-      diet: parsed.diet === 'vegetarian' || parsed.diet === 'vegan' ? parsed.diet : 'none',
+      diet: normalizePlanningDiet(parsed.diet),
       excludedIngredients: Array.isArray(parsed.excludedIngredients)
         ? [...new Set(parsed.excludedIngredients.map(String).map((item) => item.trim()).filter(Boolean))]
         : [],

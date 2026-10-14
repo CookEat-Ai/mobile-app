@@ -1,3 +1,4 @@
+import { planningGenerationWindow } from './planning-time';
 import type { MealPlan } from './api';
 
 export function localDateKey(date = new Date()): string {
@@ -42,9 +43,10 @@ export function formatPlanRange(plan: Pick<MealPlan, 'weekStart' | 'weekEnd'>, l
   return `${formatter.format(new Date(`${plan.weekStart}T12:00:00`))} – ${formatter.format(new Date(`${lastDay}T12:00:00`))}`;
 }
 
-/** Home only displays the current calendar week; older plans stay in history. */
-export function displayedPlan(plans: MealPlan[], weekStart: string): MealPlan | undefined {
-  return plans.find(plan => plan.weekStart === weekStart);
+/** Keep the newest active rolling week visible until its final calendar day. */
+export function displayedPlan(plans: MealPlan[], today = planningGenerationWindow().weekStart): MealPlan | undefined {
+  return plans.filter(plan => plan.weekStart <= today && !isPastPlan(plan, today))
+    .sort((a, b) => b.weekStart.localeCompare(a.weekStart) || (b.updatedAt || '').localeCompare(a.updatedAt || ''))[0];
 }
 
 export function isPastPlanDay(weekStart: string, dayIndex: number, today = localDateKey()): boolean {
@@ -64,6 +66,7 @@ export function planningDaySlots(plan: MealPlan, dayIndex: number) {
 export function compatiblePlanningSlots(plan: MealPlan, mealTypes: string[], today = localDateKey()) {
   const configured = Array.isArray(plan.preferences?.cookingDays) ? plan.preferences.cookingDays as number[] : [];
   const days = new Set([...configured, ...plan.meals.map(meal => meal.dayIndex ?? 0)]);
+  const window = planningGenerationWindow();
   return planDays(plan.weekStart).filter(day => days.has(day.dayIndex) && !isPastPlanDay(plan.weekStart, day.dayIndex, today))
-    .flatMap(day => planningDaySlots(plan, day.dayIndex).filter(slot => mealTypes.includes(slot.mealType)).map(slot => ({ ...slot, dayIndex: day.dayIndex })));
+    .flatMap(day => planningDaySlots(plan, day.dayIndex).filter(slot => mealTypes.includes(slot.mealType) && (day.key !== window.today || today !== window.today || window.remainingMealTypes.includes(slot.mealType))).map(slot => ({ ...slot, dayIndex: day.dayIndex })));
 }

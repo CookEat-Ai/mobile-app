@@ -1,5 +1,7 @@
+import { invalidatePlanning, planningRevision } from '../../services/planningUpdates';
+import { usePresentationMode } from '../../services/presentationMode';
+import { clearDeletedPlanReferences } from '../../services/planningDeletion';
 import { useEntranceReplay } from '../../hooks/useEntranceReplay';
-import { planningRevision } from '../../services/planningUpdates';
 import { EntranceView } from '../../components/motion/Entrance';
 import { AppScreenHeading } from '../../components/AppScreenHeading';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
@@ -8,13 +10,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Modal, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Modal, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { apiService, type MealPlan } from '../../services/api';
-import { startOfWeekMondayKey } from '../../services/weeklyPlanning';
+import { planningStartKey } from '../../services/weeklyPlanning';
 import { displayedPlan, formatPlanRange } from '../../services/planningDisplay';
 import { getRecipeImageSource } from '../../constants/RecipeImages';
 import { PlanWeekContent } from '../../components/planning/PlanWeekContent';
@@ -31,13 +33,16 @@ export default function PlanningScreen() {
     if (!scroll) return;
     scroll.getNativeScrollRef()?.measureInWindow((_x: number, viewportY: number) => {
       anchor.measureInWindow((_anchorX, anchorY) => {
-        const y = Math.max(0, scrollOffset.current + anchorY - viewportY - (insets.top + 8));
+        const y = Math.max(0, scrollOffset.current + anchorY - viewportY - 8);
         scrollOffset.current = y;
         scroll.scrollTo({ y, animated: false });
       });
     });
-  }, [insets.top]);
+  }, []);
   const { gutter } = useResponsive();
+  const presentationMode = usePresentationMode();
+  const [deleting, setDeleting] = useState(false);
+  const deleteBusy = useRef(false);
   const [plans, setPlans] = useState<MealPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -53,6 +58,7 @@ export default function PlanningScreen() {
     }
   }, [selectionKey]);
   const loadPlans = useCallback(async (refresh = false) => {
+    if (deleteBusy.current) return;
     const request = ++loadRequest.current;
     const revision = planningRevision();
     if (refresh) setRefreshing(true);
@@ -60,13 +66,13 @@ export default function PlanningScreen() {
     try {
       const userId = await AsyncStorage.getItem('userId');
       if (!userId) throw new Error(t('planning.errors.user'));
-      const response = await apiService.listMealPlans(userId);
+      const response = await apiService.listMealPlans(userId, { forceRefresh: refresh });
       if (!response.data?.plans) throw new Error(response.error || t('planning.errors.load'));
       let nextPlans = response.data.plans;
-      const currentSummary = displayedPlan(nextPlans, startOfWeekMondayKey());
+      const currentSummary = displayedPlan(nextPlans);
       if (currentSummary) {
         // The history endpoint omits preferences and nutrition targets.
-        const detail = await apiService.getMealPlanById(currentSummary._id, userId);
+        const detail = await apiService.getMealPlanById(currentSummary._id, userId, { forceRefresh: refresh });
         if (!detail.data?.plan) throw new Error(detail.error || t('planning.errors.load'));
         const fullPlan = detail.data.plan;
         nextPlans = nextPlans.map(plan => plan._id === fullPlan._id ? fullPlan : plan);
@@ -81,31 +87,63 @@ export default function PlanningScreen() {
     return () => { loadRequest.current += 1; };
   }, [loadPlans, shouldReplay]));
   const ordered = useMemo(() => [...plans].sort((a, b) => b.weekStart.localeCompare(a.weekStart)), [plans]);
-  const current = displayedPlan(ordered, startOfWeekMondayKey());
+  const current = displayedPlan(ordered);
   const locale = i18n.resolvedLanguage || 'fr';
-  const configure = () => router.push({ pathname: '/planning/configure', params: { replace: current?.weekStart === startOfWeekMondayKey() ? 'true' : 'false' } });
+  const configure = () => {
+    if (deleteBusy.current) return;
+    router.push({ pathname: '/planning/configure', params: { replace: current?.weekStart === planningStartKey() ? 'true' : 'false' } });
+  };
   const updatePlan = (next: MealPlan) => setPlans(previous => previous.map(plan => plan._id === next._id ? next : plan));
 
+  const deleteCurrentPlan = () => {
+    if (!presentationMode || !current || deleteBusy.current) return;
+    const selected = current;
+    Alert.alert(t('planningFlow.deleteTitle'), t('planningFlow.deleteBody'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('common.delete'), style: 'destructive', onPress: () => {
+        if (deleteBusy.current) return;
+        deleteBusy.current = true; setDeleting(true); setError(null);
+        ++loadRequest.current;
+        void (async () => {
+          try {
+            const userId = await AsyncStorage.getItem('userId');
+            if (!userId) throw new Error(t('planning.errors.user'));
+            const response = await apiService.deleteMealPlan(selected._id, userId);
+            if (!response.data?.success) throw new Error(response.error || t('planningFlow.deleteError'));
+            invalidatePlanning(); loadedRevision.current = planningRevision();
+            setPlans(previous => previous.filter(plan => plan._id !== selected._id));
+            setHistory(false); setRefreshing(false); setLoading(false);
+            scrollRef.current?.scrollTo({ y: 0, animated: false });
+            await clearDeletedPlanReferences(selected, userId).catch(() => undefined);
+          } catch (caught) { setError(caught instanceof Error ? caught.message : t('planningFlow.deleteError')); }
+          finally { deleteBusy.current = false; setDeleting(false); setRefreshing(false); setLoading(false); }
+        })();
+      } },
+    ]);
+  };
+
   return <View style={appStyles.screen}>
-    <ScrollView ref={scrollRef} scrollEventThrottle={16} onScroll={event => { scrollOffset.current = event.nativeEvent.contentOffset.y; }} style={styles.fill} contentInsetAdjustmentBehavior="never" showsVerticalScrollIndicator={false}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void loadPlans(true)} tintColor={theme.ink} />}
-      contentContainerStyle={{ ...contentColumn(), paddingTop: insets.top + 8, paddingHorizontal: gutter, paddingBottom: theme.bottomSpace }}>
-      <AppScreenHeading title="CookEat" showAppLogo action={
-        <TouchableOpacity style={appStyles.iconButton} accessibilityRole="button" accessibilityLabel={t('dailyApp.history')} onPress={() => setHistory(true)}><Ionicons name="time-outline" size={24} color={theme.ink} /></TouchableOpacity>
+    <View style={{ paddingLeft: gutter + insets.left, paddingRight: gutter + insets.right, paddingTop: insets.top + 8 }}><AppScreenHeading title="CookEat" showAppLogo action={
+        <TouchableOpacity style={appStyles.iconButton} accessibilityRole="button" accessibilityLabel={t('dailyApp.history')} disabled={deleting} onPress={() => setHistory(true)}><Ionicons name="time-outline" size={24} color={theme.ink} /></TouchableOpacity>
       } />
+</View>
+    <ScrollView ref={scrollRef} scrollEventThrottle={16} onScroll={event => { scrollOffset.current = event.nativeEvent.contentOffset.y; }} style={styles.fill} contentInsetAdjustmentBehavior="never" showsVerticalScrollIndicator={false}
+      refreshControl={<RefreshControl enabled={!deleting} refreshing={refreshing} onRefresh={() => void loadPlans(true)} tintColor={theme.ink} />}
+      contentContainerStyle={{ ...contentColumn(), paddingTop: 4, paddingHorizontal: gutter, paddingBottom: theme.bottomSpace }}>
       <Text style={appStyles.title}>{t('dailyApp.weekTitle')}</Text>
       {current && <Text style={styles.range}>{formatPlanRange(current, locale)}</Text>}
       {loading && <ActivityIndicator style={styles.loader} color={theme.ink} />}
       {error && <View><Text accessibilityRole="alert" style={appStyles.error}>{error}</Text><TouchableOpacity accessibilityRole="button" style={styles.historyButton} onPress={() => void loadPlans(true)}><Text style={styles.historyText}>{t('mealLibrary.retry')}</Text></TouchableOpacity></View>}
       {current ? <>
-        <PlanWeekContent key={`${current._id}:${selectionKey || ''}`} plan={current} onPlanChange={updatePlan} onRevealStart={alignPlanningDays}
-          initialDay={selectedPlanId === current._id && selectedDay !== undefined ? Number(selectedDay) : undefined} />
-        <TouchableOpacity accessibilityRole="button" style={styles.editWeek} onPress={configure}><Ionicons name="refresh-outline" size={20} color={theme.ink} /><Text style={appStyles.textAction}>{t('planningDetail.regenerate')}</Text></TouchableOpacity>
+        <View pointerEvents={deleting ? 'none' : 'auto'}><PlanWeekContent key={`${current._id}:${selectionKey || ''}`} plan={current} onPlanChange={updatePlan} onRevealStart={alignPlanningDays}
+          initialDay={selectedPlanId === current._id && selectedDay !== undefined ? Number(selectedDay) : undefined} /></View>
+        <TouchableOpacity accessibilityRole="button" style={styles.editWeek} disabled={deleting} onPress={configure}><Ionicons name="refresh-outline" size={20} color={theme.ink} /><Text style={appStyles.textAction}>{t('planningDetail.regenerate')}</Text></TouchableOpacity>
+        {presentationMode && <TouchableOpacity accessibilityRole="button" disabled={deleting} accessibilityState={{ disabled: deleting, busy: deleting }} style={styles.editWeek} onPress={deleteCurrentPlan}>{deleting ? <ActivityIndicator color="#963F32" /> : <Ionicons name="trash-outline" size={20} color="#963F32" />}<Text style={[appStyles.textAction, { color: '#963F32' }]}>{t('planningFlow.deleteAction')}</Text></TouchableOpacity>}
       </> : !loading && !error ? <EntranceView entranceIndex={0} style={styles.empty}>
         <EntranceView entranceIndex={1} style={styles.emptyMark}><Ionicons name="calendar-outline" size={44} color={theme.ink} /></EntranceView>
         <Text style={styles.emptyTitle}>{t('dailyApp.emptyTitle')}</Text>
         <Text style={[appStyles.subtitle, styles.emptyCopy]}>{t('dailyApp.emptyBody')}</Text>
-        <TouchableOpacity accessibilityRole="button" style={appStyles.button} onPress={configure}><Text style={appStyles.buttonText}>{t('dailyApp.createWeek')}</Text><Ionicons name="arrow-forward" size={20} color="white" /></TouchableOpacity>
+        <TouchableOpacity accessibilityRole="button" style={appStyles.button} disabled={deleting} onPress={configure}><Text style={appStyles.buttonText}>{t('dailyApp.createWeek')}</Text><Ionicons name="arrow-forward" size={20} color="white" /></TouchableOpacity>
       </EntranceView> : null}
     </ScrollView>
     <Modal visible={history} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setHistory(false)}>

@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import EventSource from 'react-native-sse';
 import { API_BASE_URL, WS_URL } from '../config/api';
 import i18n, { resolveSupportedLanguage } from '../i18n';
+import { responseCache, responseCachePolicy, type ReadOptions } from './responseCache';
 
 function parsePartialJSON(text: string): any {
   if (!text || !text.trim()) return null;
@@ -209,6 +210,7 @@ export type MealPlan = {
 };
 
 class ApiService {
+  private cacheUserId: string | null = null;
   private healthWs: WebSocket | null = null;
   private onHealthChange: ((isAvailable: boolean) => void) | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
@@ -229,6 +231,7 @@ class ApiService {
 
   /** Au retour au premier plan : reconnecte tout de suite au lieu d'attendre le délai de retry. */
   onAppForeground() {
+    this.invalidateReadCache();
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
@@ -313,7 +316,40 @@ class ApiService {
     return resolveSupportedLanguage(i18n.language);
   }
 
+  invalidateReadCache() {
+    responseCache.invalidatePersonal();
+  }
+
   private async request<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    timeoutMs: number = 60000,
+    readOptions: ReadOptions = {},
+  ): Promise<ApiResponse<T>> {
+    const method = (options.method || 'GET').toUpperCase();
+    const mutation = method !== 'GET' && /^(?:\/meal-plans(?:\/|$)|\/recipe(?:\/|$)|\/user\/(?:delete|init|onboarding|admin-access)$)/.test(endpoint);
+    if (mutation) {
+      this.invalidateReadCache();
+      try { return await this.networkRequest<T>(endpoint, options, timeoutMs); }
+      finally { this.invalidateReadCache(); }
+    }
+    const policy = method === 'GET' ? responseCachePolicy(endpoint) : null;
+    if (!policy) return this.networkRequest<T>(endpoint, options, timeoutMs);
+    let userId: string | null = null;
+    if (policy.group === 'personal') {
+      try { userId = await AsyncStorage.getItem('userId'); }
+      catch { return this.networkRequest<T>(endpoint, options, timeoutMs); }
+      if (userId !== this.cacheUserId) {
+        this.invalidateReadCache();
+        this.cacheUserId = userId;
+      }
+      if (!userId) return this.networkRequest<T>(endpoint, options, timeoutMs);
+    }
+    const key = JSON.stringify([API_BASE_URL, this.getCurrentLanguage(), userId, endpoint]);
+    return responseCache.read<T>(key, policy, () => this.networkRequest<T>(endpoint, options, timeoutMs), readOptions);
+  }
+
+  private async networkRequest<T>(
     endpoint: string,
     options: RequestInit = {},
     timeoutMs: number = 60000 // Repasser à un timeout plus long (30s) par défaut
@@ -349,7 +385,10 @@ class ApiService {
       catch { return { error: i18n.t('common.requestError'), status: response.ok ? 502 : response.status }; }
 
       if (!response.ok) {
-        if (response.status === 401) invalidateAnonymousSession();
+        if (response.status === 401) {
+          invalidateAnonymousSession();
+          this.invalidateReadCache();
+        }
         return { error: response.status >= 500 ? i18n.t('common.requestError') : data.message || i18n.t('common.requestError'), status: response.status };
       }
 
@@ -432,6 +471,7 @@ class ApiService {
       onError: (message: string) => void;
     }
   ): { close: () => void } {
+    this.invalidateReadCache();
     const month = new Date().getMonth();
     const language = this.getCurrentLanguage();
     let ws: WebSocket | null = null;
@@ -534,11 +574,13 @@ class ApiService {
               break;
             case 'done':
               clearPreviewTimers();
+              this.invalidateReadCache();
               callbacks.onDone(msg.data);
               ws?.close();
               break;
             case 'error':
               clearPreviewTimers();
+              this.invalidateReadCache();
               callbacks.onError(msg.data.message || i18n.t('recipe_loading.generationError'));
               ws?.close();
               break;
@@ -549,11 +591,13 @@ class ApiService {
       };
 
       ws.onerror = (e) => {
+        this.invalidateReadCache();
         console.error('WS error:', e);
         callbacks.onError(i18n.t('recipe_loading.connectionError'));
       };
 
       ws.onclose = () => {
+        this.invalidateReadCache();
         clearPreviewTimers();
         ws = null;
       };
@@ -562,7 +606,7 @@ class ApiService {
     });
 
     return {
-      close: () => { clearPreviewTimers(); ws?.close(); ws = null; }
+      close: () => { this.invalidateReadCache(); clearPreviewTimers(); ws?.close(); ws = null; }
     };
   }
 
@@ -632,16 +676,22 @@ class ApiService {
     });
   }
 
-  async getCatalogCuisines() {
-    return this.request<{ success: boolean; cuisines: CatalogCuisine[] }>('/catalog/cuisines', { method: 'GET' }, 12000);
+  async getCatalogCuisines(readOptions: ReadOptions = {}) {
+    const response = await this.request<{ success: boolean; cuisines: CatalogCuisine[] }>('/catalog/cuisines', { method: 'GET' }, 12000, readOptions);
+    if (!response.data) return response;
+    // Older catalogues still include “/ fitness” in this category's display name.
+    return { ...response, data: { ...response.data, cuisines: response.data.cuisines.map(cuisine => cuisine.id === 'international'
+      ? { ...cuisine, names: cuisine.names.map(name => ({ ...name, value: name.value.replace(/\s*\/\s*fitness\s*$/i, '').trim() })) }
+      : cuisine) } };
   }
 
-  async getCatalogRecipe(recipeId: string) {
+  async getCatalogRecipe(recipeId: string, readOptions: ReadOptions = {}) {
     const params = new URLSearchParams({ language: this.getCurrentLanguage() });
-    return this.request<{ success: boolean; recipe: CatalogRecipe }>(`/catalog/recipes/${encodeURIComponent(recipeId)}?${params.toString()}`, { method: 'GET' }, 12000);
+    return this.request<{ success: boolean; recipe: CatalogRecipe }>(`/catalog/recipes/${encodeURIComponent(recipeId)}?${params.toString()}`, { method: 'GET' }, 12000, readOptions);
   }
 
   async getRecipeCatalog(options: {
+    search?: string;
     page?: number;
     limit?: number;
     cuisineId?: string;
@@ -657,12 +707,13 @@ class ApiService {
     maxMinutes?: number;
     allergies?: string[];
     excludedIngredients?: string[];
-  } = {}) {
+  } = {}, readOptions: ReadOptions = {}) {
     const params = new URLSearchParams({
       language: this.getCurrentLanguage(),
       page: String(options.page || 1),
       limit: String(options.limit || 50),
     });
+    if (options.search?.trim()) params.set('search', options.search.trim());
     if (options.cuisineId && options.cuisineId !== 'all') params.set('cuisineId', options.cuisineId);
     if (options.mealType) params.set('mealType', options.mealType);
     if (options.express) params.set('express', 'true');
@@ -678,10 +729,10 @@ class ApiService {
     if (options.maxMinutes) params.set('maxMinutes', String(options.maxMinutes));
     if (options.allergies?.length) params.set('allergies', options.allergies.join(','));
     if (options.excludedIngredients?.length) params.set('excludedIngredients', options.excludedIngredients.join(','));
-    return this.request<{ success: boolean; recipes: CatalogRecipe[]; page: number; limit: number; total: number; pages: number }>(`/catalog/recipes?${params.toString()}`, { method: 'GET' }, 12000);
+    return this.request<{ success: boolean; recipes: CatalogRecipe[]; page: number; limit: number; total: number; pages: number }>(`/catalog/recipes?${params.toString()}`, { method: 'GET' }, 12000, readOptions);
   }
 
-  async getRecipeHistory(userId: string, page: number = 1, limit: number = 30, options?: { isImported?: boolean }) {
+  async getRecipeHistory(userId: string, page: number = 1, limit: number = 30, options?: { isImported?: boolean; forceRefresh?: boolean }) {
     const params = new URLSearchParams({
       page: String(page),
       limit: String(limit),
@@ -692,32 +743,38 @@ class ApiService {
     }
     return this.request<{ success: boolean; history: any[]; pagination?: { page: number; limit: number; total: number; hasMore: boolean } }>(`/recipe/history/${userId}?${params.toString()}`, {
       method: 'GET',
-    });
+    }, 60000, options);
   }
 
-  async getRecipeById(id: string) {
-    return this.request<{ success: boolean; recipe: any }>(`/recipe/detail/${id}?language=${encodeURIComponent(this.getCurrentLanguage())}`, {
+  async getRecipeById(id: string, readOptions: ReadOptions = {}) {
+    return this.request<{ success: boolean; recipe: any }>(`/recipe/detail/${encodeURIComponent(id)}?language=${encodeURIComponent(this.getCurrentLanguage())}`, {
       method: 'GET',
-    });
+    }, 12000, readOptions);
   }
 
-  async getMealPlan(userId: string, weekStart?: string, preview = false) {
-    const params = new URLSearchParams({ language: this.getCurrentLanguage() });
+  async getMealPlan(userId: string, weekStart?: string, preview = false, readOptions: ReadOptions = {}) {
+    const params = new URLSearchParams({ language: this.getCurrentLanguage(), timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
     if (weekStart) params.set('weekStart', weekStart);
     if (preview) params.set('preview', 'true');
     const query = `?${params.toString()}`;
-    return this.request<{ success: boolean; plan: MealPlan | null }>(`/meal-plans/user/${userId}${query}`, { method: 'GET' }, 12000);
+    return this.request<{ success: boolean; plan: MealPlan | null }>(`/meal-plans/user/${userId}${query}`, { method: 'GET' }, 12000, readOptions);
   }
 
-  async listMealPlans(userId: string) {
-    return this.request<{ success: boolean; plans: MealPlan[] }>(`/meal-plans/user/${userId}/all?language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000);
+  async listMealPlans(userId: string, readOptions: ReadOptions = {}) {
+    return this.request<{ success: boolean; plans: MealPlan[] }>(`/meal-plans/user/${userId}/all?language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000, readOptions);
   }
 
-  async getMealPlanById(planId: string, userId: string) {
+  async getMealPlanById(planId: string, userId: string, readOptions: ReadOptions = {}) {
     if (!planId || planId === 'undefined' || planId === 'null') {
       return { error: i18n.t('planning.errors.load'), status: 400 } as ApiResponse<{ success: boolean; plan: MealPlan }>;
     }
-    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}?userId=${encodeURIComponent(userId)}&language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000);
+    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}?userId=${encodeURIComponent(userId)}&language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000, readOptions);
+  }
+
+  async deleteMealPlan(planId: string, userId: string) {
+    return this.request<{ success: boolean; deletedPlanId: string }>(`/meal-plans/${encodeURIComponent(planId)}`, {
+      method: 'DELETE', body: JSON.stringify({ userId }),
+    }, 15000);
   }
 
   async createMealPlan(input: {
@@ -893,6 +950,7 @@ class ApiService {
       onProgress?: (progress: number, step?: string) => void;
     }
   ): Promise<ApiResponse<{ success: boolean; recipe: any }>> {
+    this.invalidateReadCache();
     let token: string;
     try { token = await getAnonymousSessionToken(); } catch { return { error: i18n.t('common.networkError') }; }
     const userId = await AsyncStorage.getItem('userId');
@@ -925,6 +983,7 @@ class ApiService {
       });
 
       (es as any).addEventListener('done', (event: any) => {
+        this.invalidateReadCache();
         try {
           const data = JSON.parse(event.data);
           es.close();
@@ -943,6 +1002,7 @@ class ApiService {
       });
 
       es.addEventListener('error', (event: any) => {
+        this.invalidateReadCache();
         console.error('[SSE] Error event:', event);
         es.close();
         if (!hasResolved) {
@@ -956,6 +1016,7 @@ class ApiService {
       setTimeout(() => {
         if (!hasResolved) {
           es.close();
+          this.invalidateReadCache();
           hasResolved = true;
           resolve({ error: 'Délai d\'importation dépassé' });
         }
@@ -1008,10 +1069,10 @@ class ApiService {
     });
   }
 
-  async getFavorites(userId: string) {
+  async getFavorites(userId: string, readOptions: ReadOptions = {}) {
     return this.request<{ success: boolean; recipes: any[] }>(`/recipe/favorites/${userId}?language=${encodeURIComponent(this.getCurrentLanguage())}`, {
       method: 'GET',
-    });
+    }, 60000, readOptions);
   }
 
   async addFavorite(userId: string, recipeId: string) {

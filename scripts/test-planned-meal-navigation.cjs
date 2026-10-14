@@ -3,6 +3,8 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const path = require('node:path');
 const ts = require('typescript');
+const timeRules = { exports: {} };
+vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '../services/planning-time.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: timeRules.exports, Date, Intl });
 const file = path.resolve(__dirname, '../services/plannedMealNavigation.ts');
 const exportsObject = {};
 vm.runInNewContext(ts.transpileModule(fs.readFileSync(file, 'utf8'), {
@@ -47,7 +49,7 @@ const displayFile = path.resolve(__dirname, '../services/planningDisplay.ts');
 const displayExports = {};
 vm.runInNewContext(ts.transpileModule(fs.readFileSync(displayFile, 'utf8'), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
-}).outputText, { exports: displayExports }, { filename: displayFile });
+}).outputText, { exports: displayExports, require: () => timeRules.exports }, { filename: displayFile });
 const { initialPlanDay } = displayExports;
 const week = { _id: 'week-a', weekStart: '2026-09-28', preferences: { cookingDays: [0, 1, 2, 3, 4, 5, 6] },
   meals: Array.from({ length: 7 }, (_, dayIndex) => ({ slotId: `slot-${dayIndex}`, dayIndex })) };

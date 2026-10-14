@@ -1,4 +1,27 @@
 {
+  "planningFlow": {
+    "startsTomorrow": "Está tarde: seu plano começa amanhã.",
+    "remainingToday": "Hoje inclui apenas as próximas refeições.",
+    "step": "{{current}} / {{total}}",
+    "goal": "Objetivo: {{goal}}",
+    "daysTitle": "Quais dias vamos planejar?",
+    "ingredientsTitle": "Você já tem ingredientes?",
+    "durationTitle": "Quanto tempo para cozinhar?",
+    "meals": "{{days}} dias · {{meals}} refeições",
+    "useIngredients": "Usar estes ingredientes",
+    "deleteTitle": "Excluir este planejamento?",
+    "deleteBody": "Este planejamento e sua lista de compras serão excluídos. Seu perfil, suas preferências e as outras semanas serão mantidos. Você poderá começar de novo em “Criar minha semana”.",
+    "deleteError": "Não foi possível excluir o planejamento. Tente novamente.",
+    "deleteAction": "Excluir meu planejamento",
+    "cuisinesTitle": "Quais culinárias você quer experimentar?",
+    "dietTitle": "Como você prefere se alimentar?",
+    "exclusionsTitle": "Algum ingrediente para evitar?",
+    "servingsTitle": "Para quantas pessoas vamos cozinhar?",
+    "cuisinesError": "Não foi possível carregar as culinárias. Tente novamente.",
+    "goalTitle": "Qual é o seu objetivo?",
+    "scanFridge": "Escanear minha geladeira",
+    "skip": "Pular"
+  },
   "planningReveal": {
     "replay": "Rever a semana",
     "skip": "Pular animação"
@@ -1905,7 +1928,9 @@
     "diets": {
       "none": "Tudo",
       "vegetarian": "Vegetariana",
-      "vegan": "Vegana"
+      "vegan": "Vegana",
+      "pescatarian": "Pescetariana",
+      "halal": "Halal"
     },
     "duration": "Tempo de preparo",
     "exclude": "Excluir ingredientes",
@@ -2312,8 +2337,9 @@
     "add": "Adicionar",
     "remove": "Remover",
     "review": "Confira a lista. Toque em um alimento para removê-lo.",
-    "priority": "Permitir outros ingredientes",
-    "strict": "Somente meus ingredientes",
+    "completeQuestion": "Podemos completar com algumas compras?",
+    "priority": "Sim, posso fazer compras",
+    "strict": "Não, só o que eu tenho",
     "basics": "Básicos permitidos: água, sal, pimenta e óleo.",
     "quantities": "As quantidades são desconhecidas: confira se tem o suficiente.",
     "scanError": "Não foi possível analisar a foto. Tente novamente ou digite os alimentos.",
@@ -2324,6 +2350,7 @@
     "categories": "Choose by category"
   },
   "planningSlots": {
+    "elapsed": "Horário passado",
     "add": "Adicionar refeição",
     "past": "Dia passado"
   },
@@ -2357,7 +2384,31 @@
     "activate": "Ativar",
     "deactivate": "Desativar",
     "invalid": "Código incorreto",
-    "enabled": "Modo apresentação ativado. A leitura inicia o planejamento diretamente.",
+    "enabled": "Modo de apresentação ativado.",
     "disabled": "Modo apresentação desativado."
+  },
+  "pantryReview": {
+    "foundTitle": "Veja o que encontramos",
+    "count_one": "{{count}} ingrediente",
+    "count_other": "{{count}} ingredientes",
+    "selectedCount_one": "{{count}} ingrediente selecionado",
+    "selectedCount_other": "{{count}} ingredientes selecionados",
+    "keptCount_one": "Seu ingrediente foi mantido.",
+    "keptCount_other": "Seus {{count}} ingredientes foram mantidos.",
+    "addTitle": "Adicionar um ingrediente",
+    "search": "Buscar ou digitar um ingrediente",
+    "clearSearch": "Limpar busca",
+    "suggestions": "Sugestões",
+    "noResults": "Nenhum resultado. Você pode adicionar o nome digitado.",
+    "addName": "Adicionar “{{name}}”",
+    "removeName": "Remover {{name}}",
+    "added": "{{name}} adicionado ✓",
+    "removed": "{{name}} removido",
+    "done": "Pronto",
+    "continueEmpty": "Continuar sem ingredientes",
+    "emptyScan": "Nenhum ingrediente reconhecido. Adicione alguns ou tire outra foto.",
+    "emptyManual": "Adicione os ingredientes que quer usar nesta semana.",
+    "limit": "Você pode adicionar até 100 ingredientes.",
+    "analyzePhotos": "Analisar fotos"
   }
 }

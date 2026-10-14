@@ -73,7 +73,7 @@ export default function ImportedScreen() {
     return await AsyncStorage.getItem('userId');
   };
 
-  const loadRecipes = useCallback(async (pageNum: number = 1, reset: boolean = false, showLoader: boolean = false) => {
+  const loadRecipes = useCallback(async (pageNum: number = 1, reset: boolean = false, showLoader: boolean = false, forceRefresh: boolean = false) => {
     if (!reset && isLoadingMoreRef.current) return;
     if (!reset && pageNum > 1 && !hasMoreRef.current) return;
 
@@ -96,7 +96,7 @@ export default function ImportedScreen() {
         return;
       }
 
-      const response = await apiService.getRecipeHistory(userId, pageNum, BATCH_SIZE, { isImported: true });
+      const response = await apiService.getRecipeHistory(userId, pageNum, BATCH_SIZE, { isImported: true, forceRefresh });
       if (response.data?.history) {
         const imageById = new Map<string, string>();
         try {
@@ -154,7 +154,7 @@ export default function ImportedScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadRecipes(1, true, false);
+    await loadRecipes(1, true, false, true);
     setRefreshing(false);
   }, [loadRecipes]);
 

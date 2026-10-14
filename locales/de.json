@@ -1,4 +1,27 @@
 {
+  "planningFlow": {
+    "startsTomorrow": "Es ist spät: Dein Plan beginnt morgen.",
+    "remainingToday": "Heute werden nur noch kommende Mahlzeiten geplant.",
+    "step": "{{current}} / {{total}}",
+    "goal": "Ziel: {{goal}}",
+    "daysTitle": "Welche Tage planen wir?",
+    "ingredientsTitle": "Hast du schon Zutaten?",
+    "durationTitle": "Wie viel Zeit zum Kochen?",
+    "meals": "{{days}} Tage · {{meals}} Mahlzeiten",
+    "useIngredients": "Diese Zutaten verwenden",
+    "deleteTitle": "Diesen Plan löschen?",
+    "deleteBody": "Dieser Plan und seine Einkaufsliste werden gelöscht. Dein Profil, deine Vorlieben und andere Wochen bleiben erhalten. Du kannst bei „Meine Woche erstellen“ neu beginnen.",
+    "deleteError": "Der Plan konnte nicht gelöscht werden. Versuche es erneut.",
+    "deleteAction": "Meinen Plan löschen",
+    "cuisinesTitle": "Auf welche Küchen hast du Lust?",
+    "dietTitle": "Wie möchtest du dich ernähren?",
+    "exclusionsTitle": "Welche Zutaten möchtest du vermeiden?",
+    "servingsTitle": "Für wie viele Personen kochen wir?",
+    "cuisinesError": "Die Küchen konnten nicht geladen werden. Versuche es erneut.",
+    "goalTitle": "Was ist dein Ziel?",
+    "scanFridge": "Meinen Kühlschrank scannen",
+    "skip": "Überspringen"
+  },
   "planningReveal": {
     "replay": "Woche erneut ansehen",
     "skip": "Animation überspringen"
@@ -1905,7 +1928,9 @@
     "diets": {
       "none": "Alle",
       "vegetarian": "Vegetarisch",
-      "vegan": "Vegan"
+      "vegan": "Vegan",
+      "pescatarian": "Pescetarisch",
+      "halal": "Halal"
     },
     "duration": "Zubereitungszeit",
     "exclude": "Zutaten ausschließen",
@@ -2312,8 +2337,9 @@
     "add": "Hinzufügen",
     "remove": "Entfernen",
     "review": "Liste prüfen. Zum Entfernen auf ein Lebensmittel tippen.",
-    "priority": "Weitere Zutaten erlauben",
-    "strict": "Nur meine Zutaten",
+    "completeQuestion": "Dürfen wir ein paar Zutaten dazukaufen?",
+    "priority": "Ja, ich kann einkaufen",
+    "strict": "Nein, nur was ich habe",
     "basics": "Erlaubte Basics: Wasser, Salz, Pfeffer und Öl.",
     "quantities": "Mengen sind unbekannt: prüfe, ob deine Vorräte reichen.",
     "scanError": "Das Foto konnte nicht analysiert werden. Erneut versuchen oder Zutaten eingeben.",
@@ -2324,6 +2350,7 @@
     "categories": "Choose by category"
   },
   "planningSlots": {
+    "elapsed": "Essenszeit vorbei",
     "add": "Mahlzeit hinzufügen",
     "past": "Vergangener Tag"
   },
@@ -2357,7 +2384,31 @@
     "activate": "Aktivieren",
     "deactivate": "Deaktivieren",
     "invalid": "Falscher Code",
-    "enabled": "Präsentationsmodus aktiviert. Der Scan startet direkt den Plan.",
+    "enabled": "Präsentationsmodus aktiviert.",
     "disabled": "Präsentationsmodus deaktiviert."
+  },
+  "pantryReview": {
+    "foundTitle": "Das haben wir erkannt",
+    "count_one": "{{count}} Zutat",
+    "count_other": "{{count}} Zutaten",
+    "selectedCount_one": "{{count}} Zutat ausgewählt",
+    "selectedCount_other": "{{count}} Zutaten ausgewählt",
+    "keptCount_one": "Deine Zutat bleibt gespeichert.",
+    "keptCount_other": "Deine {{count}} Zutaten bleiben gespeichert.",
+    "addTitle": "Zutat hinzufügen",
+    "search": "Zutat suchen oder eingeben",
+    "clearSearch": "Suche löschen",
+    "suggestions": "Vorschläge",
+    "noResults": "Keine Treffer. Du kannst den eingegebenen Namen hinzufügen.",
+    "addName": "„{{name}}“ hinzufügen",
+    "removeName": "{{name}} entfernen",
+    "added": "{{name}} hinzugefügt ✓",
+    "removed": "{{name}} entfernt",
+    "done": "Fertig",
+    "continueEmpty": "Ohne Zutaten fortfahren",
+    "emptyScan": "Keine Zutaten erkannt. Füge welche hinzu oder mache ein neues Foto.",
+    "emptyManual": "Füge die Zutaten hinzu, die du diese Woche verwenden möchtest.",
+    "limit": "Du kannst bis zu 100 Zutaten hinzufügen.",
+    "analyzePhotos": "Fotos analysieren"
   }
 }

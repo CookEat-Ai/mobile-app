@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, FlatList, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -25,6 +25,12 @@ export default function ChooseRecipe() {
   const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
   const { gutter, font } = useResponsive();
+  const [search, setSearch] = useState('');
+  const [query, setQuery] = useState('');
+  useEffect(() => {
+    const timer = setTimeout(() => setQuery(search.trim()), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
   const [recipes, setRecipes] = useState<CatalogRecipe[]>([]);
   const [busy, setBusy] = useState(false);
   const [choosing, setChoosing] = useState(false);
@@ -62,14 +68,15 @@ export default function ChooseRecipe() {
         // Only catalogue favorites expose replacement eligibility; imported recipes
         // are not accepted by the planning replacement endpoint.
         setRecipes(response.data.recipes.filter((item: CatalogRecipe) =>
-          item.replacementMealTypes?.includes(targetType as any)));
+          item.replacementMealTypes?.includes(targetType as any) && (!query ||
+            [item.title, ...(item.ingredients || []).map(ingredient => ingredient.name)].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().includes(query.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()))));
         page.current = 1;
         ended.current = true;
         return;
       }
       const nextPage = append ? page.current + 1 : 1;
       const response = await apiService.getRecipeCatalog({
-        page: nextPage, limit: 50, cuisineId: cuisine,
+        page: nextPage, limit: 50, cuisineId: cuisine, search: query,
         mealType: targetType === 'breakfast' || targetType === 'snack' ? 'breakfast' : 'main',
         highProtein: filter === 'protein', express: filter === 'express',
         diet: typeof plan?.preferences?.diet === 'string' ? plan.preferences.diet : undefined,
@@ -87,7 +94,7 @@ export default function ChooseRecipe() {
     } finally {
       if (version === requestId.current) { pending.current = false; setBusy(false); }
     }
-  }, [planId, slotId, dayIndex, mealType, cuisine, filter, t]);
+  }, [planId, slotId, dayIndex, mealType, cuisine, filter, query, t]);
 
   useEffect(() => {
     void load();
@@ -130,7 +137,8 @@ export default function ChooseRecipe() {
         accessibilityRole="button" accessibilityLabel={t('dailyApp.filters')} accessibilityState={{ selected: cuisine !== 'all', disabled: choosing }}
         onPress={() => { feedback.light(); setFiltersVisible(true); }}><Ionicons name="options-outline" size={24} color={theme.ink} /></TouchableOpacity>}
     </View>
-    <FlatList style={{ flex: 1 }} contentContainerStyle={{ ...contentColumn(), paddingHorizontal: gutter, paddingBottom: insets.bottom + 30 }}
+    <View style={[styles.search, { marginHorizontal: gutter }]}><Ionicons name="search" size={20} color={theme.muted} /><TextInput value={search} onChangeText={setSearch} editable={!choosing} placeholder={t('common.searchPlaceholder')} accessibilityLabel={t('common.searchPlaceholder')} style={styles.searchInput} returnKeyType="search" autoCorrect={false} onSubmitEditing={() => setQuery(search.trim())} />{!!search && <TouchableOpacity accessibilityRole="button" accessibilityLabel={t('dailyApp.clearFilters')} disabled={choosing} onPress={() => setSearch('')}><Ionicons name="close-circle" size={22} color={theme.muted} /></TouchableOpacity>}</View>
+    <FlatList keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" style={{ flex: 1 }} contentContainerStyle={{ ...contentColumn(), paddingHorizontal: gutter, paddingBottom: insets.bottom + 30 }}
       data={recipes} keyExtractor={item => item.id} ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
       ListHeaderComponent={<>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
@@ -145,7 +153,7 @@ export default function ChooseRecipe() {
       </>}
       ListEmptyComponent={!busy && !error ? <View style={styles.state}><Text style={appStyles.subtitle}>{t('mealLibrary.empty')}</Text></View> : null}
       renderItem={({ item }) => <PlanMealCard meal={catalogMealCardData(item)} disabled={choosing} onPress={() => void choose(item.id)} />}
-      onEndReached={() => { if (!error) void load(true); }} onEndReachedThreshold={0.5}
+      onEndReached={() => { if (!error && query === search.trim()) void load(true); }} onEndReachedThreshold={0.5}
       ListFooterComponent={busy || choosing ? <ActivityIndicator style={{ paddingVertical: 20 }} color={theme.yellow} /> : null} />
     <Modal visible={filtersVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setFiltersVisible(false)}>
       <View style={appStyles.screen}>
@@ -160,6 +168,8 @@ export default function ChooseRecipe() {
 }
 
 const styles = StyleSheet.create({
+  search: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 52, paddingHorizontal: 16, marginBottom: 16, borderRadius: 18, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface },
+  searchInput: { flex: 1, minHeight: 52, fontFamily: 'CronosPro', fontSize: 17, color: theme.ink },
   filters: { gap: 8, paddingBottom: 20 },
   filter: { minHeight: 48, justifyContent: 'center', borderRadius: 17, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, paddingHorizontal: 17 },
   filterActive: { backgroundColor: theme.yellow, borderColor: theme.yellow },

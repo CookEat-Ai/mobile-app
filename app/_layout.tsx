@@ -7,7 +7,7 @@ import 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import { RecipeProvider } from '../contexts/RecipeContext';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Linking, Platform } from 'react-native';
+import { Alert, AppState, Linking, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Localization from 'expo-localization';
 import Constants from 'expo-constants';
@@ -178,6 +178,7 @@ function QuickActionHandler({ revenueCatReady }: { revenueCatReady: boolean }) {
     };
 
     const customerInfoListener = (_customerInfo: CustomerInfo) => {
+      apiService.invalidateReadCache();
       void configure().catch((quickActionError) => {
         console.error('[QuickActions] Impossible d’actualiser l’offre:', quickActionError);
       });
@@ -396,6 +397,14 @@ function RootLayout() {
     }
   }, [loaded, error]);
 
+  // Revalidate personal responses when returning from the background.
+  useEffect(() => {
+    const listener = AppState.addEventListener('change', state => {
+      if (state === 'active') apiService.invalidateReadCache();
+    });
+    return () => listener.remove();
+  }, []);
+
   // Nettoyer Voice quand l'application se ferme
   useEffect(() => {
     recipeStorageService.cleanupOldRecipes();
@@ -434,6 +443,7 @@ function RootLayout() {
               <Stack.Screen name="share-intent" options={{ headerShown: false, animation: 'fade' }} />
               <Stack.Screen name="recipe-loading" options={{ headerShown: false, animation: 'fade' }} />
               <Stack.Screen name="recipe-loading-modal" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+              <Stack.Screen name="planning/ingredients" options={{ presentation: 'modal', gestureEnabled: true }} />
               <Stack.Screen name="planning/loading" options={{ animation: 'none', gestureEnabled: false }} />
               <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
               {/* Tous les points d'entrée poussent cette route au-dessus d'un

@@ -1,3 +1,5 @@
+import { usePlanningClock } from '../../hooks/usePlanningClock';
+import { isElapsedPlanningMeal } from '../../services/planning-time';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
@@ -25,13 +27,14 @@ export function PlanWeekContent({ plan, onPlanChange, initialDay, onRevealStart 
   useEffect(() => () => { if (alignmentFrame.current !== null) cancelAnimationFrame(alignmentFrame.current); }, []);
   const alignDays = useCallback(() => {
     if (alignmentFrame.current !== null) cancelAnimationFrame(alignmentFrame.current);
-    // Measure after the replay controls and day selector have laid out.
+    // Measure after the reveal controls and day selector have laid out.
     alignmentFrame.current = requestAnimationFrame(() => {
       alignmentFrame.current = null;
       if (daysAnchor.current) onRevealStart?.(daysAnchor.current);
     });
   }, [onRevealStart]);
   const { t, i18n } = useTranslation();
+  const clock = usePlanningClock();
   const [selectedDay, setDay] = useState(() => initialPlanDay(plan, undefined, initialDay));
   const [opening, setOpening] = useState<string | null>(null);
   const openingRef = useRef(false);
@@ -42,7 +45,7 @@ export function PlanWeekContent({ plan, onPlanChange, initialDay, onRevealStart 
   const day = selected?.dayIndex ?? 0;
   const meals = useMemo(() => mealsForDay(plan, initialPlanDay(plan, undefined, selectedDay)), [plan, selectedDay]);
   const locale = i18n.resolvedLanguage || 'fr';
-  const { animationKey, replayButton, stopReveal, visibleDayCount, dayAnimationKey } = usePlanningReveal(plan.meals.length > 0, days.map(item => item.dayIndex), setDay, plan._id, alignDays);
+  const { animationKey, revealControls, stopReveal, visibleDayCount, dayAnimationKey } = usePlanningReveal(plan.meals.length > 0, days.map(item => item.dayIndex), setDay, plan._id, alignDays);
   const openMeal = async (meal: MealPlanMeal) => {
     if (openingRef.current) return;
     stopReveal();
@@ -99,7 +102,7 @@ export function PlanWeekContent({ plan, onPlanChange, initialDay, onRevealStart 
     ]);
   };
   return <View>
-    {replayButton}
+    {revealControls}
 
     <View ref={daysAnchor} collapsable={false}><PlanningDayPicker visibleCount={visibleDayCount} revealKey={dayAnimationKey} days={days.map(item => ({
       ...item,
@@ -114,13 +117,13 @@ export function PlanWeekContent({ plan, onPlanChange, initialDay, onRevealStart 
     </View>}
     {error ? <Text accessibilityRole="alert" style={appStyles.error}>{error}</Text> : null}
     <AnimatedPlanningMeals key={`meals:${plan._id}:${day}`} meals={planningDaySlots(plan, day)} animationKey={animationKey}
-      renderMeal={slot => slot.meal ? <PlanMealCard meal={slot.meal} loading={opening === slot.meal.slotId} disabled={!!opening} onLongPress={!isPastPlanDay(plan.weekStart, slot.meal.dayIndex ?? 0) ? () => removeMeal(slot.meal!) : undefined} onPress={() => void openMeal(slot.meal!)} /> : <TouchableOpacity key={slot.slotId} accessibilityRole="button" disabled={!!opening || isPastPlanDay(plan.weekStart, day)} style={[styles.emptySlot, isPastPlanDay(plan.weekStart, day) && { opacity: 0.5 }]}
+      renderMeal={slot => slot.meal ? <PlanMealCard meal={slot.meal} loading={opening === slot.meal.slotId} disabled={!!opening} onLongPress={!isPastPlanDay(plan.weekStart, slot.meal.dayIndex ?? 0) ? () => removeMeal(slot.meal!) : undefined} onPress={() => void openMeal(slot.meal!)} /> : <TouchableOpacity key={slot.slotId} accessibilityRole="button" disabled={!!opening || isElapsedPlanningMeal(plan.weekStart, day, slot.mealType, undefined, clock.now)} style={[styles.emptySlot, isElapsedPlanningMeal(plan.weekStart, day, slot.mealType, undefined, clock.now) && { opacity: 0.5 }]}
       onPress={() => Alert.alert(t('planningSlots.add'), t(`search.categories.${{ breakfast: 'Breakfast', lunch: 'Lunch', snack: 'Snack', dinner: 'Dinner' }[slot.mealType]}`), [
         { text: t('common.cancel'), style: 'cancel' },
         { text: t('recipeDetail.chooseReplacement'), onPress: () => { stopReveal(); router.push({ pathname: '/planning/choose-recipe', params: { planId: plan._id, dayIndex: day, mealType: slot.mealType } }); } },
         { text: t('recipeDetail.automaticReplacement'), onPress: () => { stopReveal(); void addMeal(slot.mealType); } },
       ])}>
-      <Ionicons name="add-circle-outline" size={24} color={theme.ink} /><View style={{ flex: 1 }}><Text style={appStyles.textAction}>{t(`search.categories.${{ breakfast: 'Breakfast', lunch: 'Lunch', snack: 'Snack', dinner: 'Dinner' }[slot.mealType]}`)}</Text><Text style={appStyles.subtitle}>{t(isPastPlanDay(plan.weekStart, day) ? 'planningSlots.past' : 'planningSlots.add')}</Text></View>
+      <Ionicons name="add-circle-outline" size={24} color={theme.ink} /><View style={{ flex: 1 }}><Text style={appStyles.textAction}>{t(`search.categories.${{ breakfast: 'Breakfast', lunch: 'Lunch', snack: 'Snack', dinner: 'Dinner' }[slot.mealType]}`)}</Text><Text style={appStyles.subtitle}>{t(isPastPlanDay(plan.weekStart, day) ? 'planningSlots.past' : isElapsedPlanningMeal(plan.weekStart, day, slot.mealType, undefined, clock.now) ? 'planningSlots.elapsed' : 'planningSlots.add')}</Text></View>
     </TouchableOpacity>} />
     <PlanningShoppingLink onPress={() => router.push({ pathname: '/planning/[planId]/shopping', params: { planId: plan._id } })} />
     {!isPastPlan(plan) && plan.meals.length > 0 && <TouchableOpacity accessibilityRole="button" style={styles.organize} disabled={!!opening}

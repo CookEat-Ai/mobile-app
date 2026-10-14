@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { ingredientCategories } from '../../services/ingredientCategories';
 import { normalizePantryIngredients as normalize, pantryIngredientKey } from '../../services/planningPantry';
 import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+import { AppScreenHeading } from '../AppScreenHeading';
 
 type Props = { visible: boolean; showPantry?: boolean; initialCategoryId?: string; ingredients: string[]; onChange: (names: string[]) => void; onClose: () => void; };
 export function PlanningPantryCategoryModal(props: Props) {
@@ -43,7 +44,8 @@ function PantryCategoryContent({ visible, showPantry = false, initialCategoryId,
   return (
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <View style={[styles.sheet, { paddingTop: insets.top + 12 }]}>
-        <View style={styles.sheetHeader}>
+        <View style={{ paddingLeft: 12 + insets.left, paddingRight: 12 + insets.right, marginBottom: 12 }}><AppScreenHeading title="CookEat" showAppLogo compact /></View>
+        <View style={[styles.sheetHeader, { paddingLeft: 12 + insets.left, paddingRight: 12 + insets.right }]}>
           {browsingCategories ? <>
             {(category || showPantry) && <Pressable accessibilityRole="button" accessibilityLabel={t('planningPantry.categories')} style={appStyles.iconButton} onPress={() => { if (category) setCategory(null); else setBrowsingCategories(false); }}><Ionicons name="arrow-back" size={24} color={theme.ink} /></Pressable>}
             <Text style={[appStyles.section, { flex: 1 }]}>{category ? (categories.find(group => group.id === category)?.title || t('recipeSummary.other')) : t('planningPantry.categories')}</Text>
@@ -53,7 +55,7 @@ function PantryCategoryContent({ visible, showPantry = false, initialCategoryId,
             <Pressable accessibilityRole="button" accessibilityLabel={t('planningOrganize.done')} style={appStyles.iconButton} onPress={onClose}><Ionicons name="close" size={24} color={theme.ink} /></Pressable>
           </>}
         </View>
-        <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentInsetAdjustmentBehavior="never" contentContainerStyle={styles.browseContent}>
+        <ScrollView style={{ marginLeft: insets.left, marginRight: insets.right }} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentInsetAdjustmentBehavior="never" contentContainerStyle={styles.browseContent}>
           {browsingCategories && <View style={styles.manualRow}><TextInput value={draft} onChangeText={setDraft} editable={!adding} placeholder={t('pantry.addIngredient')} accessibilityLabel={t('pantry.addIngredient')} style={styles.manualInput} returnKeyType="done" onSubmitEditing={() => void addManual()} /><Pressable accessibilityRole="button" accessibilityLabel={t('recipeSummary.add')} disabled={!draft.trim() || adding} style={[styles.manualAdd, (!draft.trim() || adding) && { opacity: 0.45 }]} onPress={() => void addManual()}><Ionicons name="add" size={24} color={theme.ink} /></Pressable></View>}
           {!browsingCategories ? <>
             {!ingredients.length && <Text style={styles.help}>{t('pantry.emptyTitle')}</Text>}

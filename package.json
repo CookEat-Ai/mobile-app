@@ -1,7 +1,7 @@
 {
   "name": "CookEat",
   "main": "expo-router/entry",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "packageManager": "yarn@1.22.22",
   "scripts": {
     "start": "expo start",
@@ -15,9 +15,14 @@
     "update:production": "sh ./scripts/eas-update-with-sentry.sh production production",
     "update:preview": "sh ./scripts/eas-update-with-sentry.sh preview preview",
     "test:goal-timeline": "node scripts/test-goal-timeline.cjs",
-    "test:planning-organization": "node scripts/test-planning-organization.cjs && node scripts/test-planning-display.cjs",
+    "test:planning-organization": "node scripts/test-planning-organization.cjs && node scripts/test-planning-display.cjs && node scripts/test-planning-organizer-interactions.cjs && node scripts/test-planning-time.cjs",
     "test:planning-loading": "node scripts/test-planning-loading.cjs",
-    "test:planned-meal-navigation": "node scripts/test-planned-meal-navigation.cjs"
+    "test:planned-meal-navigation": "node scripts/test-planned-meal-navigation.cjs",
+    "test:planning-configuration": "node scripts/test-planning-configuration.cjs && node scripts/test-planning-home-deletion.cjs",
+    "test:pantry-scan": "node scripts/test-pantry-scan.cjs",
+    "test:onboarding-planning": "node scripts/test-onboarding-planning.cjs",
+    "test:response-cache": "node scripts/test-response-cache.cjs",
+    "test:meals-cache": "node scripts/test-meals-cache.cjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

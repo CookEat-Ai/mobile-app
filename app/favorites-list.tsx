@@ -40,10 +40,10 @@ export default function FavoritesListScreen() {
   const hasLoadedOnceRef = useRef(hasLoadedOnce);
   hasLoadedOnceRef.current = hasLoadedOnce;
 
-  const loadRecipes = useCallback(async (showLoader: boolean = false) => {
+  const loadRecipes = useCallback(async (showLoader: boolean = false, forceRefresh: boolean = false) => {
     try {
       if (showLoader) setLoading(true);
-      const favorites = await favoritesStorageService.getFavorites();
+      const favorites = await favoritesStorageService.getFavorites(forceRefresh);
       setRecipes(favorites || []);
     } catch (error) {
       console.error('Erreur lors du chargement des recettes:', error);
@@ -61,7 +61,7 @@ export default function FavoritesListScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadRecipes(false);
+    await loadRecipes(false, true);
     setRefreshing(false);
   }, [loadRecipes]);
 

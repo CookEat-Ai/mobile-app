@@ -3,9 +3,11 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const ts = require('typescript');
+const timeRules = { exports: {} };
+vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '../services/planning-time.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: timeRules.exports, Date, Intl });
 const source = fs.readFileSync(path.join(__dirname, '../services/planningDisplay.ts'), 'utf8');
 const mod = { exports: {} };
-vm.runInNewContext(ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, { exports: mod.exports, Date, Intl });
+vm.runInNewContext(ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, { exports: mod.exports, Date, Intl, require: () => timeRules.exports });
 const { planDays, initialPlanDay, mealsForDay, formatPlanRange, isPastPlan, selectedPlanDays } = mod.exports;
 for (const zone of ['Europe/Paris', 'America/Los_Angeles']) {
   process.env.TZ = zone;
@@ -51,18 +53,20 @@ for (const zone of ['Europe/Paris', 'America/Los_Angeles']) {
   assert.equal(isPastPlan({ weekStart: '2026-10-19' }, '2026-10-26'), true);
 }
 console.log('Planning display passed: today, empty days, historical weeks, meal order, DST and year boundaries.');
-const onboarding = { ...plan, _id: 'onboarding' };
-const thisWeek = { ...plan, _id: 'current', weekStart: '2026-10-05' };
-const nextWeek = { ...plan, _id: 'future', weekStart: '2026-10-12' };
-const history = [onboarding, nextWeek];
-assert.equal(mod.exports.displayedPlan(history, '2026-10-05'), undefined, 'missing current week shows the create-planning state, not a past onboarding or future plan');
-assert.equal(mod.exports.displayedPlan([onboarding, thisWeek, nextWeek], '2026-10-05'), thisWeek, 'only the current calendar week is displayed');
-assert.equal(mod.exports.displayedPlan([onboarding], '2026-09-28'), onboarding, 'onboarding plan remains visible during its own week');
-assert.equal(mod.exports.displayedPlan([], '2026-10-05'), undefined);
-assert.equal(history.length, 2, 'selection preserves older and future plans for history');
-assert.equal(onboarding.weekStart, '2026-09-28', 'original dates remain unchanged');
-assert.equal(mod.exports.displayedPlan([thisWeek], '2026-10-12'), undefined, 'the previous current plan disappears after the next rollover');
-console.log('Home current-week selection passed: rollover, missing week, current week, future plans and history preservation.');
+const old = { ...plan, _id: 'old' };
+const rolling = { ...plan, _id: 'rolling', weekStart: '2026-10-07' };
+const newer = { ...plan, _id: 'newer', weekStart: '2026-10-09' };
+const future = { ...plan, _id: 'future', weekStart: '2026-10-14' };
+assert.equal(mod.exports.displayedPlan([old, rolling, future], '2026-10-07'), rolling, 'Wednesday generation is visible immediately');
+assert.equal(mod.exports.displayedPlan([old, rolling, future], '2026-10-12'), rolling, 'a Monday rollover cannot hide an active rolling week');
+assert.equal(mod.exports.displayedPlan([rolling], '2026-10-13'), rolling, 'seventh day remains visible');
+assert.equal(mod.exports.displayedPlan([rolling], '2026-10-14'), undefined, 'renewal is the following Wednesday');
+assert.equal(mod.exports.displayedPlan([rolling, newer, future], '2026-10-10'), newer, 'newest active week wins even with unsorted history');
+assert.equal(mod.exports.displayedPlan([old, future], '2026-10-07'), undefined, 'expired and future plans stay in history');
+assert.equal(mod.exports.displayedPlan([], '2026-10-07'), undefined);
+assert.equal(rolling.weekStart, '2026-10-07', 'selection never relabels saved dates');
+assert.equal(mod.exports.displayedPlan([{ ...rolling, weekEnd: '2026-10-10' }], '2026-10-11'), undefined, 'saved end date is authoritative');
+console.log('Home rolling-week selection passed: Wednesday start, Monday rollover, expiry, newer weeks and history preservation.');
 
 const slotPlan = { weekStart: '2026-10-05', preferences: { includeSnack: false }, meals: [
   { slotId: 'dinner', dayIndex: 0, mealType: 'dinner', position: 0 },

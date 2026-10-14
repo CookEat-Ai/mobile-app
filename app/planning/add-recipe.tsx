@@ -16,7 +16,6 @@ import { Colors } from '../../constants/Colors';
 import { appStyles } from '../../constants/AppTheme';
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import apiService, { MealPlan, CatalogRecipe } from '../../services/api';
-import { startOfWeekMondayKey } from '../../services/weeklyPlanning';
 import { replacedMealPlanningRoute } from '../../services/plannedMealNavigation';
 
 export default function AddRecipeToPlanScreen() {
@@ -41,7 +40,7 @@ export default function AddRecipeToPlanScreen() {
         if (!userId) throw new Error(t('planning.errors.user'));
         if (!recipeId) throw new Error(t('common.requestError'));
         const [planResponse, recipeResponse] = await Promise.all([
-          apiService.getMealPlan(userId, startOfWeekMondayKey()),
+          apiService.getMealPlan(userId),
           apiService.getCatalogRecipe(recipeId),
         ]);
         if (!active) return;

@@ -1,6 +1,5 @@
-import { PresentationScanOverlay } from '../../components/planning/PresentationScanOverlay';
-import { finishPresentationScan } from '../../services/presentationScan';
-import { PlanningPantry, type PlanningPantryValue } from '../../components/planning/PlanningPantry';
+import { usePlanningClock } from '../../hooks/usePlanningClock';
+import { CookingDaysPicker } from '../../components/planning/CookingDaysPicker';
 import { PlanMealCard } from '../../components/planning/PlanMealCard';
 import { PlanningDayPicker } from '../../components/planning/PlanningDayPicker';
 import { PlanningNutritionSummary } from '../../components/planning/PlanningNutritionSummary';
@@ -34,7 +33,6 @@ import {
   normalizeCookingDays,
   saveOnboardingWeeklyPlanId,
   savePlanningGenerationSettings,
-  startOfWeekMondayKey,
 } from '../../services/weeklyPlanning';
 
 
@@ -42,21 +40,20 @@ export default function WeeklyPlanPreviewScreen() {
   const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
   const { ready: loadingReady, reset: resetLoadingBar, finish: finishLoadingBar, onComplete: completeLoadingBar } = usePlanningLoading();
-  const weekStart = useMemo(() => startOfWeekMondayKey(), []);
+  const { weekStart } = usePlanningClock();
   const [plan, setPlan] = useState<MealPlan | null>(null);
   const [selectedDay, setSelectedDay] = useState(0);
   const [cookingDays, setCookingDays] = useState<number[]>([...DEFAULT_COOKING_DAYS]);
-  const [pantry, setPantry] = useState<PlanningPantryValue>({ pantryIngredients: [], pantryMode: 'priority' });
-  const [pantryBusy, setPantryBusy] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [networkError, setNetworkError] = useState(false);
   const [opening, setOpening] = useState<string | null>(null);
   const interactionVersion = useRef(0);
+  const generating = useRef(false);
 
-  const generate = useCallback(async (pantryOverride?: PlanningPantryValue) => {
-    const selectedPantry = pantryOverride || pantry;
-    if (pantryBusy) return;
+  const generate = useCallback(async () => {
+    if (generating.current) return;
+    generating.current = true;
     interactionVersion.current += 1;
     feedback.confirm();
     resetLoadingBar();
@@ -78,7 +75,7 @@ export default function WeeklyPlanPreviewScreen() {
       analytics.track('onboarding_weekly_plan_generation_started', { planning_horizon_days: 7, cooking_days: selectedCookingDays.join(',') });
       const settings = await loadPlanningGenerationSettings();
       const profilePreferences = fitnessProfileToPlanningPreferences(profile);
-      const preferences = { ...profilePreferences, ...selectedPantry, servings: settings.servings || 1, cookingDays: selectedCookingDays, includeSnack: true };
+      const preferences = { ...profilePreferences, pantryIngredients: [], pantryMode: 'priority' as const, servings: settings.servings || 1, cookingDays: selectedCookingDays, includeSnack: true };
       const response = await apiService.createMealPlan({
         userId,
         weekStart,
@@ -95,7 +92,8 @@ export default function WeeklyPlanPreviewScreen() {
         saveOnboardingWeeklyPlanId(nextPlan._id),
         savePlanningGenerationSettings({
           ...settings,
-          ...selectedPantry,
+          pantryIngredients: [],
+          pantryMode: 'priority',
           cookingDays: selectedCookingDays,
           includeSnack: true,
           duration: profilePreferences.duration === 'fast' || profilePreferences.duration === 'medium' ? profilePreferences.duration : 'all',
@@ -114,10 +112,10 @@ export default function WeeklyPlanPreviewScreen() {
       setError(generationError instanceof Error ? generationError.message : t('planning.errors.create'));
       analytics.track('onboarding_weekly_plan_generation_failed', { reason: generationError instanceof Error ? generationError.message : 'unknown' });
     } finally {
-      finishPresentationScan();
+      generating.current = false;
       setLoading(false);
     }
-  }, [pantry, pantryBusy, cookingDays, weekStart, finishLoadingBar, resetLoadingBar, t]);
+  }, [cookingDays, weekStart, finishLoadingBar, resetLoadingBar, t]);
 
   useFocusEffect(useCallback(() => {
     let active = true;
@@ -160,7 +158,7 @@ export default function WeeklyPlanPreviewScreen() {
   }), [i18n.language, weekStart, plan?.weekStart]);
   const visibleDays = useMemo(() => days.filter((day) => (plan?.meals || []).some((meal) => meal.dayIndex === day.dayIndex)), [days, plan?.meals]);
   const meals = useMemo(() => (plan?.meals || []).filter((meal) => (meal.dayIndex ?? 0) === selectedDay).sort((a, b) => a.position - b.position), [plan?.meals, selectedDay]);
-  const { animationKey, replayButton, stopReveal, visibleDayCount, dayAnimationKey } = usePlanningReveal(!loading && Boolean(plan?.meals.length), visibleDays.map(day => day.dayIndex), setSelectedDay, plan?._id || '');
+  const { animationKey, revealControls, stopReveal, visibleDayCount, dayAnimationKey } = usePlanningReveal(!loading && Boolean(plan?.meals.length), visibleDays.map(day => day.dayIndex), setSelectedDay, plan?._id || '');
   const selectedDayLabel = days.find((day) => day.dayIndex === selectedDay)?.label || '';
 
   const openMeal = async (meal: MealPlanMeal) => {
@@ -187,33 +185,12 @@ export default function WeeklyPlanPreviewScreen() {
     }
   };
 
-  const toggleCookingDay = (dayIndex: number) => {
-    if (cookingDays.includes(dayIndex) && cookingDays.length === 1) return;
-    feedback.selection();
-    interactionVersion.current += 1;
-    setCookingDays((current) => {
-      if (current.includes(dayIndex)) {
-        if (current.length === 1) return current;
-        return current.filter((day) => day !== dayIndex);
-      }
-      return [...current, dayIndex].sort((a, b) => a - b);
-    });
-  };
-
-  if (loading) return <View style={{ flex: 1 }}><PlanningLoadingView ready={loadingReady} onComplete={completeLoadingBar} /><PresentationScanOverlay /></View>;
+  if (loading) return <View style={{ flex: 1 }}><PlanningLoadingView ready={loadingReady} onComplete={completeLoadingBar} /></View>;
   if (error) return (
     <View style={styles.state}>
       <View style={styles.sparkle}><Ionicons name="alert-circle-outline" size={48} color={Colors.light.button} /></View>
       <Text style={styles.stateTitle}>{t(networkError ? 'weeklyOnboarding.preview.networkErrorTitle' : 'weeklyOnboarding.preview.errorTitle')}</Text>
       <Text style={styles.stateSubtitle}>{error}</Text>
-      {!networkError && pantry.pantryMode === 'strict' && pantry.pantryIngredients.length > 0 && <TouchableOpacity accessibilityRole="button" activeOpacity={0.82} onPress={() => {
-        const next: PlanningPantryValue = { ...pantry, pantryMode: 'priority' };
-        setPantry(next);
-        void AsyncStorage.setItem('cookeat_planning_pantry_v1', JSON.stringify(next)).catch(() => undefined);
-        void generate(next);
-      }} style={styles.retry}>
-        <Text style={styles.retryText}>{t('planningPantry.allowShopping')}</Text>
-      </TouchableOpacity>}
       <TouchableOpacity accessibilityRole="button" activeOpacity={0.82} onPress={() => void generate()} style={styles.retry}>
         <Text style={styles.retryText}>{t('weeklyOnboarding.preview.retry')}</Text>
       </TouchableOpacity>
@@ -227,27 +204,20 @@ export default function WeeklyPlanPreviewScreen() {
   );
 
   if (!plan) return <View style={[styles.root, { paddingTop: insets.top + 8 }]}>
-    <OnboardingScrollView stepKey="configuration" keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerStyle={[styles.configurationContent, { paddingBottom: 132 + insets.bottom }]} showsVerticalScrollIndicator={false}>
+    <OnboardingScrollView stepKey="configuration" style={{ marginLeft: insets.left, marginRight: insets.right }} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerStyle={[styles.configurationContent, { paddingBottom: 132 + insets.bottom }]} showsVerticalScrollIndicator={false}>
       <View style={styles.configurationIcon}><Ionicons name="calendar" size={34} color={Colors.light.button} /></View>
       <Text style={styles.configurationTitle}>{t('planning.generation.title')}</Text>
       <Text style={styles.configurationSubtitle}>{t('planning.generation.subtitle')}</Text>
       <Text style={styles.configurationLabel}>{t('planning.generation.daysTitle')}</Text>
-      <View style={styles.configurationDays}>
-        {days.map((day) => {
-          const dayIndex = day.dayIndex;
-          const selected = cookingDays.includes(dayIndex);
-          return <TouchableOpacity key={day.key} onPress={() => toggleCookingDay(dayIndex)} style={[styles.configurationDay, selected && styles.configurationDayActive]} accessibilityRole="checkbox" accessibilityState={{ checked: selected }}><Text style={[styles.configurationDayText, selected && styles.configurationDayTextActive]}>{day.short.replace('.', '')}</Text></TouchableOpacity>;
-        })}
-      </View>
-      <PlanningPantry onChange={setPantry} onBusy={setPantryBusy} useDisabled={loading} onUseIngredients={value => void generate(value)} />
+      <CookingDaysPicker weekStart={weekStart} value={cookingDays} onChange={next => { interactionVersion.current += 1; setCookingDays(next); }} />
     </OnboardingScrollView>
-    <OnboardingFooter disabled={pantryBusy} label={t('planning.generation.cta')} onPress={() => void generate()} />
+    <OnboardingFooter label={t('planning.generation.cta')} onPress={() => void generate()} />
   </View>;
 
   return <View style={[styles.root, { paddingTop: insets.top + 8 }]}>
     <OnboardingScrollView stepKey="preview" contentContainerStyle={[styles.content, { paddingBottom: 132 + insets.bottom }]} showsVerticalScrollIndicator={false}>
       <View style={styles.heroRow}><View style={styles.heroCopy}><View style={styles.badge}><Ionicons name="sparkles" size={14} color={Colors.light.button} /><Text style={styles.badgeText}>{t('weeklyOnboarding.preview.badge')}</Text></View><Text style={styles.title}>{t('fitnessOnboarding.preview.title')}</Text><View style={styles.weekCount}><Text style={styles.weekCountValue}>{plan?.meals.length || 0}</Text><Text style={styles.weekCountLabel}>{t('fitnessOnboarding.interstitials.facts.meals')}</Text></View></View></View>
-      {replayButton}
+      {revealControls}
       <PlanningDayPicker visibleCount={visibleDayCount} revealKey={dayAnimationKey} days={visibleDays} selectedDay={selectedDay} onSelect={day => { stopReveal(); setSelectedDay(day); }} />
       <PlanningNutritionSummary key={`nutrition:${plan._id}:${selectedDay}`} meals={meals} />
       <PlanningCalorieNotice plan={plan} dayIndex={selectedDay} />
@@ -269,11 +239,6 @@ const styles = StyleSheet.create({
   configurationTitle: { marginTop: 22, fontFamily: 'Degular', fontSize: 34, lineHeight: 37, color: Colors.light.text },
   configurationSubtitle: { marginTop: 7, fontFamily: 'CronosPro', fontSize: 17, lineHeight: 23, color: Colors.light.textSecondary },
   configurationLabel: { marginTop: 30, marginBottom: 11, fontFamily: 'CronosProBold', fontSize: 16, color: Colors.light.text },
-  configurationDays: { flexDirection: 'row', gap: 7 },
-  configurationDay: { flex: 1, height: 48, borderRadius: 15, backgroundColor: 'white', borderWidth: 1, borderColor: '#E8E1C9', alignItems: 'center', justifyContent: 'center' },
-  configurationDayActive: { backgroundColor: Colors.light.button, borderColor: Colors.light.button },
-  configurationDayText: { fontFamily: 'CronosProBold', fontSize: 13, color: Colors.light.textSecondary, textTransform: 'capitalize' },
-  configurationDayTextActive: { color: 'white' },
   heroRow: { marginTop: 8 }, heroCopy: { width: '100%' }, badge: { alignSelf: 'flex-start', flexDirection: 'row', gap: 6, alignItems: 'center', backgroundColor: '#FFF4CF', borderRadius: 999, paddingHorizontal: 11, minHeight: 30 }, badgeText: { color: Colors.light.button, fontFamily: 'CronosProBold', fontSize: 12 }, title: { marginTop: 11, fontFamily: 'Degular', fontSize: 31, lineHeight: 34, color: Colors.light.text },
   weekCount: { alignSelf: 'flex-start', marginTop: 10, minHeight: 32, borderRadius: 999, backgroundColor: Colors.light.button, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4, paddingHorizontal: 12 }, weekCountValue: { fontFamily: 'Degular', fontSize: 18, lineHeight: 20, color: 'white' }, weekCountLabel: { fontFamily: 'CronosProBold', fontSize: 10, color: 'white' },
 });

@@ -47,7 +47,7 @@ import {
   PlanningGenerationSettings,
   roundNutritionValue,
   savePlanningGenerationSettings,
-  startOfWeekMondayKey,
+  planningStartKey,
 } from '../../services/weeklyPlanning';
 
 type PlanningView = 'meals' | 'shopping';
@@ -113,14 +113,14 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
     try {
       const userId = await getUserId();
       if (!userId) throw new Error(t('planning.errors.user'));
-      const weekStart = startOfWeekMondayKey();
+      const weekStart = planningStartKey();
       const cacheKey = `${PLAN_CACHE_PREFIX}:${userId}:${weekStart}:${i18n.language.toLowerCase()}`;
       const cached = await AsyncStorage.getItem(cacheKey);
       if (request !== planLoadRequest.current) return;
       if (cached) {
         try {
           const cachedPlan = JSON.parse(cached) as MealPlan;
-          if (isUsableWeeklyPlan(cachedPlan)) {
+          if (isUsableWeeklyPlan(cachedPlan) && isDateInsideRollingWeek(cachedPlan.weekStart, cachedPlan.weekEnd, planningStartKey())) {
             setPlan(cachedPlan);
             if (!refresh) setLoading(false);
           } else {
@@ -131,13 +131,12 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
           await AsyncStorage.removeItem(cacheKey);
         }
       }
-      const response = await apiService.getMealPlan(userId);
+      const response = await apiService.getMealPlan(userId, undefined, false, { forceRefresh: refresh });
       if (request !== planLoadRequest.current) return;
       if (response.error) throw new Error(response.error);
       const latestPlan = response.data?.plan || null;
       const reusablePlan = latestPlan
-        && latestPlan.weekStart === weekStart
-        && isDateInsideRollingWeek(latestPlan.weekStart, latestPlan.weekEnd)
+        && isDateInsideRollingWeek(latestPlan.weekStart, latestPlan.weekEnd, planningStartKey())
         && isUsableWeeklyPlan(latestPlan)
         ? latestPlan
         : null;
@@ -196,7 +195,7 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
       };
       const response = await apiService.createMealPlan({
         userId,
-        weekStart: startOfWeekMondayKey(),
+        weekStart: planningStartKey(),
         preferences,
         isSubscribed: subscriptionStatus.isSubscribed,
         replaceExisting: replaceExistingOnCreate.current,
@@ -350,7 +349,7 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
   }, [settingsDraft]);
 
   const days = useMemo(() => Array.from({ length: 7 }, (_, dayIndex) => {
-    const dateKey = addDays(plan?.weekStart || startOfWeekMondayKey(), dayIndex);
+    const dateKey = addDays(plan?.weekStart || planningStartKey(), dayIndex);
     const date = new Date(`${dateKey}T12:00:00`);
     const label = new Intl.DateTimeFormat(i18n.resolvedLanguage, { weekday: 'long' }).format(date);
     return {

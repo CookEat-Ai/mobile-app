@@ -1,5 +1,4 @@
-import { PresentationScanOverlay } from '../../components/planning/PresentationScanOverlay';
-import { finishPresentationScan } from '../../services/presentationScan';
+import { PlanningFlowHeader } from '../../components/planning/PlanningFlowHeader';
 import { invalidatePlanning } from '../../services/planningUpdates';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,15 +15,17 @@ import { useSubscription } from '../../hooks/useSubscription';
 import analytics from '../../services/analytics';
 import { schedulePlanningReview } from '../../services/planningReview';
 import { apiService } from '../../services/api';
-import { loadFitnessProfile, fitnessProfileToPlanningPreferences } from '../../services/fitnessProfile';
-import { dailyMealsForDays, isCompleteWeeklyPlan, normalizeCookingDays, startOfWeekMondayKey } from '../../services/weeklyPlanning';
+import { loadFitnessProfile, fitnessProfileToPlanningPreferences, type FitnessGoal } from '../../services/fitnessProfile';
+import { profileForPlanningGoal } from '../../services/planningGoal';
+import { dailyMealsForDays, isCompleteWeeklyPlan, normalizeCookingDays, planningStartKey, type PlanningDiet } from '../../services/weeklyPlanning';
 
 type Config = {
+  goal?: FitnessGoal;
   servings?: number;
   cookingDays: number[];
   duration: string;
   cuisineIds?: string[];
-  diet?: 'none' | 'vegetarian' | 'vegan';
+  diet?: PlanningDiet;
   excludedIngredients?: string[];
   pantryIngredients?: string[];
   pantryMode?: 'priority' | 'strict';
@@ -42,7 +43,6 @@ export default function PlanningLoadingScreen() {
   useEffect(() => {
     if (subscriptionLoading || started.current) return;
     if (!subscriptionStatus.isSubscribed) {
-      finishPresentationScan();
       router.replace({ pathname: '/paywall', params: { source: 'meal_planner_generation' } });
       return;
     }
@@ -54,11 +54,11 @@ export default function PlanningLoadingScreen() {
         const config = JSON.parse(rawConfig || '{}') as Config;
         const [userId, profile] = await Promise.all([AsyncStorage.getItem('userId'), loadFitnessProfile()]);
         if (!userId) throw new Error(t('planning.errors.user'));
-        const profilePreferences = fitnessProfileToPlanningPreferences(profile);
+        const profilePreferences = fitnessProfileToPlanningPreferences(profileForPlanningGoal(profile, config.goal));
         const cookingDays = normalizeCookingDays(config.cookingDays);
         const response = await apiService.createMealPlan({
           userId,
-          weekStart: startOfWeekMondayKey(),
+          weekStart: planningStartKey(),
           isSubscribed: true,
           replaceExisting: replace === 'true',
           preferences: {
@@ -80,26 +80,20 @@ export default function PlanningLoadingScreen() {
         analytics.track('meal_plan_created', { plan_id: response.data.plan._id, meal_count: response.data.plan.meals.length, cooking_days: cookingDays.join(',') });
         if (!await finishLoadingBar(generationStartedAt)) return;
         await feedback.success();
-        if (replace === 'true') {
-          router.dismissTo('/(tabs)');
-        } else {
-          router.replace({ pathname: '/planning/[planId]', params: { planId: response.data.plan._id } });
-        }
-        finishPresentationScan();
-        schedulePlanningReview(response.data.plan._id);
+        router.dismissTo('/(tabs)');
+          schedulePlanningReview(response.data.plan._id);
       } catch (generationError) {
-        finishPresentationScan();
-        setError(generationError instanceof Error ? generationError.message : t('planning.errors.create'));
+          setError(generationError instanceof Error ? generationError.message : t('planning.errors.create'));
         await feedback.error();
       }
     })();
   }, [rawConfig, replace, subscriptionLoading, subscriptionStatus.isSubscribed, t, finishLoadingBar, resetLoadingBar]);
 
-  if (!error) return <View style={{ flex: 1 }}><PlanningLoadingView ready={loadingReady} onComplete={completeLoadingBar} /><PresentationScanOverlay /></View>;
+  if (!error) return <View style={{ flex: 1 }}><PlanningFlowHeader /><View style={{ flex: 1 }}><PlanningLoadingView ready={loadingReady} onComplete={completeLoadingBar} /></View></View>;
 
   return (
-    <LinearGradient colors={['#FDF9E2', '#FFFFFF']} style={[styles.fill, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-      <View style={styles.content}>
+    <LinearGradient colors={['#FDF9E2', '#FFFFFF']} style={[styles.fill, { paddingBottom: insets.bottom }]}>
+      <PlanningFlowHeader /><View style={styles.content}>
         <Image source={require('../../assets/images/mascot.png')} style={styles.mascot} resizeMode="contain" />
         <View style={styles.errorIcon}><Ionicons name="alert-circle-outline" size={32} color="#9B3B32" /></View>
         <Text style={styles.title}>{t('planningLoading.error')}</Text>

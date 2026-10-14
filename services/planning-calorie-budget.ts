@@ -9,7 +9,8 @@ export function dailyPlannedCalorieTarget(dayIndex: number, meals: Pick<BudgetMe
   // still request a snack that is no longer present in the generated plan.
   if (['breakfast', 'lunch', 'dinner'].every(type => dayMeals.some(meal => meal.mealType === type))) return dailyCalories;
   const saved = (preferences.mealsByDay as Record<string, unknown> | undefined)?.[String(dayIndex)];
-  const snack = Array.isArray(saved) && saved.length ? saved.includes('snack')
+  const snack = preferences.partialStartDay === true && dayIndex === 0 ? true
+    : Array.isArray(saved) && saved.length ? saved.includes('snack')
     : preferences.includeSnack === true || dayMeals.some(meal => meal.mealType === 'snack');
   const allocation = mealNutritionAllocation(snack);
   return dailyCalories * dayMeals.reduce((sum, meal) => sum + allocation[meal.mealType], 0);

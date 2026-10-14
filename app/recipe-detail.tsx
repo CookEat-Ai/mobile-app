@@ -238,6 +238,8 @@ export default function RecipeDetailScreen() {
   }, [recipe.id]);
 
   const [loadingRecipe, setLoadingRecipe] = useState(isStreaming || !!recipeIdParam);
+  const [recipeLoadError, setRecipeLoadError] = useState<string | null>(null);
+  const [recipeLoadAttempt, setRecipeLoadAttempt] = useState(0);
   const [loadingSteps, setLoadingSteps] = useState(isStreaming || !recipe.steps?.length);
   const [streamingTitleAndIngredients, setStreamingTitleAndIngredients] = useState(isStreaming);
   const [streamingSteps, setStreamingSteps] = useState(isStreaming);
@@ -607,41 +609,59 @@ export default function RecipeDetailScreen() {
   useEffect(() => {
     if (!recipeIdParam || isStreaming) return;
     let active = true;
-    apiService.getRecipeById(recipeIdParam)
+    setRecipeLoadError(null);
+    setLoadingRecipe(true);
+    setLoadingSteps(true);
+    setLoadingImage(true);
+    const fail = (message: string) => {
+      if (!active) return;
+      setRecipeLoadError(message);
+      setLoadingRecipe(false);
+      setLoadingSteps(false);
+      setLoadingImage(false);
+    };
+    // Bound the whole load, including session setup and planned portions.
+    const timeout = setTimeout(() => {
+      fail(t('common.networkError'));
+      active = false;
+    }, 30000);
+    const request = isMealLibrary
+      ? apiService.getCatalogRecipe(recipeIdParam)
+      : apiService.getRecipeById(recipeIdParam);
+    request
       .then(async (response) => {
-        if (active && response.data?.recipe) {
-          let fullRecipe = {
-            ...response.data.recipe,
-            id: response.data.recipe.id || recipeIdParam,
-          };
-          servingsBaseRef.current = fullRecipe;
-          if (isMealLibrary) fullRecipe = recipeForServings(fullRecipe, 1);
-          if (isPlannedMeal && mealPlanId && mealSlotId) {
-            const userId = await AsyncStorage.getItem('userId');
-            if (!userId) throw new Error(t('planning.errors.user'));
-            const planned = await apiService.getMealPlanById(mealPlanId, userId);
-            if (!planned.data?.plan) throw new Error(planned.error || t('planning.errors.load'));
-            const plannedMeal = planned.data.plan.meals.find(meal => meal.slotId === mealSlotId);
-            if (active) setPlannedDayEditable(!!plannedMeal && !isPastPlanDay(planned.data.plan.weekStart, plannedMeal.dayIndex ?? 0));
-            fullRecipe = applyPlannedMealPortion(fullRecipe, planned.data.plan, mealSlotId);
-          }
-          if (!active) return;
-          setRecipe(fullRecipe);
-          setLoadingRecipe(false);
-          setLoadingSteps(!(fullRecipe.steps?.length));
-          if (fullRecipe.steps?.length) setLoadingSteps(false);
-          if (fullRecipe.image) setLoadingImage(false);
-          savedRecipeIdRef.current = fullRecipe.id;
+        if (!active) return;
+        if (!response.data?.recipe?.title) throw new Error(response.error || t('common.requestError'));
+        let fullRecipe = {
+          ...response.data.recipe,
+          id: response.data.recipe.id || recipeIdParam,
+        };
+        servingsBaseRef.current = fullRecipe;
+        if (isMealLibrary) fullRecipe = recipeForServings(fullRecipe, 1);
+        if (isPlannedMeal && mealPlanId && mealSlotId) {
+          const userId = await AsyncStorage.getItem('userId');
+          if (!userId) throw new Error(t('planning.errors.user'));
+          const planned = await apiService.getMealPlanById(mealPlanId, userId);
+          if (!planned.data?.plan) throw new Error(planned.error || t('planning.errors.load'));
+          const plannedMeal = planned.data.plan.meals.find(meal => meal.slotId === mealSlotId);
+          if (active) setPlannedDayEditable(!!plannedMeal && !isPastPlanDay(planned.data.plan.weekStart, plannedMeal.dayIndex ?? 0));
+          fullRecipe = applyPlannedMealPortion(fullRecipe, planned.data.plan, mealSlotId);
         }
+        if (!active) return;
+        setRecipe(fullRecipe);
+        setLoadingRecipe(false);
+        setLoadingSteps(false);
+        if (fullRecipe.image) setLoadingImage(false);
+        savedRecipeIdRef.current = fullRecipe.id;
       })
       .catch((error) => {
         if (!active) return;
         console.error('Erreur lors du chargement de la recette:', error);
-        setLoadingRecipe(false);
-        Alert.alert(t('recipeDetail.error'), t('recipeDetail.unableToGenerateRecipe'));
-      });
-    return () => { active = false; };
-  }, [recipeIdParam, isStreaming, i18n.language, isPlannedMeal, mealPlanId, mealSlotId, t]);
+        fail(error instanceof Error ? error.message : t('common.requestError'));
+      })
+      .finally(() => { clearTimeout(timeout); });
+    return () => { active = false; clearTimeout(timeout); };
+  }, [recipeIdParam, isStreaming, i18n.language, isMealLibrary, isPlannedMeal, mealPlanId, mealSlotId, t, recipeLoadAttempt]);
 
   useEffect(() => {
     if (params.showGenerateButton === 'false')
@@ -651,6 +671,7 @@ export default function RecipeDetailScreen() {
   useEffect(() => {
     // En mode streaming, on attend les données complètes via WS
     if (isStreaming) return;
+    if (recipeLoadError) return;
     if (loadingRecipe) return;
     if (isGeneratingNewRecipe) return;
     const effectSessionId = streamSessionIdRef.current;
@@ -689,7 +710,7 @@ export default function RecipeDetailScreen() {
       if (streamSessionIdRef.current !== effectSessionId) return;
       setLoadingImage(false);
     }
-  }, [recipe, isGeneratingNewRecipe, shouldSearchImage]);
+  }, [recipe, isGeneratingNewRecipe, shouldSearchImage, recipeLoadError]);
 
   useEffect(() => {
     if (!recipe.id || !recipe.title) return;
@@ -1208,6 +1229,18 @@ export default function RecipeDetailScreen() {
     return translation;
   };
 
+  if (recipeLoadError) return <View style={[styles.container, { backgroundColor: colors.background, paddingTop: insets.top + 8, paddingHorizontal: 20 }]}>
+    <Stack.Screen options={{ statusBarStyle: 'dark' }} />
+    <NavigationIconButton style={appStyles.iconButton} onPress={handleBackPress} accessibilityRole="button" accessibilityLabel={t('common.back')} />
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', gap: 20, paddingBottom: insets.bottom + 60 }}>
+      <Ionicons name="cloud-offline-outline" size={44} color={colors.button} />
+      <Text accessibilityRole="alert" style={[appStyles.subtitle, { textAlign: 'center' }]}>{recipeLoadError}</Text>
+      <TouchableOpacity accessibilityRole="button" style={appStyles.button} onPress={() => { setRecipeLoadError(null); setLoadingRecipe(true); setRecipeLoadAttempt(attempt => attempt + 1); }}>
+        <Text style={appStyles.buttonText}>{t('mealLibrary.retry')}</Text>
+      </TouchableOpacity>
+    </View>
+  </View>;
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Stack.Screen options={{ statusBarStyle: imageViewerVisible ? 'light' : statusBarStyle }} />
@@ -1220,7 +1253,7 @@ export default function RecipeDetailScreen() {
           </ScrollView>
           <TouchableOpacity accessibilityRole="button" accessibilityLabel={t('common.close')}
             onPress={() => setImageViewerVisible(false)}
-            style={{ position: 'absolute', top: insets.top + 12, right: 20, width: 44, height: 44, borderRadius: 22, backgroundColor: '#333B', alignItems: 'center', justifyContent: 'center' }}>
+            style={{ position: 'absolute', top: insets.top + 12, right: 20 + insets.right, width: 44, height: 44, borderRadius: 22, backgroundColor: '#333B', alignItems: 'center', justifyContent: 'center' }}>
             <Ionicons name="close" size={28} color="white" />
           </TouchableOpacity>
         </View>
@@ -1295,7 +1328,7 @@ export default function RecipeDetailScreen() {
           <View pointerEvents="none" style={styles.imageOverlay} />
 
           {/* Marque */}
-          <View style={[styles.brandContainer, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top }]}>
+          <View style={[styles.brandContainer, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top, left: insets.left, right: insets.right }]}>
             <View style={styles.brandBadge}>
               <Text style={styles.brandText}>CookEat</Text>
               <Image source={require('../assets/images/mascot.png')} style={styles.brandLogo} contentFit="contain" accessible={false} />
@@ -1305,14 +1338,14 @@ export default function RecipeDetailScreen() {
           {/* Bouton retour */}
           {!isOnboarding && (params.showGenerateButton !== 'false' || params.isHistory === 'true') &&
             <NavigationIconButton
-              style={[styles.backButton, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top }]}
+              style={[styles.backButton, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top, left: 20 + insets.left }]}
               onPress={handleBackPress}
              />}
 
           <NavigationIconButton
             icon="share-outline"
             accessibilityLabel={t('recipeDetail.share')}
-            style={[styles.shareButton, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top }]}
+            style={[styles.shareButton, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top, right: 75 + insets.right }]}
             onPress={handleShare}
           />
 
@@ -1321,7 +1354,7 @@ export default function RecipeDetailScreen() {
             iconColor={isFavorite ? Colors.light.button : undefined}
             accessibilityLabel={t(isFavorite ? 'recipeDetail.removeFromFavorites' : 'recipeDetail.addToFavorites')}
             accessibilityState={{ selected: isFavorite }}
-            style={[styles.likeButton, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top }]}
+            style={[styles.likeButton, { top: Platform.OS === 'android' ? insets.top + 5 : insets.top, right: 20 + insets.right }]}
             onPress={handleAddToFavorites}
           />
 

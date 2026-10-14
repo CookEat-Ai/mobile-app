@@ -23,8 +23,8 @@ assert.equal(readPantryScanHandoff(createPantryScanHandoff(['Tomate', 'Tomates']
 assert.equal(readPantryScanHandoff(createPantryScanHandoff(['Tomate'], 'strict')).pantryMode, 'strict');
 assert.equal(readPantryScanHandoff(createPantryScanHandoff(['Tomate'], 'strict')).generate, false);
 assert.equal(readPantryScanHandoff(createPantryScanHandoff(['Tomate'], 'strict')).replace, true);
-assert.equal(readPantryScanHandoff(createPantryScanHandoff(['Tomate'], 'strict', true)).pantryMode, 'priority');
-assert.equal(readPantryScanHandoff(createPantryScanHandoff(['Tomate'], 'priority', true)).generate, true);
+assert.equal(readPantryScanHandoff(createPantryScanHandoff(['Tomate'], 'strict', true)).pantryMode, 'strict');
+assert.equal(readPantryScanHandoff(createPantryScanHandoff(['Tomate'], 'priority', true)).generate, false);
 assert.equal(readPantryScanHandoff('[{"name":"Tomate"}]').generate, false);
 const code = 'PRESENTATION-TEST';
 const { sha256 } = require('@noble/hashes/sha256');
@@ -44,9 +44,62 @@ const mode = load('services/presentationMode.ts', {
   assert(stored && !stored.includes(code));
   await mode.disablePresentationMode();
   assert.equal(mode.usePresentationMode(), false);
-  assert.equal(stored, null);
-  const reviewer = load('services/reviewerAccess.ts', { './api': { default: { getAdminAccess: async () => ({ data: { active: false } }), activateAdminAccess: async () => ({ data: { active: false } }) } } });
+  assert.equal(stored, 'disabled');
+  await mode.enablePresentationModeByDefault();
+  assert.equal(mode.usePresentationMode(), false, 'automatic defaults respect manual deactivation');
+  const reviewer = load('services/reviewerAccess.ts', { './presentationMode': mode, './api': { default: { getAdminAccess: async () => ({ data: { active: false } }), activateAdminAccess: async () => ({ data: { active: false } }) } } });
   assert.equal(await reviewer.hasReviewerAccess(), false);
   assert.equal(await reviewer.activateReviewerAccess(code), false);
-  console.log('Presentation mode checks passed: shake, code, activation, deactivation, scan modes, unchanged reviewer access');
+  const presentationHash = bytesToHex(sha256(utf8ToBytes(code)));
+  function bypassScenario(initialPreference = null, failStorage = false) {
+    let preference = initialPreference;
+    let active = false;
+    let offline = false;
+    const presentation = load('services/presentationMode.ts', {
+      react: { useEffect: fn => fn(), useSyncExternalStore: (_, snapshot) => snapshot() },
+      'expo-secure-store': {
+        getItemAsync: async () => { if (failStorage) throw Error('storage unavailable'); return preference; },
+        setItemAsync: async (_, value) => { preference = value; },
+      },
+      '../config/presentationMode': { PRESENTATION_CODE_HASH: presentationHash },
+    });
+    const access = load('services/reviewerAccess.ts', {
+      './presentationMode': presentation,
+      './api': { default: {
+        activateAdminAccess: async submitted => ({ data: { active: submitted === 'valid-bypass' } }),
+        getAdminAccess: async () => { if (offline) throw Error('offline'); return { data: { active } }; },
+      } },
+    });
+    return { presentation, access, preference: () => preference,
+      grant: () => { active = true; }, goOffline: () => { offline = true; } };
+  }
+  const first = bypassScenario();
+  assert.equal(await first.access.hasReviewerAccess(), false);
+  assert.equal(await first.access.activateReviewerAccess('invalid'), false);
+  assert.equal(first.preference(), null, 'no presentation default without server-confirmed bypass');
+  assert.equal(await first.access.activateReviewerAccess(' valid-bypass '), true);
+  assert.equal(first.presentation.usePresentationMode(), true, 'valid bypass enables presentation before leaving paywall');
+  assert.equal(first.preference(), presentationHash);
+  await first.presentation.disablePresentationMode();
+  first.grant();
+  assert.equal(await first.access.hasReviewerAccess(), true);
+  assert.equal(first.presentation.usePresentationMode(), false, 'subscription refresh does not override opt-out');
+  const existing = bypassScenario();
+  existing.grant();
+  assert.equal(await existing.access.hasReviewerAccess(), true);
+  assert.equal(existing.presentation.usePresentationMode(), true, 'existing bypass receives the default on startup');
+  const restarted = bypassScenario('disabled');
+  restarted.grant();
+  assert.equal(await restarted.access.hasReviewerAccess(), true);
+  assert.equal(restarted.presentation.usePresentationMode(), false, 'opt-out survives app restart');
+  assert.equal(await restarted.presentation.activatePresentationMode(code), true, 'manual activation still works');
+  const unavailable = bypassScenario();
+  unavailable.goOffline();
+  assert.equal(await unavailable.access.hasReviewerAccess(), false);
+  assert.equal(unavailable.preference(), null);
+  const storageFailure = bypassScenario(null, true);
+  storageFailure.grant();
+  assert.equal(await storageFailure.access.hasReviewerAccess(), true, 'presentation storage failure cannot remove confirmed bypass access');
+  assert.equal(await storageFailure.access.activateReviewerAccess('valid-bypass'), true);
+  console.log('Presentation mode checks passed: shake, manual code, server-confirmed bypass defaults, existing users, persistent opt-out, storage/offline failures and scan modes.');
 })().catch(error => { console.error(error); process.exitCode = 1; });
