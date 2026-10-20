@@ -1,0 +1,28 @@
+{
+  "verifiedAt": "2026-10-21",
+  "experimentId": "exp46ca5ef93c",
+  "status": "DRAFT",
+  "priceOnly": true,
+  "nativePaywallUnchanged": true,
+  "hostedPaywallAssigned": false,
+  "existingDefaultOfferingsUnchanged": true,
+  "countriesInExperiment": [
+    "FRA",
+    "USA"
+  ],
+  "minimumAppVersion": "1.8.0",
+  "trialDays": 7,
+  "entitlement": "Pro",
+  "offerings": {
+    "49InApp": "ofrngf00fec1c00",
+    "49Onboarding": "ofrng7ae6fdaa71",
+    "39InApp": "ofrng51e7b5b039",
+    "39Onboarding": "ofrngb7ea18de6b"
+  },
+  "activationPending": [
+    "Apple approval for both new subscriptions",
+    "Physical sandbox purchase and restore validation"
+  ],
+  "mobileBuildCreated": false,
+  "storeReviewSubmissionCreated": false
+}

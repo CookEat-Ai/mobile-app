@@ -1,23 +1,28 @@
-# CookEat 1.8.0 — source corrections, October 20, 2026
+# CookEat 1.8.0 — état vérifié le 21 octobre 2026
 
-API 1.10.2, commit `abad58d37301d7fa0da8c92aca86eca49f073252`, deployed to cookeat.info with public health HTTP 200. Docker image `cookeat-api-prod:1.10.2`; previous image `cookeat-api-prod:1.10.1` retained for rollback. No migration required for the additive regeneration history field.
+API 1.10.3 déployée sur cookeat.info : source `5aa301e5b99db740f25bede69c758948978bd270`, image `cookeat-api-prod:1.10.3`, santé HTTP 200, zéro redémarrage après déploiement. Les changements VPS précédents sont préservés par un stash récupérable ; la configuration et l’image 1.10.2 sont conservées pour retour arrière.
 
-Mobile source commit `c258f65f48e59feee2cfdd8ae0f51c1eaee89898` is pushed. The existing uploaded Android 12 / iOS 25 binaries predate the latest source corrections. No new mobile build, OTA update, Store review submission or publication was triggered.
+90 recettes ajoutées sans écraser de document : 32 recettes déjà préparées localement et 58 nouvelles recettes, chacune avec une photo approuvée. Les 58 nouvelles photos ont été générées individuellement avec imagegen. Les 90 fichiers publiés répondent en HTTP 200 et correspondent exactement aux SHA-256 validés. Le catalogue publié compte 1 715 recettes.
 
-## Validation
+## Génération et validation
 
-- Complete API `yarn test`: passed, including 72 synthetic weeks / 504 days and controller checks.
-- Actual published catalogue (1,625 recipes), local MongoDB: 26 configurations, 120 generations, 2,400 meals, passed.
-- HTTP + local MongoDB: 14 generated plans / 280 meals, 8 idempotent restorations, same-week regeneration history and strict-pantry recovery, passed.
-- Reported configuration: 1 person, 5 days, 45 EUR, beginner, oven and microwave, max 60 minutes, African/Italian/Middle Eastern/Thai, halal, pork and milk excluded. Four calorie targets across eight successive weeks each; no overlap with the immediately preceding week in those cases. This guarantee is not generalized to every narrow catalogue.
-- Strict pantry with the screenshot inventory has insufficient compatible recipes; priority pantry succeeds. The mobile recovery CTA explicitly asks to allow supplementary groceries and retains budget, exclusions, equipment, days and household size. User pantry-mode confirmation remains outstanding.
-- Mobile: 17 suites passed; TypeScript passed; lint has 0 errors and 61 existing warnings.
-- iPhone, iPad and Android emulator screenshots visually inspected. Store billing purchase/restore on physical devices remains unverified.
+Cas fourni : 1 personne, 5 jours, 45 EUR, prise de muscle, débutant, cuisine standard + four + micro-ondes, maximum 60 minutes, cuisines africaine/italienne/moyen-orientale/thaïlandaise, halal, porc et lait exclus, placard des captures.
 
-## Store drafts and annual price experiment
+L’audit des données relues en production trouve 63 recettes compatibles : 28 plats et 35 options de petit-déjeuner/collation. Le mode placard strict réussit sans achats supplémentaires. Les produits laitiers restent exclus, même présents dans le placard ; les petits-déjeuners/collations de ce cas sont salés. Les petites quantités d’herbes et d’épices ne bloquent plus la recherche ni la liste de courses. Les ingrédients principaux et les allergènes restent vérifiés.
 
-Four-slide story: meal analysis with accumulated calories and an ingredient circled; weekly recipe planning; budget grocery list; goal. French titles: “Analyse tes repas” and “Planifie ta semaine de repas”. 108 PNGs cover 3 devices and 9 locales/regions. App Store Connect: 18 sets / 72 files, COMPLETE, ordered filenames and source checksums read back. Google Play: all 9 locale drafts saved and read back with 4 ordered phone screenshots; exact file names are recorded in google-story-v3-readback.json.
+- Suite API complète passée ; tests affectés relancés après les références d’aliments crus.
+- Catalogue réel enrichi : 30 configurations, 152 générations, 3 040 repas, passés.
+- Cas strict : 32 semaines / 640 repas, 27,43–44,35 EUR ; aucun repas commun avec la semaine précédente dans ces replays. Ce résultat n’est pas une garantie générale pour chaque petit catalogue.
+- HTTP strict : 14 plannings / 280 repas, 8 restaurations, listes de courses dans 6 langues, zéro achat supplémentaire.
+- Après ajout des photos : TypeScript, 32 semaines / 640 repas et publication additive/idempotente passés.
+- Source mobile `c258f65f48e59feee2cfdd8ae0f51c1eaee89898` inchangée : 17 suites et TypeScript passés ; lint sans erreur, 61 avertissements préexistants.
 
-Annual experiment compares 49.99 EUR/USD and 39.99 EUR/USD using the existing custom paywall. RevenueCat experiment remains DRAFT. Apple products are prepared; Google base-plan configuration is still blocked by the Console save error. No hosted RevenueCat paywall or default offering was substituted.
+## Stores et test annuel
 
-Production fixture creation, review submission, publication, and experiment activation were not performed.
+Les 108 visuels du récit en quatre slides restent préparés pour trois appareils et neuf langues/régions : analyse du repas, planification, courses et budget, objectif. Apple : 72 images COMPLETE dans 18 jeux. Google : 4 images ordonnées dans chacun des 9 brouillons locaux.
+
+Test RevenueCat `exp46ca5ef93c` : prix annuel 49,99 EUR/USD contre 39,99 EUR/USD, mêmes paywalls natifs, même droit Pro, mêmes produits mensuels/hebdomadaires et même essai de sept jours. Les quatre offres utilisent maintenant les nouveaux produits Android correspondants. Les deux variantes sont configurées dans 175 régions par store ; montants EUR/USD exacts, équivalents locaux pour les autres devises. Les essais Apple sont relus dans les 175 régions pour chaque produit. Les forfaits Google et leurs offres d’essai sont actifs.
+
+L’expérience reste DRAFT pour les nouveaux clients France/USA sur app >= 1.8.0 : les deux produits Apple sont READY_TO_SUBMIT, sans approbation Store, et achat/restauration sandbox sur appareil réel restent à vérifier. Aucun paywall hébergé RevenueCat ni offre par défaut n’a été substitué.
+
+Les binaires Android 12 / iOS 25 déjà téléversés précèdent les dernières corrections mobiles. Aucun nouveau build mobile, OTA, envoi en validation ou publication n’a été déclenché.
