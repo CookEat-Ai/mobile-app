@@ -1,0 +1,155 @@
+[
+  {
+    "locale": "en-GB",
+    "images": [
+      "en-US-01-analysis.png",
+      "en-GB-02-planning.png",
+      "en-US-03-budget-shopping.png",
+      "en-US-04-goal.png"
+    ],
+    "expected": [
+      "en-US-01-analysis.png",
+      "en-GB-02-planning.png",
+      "en-US-03-budget-shopping.png",
+      "en-US-04-goal.png"
+    ],
+    "saved": true,
+    "passed": true
+  },
+  {
+    "locale": "fr-FR",
+    "images": [
+      "fr-FR-01-analysis.png",
+      "fr-FR-02-planning.png",
+      "fr-FR-03-budget-shopping.png",
+      "fr-FR-04-goal.png"
+    ],
+    "expected": [
+      "fr-FR-01-analysis.png",
+      "fr-FR-02-planning.png",
+      "fr-FR-03-budget-shopping.png",
+      "fr-FR-04-goal.png"
+    ],
+    "saved": true,
+    "passed": true
+  },
+  {
+    "locale": "en-US",
+    "images": [
+      "en-US-01-analysis.png",
+      "en-US-02-planning.png",
+      "en-US-03-budget-shopping.png",
+      "en-US-04-goal.png"
+    ],
+    "expected": [
+      "en-US-01-analysis.png",
+      "en-US-02-planning.png",
+      "en-US-03-budget-shopping.png",
+      "en-US-04-goal.png"
+    ],
+    "saved": true,
+    "passed": true
+  },
+  {
+    "locale": "de-DE",
+    "images": [
+      "de-DE-01-analysis.png",
+      "de-DE-02-planning.png",
+      "de-DE-03-budget-shopping.png",
+      "de-DE-04-goal.png"
+    ],
+    "expected": [
+      "de-DE-01-analysis.png",
+      "de-DE-02-planning.png",
+      "de-DE-03-budget-shopping.png",
+      "de-DE-04-goal.png"
+    ],
+    "saved": true,
+    "passed": true
+  },
+  {
+    "locale": "es-ES",
+    "images": [
+      "es-ES-01-analysis.png",
+      "es-ES-02-planning.png",
+      "es-ES-03-budget-shopping.png",
+      "es-ES-04-goal.png"
+    ],
+    "expected": [
+      "es-ES-01-analysis.png",
+      "es-ES-02-planning.png",
+      "es-ES-03-budget-shopping.png",
+      "es-ES-04-goal.png"
+    ],
+    "saved": true,
+    "passed": true
+  },
+  {
+    "locale": "es-MX",
+    "images": [
+      "es-MX-01-analysis.png",
+      "es-MX-02-planning.png",
+      "es-MX-03-budget-shopping.png",
+      "es-MX-04-goal.png"
+    ],
+    "expected": [
+      "es-MX-01-analysis.png",
+      "es-MX-02-planning.png",
+      "es-MX-03-budget-shopping.png",
+      "es-MX-04-goal.png"
+    ],
+    "saved": true,
+    "passed": true
+  },
+  {
+    "locale": "pt-BR",
+    "images": [
+      "pt-BR-01-analysis.png",
+      "pt-BR-02-planning.png",
+      "pt-BR-03-budget-shopping.png",
+      "pt-BR-04-goal.png"
+    ],
+    "expected": [
+      "pt-BR-01-analysis.png",
+      "pt-BR-02-planning.png",
+      "pt-BR-03-budget-shopping.png",
+      "pt-BR-04-goal.png"
+    ],
+    "saved": true,
+    "passed": true
+  },
+  {
+    "locale": "en-AU",
+    "images": [
+      "en-US-01-analysis.png",
+      "en-AU-02-planning.png",
+      "en-US-03-budget-shopping.png",
+      "en-US-04-goal.png"
+    ],
+    "expected": [
+      "en-US-01-analysis.png",
+      "en-AU-02-planning.png",
+      "en-US-03-budget-shopping.png",
+      "en-US-04-goal.png"
+    ],
+    "saved": true,
+    "passed": true
+  },
+  {
+    "locale": "en-CA",
+    "images": [
+      "en-US-01-analysis.png",
+      "en-CA-02-planning.png",
+      "en-US-03-budget-shopping.png",
+      "en-US-04-goal.png"
+    ],
+    "expected": [
+      "en-US-01-analysis.png",
+      "en-CA-02-planning.png",
+      "en-US-03-budget-shopping.png",
+      "en-US-04-goal.png"
+    ],
+    "saved": true,
+    "passed": true
+  }
+]

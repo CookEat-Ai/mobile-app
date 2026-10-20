@@ -1,0 +1,362 @@
+[
+  {
+    "locale": "es-MX",
+    "sets": [
+      {
+        "device": "iphone",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      },
+      {
+        "device": "ipad",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  {
+    "locale": "fr-FR",
+    "sets": [
+      {
+        "device": "iphone",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      },
+      {
+        "device": "ipad",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  {
+    "locale": "pt-BR",
+    "sets": [
+      {
+        "device": "iphone",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      },
+      {
+        "device": "ipad",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  {
+    "locale": "en-US",
+    "sets": [
+      {
+        "device": "ipad",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      },
+      {
+        "device": "iphone",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  {
+    "locale": "es-ES",
+    "sets": [
+      {
+        "device": "ipad",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      },
+      {
+        "device": "iphone",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  {
+    "locale": "en-CA",
+    "sets": [
+      {
+        "device": "iphone",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      },
+      {
+        "device": "ipad",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  {
+    "locale": "de-DE",
+    "sets": [
+      {
+        "device": "ipad",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      },
+      {
+        "device": "iphone",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  {
+    "locale": "en-AU",
+    "sets": [
+      {
+        "device": "ipad",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      },
+      {
+        "device": "iphone",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  {
+    "locale": "en-GB",
+    "sets": [
+      {
+        "device": "iphone",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      },
+      {
+        "device": "ipad",
+        "names": [
+          "01-analysis.png",
+          "02-planning.png",
+          "03-budget-shopping.png",
+          "04-goal.png"
+        ],
+        "states": [
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE",
+          "COMPLETE"
+        ],
+        "checksumsMatch": true,
+        "passed": true
+      }
+    ],
+    "passed": true
+  }
+]

@@ -1,0 +1,92 @@
+{
+  "localOnly": true,
+  "actualHttp": true,
+  "actualMongoQuery": true,
+  "productionCatalogueSnapshot": true,
+  "passed": true,
+  "generatedPlans": 14,
+  "restorationChecks": 8,
+  "meals": 280,
+  "results": [
+    {
+      "kind": "new-week",
+      "week": 1,
+      "meals": 20,
+      "elapsedMs": 1949
+    },
+    {
+      "kind": "new-week",
+      "week": 2,
+      "meals": 20,
+      "elapsedMs": 1613
+    },
+    {
+      "kind": "new-week",
+      "week": 3,
+      "meals": 20,
+      "elapsedMs": 4334
+    },
+    {
+      "kind": "new-week",
+      "week": 4,
+      "meals": 20,
+      "elapsedMs": 17971
+    },
+    {
+      "kind": "new-week",
+      "week": 5,
+      "meals": 20,
+      "elapsedMs": 13730
+    },
+    {
+      "kind": "new-week",
+      "week": 6,
+      "meals": 20,
+      "elapsedMs": 11811
+    },
+    {
+      "kind": "new-week",
+      "week": 7,
+      "meals": 20,
+      "elapsedMs": 12567
+    },
+    {
+      "kind": "new-week",
+      "week": 8,
+      "meals": 20,
+      "elapsedMs": 15759
+    },
+    {
+      "kind": "regeneration",
+      "run": 1,
+      "meals": 20
+    },
+    {
+      "kind": "regeneration",
+      "run": 2,
+      "meals": 20
+    },
+    {
+      "kind": "regeneration",
+      "run": 3,
+      "meals": 20
+    },
+    {
+      "kind": "regeneration",
+      "run": 4,
+      "meals": 20
+    },
+    {
+      "kind": "regeneration",
+      "run": 5,
+      "meals": 20
+    },
+    {
+      "kind": "strict-pantry-recovery",
+      "status": 422,
+      "recoveryStatus": 201,
+      "budgetUnchanged": true,
+      "exclusionsUnchanged": true
+    }
+  ]
+}

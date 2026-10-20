@@ -1,0 +1,1092 @@
+{
+  "localOnly": true,
+  "actualMongoQuery": true,
+  "catalogueRecipes": 1625,
+  "scenarios": 26,
+  "generations": 120,
+  "meals": 2400,
+  "passed": true,
+  "rows": [
+    {
+      "case": "reported-case-1800",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 21.43,
+      "elapsedMs": 1512
+    },
+    {
+      "case": "reported-case-1800",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 21.64,
+      "elapsedMs": 1487
+    },
+    {
+      "case": "reported-case-1800",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 26.53,
+      "elapsedMs": 1450
+    },
+    {
+      "case": "reported-case-1800",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 25.62,
+      "elapsedMs": 4429
+    },
+    {
+      "case": "reported-case-1800",
+      "week": 5,
+      "meals": 20,
+      "distinct": 19,
+      "previousWeekOverlap": 0,
+      "cost": 23.33,
+      "elapsedMs": 8067
+    },
+    {
+      "case": "reported-case-1800",
+      "week": 6,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 24.23,
+      "elapsedMs": 1341
+    },
+    {
+      "case": "reported-case-1800",
+      "week": 7,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 26.03,
+      "elapsedMs": 1206
+    },
+    {
+      "case": "reported-case-1800",
+      "week": 8,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 24.62,
+      "elapsedMs": 3284
+    },
+    {
+      "case": "reported-case-2200",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 24.85,
+      "elapsedMs": 1523
+    },
+    {
+      "case": "reported-case-2200",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 26.43,
+      "elapsedMs": 1481
+    },
+    {
+      "case": "reported-case-2200",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 29.1,
+      "elapsedMs": 1323
+    },
+    {
+      "case": "reported-case-2200",
+      "week": 4,
+      "meals": 20,
+      "distinct": 15,
+      "previousWeekOverlap": 0,
+      "cost": 22.69,
+      "elapsedMs": 15506
+    },
+    {
+      "case": "reported-case-2200",
+      "week": 5,
+      "meals": 20,
+      "distinct": 17,
+      "previousWeekOverlap": 0,
+      "cost": 24.94,
+      "elapsedMs": 16340
+    },
+    {
+      "case": "reported-case-2200",
+      "week": 6,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 23.95,
+      "elapsedMs": 9129
+    },
+    {
+      "case": "reported-case-2200",
+      "week": 7,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 34.13,
+      "elapsedMs": 1243
+    },
+    {
+      "case": "reported-case-2200",
+      "week": 8,
+      "meals": 20,
+      "distinct": 18,
+      "previousWeekOverlap": 0,
+      "cost": 26.59,
+      "elapsedMs": 12324
+    },
+    {
+      "case": "reported-case-2550",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 27.42,
+      "elapsedMs": 1553
+    },
+    {
+      "case": "reported-case-2550",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 30.85,
+      "elapsedMs": 1337
+    },
+    {
+      "case": "reported-case-2550",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 32.56,
+      "elapsedMs": 4184
+    },
+    {
+      "case": "reported-case-2550",
+      "week": 4,
+      "meals": 20,
+      "distinct": 15,
+      "previousWeekOverlap": 0,
+      "cost": 24.43,
+      "elapsedMs": 16701
+    },
+    {
+      "case": "reported-case-2550",
+      "week": 5,
+      "meals": 20,
+      "distinct": 16,
+      "previousWeekOverlap": 0,
+      "cost": 28.15,
+      "elapsedMs": 15905
+    },
+    {
+      "case": "reported-case-2550",
+      "week": 6,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 35.47,
+      "elapsedMs": 4279
+    },
+    {
+      "case": "reported-case-2550",
+      "week": 7,
+      "meals": 20,
+      "distinct": 18,
+      "previousWeekOverlap": 0,
+      "cost": 29.83,
+      "elapsedMs": 18885
+    },
+    {
+      "case": "reported-case-2550",
+      "week": 8,
+      "meals": 20,
+      "distinct": 15,
+      "previousWeekOverlap": 0,
+      "cost": 26.52,
+      "elapsedMs": 17752
+    },
+    {
+      "case": "reported-case-3000",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 32.24,
+      "elapsedMs": 1795
+    },
+    {
+      "case": "reported-case-3000",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 37.4,
+      "elapsedMs": 1532
+    },
+    {
+      "case": "reported-case-3000",
+      "week": 3,
+      "meals": 20,
+      "distinct": 16,
+      "previousWeekOverlap": 0,
+      "cost": 30.64,
+      "elapsedMs": 11683
+    },
+    {
+      "case": "reported-case-3000",
+      "week": 4,
+      "meals": 20,
+      "distinct": 15,
+      "previousWeekOverlap": 0,
+      "cost": 32.64,
+      "elapsedMs": 22561
+    },
+    {
+      "case": "reported-case-3000",
+      "week": 5,
+      "meals": 20,
+      "distinct": 14,
+      "previousWeekOverlap": 0,
+      "cost": 29.99,
+      "elapsedMs": 21394
+    },
+    {
+      "case": "reported-case-3000",
+      "week": 6,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 41.27,
+      "elapsedMs": 1657
+    },
+    {
+      "case": "reported-case-3000",
+      "week": 7,
+      "meals": 20,
+      "distinct": 16,
+      "previousWeekOverlap": 0,
+      "cost": 36.15,
+      "elapsedMs": 15876
+    },
+    {
+      "case": "reported-case-3000",
+      "week": 8,
+      "meals": 20,
+      "distinct": 19,
+      "previousWeekOverlap": 0,
+      "cost": 33.74,
+      "elapsedMs": 13331
+    },
+    {
+      "case": "cuisine-italian",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 27.48,
+      "elapsedMs": 880
+    },
+    {
+      "case": "cuisine-italian",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 30.35,
+      "elapsedMs": 932
+    },
+    {
+      "case": "cuisine-italian",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 26.4,
+      "elapsedMs": 1929
+    },
+    {
+      "case": "cuisine-italian",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 29.36,
+      "elapsedMs": 2229
+    },
+    {
+      "case": "cuisine-french",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 30.83,
+      "elapsedMs": 1580
+    },
+    {
+      "case": "cuisine-french",
+      "week": 2,
+      "meals": 20,
+      "distinct": 13,
+      "previousWeekOverlap": 0,
+      "cost": 32.78,
+      "elapsedMs": 3986
+    },
+    {
+      "case": "cuisine-french",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 29.24,
+      "elapsedMs": 1099
+    },
+    {
+      "case": "cuisine-french",
+      "week": 4,
+      "meals": 20,
+      "distinct": 13,
+      "previousWeekOverlap": 0,
+      "cost": 34.44,
+      "elapsedMs": 2419
+    },
+    {
+      "case": "cuisine-mexican",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 34.56,
+      "elapsedMs": 1221
+    },
+    {
+      "case": "cuisine-mexican",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 34.82,
+      "elapsedMs": 1036
+    },
+    {
+      "case": "cuisine-mexican",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 34.84,
+      "elapsedMs": 1130
+    },
+    {
+      "case": "cuisine-mexican",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 35.97,
+      "elapsedMs": 1665
+    },
+    {
+      "case": "cuisine-indian",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 29.24,
+      "elapsedMs": 1425
+    },
+    {
+      "case": "cuisine-indian",
+      "week": 2,
+      "meals": 20,
+      "distinct": 17,
+      "previousWeekOverlap": 0,
+      "cost": 29.49,
+      "elapsedMs": 3970
+    },
+    {
+      "case": "cuisine-indian",
+      "week": 3,
+      "meals": 20,
+      "distinct": 15,
+      "previousWeekOverlap": 0,
+      "cost": 25.74,
+      "elapsedMs": 9358
+    },
+    {
+      "case": "cuisine-indian",
+      "week": 4,
+      "meals": 20,
+      "distinct": 13,
+      "previousWeekOverlap": 0,
+      "cost": 24.95,
+      "elapsedMs": 10285
+    },
+    {
+      "case": "cuisine-mediterranean",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 35.01,
+      "elapsedMs": 1147
+    },
+    {
+      "case": "cuisine-mediterranean",
+      "week": 2,
+      "meals": 20,
+      "distinct": 18,
+      "previousWeekOverlap": 0,
+      "cost": 37.67,
+      "elapsedMs": 3323
+    },
+    {
+      "case": "cuisine-mediterranean",
+      "week": 3,
+      "meals": 20,
+      "distinct": 16,
+      "previousWeekOverlap": 0,
+      "cost": 30.92,
+      "elapsedMs": 8117
+    },
+    {
+      "case": "cuisine-mediterranean",
+      "week": 4,
+      "meals": 20,
+      "distinct": 13,
+      "previousWeekOverlap": 0,
+      "cost": 35.92,
+      "elapsedMs": 10153
+    },
+    {
+      "case": "cuisine-middle-eastern",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 33.13,
+      "elapsedMs": 782
+    },
+    {
+      "case": "cuisine-middle-eastern",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 10,
+      "cost": 33.52,
+      "elapsedMs": 1094
+    },
+    {
+      "case": "cuisine-middle-eastern",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 10,
+      "cost": 33,
+      "elapsedMs": 1374
+    },
+    {
+      "case": "cuisine-middle-eastern",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 10,
+      "cost": 34.77,
+      "elapsedMs": 1862
+    },
+    {
+      "case": "cuisine-japanese",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 31.34,
+      "elapsedMs": 1005
+    },
+    {
+      "case": "cuisine-japanese",
+      "week": 2,
+      "meals": 20,
+      "distinct": 17,
+      "previousWeekOverlap": 0,
+      "cost": 31.12,
+      "elapsedMs": 3529
+    },
+    {
+      "case": "cuisine-japanese",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 30.88,
+      "elapsedMs": 1268
+    },
+    {
+      "case": "cuisine-japanese",
+      "week": 4,
+      "meals": 20,
+      "distinct": 17,
+      "previousWeekOverlap": 0,
+      "cost": 32.71,
+      "elapsedMs": 5113
+    },
+    {
+      "case": "cuisine-chinese",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 36.57,
+      "elapsedMs": 1539
+    },
+    {
+      "case": "cuisine-chinese",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 39.31,
+      "elapsedMs": 1138
+    },
+    {
+      "case": "cuisine-chinese",
+      "week": 3,
+      "meals": 20,
+      "distinct": 17,
+      "previousWeekOverlap": 0,
+      "cost": 36.78,
+      "elapsedMs": 10960
+    },
+    {
+      "case": "cuisine-chinese",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 40.88,
+      "elapsedMs": 5636
+    },
+    {
+      "case": "cuisine-thai",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 35.54,
+      "elapsedMs": 1017
+    },
+    {
+      "case": "cuisine-thai",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 39.43,
+      "elapsedMs": 891
+    },
+    {
+      "case": "cuisine-thai",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 35.66,
+      "elapsedMs": 2817
+    },
+    {
+      "case": "cuisine-thai",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 39.57,
+      "elapsedMs": 4066
+    },
+    {
+      "case": "cuisine-american",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 30.12,
+      "elapsedMs": 750
+    },
+    {
+      "case": "cuisine-american",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 9,
+      "cost": 30.61,
+      "elapsedMs": 1043
+    },
+    {
+      "case": "cuisine-american",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 9,
+      "cost": 29.19,
+      "elapsedMs": 1144
+    },
+    {
+      "case": "cuisine-american",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 10,
+      "cost": 30.12,
+      "elapsedMs": 1491
+    },
+    {
+      "case": "cuisine-african",
+      "week": 1,
+      "meals": 20,
+      "distinct": 19,
+      "previousWeekOverlap": 0,
+      "cost": 30.05,
+      "elapsedMs": 1420
+    },
+    {
+      "case": "cuisine-african",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 9,
+      "cost": 33.03,
+      "elapsedMs": 1153
+    },
+    {
+      "case": "cuisine-african",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 10,
+      "cost": 29.67,
+      "elapsedMs": 1442
+    },
+    {
+      "case": "cuisine-african",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 9,
+      "cost": 32.91,
+      "elapsedMs": 1716
+    },
+    {
+      "case": "cuisine-international",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 28.53,
+      "elapsedMs": 5795
+    },
+    {
+      "case": "cuisine-international",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 27.92,
+      "elapsedMs": 5533
+    },
+    {
+      "case": "cuisine-international",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 31.39,
+      "elapsedMs": 7537
+    },
+    {
+      "case": "cuisine-international",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 33.34,
+      "elapsedMs": 5857
+    },
+    {
+      "case": "3-days-fast",
+      "week": 1,
+      "meals": 12,
+      "distinct": 12,
+      "previousWeekOverlap": 0,
+      "cost": 14.7,
+      "elapsedMs": 900
+    },
+    {
+      "case": "3-days-fast",
+      "week": 2,
+      "meals": 12,
+      "distinct": 12,
+      "previousWeekOverlap": 0,
+      "cost": 16.53,
+      "elapsedMs": 962
+    },
+    {
+      "case": "3-days-fast",
+      "week": 3,
+      "meals": 12,
+      "distinct": 12,
+      "previousWeekOverlap": 0,
+      "cost": 16.84,
+      "elapsedMs": 646
+    },
+    {
+      "case": "3-days-fast",
+      "week": 4,
+      "meals": 12,
+      "distinct": 12,
+      "previousWeekOverlap": 0,
+      "cost": 21.33,
+      "elapsedMs": 660
+    },
+    {
+      "case": "3-days-medium",
+      "week": 1,
+      "meals": 12,
+      "distinct": 12,
+      "previousWeekOverlap": 0,
+      "cost": 17.13,
+      "elapsedMs": 903
+    },
+    {
+      "case": "3-days-medium",
+      "week": 2,
+      "meals": 12,
+      "distinct": 12,
+      "previousWeekOverlap": 0,
+      "cost": 14.83,
+      "elapsedMs": 854
+    },
+    {
+      "case": "3-days-medium",
+      "week": 3,
+      "meals": 12,
+      "distinct": 12,
+      "previousWeekOverlap": 0,
+      "cost": 17.98,
+      "elapsedMs": 813
+    },
+    {
+      "case": "3-days-medium",
+      "week": 4,
+      "meals": 12,
+      "distinct": 12,
+      "previousWeekOverlap": 0,
+      "cost": 18.65,
+      "elapsedMs": 642
+    },
+    {
+      "case": "7-days-fast",
+      "week": 1,
+      "meals": 28,
+      "distinct": 28,
+      "previousWeekOverlap": 0,
+      "cost": 37.5,
+      "elapsedMs": 1902
+    },
+    {
+      "case": "7-days-fast",
+      "week": 2,
+      "meals": 28,
+      "distinct": 28,
+      "previousWeekOverlap": 0,
+      "cost": 45.3,
+      "elapsedMs": 1062
+    },
+    {
+      "case": "7-days-fast",
+      "week": 3,
+      "meals": 28,
+      "distinct": 28,
+      "previousWeekOverlap": 0,
+      "cost": 41.46,
+      "elapsedMs": 2473
+    },
+    {
+      "case": "7-days-fast",
+      "week": 4,
+      "meals": 28,
+      "distinct": 28,
+      "previousWeekOverlap": 0,
+      "cost": 41.31,
+      "elapsedMs": 3244
+    },
+    {
+      "case": "7-days-medium",
+      "week": 1,
+      "meals": 28,
+      "distinct": 28,
+      "previousWeekOverlap": 0,
+      "cost": 38.73,
+      "elapsedMs": 1909
+    },
+    {
+      "case": "7-days-medium",
+      "week": 2,
+      "meals": 28,
+      "distinct": 28,
+      "previousWeekOverlap": 0,
+      "cost": 41.23,
+      "elapsedMs": 1711
+    },
+    {
+      "case": "7-days-medium",
+      "week": 3,
+      "meals": 28,
+      "distinct": 28,
+      "previousWeekOverlap": 0,
+      "cost": 52.4,
+      "elapsedMs": 1692
+    },
+    {
+      "case": "7-days-medium",
+      "week": 4,
+      "meals": 28,
+      "distinct": 28,
+      "previousWeekOverlap": 0,
+      "cost": 42.58,
+      "elapsedMs": 1947
+    },
+    {
+      "case": "diet-none",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 27.96,
+      "elapsedMs": 1473
+    },
+    {
+      "case": "diet-none",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 28.88,
+      "elapsedMs": 1229
+    },
+    {
+      "case": "diet-none",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 31.64,
+      "elapsedMs": 1144
+    },
+    {
+      "case": "diet-none",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 41.92,
+      "elapsedMs": 1205
+    },
+    {
+      "case": "diet-vegetarian",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 25.93,
+      "elapsedMs": 1304
+    },
+    {
+      "case": "diet-vegetarian",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 31.91,
+      "elapsedMs": 1051
+    },
+    {
+      "case": "diet-vegetarian",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 32.24,
+      "elapsedMs": 888
+    },
+    {
+      "case": "diet-vegetarian",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 30.23,
+      "elapsedMs": 1728
+    },
+    {
+      "case": "diet-vegan",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 25.2,
+      "elapsedMs": 1108
+    },
+    {
+      "case": "diet-vegan",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 31.56,
+      "elapsedMs": 802
+    },
+    {
+      "case": "diet-vegan",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 34.26,
+      "elapsedMs": 974
+    },
+    {
+      "case": "diet-vegan",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 27.74,
+      "elapsedMs": 1093
+    },
+    {
+      "case": "diet-pescatarian",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 27.54,
+      "elapsedMs": 1318
+    },
+    {
+      "case": "diet-pescatarian",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 29.48,
+      "elapsedMs": 1539
+    },
+    {
+      "case": "diet-pescatarian",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 31.4,
+      "elapsedMs": 2063
+    },
+    {
+      "case": "diet-pescatarian",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 37.72,
+      "elapsedMs": 1318
+    },
+    {
+      "case": "two-people",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 55.2,
+      "elapsedMs": 1853
+    },
+    {
+      "case": "two-people",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 62.69,
+      "elapsedMs": 1582
+    },
+    {
+      "case": "two-people",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 72.32,
+      "elapsedMs": 1597
+    },
+    {
+      "case": "two-people",
+      "week": 4,
+      "meals": 20,
+      "distinct": 13,
+      "previousWeekOverlap": 0,
+      "cost": 43.55,
+      "elapsedMs": 19954
+    },
+    {
+      "case": "non-consecutive-days",
+      "week": 1,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 26.44,
+      "elapsedMs": 1729
+    },
+    {
+      "case": "non-consecutive-days",
+      "week": 2,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 27.85,
+      "elapsedMs": 1251
+    },
+    {
+      "case": "non-consecutive-days",
+      "week": 3,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 31.47,
+      "elapsedMs": 1137
+    },
+    {
+      "case": "non-consecutive-days",
+      "week": 4,
+      "meals": 20,
+      "distinct": 20,
+      "previousWeekOverlap": 0,
+      "cost": 40.75,
+      "elapsedMs": 1403
+    }
+  ],
+  "failures": []
+}

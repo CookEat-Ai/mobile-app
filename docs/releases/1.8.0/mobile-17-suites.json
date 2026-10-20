@@ -1,0 +1,87 @@
+[
+  {
+    "script": "test:goal-timeline",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:planning-organization",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:planning-loading",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:planned-meal-navigation",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:planning-configuration",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:pantry-scan",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:onboarding-planning",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:response-cache",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:meals-cache",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:cooking-preferences",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:personal-recipe",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:meal-tracking",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:notifications",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:chat-interactions",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:visual-system",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:photo-reveal",
+    "passed": true,
+    "exitCode": 0
+  },
+  {
+    "script": "test:responsive-layout",
+    "passed": true,
+    "exitCode": 0
+  }
+]

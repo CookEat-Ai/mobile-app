@@ -1,0 +1,40 @@
+{
+  "version": "1.10.2",
+  "commit": "abad58d37301d7fa0da8c92aca86eca49f073252",
+  "deployedAt": "2026-10-20T19:31:16.901060+00:00",
+  "host": "cookeat.info",
+  "container": "cookeat-api-prod",
+  "image": "cookeat-api-prod:1.10.2",
+  "publicHealth": {
+    "url": "https://cookeat.info/api/health",
+    "status": 200,
+    "body": {
+      "status": "ok"
+    }
+  },
+  "connections": [
+    "MongoDB connected",
+    "Redis connected"
+  ],
+  "previousCommit": "9461059241b59b5f80e8f93144159ca8124b6554",
+  "rollbackImage": "cookeat-api-prod:1.10.1",
+  "rollbackCompose": "/root/cookeat-api-compose-before-1.10.2-20261020.yml",
+  "vpsInitialGitStatus": "clean",
+  "vpsBranch": "release/production-photo-1.10.2",
+  "mobileBuildCreated": false,
+  "storeSubmissionCreated": false,
+  "budgetSmoke": {
+    "route": "/api/meal-plans/budget-options",
+    "country": "FR",
+    "currency": "EUR",
+    "servings": 1,
+    "days": 5,
+    "minimum": 25,
+    "maximum": 125,
+    "step": 5,
+    "horizonDays": 5,
+    "status": 200
+  },
+  "postDeploymentRestartCount": 0,
+  "vpsConfigChange": "docker-compose.prod.yml API image pinned to 1.10.2; previous compose backed up"
+}
