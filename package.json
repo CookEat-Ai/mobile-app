@@ -16,7 +16,7 @@
     "update:preview": "sh ./scripts/eas-update-with-sentry.sh preview preview",
     "test:goal-timeline": "node scripts/test-goal-timeline.cjs",
     "test:planning-organization": "node scripts/test-planning-organization.cjs && node scripts/test-planning-display.cjs && node scripts/test-planning-organizer-interactions.cjs && node scripts/test-planning-time.cjs",
-    "test:planning-loading": "node scripts/test-planning-loading.cjs",
+    "test:planning-loading": "node scripts/test-planning-loading.cjs && node scripts/test-planning-pantry-recovery.cjs",
     "test:planned-meal-navigation": "node scripts/test-planned-meal-navigation.cjs",
     "test:planning-configuration": "node scripts/test-planning-configuration.cjs && node scripts/test-planning-home-deletion.cjs",
     "test:pantry-scan": "node scripts/test-pantry-scan.cjs",

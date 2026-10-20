@@ -2391,7 +2391,8 @@
     "owned": "Já em casa",
     "shoppingHelp": "Os alimentos que você tem estão marcados. Desmarque se precisar de mais.",
     "coverage": "Você tem {{owned}} de {{required}} ingredientes",
-    "categories": "Choose by category"
+    "categories": "Choose by category",
+    "strictRecovery": "As compras extras mantêm seu orçamento, dieta e exclusões. Seus ingredientes continuam sendo prioridade."
   },
   "planningSlots": {
     "elapsed": "Horário passado",

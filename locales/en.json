@@ -2389,7 +2389,8 @@
     "owned": "Already at home",
     "shoppingHelp": "Foods you have are checked. Uncheck them if you need more.",
     "coverage": "You have {{owned}} of {{required}} ingredients",
-    "categories": "Choose by category"
+    "categories": "Choose by category",
+    "strictRecovery": "Extra groceries keep your budget, diet and exclusions. Your ingredients stay the priority."
   },
   "planningSlots": {
     "elapsed": "Meal time has passed",

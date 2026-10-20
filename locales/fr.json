@@ -2395,7 +2395,8 @@
     "owned": "Déjà chez toi",
     "shoppingHelp": "Les ingrédients déjà chez toi sont cochés. Décoche-les s’il t’en manque.",
     "coverage": "Tu as {{owned}} ingrédients sur {{required}}",
-    "categories": "Choisir par catégorie"
+    "categories": "Choisir par catégorie",
+    "strictRecovery": "Les achats complémentaires gardent ton budget, ton régime et tes exclusions. Tes ingrédients restent prioritaires."
   },
   "planningSlots": {
     "elapsed": "Horaire passé",

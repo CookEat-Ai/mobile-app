@@ -2391,7 +2391,8 @@
     "owned": "Schon vorhanden",
     "shoppingHelp": "Vorhandene Lebensmittel sind abgehakt. Entferne den Haken, wenn du mehr brauchst.",
     "coverage": "Du hast {{owned}} von {{required}} Zutaten",
-    "categories": "Choose by category"
+    "categories": "Choose by category",
+    "strictRecovery": "Zusätzliche Einkäufe behalten dein Budget, deine Ernährung und Ausschlüsse bei. Deine Vorräte haben weiter Vorrang."
   },
   "planningSlots": {
     "elapsed": "Essenszeit vorbei",

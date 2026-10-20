@@ -44,7 +44,7 @@ function harness(file, exportName, dependencies = {}) {
   return { render(props) { cursor = 0; const tree = exports[exportName](props); while (effects.length) effects.shift()(); return tree; }, unmount() { for (const cleanup of cleanups.values()) cleanup?.(); } };
 }
 function all(tree, type) { if (!tree || typeof tree !== 'object') return []; return [...(tree.type === type ? [tree] : []), ...[tree.props?.children].flat(Infinity).flatMap(child => all(child, type))]; }
-function text(tree) { if (typeof tree === 'string') return tree; if (!tree || typeof tree !== 'object') return ''; return [tree.props?.children].flat(Infinity).map(text).join(''); }
+function text(tree) { if (typeof tree === 'string' || typeof tree === 'number') return String(tree); if (!tree || typeof tree !== 'object') return ''; return [tree.props?.children].flat(Infinity).map(text).join(''); }
 const button = (tree, label) => all(tree, 'Button').find(node => text(node) === label);
 (async () => {
   const yesterday = service.shiftTrackingDate(service.trackingDateKey(), -1);
@@ -154,7 +154,13 @@ const button = (tree, label) => all(tree, 'Button').find(node => text(node) === 
   assert(all(mainScroll,'Text').some(node=>text(node)==='tracking.revealing'),'recognition progress scrolls with the full sheet');
   assert(button(mainScroll,'tracking.buildingSummary'),'pending footer scrolls with the entire sheet');
   assert(!button(progressTree,'tracking.skip'),'skip is removed');
-  nutrientEditor.unmount(); ui.unmount(); route.unmount(); edit.unmount();
+  const summary = harness('components/tracking/MealNutritionSummary.tsx', 'MealNutritionSummary', {'react-native-svg': {__esModule:true, default:'Svg', Circle:'Circle'}});
+  const running = summary.render({nutrition:{calories:411,proteins:15,carbs:80,fats:2},partial:true,recognizing:true,compact:true});
+  assert(all(running,'Text').some(node=>text(node)==='411'),'recognized calories remain visible while the next ingredient is circled');
+  const cumulative = summary.render({nutrition:{calories:625,proteins:55,carbs:80,fats:7},partial:true,recognizing:true,compact:true});
+  assert(all(cumulative,'Text').some(node=>text(node)==='625'),'recognized calories accumulate during analysis');
+  assert(!text(cumulative).includes('+ ?'),'no unknown-calorie placeholder');
+  summary.unmount(); nutrientEditor.unmount(); ui.unmount(); route.unmount(); edit.unmount();
   await service.deleteTrackedMeal('manual-user', 'stable-id'); assert.equal((await service.loadTrackedMeals('manual-user')).length, 0);
   console.log('Manual tracking: search without photo, category/quantity validation, selected day, totals, error recovery, duplicate taps, persisted edit/delete and user isolation passed.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

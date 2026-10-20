@@ -19,7 +19,7 @@ import { schedulePlanningReview } from '../../services/planningReview';
 import { apiService } from '../../services/api';
 import { loadFitnessProfile, fitnessProfileToPlanningPreferences, type FitnessGoal } from '../../services/fitnessProfile';
 import { profileForPlanningGoal } from '../../services/planningGoal';
-import { dailyMealsForDays, isCompleteWeeklyPlan, normalizeCookingDays, planningStartKey, type PlanningDiet } from '../../services/weeklyPlanning';
+import { dailyMealsForDays, loadPlanningGenerationSettings, savePlanningGenerationSettings, isCompleteWeeklyPlan, normalizeCookingDays, planningStartKey, type PlanningDiet } from '../../services/weeklyPlanning';
 
 type Config = {
   goal?: FitnessGoal;
@@ -46,6 +46,8 @@ export default function PlanningLoadingScreen() {
   const { subscriptionStatus, isLoading: subscriptionLoading } = useSubscription();
   const [error, setError] = useState<string | null>(null);
   const started = useRef(false);
+  const [pantryRecovery, setPantryRecovery] = useState(false);
+  const [allowShopping, setAllowShopping] = useState(false);
 
   useEffect(() => {
     if (subscriptionLoading || started.current) return;
@@ -83,10 +85,13 @@ export default function PlanningLoadingScreen() {
             diet: config.diet ?? profilePreferences.diet,
             excludedIngredients: config.excludedIngredients || [],
             pantryIngredients: config.pantryIngredients || [],
-            pantryMode: config.pantryMode || 'priority',
+            pantryMode: allowShopping ? 'priority' : config.pantryMode || 'priority',
           },
         });
-        if (!isCompleteWeeklyPlan(response.data?.plan)) throw new Error(response.error || t('planning.errors.create'));
+        if (!isCompleteWeeklyPlan(response.data?.plan)) {
+          setPantryRecovery(!allowShopping && config.pantryMode === 'strict' && response.status === 422);
+          throw new Error(response.error || t('planning.errors.create'));
+        }
         invalidatePlanning();
         analytics.track('meal_plan_created', { plan_id: response.data.plan._id, meal_count: response.data.plan.meals.length, cooking_days: cookingDays.join(',') });
         if (!await finishLoadingBar(generationStartedAt)) return;
@@ -98,7 +103,7 @@ export default function PlanningLoadingScreen() {
         await feedback.error();
       }
     })();
-  }, [rawConfig, replace, subscriptionLoading, subscriptionStatus.isSubscribed, t, finishLoadingBar, resetLoadingBar]);
+  }, [allowShopping, rawConfig, replace, subscriptionLoading, subscriptionStatus.isSubscribed, t, finishLoadingBar, resetLoadingBar]);
 
   if (!error) return <View style={{ flex: 1 }}><PlanningFlowHeader /><View style={{ flex: 1 }}><PlanningLoadingView ready={loadingReady} onComplete={completeLoadingBar} /></View></View>;
 
@@ -109,6 +114,7 @@ export default function PlanningLoadingScreen() {
         <View style={styles.errorIcon}><Ionicons name="alert-circle-outline" size={32} color={designTheme.danger} /></View>
         <Text style={styles.title}>{t('planningLoading.error')}</Text>
         <Text style={styles.errorText}>{error}</Text>
+        {pantryRecovery && <><Text style={[styles.errorText,{color:designTheme.muted}]}>{t('planningPantry.strictRecovery')}</Text><TouchableOpacity style={styles.button} onPress={() => {started.current=false;setError(null);setPantryRecovery(false);setAllowShopping(true);void loadPlanningGenerationSettings().then(settings => savePlanningGenerationSettings({...settings,pantryMode:'priority'})).catch(()=>undefined);}}><Text style={styles.buttonText}>{t('planningPantry.allowShopping')}</Text></TouchableOpacity></>}
         <TouchableOpacity style={styles.button} onPress={() => router.back()}><Text style={styles.buttonText}>{t('common.back')}</Text></TouchableOpacity>
       </View>
     </LinearGradient>
