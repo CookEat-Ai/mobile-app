@@ -809,9 +809,9 @@ class ApiService {
     }, 12000, readOptions);
   }
 
-  async getPlanningBudgetOptions(servings:number) {
+  async getPlanningBudgetOptions(servings:number, days = 7) {
     const locale=Localization.getLocales()[0];
-    return this.request<{country:string;currency:string;servings:number;minimum:number;maximum:number;step:number;defaultAmount:number;horizonDays:number}>(`/meal-plans/budget-options?servings=${servings}&country=${encodeURIComponent(locale?.regionCode||'FR')}&currency=${encodeURIComponent(locale?.currencyCode||'EUR')}`);
+    return this.request<{country:string;currency:string;servings:number;minimum:number;maximum:number;step:number;defaultAmount:number;horizonDays:number}>(`/meal-plans/budget-options?servings=${servings}&days=${days}&country=${encodeURIComponent(locale?.regionCode||'FR')}&currency=${encodeURIComponent(locale?.currencyCode||'EUR')}`);
   }
 
   async getMealPlan(userId: string, weekStart?: string, preview = false, readOptions: ReadOptions = {}) {

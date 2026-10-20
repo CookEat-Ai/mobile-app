@@ -9,6 +9,8 @@ function load(file, dependencies) {
 }
 const layout = load('constants/Layout.ts', { 'react-native': { Dimensions: { get: () => ({ width: 390, height: 844 }), addEventListener() {} }, PixelRatio: { roundToNearestPixel: n => n }, Platform: { OS: 'ios' } } });
 const { contentColumn } = load('hooks/useResponsive.ts', { react: { useMemo: f => f() }, 'react-native': {}, '../constants/Layout': layout });
+assert.equal(layout.FORM_CONTENT_MAX_WIDTH,760,'tablet forms keep comfortable side margins');
+assert.equal(layout.CONTENT_MAX_WIDTH,1040,'wide tablet content remains bounded');
 for (const [width, height, columns] of [[320,568,1],[390,844,1],[430,932,1],[744,1133,2],[768,1024,2],[834,1210,2],[1032,1376,3],[507,1210,1]]) {
   const info = layout.buildResponsiveInfo({ width, height });
   const columnWidth = Math.min(width, contentColumn().maxWidth);
@@ -16,7 +18,7 @@ for (const [width, height, columns] of [[320,568,1],[390,844,1],[430,932,1],[744
   assert.equal(info.columns, columns);
   assert(info.layoutWidth <= 560, 'wide content must not balloon proportional illustrations');
   assert(info.font(30) <= 33.6);
-  assert.equal(info.gutter, width >= 1024 ? 48 : width >= 744 ? 40 : width <= 360 ? 16 : 20);
+  assert.equal(info.gutter, width >= 1024 ? 72 : width >= 744 ? 56 : width <= 360 ? 16 : 20);
   const cardWidth = (columnWidth - 2 * info.gutter - (columns - 1) * 16) / columns;
   assert(cardWidth >= 250, 'each recipe tile remains readable');
 }

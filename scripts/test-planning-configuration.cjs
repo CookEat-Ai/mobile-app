@@ -34,7 +34,7 @@ assert.equal(pantry.normalizePantryIngredients(['Œufs', 'Oeufs']).length, 1, 't
 const { planningConfiguration, planningStepAfterScan, planningSteps, PLANNING_STEPS, planningChoiceDraft, planningStepCanContinue } = load('services/planningConfiguration.ts', { './planningPantry': pantry });
 assert.equal(planningSteps(false).join(','), PLANNING_STEPS.join(','));
 assert.equal(planningSteps(true).join(','), PLANNING_STEPS.join(','));
-assert.equal(PLANNING_STEPS.slice(0,4).join(','), 'goal,servings,mealBudget,days');
+assert.equal(PLANNING_STEPS.slice(0,4).join(','), 'goal,servings,days,mealBudget');
 const nutrition = load('services/nutritionModel.ts');
 const { profileForPlanningGoal } = load('services/planningGoal.ts', { './nutritionModel': nutrition });
 const profile = { goal: 'lose_weight', currentWeightKg: 75, nutritionWeightKg: 75, targetWeightKg: 65, targetChangeKg: 10, durationWeeks: 0, dailyCalorieAdjustment: -200, sex: 'male', age: 30, heightCm: 180, activityLevel: 'light', trainingDays: 3 };

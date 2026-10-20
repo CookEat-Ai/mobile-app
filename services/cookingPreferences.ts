@@ -8,7 +8,7 @@ export function normalizeCookingLevel(value: unknown): CookingLevel {
 export function normalizeMealBudget(value: unknown): MealBudget {
   return MEAL_BUDGETS.includes(value as MealBudget) ? value as MealBudget : 'budget_medium';
 }
-export const KITCHEN_EQUIPMENT = ['oven', 'airfryer', 'microwave', 'blender', 'robot'] as const;
+export const KITCHEN_EQUIPMENT = ['oven', 'airfryer', 'fryer', 'microwave', 'blender', 'robot'] as const;
 /** An explicit basic kitchen has a stove, pan and pot, without extra appliances. */
 export function normalizeEquipments(value: unknown): string[] {
   if (!Array.isArray(value)) return [];

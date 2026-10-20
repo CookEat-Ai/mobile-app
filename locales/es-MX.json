@@ -275,7 +275,7 @@
       },
       "cookingTime": {
         "less_than_30_minutes": "Menos de 30 minutos",
-        "between_30_minutes_and_1_hour": "De 30 a 60 minutos",
+        "between_30_minutes_and_1_hour": "Menos de 60 minutos",
         "more_than_1_hour": "Más de una hora"
       },
       "diet": {
@@ -721,7 +721,7 @@
       "duration": {
         "all": "Me da igual",
         "fast": "Menos de 30 min",
-        "medium": "De 30 a 60 min"
+        "medium": "Menos de 60 min"
       },
       "nextPlanNotice": "Estos ajustes se aplicarán a tu próximo plan.",
       "save": "Guardar ajustes"
@@ -1483,7 +1483,7 @@
       "evening": "Noche",
       "weekend": "Fin de semana",
       "less_than_30_minutes": "Menos de 30 minutos",
-      "between_30_minutes_and_1_hour": "Entre 30 minutos y 1 hora",
+      "between_30_minutes_and_1_hour": "Menos de 60 minutos",
       "more_than_1_hour": "Más de 1 hora",
       "fridge_empty": "Casi siempre vacío 😅",
       "fridge_classic": "Normal",
@@ -1567,7 +1567,8 @@
       "commit_all_in": "Voy con todo, sí lo voy a cumplir",
       "commit_serious": "En serio, empiezo ahora",
       "commit_try": "Lo voy a intentar",
-      "commit_unsure": "Todavía no estoy seguro"
+      "commit_unsure": "Todavía no estoy seguro",
+      "equipment_fryer": "Freidora"
     },
     "entryFeature": {
       "question": "¿Qué te trae a CookEat?",
@@ -1886,7 +1887,8 @@
     "generatingRecipe": "Generando receta...",
     "searchIngredientPlaceholder": "Buscar un ingrediente",
     "noIngredientFound": "Ningún ingrediente coincide con tu búsqueda",
-    "allIngredientsAdded": "Ya agregaste todos los ingredientes de esta categoría"
+    "allIngredientsAdded": "Ya agregaste todos los ingredientes de esta categoría",
+    "equipment_fryer": "Freidora"
   },
   "micro": {
     "permissionTitle": "Permiso para usar el micrófono",
@@ -2610,14 +2612,16 @@
     "less": "Reducir presupuesto",
     "more": "Aumentar presupuesto",
     "amount": "Presupuesto semanal total",
-    "perPerson": "{{amount}} por persona durante 7 días",
+    "perPerson": "{{amount}} por persona para los días elegidos",
     "range": "De {{minimum}} a {{maximum}} en total",
     "estimateNote": "Precios medios aproximados de los ingredientes consumidos, adaptados al país y la moneda. Comprar paquetes enteros puede costar más.",
     "peopleNote": "El siguiente presupuesto es el total para todas estas personas.",
     "cap": "Presupuesto total elegido: {{amount}}",
     "over": "La estimación supera tu presupuesto de {{amount}} tras los cambios.",
-    "totalForPeople_one": "Presupuesto total del hogar · {{count}} persona",
-    "totalForPeople_other": "Presupuesto total del hogar · {{count}} personas"
+    "totalForPeople_one": "Presupuesto total para {{count}} persona",
+    "totalForPeople_other": "Presupuesto total para {{count}} personas",
+    "totalDays_one": "Presupuesto para {{count}} día",
+    "totalDays_other": "Presupuesto para {{count}} días"
   },
   "mealImport": {
     "add": "Importar receta",

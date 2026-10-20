@@ -97,6 +97,7 @@ export default function RecipeSummaryScreen() {
   const EQUIPMENTS = useMemo(() => [
     { id: 'oven', label: t('recipeSummary.equipment_oven') },
     { id: 'airfryer', label: t('recipeSummary.equipment_airfryer') },
+    { id: 'fryer', label: t('recipeSummary.equipment_fryer') },
     { id: 'microwave', label: t('recipeSummary.equipment_microwave') },
     { id: 'blender', label: t('recipeSummary.equipment_blender') },
     { id: 'robot', label: t('recipeSummary.equipment_robot') },

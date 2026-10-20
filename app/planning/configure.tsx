@@ -166,7 +166,7 @@ export default function ConfigurePlanningScreen() {
           <Text accessible={false} style={styles.goalEmoji}>{GOAL_EMOJI[item]}</Text><Text style={styles.goalName}>{t(`fitnessOnboarding.options.goal.${item}`)}</Text>
           {goal === item && <View style={styles.cuisineCheck}><Ionicons name="checkmark-circle" size={22} color={theme.yellow} /></View>}
         </TouchableOpacity>)}</View>}
-        {step === 'days' && <CookingDaysPicker weekStart={weekStart} value={selectedDays} onChange={setSelectedDays} />}
+        {step === 'days' && <CookingDaysPicker weekStart={weekStart} value={selectedDays} onChange={days => { setSelectedDays(days); setWeeklyBudget(undefined); setBudgetRegion(null); }} />}
         <View style={step === 'ingredients' && pantryStage === 'review' ? undefined : styles.hidden}>
           <PlanningPantry value={pantry} onChange={value => { setPantry(value); setUseIngredients(value.pantryIngredients.length > 0); }} onConfirm={confirmPantry} active={step === 'ingredients'} />
         </View>
@@ -178,11 +178,10 @@ export default function ConfigurePlanningScreen() {
           <Text style={appStyles.subtitle}>{t('pantryReview.keptCount', { count: pantry.pantryIngredients.length })}</Text>
         </View>}
         {step === 'duration' && <View style={styles.choices}>{(['fast', 'medium', 'all'] as const).map(item => <Choice key={item} emoji={{ fast: '⚡️', medium: '🍳', all: '👨‍🍳' }[item]} selected={duration === item} title={t(`planning.settings.duration.${item}`)} onPress={() => chooseAndAdvance(() => setDuration(item))} />)}</View>}
-        {step === 'cookingLevel' && <View style={styles.choices}><Text style={appStyles.subtitle}>{t('cookingPreferences.levelSubtitle')}</Text>{COOKING_LEVELS.map(item => <Choice key={item} emoji={{ beginner: '🍳', medium: '🥘', advanced: '👨‍🍳' }[item]} selected={cookingLevel === item} title={t(`onboarding.formQuestions.${item}`)} onPress={() => chooseAndAdvance(() => { setCookingLevel(item); void analytics.track('planning_preference_selected', { preference: 'cookingLevel', value: item }).catch(() => undefined); })} />)}</View>}
-        {step === 'mealBudget' && <PlanningBudgetPicker people={servings||1} value={weeklyBudget} onChange={(amount,region)=>{setWeeklyBudget(amount);setBudgetRegion({country:region.country,currency:region.currency});setMealBudget(amount&&amount>region.minimum*3?'budget_large':amount&&amount>region.minimum*1.5?'budget_medium':'budget_small');}}/>}
+        {step === 'cookingLevel' && <View style={styles.choices}>{COOKING_LEVELS.map(item => <Choice key={item} emoji={{ beginner: '🍳', medium: '🥘', advanced: '👨‍🍳' }[item]} selected={cookingLevel === item} title={t(`onboarding.formQuestions.${item}`)} onPress={() => chooseAndAdvance(() => { setCookingLevel(item); void analytics.track('planning_preference_selected', { preference: 'cookingLevel', value: item }).catch(() => undefined); })} />)}</View>}
+        {step === 'mealBudget' && <PlanningBudgetPicker people={servings||1} days={selectedDays.length} value={weeklyBudget} onChange={(amount,region)=>{setWeeklyBudget(amount);setBudgetRegion({country:region.country,currency:region.currency});setMealBudget(amount&&amount>region.minimum*3?'budget_large':amount&&amount>region.minimum*1.5?'budget_medium':'budget_small');}}/>}
         {step === 'equipments' && <View style={styles.choices}>
-          <Text style={appStyles.subtitle}>{t('cookingPreferences.equipmentSubtitle')}</Text>
-          {['standard-kitchen', ...KITCHEN_EQUIPMENT].map(item => <Choice key={item} multiple={item !== 'standard-kitchen'} emoji={item === 'standard-kitchen' ? '🍳' : { oven: '🔥', airfryer: '🍟', microwave: '📡', blender: '🥤', robot: '🤖' }[item as typeof KITCHEN_EQUIPMENT[number]]} selected={item === 'standard-kitchen' ? equipments?.length === 1 : !!equipments?.includes(item)} title={item === 'standard-kitchen' ? t('cookingPreferences.basicKitchen') : t(`onboarding.formQuestions.equipment_${item}`)} onPress={() => { feedback.selection(); setEquipments(previous => item === 'standard-kitchen' ? ['standard-kitchen'] : ['standard-kitchen', ...(previous || []).filter(tool => tool !== 'standard-kitchen' && tool !== item), ...(!previous?.includes(item) ? [item] : [])]); }} />)}
+          {['standard-kitchen', ...KITCHEN_EQUIPMENT].map(item => <Choice key={item} multiple={item !== 'standard-kitchen'} emoji={item === 'standard-kitchen' ? '🍳' : { oven: '🔥', airfryer: '🍟', fryer: '🍟', microwave: '📡', blender: '🥤', robot: '🤖' }[item as typeof KITCHEN_EQUIPMENT[number]]} selected={item === 'standard-kitchen' ? equipments?.length === 1 : !!equipments?.includes(item)} title={item === 'standard-kitchen' ? t('cookingPreferences.basicKitchen') : t(`onboarding.formQuestions.equipment_${item}`)} onPress={() => { feedback.selection(); setEquipments(previous => item === 'standard-kitchen' ? ['standard-kitchen'] : ['standard-kitchen', ...(previous || []).filter(tool => tool !== 'standard-kitchen' && tool !== item), ...(!previous?.includes(item) ? [item] : [])]); }} />)}
         </View>}
         {step === 'cuisines' && <>
           {cuisinesLoading ? <ActivityIndicator color={theme.yellow} /> : cuisinesError ? <View style={styles.choices}>
@@ -221,7 +220,7 @@ export default function ConfigurePlanningScreen() {
             placeholder={t('planningConfig.excludePlaceholder')} placeholderTextColor={theme.muted} style={styles.input} autoCapitalize="none" returnKeyType="done" onSubmitEditing={() => Keyboard.dismiss()} />
         </>}
         {step === 'servings' && <>
-          <View style={styles.people}><Text accessible={false} style={styles.peopleEmoji}>{servings === null ? '👥' : Array.from({ length: Math.min(4, servings) }, () => '🧑').join(' ')}{servings !== null && servings > 4 ? ' +' : ''}</Text><ServingsControl value={servings} onChange={value=>{setServings(value);setWeeklyBudget(undefined);}} /></View>
+          <View style={styles.people}><Text accessible={false} style={styles.peopleEmoji}>{servings === null ? '👥' : Array.from({ length: Math.min(4, servings) }, () => '🧑').join(' ')}{servings !== null && servings > 4 ? ' +' : ''}</Text><ServingsControl value={servings} onChange={value=>{setServings(value);setWeeklyBudget(undefined);setBudgetRegion(null);}} /></View>
           <Text style={styles.selection}>{t('planningBudget.peopleNote')}</Text>
         </>}
       </>}

@@ -275,7 +275,7 @@
       },
       "cookingTime": {
         "less_than_30_minutes": "Unter 30 Minuten",
-        "between_30_minutes_and_1_hour": "30 bis 60 Minuten",
+        "between_30_minutes_and_1_hour": "Unter 60 Minuten",
         "more_than_1_hour": "Mehr als eine Stunde"
       },
       "diet": {
@@ -721,7 +721,7 @@
       "duration": {
         "all": "Egal",
         "fast": "Unter 30 Min.",
-        "medium": "30 bis 60 Min."
+        "medium": "Unter 60 Min."
       },
       "nextPlanNotice": "Diese Einstellungen gelten für deinen nächsten Plan.",
       "save": "Einstellungen speichern"
@@ -1483,7 +1483,7 @@
       "evening": "Abends",
       "weekend": "Am Wochenende",
       "less_than_30_minutes": "Weniger als 30 Minuten",
-      "between_30_minutes_and_1_hour": "Zwischen 30 Minuten und 1 Stunde",
+      "between_30_minutes_and_1_hour": "Unter 60 Minuten",
       "more_than_1_hour": "Mehr als 1 Stunde",
       "fridge_empty": "Oft leer 😅",
       "fridge_classic": "Normal gefüllt",
@@ -1567,7 +1567,8 @@
       "commit_all_in": "Ich bin voll dabei und ziehe es durch",
       "commit_serious": "Im Ernst, ich fange jetzt an",
       "commit_try": "Ich probiere es aus",
-      "commit_unsure": "Ich bin mir noch nicht sicher"
+      "commit_unsure": "Ich bin mir noch nicht sicher",
+      "equipment_fryer": "Fritteuse"
     },
     "entryFeature": {
       "question": "Was führt dich zu CookEat?",
@@ -1886,7 +1887,8 @@
     "generatingRecipe": "Rezept wird erstellt ...",
     "searchIngredientPlaceholder": "Zutat suchen",
     "noIngredientFound": "Keine passende Zutat gefunden",
-    "allIngredientsAdded": "Alle Zutaten in dieser Kategorie wurden bereits hinzugefügt"
+    "allIngredientsAdded": "Alle Zutaten in dieser Kategorie wurden bereits hinzugefügt",
+    "equipment_fryer": "Fritteuse"
   },
   "micro": {
     "permissionTitle": "Mikrofonzugriff",
@@ -2610,14 +2612,16 @@
     "less": "Budget verringern",
     "more": "Budget erhöhen",
     "amount": "Gesamtes Wochenbudget",
-    "perPerson": "{{amount}} pro Person für 7 Tage",
+    "perPerson": "{{amount}} pro Person für die gewählten Tage",
     "range": "Insgesamt von {{minimum}} bis {{maximum}}",
     "estimateNote": "Ungefähre Durchschnittspreise der verbrauchten Zutaten, an Land und Währung angepasst. Ganze Packungen können mehr kosten.",
     "peopleNote": "Das nächste Budget gilt insgesamt für alle diese Personen.",
     "cap": "Gewähltes Gesamtbudget: {{amount}}",
     "over": "Die Schätzung liegt nach deinen Änderungen über dem Budget von {{amount}}.",
-    "totalForPeople_one": "Gesamtes Haushaltsbudget · {{count}} Person",
-    "totalForPeople_other": "Gesamtes Haushaltsbudget · {{count}} Personen"
+    "totalForPeople_one": "Gesamtbudget für {{count}} Person",
+    "totalForPeople_other": "Gesamtbudget für {{count}} Personen",
+    "totalDays_one": "Budget für {{count}} Tag",
+    "totalDays_other": "Budget für {{count}} Tage"
   },
   "mealImport": {
     "add": "Rezept importieren",

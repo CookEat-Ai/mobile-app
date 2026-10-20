@@ -45,3 +45,14 @@ const configuration = load(path.join(root, 'planningConfiguration.ts'));
   assert.equal(fitness.fitnessProfileToPlanningPreferences(await fitness.loadFitnessProfile()).equipments.length, 0, 'unanswered legacy gear is not silently interpreted as basic-only');
   console.log('Cooking preferences passed: onboarding → profile → planning, settings round trip, demo reset, single recipes and legacy equipment semantics.');
 })().catch(error => { console.error(error); process.exitCode = 1; });
+
+const { budgetOptionsForDays } = load(path.join(root, 'planningBudget.ts'));
+const weeklyBudget = { country:'FR',currency:'EUR',minimum:120,maximum:600,step:20,defaultAmount:120,horizonDays:7 };
+const oneDay = budgetOptionsForDays(weeklyBudget,1),threeDays=budgetOptionsForDays(weeklyBudget,3);
+assert.equal(oneDay.minimum,20);assert.equal(threeDays.minimum,60);assert.equal(threeDays.horizonDays,3);
+assert.equal(budgetOptionsForDays(weeklyBudget,7),weeklyBudget);
+assert.equal(budgetOptionsForDays(threeDays,3),threeDays,'a new API day-aware budget is not scaled twice');
+assert.equal(budgetOptionsForDays(weeklyBudget,0).minimum,20);
+const cooking = load(path.join(root,'cookingPreferences.ts'));
+assert.equal(cooking.normalizeEquipments(['equipment_fryer']).join(','),'standard-kitchen,fryer');
+assert.equal(cooking.normalizeEquipments(['equipment_airfryer']).join(','),'standard-kitchen,airfryer');

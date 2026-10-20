@@ -26,6 +26,7 @@ function harness(file, exportName, dependencies = {}) {
     if (name === 'react-native') return { View: 'View', Text: 'Text', TextInput: 'TextInput', TouchableOpacity: 'Button', ScrollView: 'ScrollView', KeyboardAvoidingView: 'KeyboardAvoidingView', ActivityIndicator: 'Spinner', StyleSheet: { create: x => x }, Platform: { OS: 'ios' }, Keyboard: { addListener: () => ({ remove() {} }) } };
     if (name === 'react-i18next') return { useTranslation: () => ({ t, i18n: { language: 'fr' } }) };
     if (name.includes('AppSpinner')) return { AppSpinner: 'Spinner' };
+    if (name.includes('useResponsive')) return {useResponsive:()=>({gutter:20})};
     if (name.includes('AppTheme')) return require('./helpers/ui-theme.cjs');
     if (name.includes('mealTracking')) return service;
     if (name.includes('anonymousSession')) return {getAnonymousUserId: async () => 'manual-user'};
@@ -149,7 +150,8 @@ const button = (tree, label) => all(tree, 'Button').find(node => text(node) === 
   const progressProps={...props,manual:false,pending:true,analysis:{kind:'meal',mealType:'dinner',items:props.items},photo:{uri:'meal-photo',width:1000,height:800},progressItems:props.items};
   const progressTree=ui.render(progressProps),mainScroll=all(progressTree,'ScrollView')[0];
   assert(all(mainScroll,'Image').some(node=>node.props.source.uri==='meal-photo'),'photo belongs to the scrolling content during recognition');
-  assert(all(mainScroll,'Text').some(node=>text(node)==='tracking.nutritionTitle'),'pending heading scrolls with the entire sheet');
+  assert(!all(progressTree,'Text').some(node=>text(node)==='tracking.nutritionTitle'),'the redundant nutrition title is absent throughout the sheet');
+  assert(all(mainScroll,'Text').some(node=>text(node)==='tracking.revealing'),'recognition progress scrolls with the full sheet');
   assert(button(mainScroll,'tracking.buildingSummary'),'pending footer scrolls with the entire sheet');
   assert(!button(progressTree,'tracking.skip'),'skip is removed');
   nutrientEditor.unmount(); ui.unmount(); route.unmount(); edit.unmount();

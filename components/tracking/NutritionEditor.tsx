@@ -4,6 +4,7 @@ import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+import { useResponsive } from '../../hooks/useResponsive';
 import { nutritionKeys, type FoodNutrition } from '../../services/mealTracking';
 
 /** Draft strings keep empty fields and decimal commas editable without writing partial values. */
@@ -15,6 +16,7 @@ export function NutritionEditor({ initial, food, onApply }: {
   const [saving, setSaving] = useState(false), [error, setError] = useState(false);
   const busy = useRef(false);
   const { t } = useTranslation(), insets = useSafeAreaInsets();
+  const { gutter } = useResponsive();
   const [name, setName] = useState(food?.name || ''), [grams, setGrams] = useState(String(food?.grams || 100));
   const [draft, setDraft] = useState(() => Object.fromEntries(nutritionKeys.map(key => [key, initial ? String(Math.round(initial[key] * 100) / 100) : ''])) as Record<keyof FoodNutrition, string>);
   const parse = (raw: string) => /^\d+(?:[.,]\d*)?$/.test(raw.trim()) ? Number(raw.replace(',', '.')) : NaN;
@@ -28,7 +30,7 @@ export function NutritionEditor({ initial, food, onApply }: {
     catch { setError(true); }
     finally { busy.current = false; setSaving(false); }
   };
-  return <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{padding: 20, gap: 18, paddingBottom: insets.bottom + 24}}>
+  return <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{padding: gutter, gap: 18, paddingBottom: insets.bottom + 24}}>
       <Text style={appStyles.subtitle}>{t(food ? 'tracking.portionNutritionNote' : 'tracking.mealNutritionNote')}</Text>
       {food && <>
         <View style={{gap: 8}}><Text style={appStyles.textAction}>{t('tracking.foodName')}</Text><TextInput editable={!saving} accessibilityLabel={t('tracking.foodName')} value={name} onChangeText={setName} maxLength={100} style={appStyles.input}/></View>

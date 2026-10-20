@@ -1,7 +1,7 @@
 import type { PlanningGenerationSettings } from './weeklyPlanning';
 import { normalizePantryIngredients } from './planningPantry';
 
-export const PLANNING_STEPS = ['goal', 'servings', 'mealBudget', 'days', 'ingredients', 'duration', 'cookingLevel', 'equipments', 'cuisines', 'diet', 'exclusions'] as const;
+export const PLANNING_STEPS = ['goal', 'servings', 'days', 'mealBudget', 'ingredients', 'duration', 'cookingLevel', 'equipments', 'cuisines', 'diet', 'exclusions'] as const;
 export const PRESENTATION_PLANNING_STEPS = [...PLANNING_STEPS] as const;
 export type PlanningStep = typeof PLANNING_STEPS[number] | 'goal';
 export function planningSteps(presentation: boolean): readonly PlanningStep[] {

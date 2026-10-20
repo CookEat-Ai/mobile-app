@@ -5,6 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { AppSlider } from '../ui/AppSlider';
 import { useTranslation } from 'react-i18next';
 
+import { budgetOptionsForDays } from '../../services/planningBudget';
 import { apiService } from '../../services/api';
 type Options = {
     country: string;
@@ -13,9 +14,11 @@ type Options = {
     maximum: number;
     step: number;
     defaultAmount: number;
+    horizonDays: number;
 };
-export function PlanningBudgetPicker({ people, value, onChange }: {
+export function PlanningBudgetPicker({ people, days, value, onChange }: {
     people: number;
+    days: number;
     value?: number;
     onChange: (amount: number | undefined, region: Options) => void;
 }) {
@@ -29,12 +32,12 @@ export function PlanningBudgetPicker({ people, value, onChange }: {
         let active = true;
         setError(false);
         setOptions(null);
-        void apiService.getPlanningBudgetOptions(people).then(response => {
+        void apiService.getPlanningBudgetOptions(people, days).then(response => {
             if (!active)
                 return;
             if (!response.data)
                 throw new Error('budget_unavailable');
-            const next = response.data;
+            const next = budgetOptionsForDays(response.data, days);
             setOptions(next);
             const amount = value && value >= next.minimum && value <= next.maximum ? value : next.defaultAmount;
             change.current(amount, next);
@@ -43,7 +46,7 @@ export function PlanningBudgetPicker({ people, value, onChange }: {
         return () => { active = false; };
         // Value changes are edits, not new option requests.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [people, attempt]);
+    }, [people, days, attempt]);
     if (error)
         return <View><Text style={appStyles.error}>{t('planningBudget.loadError')}</Text><TouchableOpacity style={appStyles.button} onPress={() => setAttempt(n => n + 1)}><Text style={appStyles.buttonText}>{t('common.retry')}</Text></TouchableOpacity></View>;
     if (!options)
@@ -53,7 +56,7 @@ export function PlanningBudgetPicker({ people, value, onChange }: {
     return <View style={{ gap: 20 }}>
     <Text style={appStyles.subtitle}>{t('planningBudget.totalForPeople', { count: people })}</Text>
     <View style={[appStyles.card, { alignItems: 'center', gap: 18, paddingVertical: 26 }]}>
-      <Text style={appStyles.eyebrow}>{t('planningBudget.totalWeek')}</Text>
+      <Text style={appStyles.eyebrow}>{t('planningBudget.totalDays', {count: days})}</Text>
       <Text style={styles.amount}>{money(value ?? options.defaultAmount)}</Text>
       <AppSlider minimum={options.minimum} maximum={options.maximum} step={options.step}
         value={value ?? options.defaultAmount} onChange={select} label={t('planningBudget.amount')} valueText={money(value ?? options.defaultAmount)} />

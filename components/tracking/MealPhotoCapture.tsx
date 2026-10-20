@@ -10,7 +10,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-export function MealPhotoCapture({ cameraRef, granted, cameraError, canAskAgain, active, ready, busy, error, onClose, onAllow, onReady, onCameraError, onTake, onPick, onManual }: {
+export function MealPhotoCapture({ cameraRef, granted, cameraError, canAskAgain, active, ready, busy, error, onClose, onAllow, onReady, onCameraError, onTake, onPick, onManual, cameraPreview }: {
+    /** Camera surface injection for deterministic native previews; normal capture uses CameraView. */
+    cameraPreview?: React.ReactNode;
     cameraRef: React.Ref<CameraView>;
     granted: boolean;
     cameraError: boolean;
@@ -47,7 +49,7 @@ export function MealPhotoCapture({ cameraRef, granted, cameraError, canAskAgain,
     </View>;
     return <View style={[appStyles.screen, live && { backgroundColor: '#000000' }]}>
         {live ? <>
-            <CameraView ref={cameraRef} style={StyleSheet.absoluteFill} facing="back" active={active} onCameraReady={onReady} onMountError={onCameraError} />
+            {cameraPreview ?? <CameraView ref={cameraRef} style={StyleSheet.absoluteFill} facing="back" active={active} onCameraReady={onReady} onMountError={onCameraError} />}
             <View pointerEvents="none" style={styles.guide}><View style={[styles.corner, styles.tl]} /><View style={[styles.corner, styles.tr]} /><View style={[styles.corner, styles.bl]} /><View style={[styles.corner, styles.br]} /></View>
             <LinearGradient pointerEvents="box-none" colors={['rgba(0,0,0,.72)', 'transparent']} style={styles.topOverlay}>{header}</LinearGradient>
             <LinearGradient pointerEvents="box-none" colors={['transparent', 'rgba(0,0,0,.88)']} locations={[0, .45]} style={styles.bottomOverlay}>{controls}</LinearGradient>

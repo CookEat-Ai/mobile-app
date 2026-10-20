@@ -37,9 +37,9 @@ export const BREAKPOINTS = {
 } as const;
 
 /** Colonne principale : exploite aussi le portrait des grands iPad. */
-export const CONTENT_MAX_WIDTH = 1120;
+export const CONTENT_MAX_WIDTH = 1040;
 /** Formulaires et textes courts : largeur confortable sans rail de téléphone. */
-export const FORM_CONTENT_MAX_WIDTH = 840;
+export const FORM_CONTENT_MAX_WIDTH = 760;
 /** Base des calculs proportionnels, indépendante de la largeur du contenu. */
 export const SCALE_MAX_WIDTH = 560;
 
@@ -114,8 +114,8 @@ export function getSpaceScale(width: number): number {
 }
 
 export function getGutter(width: number): number {
-  if (width >= 1024) return 48;
-  if (width >= BREAKPOINTS.tablet) return 40;
+  if (width >= 1024) return 72;
+  if (width >= BREAKPOINTS.tablet) return 56;
   if (width <= BREAKPOINTS.smallPhone) return 16;
   return 20;
 }

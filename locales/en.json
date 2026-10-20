@@ -275,7 +275,7 @@
       },
       "cookingTime": {
         "less_than_30_minutes": "Under 30 minutes",
-        "between_30_minutes_and_1_hour": "30 to 60 minutes",
+        "between_30_minutes_and_1_hour": "Under 60 minutes",
         "more_than_1_hour": "More than one hour"
       },
       "diet": {
@@ -721,7 +721,7 @@
       "duration": {
         "all": "Any duration",
         "fast": "Under 30 min",
-        "medium": "30 to 60 min"
+        "medium": "Under 60 min"
       },
       "nextPlanNotice": "These settings will apply to your next meal plan.",
       "save": "Save settings"
@@ -1483,7 +1483,7 @@
       "evening": "Evening",
       "weekend": "Weekend",
       "less_than_30_minutes": "Less than 30 minutes",
-      "between_30_minutes_and_1_hour": "Between 30 minutes and 1 hour",
+      "between_30_minutes_and_1_hour": "Under 60 minutes",
       "more_than_1_hour": "More than 1 hour",
       "fridge_empty": "Often empty 😅",
       "fridge_classic": "Classic",
@@ -1567,7 +1567,8 @@
       "commit_all_in": "All in, I'm sticking to it",
       "commit_serious": "Seriously, I'm starting now",
       "commit_try": "I'll give it a try",
-      "commit_unsure": "I'm not sure yet"
+      "commit_unsure": "I'm not sure yet",
+      "equipment_fryer": "Deep fryer"
     },
     "entryFeature": {
       "question": "What brings you to CookEat?",
@@ -1884,7 +1885,8 @@
     "generatingRecipe": "Generating recipe...",
     "searchIngredientPlaceholder": "Search an ingredient",
     "noIngredientFound": "No ingredient matches your search",
-    "allIngredientsAdded": "Every ingredient in this category is already added"
+    "allIngredientsAdded": "Every ingredient in this category is already added",
+    "equipment_fryer": "Deep fryer"
   },
   "micro": {
     "permissionTitle": "Microphone Permission",
@@ -2608,14 +2610,16 @@
     "less": "Decrease budget",
     "more": "Increase budget",
     "amount": "Total weekly budget",
-    "perPerson": "{{amount}} per person over 7 days",
+    "perPerson": "{{amount}} per person for the selected days",
     "range": "From {{minimum}} to {{maximum}} in total",
     "estimateNote": "Approximate average prices for consumed ingredients, adjusted for country and currency. Buying full packs may cost more.",
     "peopleNote": "The next budget is the total for all these people.",
     "cap": "Chosen total budget: {{amount}}",
     "over": "Estimate exceeds your {{amount}} budget after your changes.",
-    "totalForPeople_one": "Total household budget · {{count}} person",
-    "totalForPeople_other": "Total household budget · {{count}} people"
+    "totalForPeople_one": "Total budget for {{count}} person",
+    "totalForPeople_other": "Total budget for {{count}} people",
+    "totalDays_one": "Budget for {{count}} day",
+    "totalDays_other": "Budget for {{count}} days"
   },
   "mealImport": {
     "add": "Import a recipe",
