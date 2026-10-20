@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { router } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import {
@@ -211,7 +212,7 @@ export default function WelcomeScreen() {
           position: 'absolute',
           left: curveLeft,
           bottom: curveBottom,
-          backgroundColor: '#FDF9E2',
+          backgroundColor: designTheme.background,
           width: curveWidth,
           height: curveHeight,
           borderRadius: curveHeight,
@@ -330,7 +331,7 @@ const styles = StyleSheet.create({
   laurel: {
     width: 28,
     height: 28,
-    borderRadius: 14,
+    borderRadius: AppRadii.control,
     borderWidth: 2,
     borderColor: Colors.light.text,
   },
@@ -341,7 +342,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.button,
     paddingVertical: 16,
     paddingHorizontal: 32,
-    borderRadius: 200,
+    borderRadius: AppRadii.pill,
     shadowColor: Colors.light.button,
     shadowOffset: {
       width: 0,
@@ -354,7 +355,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   buttonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: rw(0.05),
     fontFamily: 'Degular',
   },

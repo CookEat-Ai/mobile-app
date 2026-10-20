@@ -1,8 +1,9 @@
+import { AppRadii, AppTheme as theme } from '../constants/AppTheme';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { AppTheme as theme } from '../constants/AppTheme';
+
 export function ServingsControl({ value, onChange, disabled = false, compact = false }: { value: number | null; onChange: (value: number) => void; disabled?: boolean; compact?: boolean }) {
   const { t } = useTranslation();
   return <View style={[styles.row, compact && { gap: 0 }]}>
@@ -11,4 +12,4 @@ export function ServingsControl({ value, onChange, disabled = false, compact = f
     <Pressable accessibilityRole="button" accessibilityLabel={t('planningConfig.morePeople')} disabled={disabled || (value !== null && value >= 20)} style={[styles.button, compact && { minWidth: 32 }, (disabled || (value !== null && value >= 20)) && styles.disabled]} onPress={() => onChange((value ?? 0) + 1)}><Ionicons name="add" size={20} color={theme.ink} /></Pressable>
   </View>;
 }
-const styles = StyleSheet.create({ row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }, button: { minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 12, backgroundColor: theme.yellowSoft }, value: { minWidth: 28, textAlign: 'center', fontFamily: 'CronosProBold', fontSize: 22, color: theme.ink }, disabled: { opacity: 0.4 } });
+const styles = StyleSheet.create({ row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }, button: { minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center', borderRadius: AppRadii.chip, backgroundColor: theme.yellowSoft }, value: { minWidth: 28, textAlign: 'center', fontFamily: 'CronosProBold', fontSize: 22, color: theme.ink }, disabled: { opacity: 0.4 } });

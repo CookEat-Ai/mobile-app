@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { CREATOR_PROMO_CODES_ENABLED } from '../../config/storeCompliance';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
@@ -211,7 +212,7 @@ export default function ReminderScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.background,
   },
   content: {
     flex: 1,
@@ -269,15 +270,15 @@ const styles = StyleSheet.create({
     height: rw(0.17),
     maxWidth: 68,
     maxHeight: 68,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     backgroundColor: Colors.light.button,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 4,
-    borderColor: '#FDF9E2',
+    borderColor: designTheme.background,
   },
   notificationBadgeText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: Math.min(rw(0.09), 38),
     lineHeight: Math.min(rw(0.1), 42),
     fontFamily: 'Degular',

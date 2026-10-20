@@ -1,3 +1,4 @@
+import { AppRadii } from '../../constants/AppTheme';
 import React from 'react';
 import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import type { MealPlanMeal } from '../../services/api';
@@ -35,7 +36,7 @@ export function MealArtwork({ meal, style }: { meal: Pick<MealPlanMeal, 'ingredi
 
 const styles = StyleSheet.create({
   root: { overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
-  glow: { position: 'absolute', width: 84, height: 84, borderRadius: 42, backgroundColor: 'rgba(255,255,255,0.44)' },
+  glow: { position: 'absolute', width: 84, height: 84, borderRadius: AppRadii.pill, backgroundColor: 'rgba(255,255,255,0.44)' },
   emoji: { fontSize: 23, letterSpacing: -2 },
 });
 

@@ -1,5 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Keyboard, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
+import { AppModal as Modal } from './ui/AppModal';
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Keyboard, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { ingredientCategories as getIngredientCategories } from '../services/ingredientCategories';
@@ -22,15 +24,12 @@ export function IngredientCategoryAddModal({ visible: isCategoryAddModalVisible,
   const [selectedIngredientsForCategoryModal, setSelectedIngredientsForCategoryModal] = useState<string[]>([]);
   const [categoryAddModalSearch, setCategoryAddModalSearch] = useState('');
   const [keyboardHeight, setKeyboardHeight] = useState(0);
-  const categoryAddSlideAnim = useRef(new Animated.Value(screenHeight)).current;
   const deburr = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
   useEffect(() => {
     if (!isCategoryAddModalVisible) return;
     setCategoryAddModalCategoryId(initialCategoryId || ingredientCategories[0]?.id || null);
     setSelectedIngredientsForCategoryModal([]);
     setCategoryAddModalSearch('');
-    categoryAddSlideAnim.setValue(screenHeight);
-    Animated.spring(categoryAddSlideAnim, { toValue: 0, useNativeDriver: false, tension: 50, friction: 8 }).start();
   }, [isCategoryAddModalVisible, initialCategoryId]);
   useEffect(() => {
     const show = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', e => setKeyboardHeight(e.endCoordinates.height));
@@ -39,7 +38,7 @@ export function IngredientCategoryAddModal({ visible: isCategoryAddModalVisible,
   }, []);
   const closeCategoryAddModal = () => {
     Keyboard.dismiss();
-    Animated.timing(categoryAddSlideAnim, { toValue: screenHeight, duration: 300, useNativeDriver: false }).start(onClose);
+    onClose();
   };
   const toggleCategoryModalIngredient = (name: string) => setSelectedIngredientsForCategoryModal(items => items.includes(name) ? items.filter(item => item !== name) : [...items, name]);
   const confirmCategoryAddModal = () => {
@@ -51,7 +50,6 @@ export function IngredientCategoryAddModal({ visible: isCategoryAddModalVisible,
       <Modal
         visible={isCategoryAddModalVisible}
         transparent={true}
-        animationType="fade"
         statusBarTranslucent={true}
         onRequestClose={closeCategoryAddModal}
       >
@@ -61,7 +59,7 @@ export function IngredientCategoryAddModal({ visible: isCategoryAddModalVisible,
             if (e.target === e.currentTarget) closeCategoryAddModal();
           }}
         >
-          <Animated.View
+          <View
             style={[
               styles.modalContent,
               styles.categoryAddModalContent,
@@ -70,7 +68,6 @@ export function IngredientCategoryAddModal({ visible: isCategoryAddModalVisible,
                 // remonte la carte et on réduit sa hauteur max de la même quantité.
                 maxHeight: (screenHeight - keyboardHeight) * 0.85,
                 marginBottom: keyboardHeight,
-                transform: [{ translateY: categoryAddSlideAnim }],
                 paddingBottom: 0,
               },
             ]}
@@ -85,11 +82,11 @@ export function IngredientCategoryAddModal({ visible: isCategoryAddModalVisible,
               {ingredientCategories.map(category => <Pressable key={category.id} accessibilityRole="button" accessibilityState={{ selected: category.id === categoryAddModalCategoryId }} onPress={() => { setCategoryAddModalCategoryId(category.id); setCategoryAddModalSearch(''); }} style={[styles.manualIngredientItem, { marginRight: 8 }, category.id === categoryAddModalCategoryId && styles.ingredientItemSelected]}><Text style={styles.manualIngredientName}>{category.icon} {category.title}</Text></Pressable>)}
             </ScrollView>}
             <View style={styles.categoryAddModalSearchBar}>
-              <IconSymbol name="search" size={18} color="#9A9A9A" />
+              <IconSymbol name="search" size={18} color={designTheme.muted} />
               <TextInput
                 style={styles.categoryAddModalSearchInput}
                 placeholder={t('recipeSummary.searchIngredientPlaceholder')}
-                placeholderTextColor="#9A9A9A"
+                placeholderTextColor={designTheme.muted}
                 value={categoryAddModalSearch}
                 onChangeText={setCategoryAddModalSearch}
                 autoCorrect={false}
@@ -98,9 +95,7 @@ export function IngredientCategoryAddModal({ visible: isCategoryAddModalVisible,
                 onSubmitEditing={Keyboard.dismiss}
               />
               {categoryAddModalSearch.length > 0 && (
-                <TouchableOpacity onPress={() => setCategoryAddModalSearch('')} hitSlop={10}>
-                  <IconSymbol name="close" size={18} color="#9A9A9A" />
-                </TouchableOpacity>
+                <NavigationIconButton kind="close" onPress={() => setCategoryAddModalSearch('')} hitSlop={10} />
               )}
             </View>
             <ScrollView
@@ -163,7 +158,7 @@ export function IngredientCategoryAddModal({ visible: isCategoryAddModalVisible,
                 <Text style={styles.categoryAddModalButtonText}>{t('recipeSummary.add')}</Text>
               </TouchableOpacity>
             </View>
-          </Animated.View>
+          </View>
         </View>
       </Modal>
   );
@@ -184,7 +179,7 @@ const styles = StyleSheet.create({
   categoryAddModalButton: {
     backgroundColor: Colors.light.button,
     paddingVertical: 16,
-    borderRadius: 16,
+    borderRadius: AppRadii.control,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -193,27 +188,27 @@ const styles = StyleSheet.create({
   },
   categoryAddModalButtonText: {
     fontSize: 18,
-    color: 'white',
+    color: designTheme.onPrimary,
     fontFamily: 'Degular'
   },
   categoryAddModalContent: {
     width: '100%',
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    borderTopLeftRadius: AppRadii.sheet,
+    borderTopRightRadius: AppRadii.sheet,
   },
   categoryAddModalEmptyText: {
     fontFamily: 'CronosPro',
     fontSize: 15,
-    color: '#9A9A9A',
+    color: designTheme.muted,
     textAlign: 'center',
     paddingVertical: 32,
     paddingHorizontal: 16,
   },
   categoryAddModalFooter: {
     padding: 24,
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
+    borderTopColor: designTheme.soft,
     marginHorizontal: -24, // Pour toucher les bords de la modale
   },
   categoryAddModalGrid: {
@@ -226,8 +221,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 15,
+    backgroundColor: designTheme.soft,
+    borderRadius: AppRadii.control,
     paddingHorizontal: 15,
     minHeight: 48,
     marginBottom: 16,
@@ -236,7 +231,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: 'CronosPro',
     fontSize: 16,
-    color: '#000',
+    color: designTheme.ink,
     minWidth: 0,
     paddingVertical: 0,
   },
@@ -251,13 +246,13 @@ const styles = StyleSheet.create({
   ingredientNameSelected: {
     fontSize: 12,
     fontFamily: 'CronosProBold',
-    color: 'white',
+    color: designTheme.onPrimary,
     textAlign: 'center'
   },
   manualIngredientItem: {
     // width fourni à l'usage (dérivé de la largeur de fenêtre courante).
     padding: 8,
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
     backgroundColor: '#F8F8F8',
     alignItems: 'center',
     borderWidth: 2,
@@ -275,11 +270,11 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     width: '100%',
     maxWidth: 640,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    borderTopLeftRadius: AppRadii.sheet,
+    borderTopRightRadius: AppRadii.sheet,
     padding: 24,
   },
   modalHeader: {
@@ -290,14 +285,14 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: designTheme.overlay,
     justifyContent: 'flex-end',
     // Sur tablette la feuille est recentrée au lieu de traverser tout l'écran.
     alignItems: 'center',
   },
   modalTitle: {
     fontSize: font(24),
-    color: '#000',
+    color: designTheme.ink,
     fontFamily: 'Degular'
   },
 });

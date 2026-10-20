@@ -4,7 +4,7 @@ const vm = require('node:vm');
 const path = require('node:path');
 const ts = require('typescript');
 const slots = []; let cursor = 0, tree, saved, focus;
-const requests = [], reads = [];
+const requests = [], reads = [], routes = [];
 const settings = { cookingDays: [0, 2], pantryIngredients: ['Old fridge item'], pantryMode: 'strict', servings: 2 };
 const jsx = (type, props, ...children) => ({ type, props: { ...props, children } });
 const react = { __esModule: true, createElement: jsx,
@@ -17,7 +17,7 @@ const deps = {
   react, 'react-native': { StyleSheet: { create: styles => styles }, Text: 'Text', View: 'View', TouchableOpacity: 'TouchableOpacity' },
   'react-i18next': { useTranslation: () => ({ t: key => key, i18n: { language: 'fr' } }) },
   'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }) },
-  'expo-router': { useFocusEffect: fn => { focus = fn; } },
+  'expo-router': { useFocusEffect: fn => { focus = fn; }, router: { replace: path => routes.push(path) } },
   '@react-native-async-storage/async-storage': { __esModule: true, default: { getItem: async key => { reads.push(key); return null; } } },
   '../../constants/Colors': { Colors: { light: {} } },
   '../../components/loading/PlanningLoadingView': { usePlanningLoading: () => ({ reset: noop, finish: async () => true, onComplete: noop }) },
@@ -28,6 +28,7 @@ const deps = {
   '../../services/planningReview': { schedulePlanningReview: noop },
   '../../services/anonymousSession': { getAnonymousUserId: async () => 'qa-user' },
   '../../services/fitnessProfile': { loadFitnessProfile: async () => ({}), fitnessProfileToPlanningPreferences: () => ({ goal: 'gain_muscle', diet: 'vegan', duration: 'fast', nutritionProfile: { goal: 'gain_muscle' } }) },
+  '../../hooks/useResponsive': { useResponsive: () => ({gutter:20}) },
   '../../hooks/usePlanningClock': { usePlanningClock: () => ({ weekStart: '2026-10-12' }) },
   '../../services/weeklyPlanning': { DEFAULT_COOKING_DAYS: [0, 2], planningStartKey: () => '2026-10-12', addDays: (_key, index) => '2026-10-' + (12 + index),
     normalizeCookingDays: days => days, loadPlanningGenerationSettings: async () => settings,
@@ -62,5 +63,7 @@ const tick = () => new Promise(resolve => setImmediate(resolve));
   assert.equal(saved.pantryIngredients.length, 0); assert.equal(saved.pantryMode, 'priority');
   assert.equal(saved.cookingDays.join(','), '1,3');
   assert.equal(settings.pantryIngredients.join(','), 'Old fridge item', 'does not mutate the stored input');
+  render(); nodes(tree).find(node => node.type === 'OnboardingFooter').props.onPress();
+  assert.equal(routes.at(-1), '/onboarding/photoTrackingDemo', 'the completed week leads to optional photo tracking before the existing conversion journey');
   console.log('Onboarding planning passed: days only, shared picker, old pantry ignored, profile preserved and duplicate generation blocked.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

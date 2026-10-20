@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -13,6 +14,8 @@ import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import analytics from '../../services/analytics';
 import { FITNESS_GOALS, type FitnessGoal } from '../../services/nutritionModel';
 import { useOnboardingTrialEligibility } from '../../hooks/useOnboardingTrialEligibility';
+import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
+import { AppIconBadge } from '../../components/ui/AppIconBadge';
 import {
   TrialConversionFooter,
   TRIAL_CONVERSION_FOOTER_RESERVED_HEIGHT,
@@ -123,8 +126,10 @@ export default function OfferTrialScreen() {
         { paddingTop: insets.top + 12 },
       ]}
     >
-      <View
-        style={[
+      <OnboardingScrollView
+        style={styles.scroll}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[
           styles.content,
           {
             paddingBottom:
@@ -177,20 +182,19 @@ export default function OfferTrialScreen() {
           <View style={styles.features}>
             {[
               ['calendar', t('paywall.features.fullDay')],
+              ['camera', t('paywall.features.photoTracking')],
               ['fitness', t(goal ? `onboarding.offerTrial.personalized.${goal}.nutrition` : 'paywall.features.macros')],
               ['cart', t('paywall.features.shopping')],
             ].map(([icon, label]) => (
               <View key={label} style={styles.featureRow}>
-                <View style={styles.featureIcon}>
-                  <Ionicons name={icon as any} size={18} color={Colors.light.button} />
-                </View>
+                <AppIconBadge name={icon as React.ComponentProps<typeof Ionicons>['name']} size={32} />
                 <Text style={styles.featureText}>{label}</Text>
-                <Ionicons name="checkmark-circle" size={21} color="#6CA45C" />
+                <Ionicons name="checkmark-circle" size={21} color={designTheme.success} />
               </View>
             ))}
           </View>
         </Animated.View>
-      </View>
+      </OnboardingScrollView>
 
       <Animated.View
         style={[
@@ -214,10 +218,11 @@ export default function OfferTrialScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.background,
   },
+  scroll: { flex: 1 },
   content: {
-    flex: 1,
+    flexGrow: 1,
     ...contentColumn(),
     paddingHorizontal: 24,
   },
@@ -243,23 +248,18 @@ const styles = StyleSheet.create({
   },
   offerCard: {
     width: '100%',
-    backgroundColor: 'white',
-    borderRadius: 28,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.card,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#EEE5C5',
-    shadowColor: '#5A3B00',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.08,
-    shadowRadius: 18,
-    elevation: 3,
+    borderColor: designTheme.line,
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     minHeight: 112,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ECE6D0',
+    borderBottomColor: designTheme.line,
     paddingBottom: 12,
     marginBottom: 13,
   },
@@ -269,8 +269,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#FFF3D4',
-    borderRadius: 100,
+    backgroundColor: designTheme.yellowSoft,
+    borderRadius: AppRadii.pill,
     paddingHorizontal: 10,
     paddingVertical: 6,
     marginBottom: 10,
@@ -292,17 +292,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 11,
-    backgroundColor: '#FFFCF3',
-    borderRadius: 15,
+    backgroundColor: designTheme.soft,
+    borderRadius: AppRadii.control,
     paddingHorizontal: 11,
-  },
-  featureIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 11,
-    backgroundColor: '#FFF1CC',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical: 8,
   },
   featureText: {
     flex: 1,
@@ -314,6 +307,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
+    backgroundColor: designTheme.background,
   },
   bottomSection: {
     ...contentColumn(),

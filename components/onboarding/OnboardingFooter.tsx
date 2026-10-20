@@ -1,8 +1,10 @@
+import { useResponsive } from '../../hooks/useResponsive';
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/Colors';
-import { ONBOARDING_CTA_BOTTOM_GAP } from '../../constants/Layout';
+import { FORM_CONTENT_MAX_WIDTH, ONBOARDING_CTA_BOTTOM_GAP } from '../../constants/Layout';
 
 type Props = {
   label: string;
@@ -21,12 +23,13 @@ export function OnboardingFooter({
   onPress,
   disabled = false,
   loading = false,
-  backgroundColor = '#FDF9E2',
+  backgroundColor = designTheme.background,
 }: Props) {
   const insets = useSafeAreaInsets();
+  const { gutter } = useResponsive();
 
   return (
-    <View style={[styles.footer, { paddingBottom: insets.bottom + ONBOARDING_CTA_BOTTOM_GAP, backgroundColor }]}>
+    <View style={[styles.footer, { paddingHorizontal: Math.max(24, gutter), paddingBottom: insets.bottom + ONBOARDING_CTA_BOTTOM_GAP, backgroundColor }]}>
       <TouchableOpacity
         accessibilityRole="button"
         activeOpacity={0.82}
@@ -34,7 +37,7 @@ export function OnboardingFooter({
         onPress={onPress}
         style={[styles.button, (disabled || loading) && styles.disabled]}
       >
-        {loading ? <ActivityIndicator color="white" /> : <Text style={styles.label}>{label}</Text>}
+        {loading ? <ActivityIndicator color={designTheme.onPrimary} /> : <Text style={styles.label}>{label}</Text>}
       </TouchableOpacity>
     </View>
   );
@@ -51,12 +54,12 @@ const styles = StyleSheet.create({
   },
   button: {
     width: '100%',
-    maxWidth: 512,
+    maxWidth: FORM_CONTENT_MAX_WIDTH - 48,
     minHeight: 56,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 200,
+    borderRadius: AppRadii.pill,
     backgroundColor: Colors.light.button,
     shadowColor: Colors.light.button,
     shadowOffset: { width: 0, height: 4 },
@@ -65,5 +68,5 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   disabled: { opacity: 0.58 },
-  label: { color: 'white', fontFamily: 'Degular', fontSize: 20 },
+  label: { color: designTheme.onPrimary, fontFamily: 'Degular', fontSize: 20 },
 });

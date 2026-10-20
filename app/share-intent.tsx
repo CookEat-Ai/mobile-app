@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -420,12 +421,12 @@ export default function ShareIntentScreen() {
                   onPress={() => router.push({ pathname: '/paywall', params: { source: 'video_import_quota' } })}
                   activeOpacity={0.8}
                 >
-                  <Ionicons name="sparkles" size={20} color="white" />
+                  <Ionicons name="sparkles" size={20} color={designTheme.onPrimary} />
                   <Text style={styles.retryButtonText}>{t('shareIntent.upgrade')}</Text>
                 </TouchableOpacity>
               ) : (
                 <TouchableOpacity style={styles.retryButton} onPress={handleRetry} activeOpacity={0.8}>
-                  <Ionicons name="refresh" size={20} color="white" />
+                  <Ionicons name="refresh" size={20} color={designTheme.onPrimary} />
                   <Text style={styles.retryButtonText}>{t('shareIntent.retry')}</Text>
                 </TouchableOpacity>
               )}
@@ -445,7 +446,7 @@ export default function ShareIntentScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.background,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 40,
@@ -464,7 +465,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(254, 181, 10, 0.1)',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
   },
   percentText: {
     fontSize: 24,
@@ -486,14 +487,14 @@ const styles = StyleSheet.create({
   loadingBarTrack: {
     width: '100%',
     height: 10,
-    backgroundColor: '#F1EACB',
-    borderRadius: 5,
+    backgroundColor: designTheme.soft,
+    borderRadius: AppRadii.small,
     overflow: 'hidden',
   },
   loadingBarFill: {
     height: '100%',
     backgroundColor: Colors.light.button,
-    borderRadius: 5,
+    borderRadius: AppRadii.small,
   },
   title: {
     fontSize: 28,
@@ -504,7 +505,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontFamily: 'CronosPro',
     fontSize: 16,
-    color: '#666',
+    color: designTheme.muted,
     textAlign: 'center',
     paddingHorizontal: 20,
   },
@@ -527,7 +528,7 @@ const styles = StyleSheet.create({
   },
   retryButton: {
     backgroundColor: Colors.light.button,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     paddingVertical: 16,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -535,20 +536,20 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   retryButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontFamily: 'CronosProBold',
     fontSize: 18,
   },
   homeButton: {
-    backgroundColor: 'white',
-    borderRadius: 100,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.pill,
     paddingVertical: 16,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 8,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: designTheme.line,
   },
   homeButtonText: {
     color: Colors.light.text,

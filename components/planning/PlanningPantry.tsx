@@ -1,10 +1,11 @@
+import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import React, { useCallback, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
-import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+
 import { PantryReviewSection } from './PantryReviewSection';
 import { PANTRY_SCAN_HANDOFF_KEY, readPantryScanHandoff } from '../../services/pantryScanHandoff';
 import analytics from '../../services/analytics';
@@ -45,7 +46,7 @@ export function PlanningPantry({ value, onChange, onConfirm, active }: {
 const styles = StyleSheet.create({
   card: { gap: 14 },
   scanAgain: { minHeight: 44, justifyContent: 'center', alignItems: 'center' },
-  method: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, minHeight: 96, borderWidth: 1, borderColor: theme.line, borderRadius: 20, backgroundColor: theme.surface },
+  method: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, minHeight: 96, borderWidth: 1, borderColor: theme.line, borderRadius: AppRadii.card, backgroundColor: theme.surface },
   emoji: { fontSize: 40, width: 52, textAlign: 'center' },
   text: { ...appStyles.textAction, fontSize: 23, lineHeight: 27, flex: 1 },
 });

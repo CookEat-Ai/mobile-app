@@ -1,3 +1,5 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
+import type { CookingLevel, MealBudget } from '../../services/cookingPreferences';
 import { PlanningFlowHeader } from '../../components/planning/PlanningFlowHeader';
 import { invalidatePlanning } from '../../services/planningUpdates';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,6 +24,11 @@ import { dailyMealsForDays, isCompleteWeeklyPlan, normalizeCookingDays, planning
 type Config = {
   goal?: FitnessGoal;
   servings?: number;
+  weeklyBudget?: number;
+  country?: string; currency?: string;
+  cookingLevel?: CookingLevel;
+  mealBudget?: MealBudget;
+  equipments?: string[];
   cookingDays: number[];
   duration: string;
   cuisineIds?: string[];
@@ -63,7 +70,11 @@ export default function PlanningLoadingScreen() {
           replaceExisting: replace === 'true',
           preferences: {
             ...profilePreferences,
+            cookingLevel: config.cookingLevel ?? profilePreferences.cookingLevel,
+            mealBudget: config.mealBudget ?? profilePreferences.mealBudget,
+            equipments: config.equipments ?? profilePreferences.equipments,
             servings: config.servings || 1,
+            weeklyBudget: config.weeklyBudget, country: config.country, currency: config.currency,
             cookingDays,
             mealsByDay: dailyMealsForDays(cookingDays),
             includeSnack: true,
@@ -92,10 +103,10 @@ export default function PlanningLoadingScreen() {
   if (!error) return <View style={{ flex: 1 }}><PlanningFlowHeader /><View style={{ flex: 1 }}><PlanningLoadingView ready={loadingReady} onComplete={completeLoadingBar} /></View></View>;
 
   return (
-    <LinearGradient colors={['#FDF9E2', '#FFFFFF']} style={[styles.fill, { paddingBottom: insets.bottom }]}>
+    <LinearGradient colors={[designTheme.background, '#FFFFFF']} style={[styles.fill, { paddingBottom: insets.bottom }]}>
       <PlanningFlowHeader /><View style={styles.content}>
         <Image source={require('../../assets/images/mascot.png')} style={styles.mascot} resizeMode="contain" />
-        <View style={styles.errorIcon}><Ionicons name="alert-circle-outline" size={32} color="#9B3B32" /></View>
+        <View style={styles.errorIcon}><Ionicons name="alert-circle-outline" size={32} color={designTheme.danger} /></View>
         <Text style={styles.title}>{t('planningLoading.error')}</Text>
         <Text style={styles.errorText}>{error}</Text>
         <TouchableOpacity style={styles.button} onPress={() => router.back()}><Text style={styles.buttonText}>{t('common.back')}</Text></TouchableOpacity>
@@ -109,8 +120,8 @@ const styles = StyleSheet.create({
   content: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28 },
   mascot: { width: 130, height: 130, marginBottom: 24 },
   title: { marginTop: 20, fontFamily: 'Degular', fontSize: 30, lineHeight: 34, color: Colors.light.text, textAlign: 'center' },
-  errorIcon: { width: 64, height: 64, borderRadius: 22, backgroundColor: '#FFF0ED', alignItems: 'center', justifyContent: 'center' },
-  errorText: { marginTop: 8, fontFamily: 'CronosPro', fontSize: 15, lineHeight: 21, color: '#82342D', textAlign: 'center' },
-  button: { marginTop: 24, minHeight: 54, minWidth: 180, borderRadius: 22, backgroundColor: Colors.light.button, alignItems: 'center', justifyContent: 'center' },
-  buttonText: { fontFamily: 'Degular', fontSize: 20, color: 'white' },
+  errorIcon: { width: 64, height: 64, borderRadius: AppRadii.card, backgroundColor: designTheme.dangerSoft, alignItems: 'center', justifyContent: 'center' },
+  errorText: { marginTop: 8, fontFamily: 'CronosPro', fontSize: 15, lineHeight: 21, color: designTheme.danger, textAlign: 'center' },
+  button: { marginTop: 24, minHeight: 54, minWidth: 180, borderRadius: AppRadii.card, backgroundColor: Colors.light.button, alignItems: 'center', justifyContent: 'center' },
+  buttonText: { fontFamily: 'Degular', fontSize: 20, color: designTheme.onPrimary },
 });

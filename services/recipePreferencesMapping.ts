@@ -1,3 +1,4 @@
+import { normalizeCookingLevel, normalizeMealBudget, normalizeEquipments, type CookingLevel, type MealBudget } from './cookingPreferences';
 export type RecipePreferences = {
   dishType: string;
   duration: string;
@@ -8,6 +9,8 @@ export type RecipePreferences = {
   allergies: string[];
   goal: string;
   equipments: string[];
+  cookingLevel?: CookingLevel;
+  mealBudget?: MealBudget;
 };
 
 export const DEFAULT_RECIPE_PREFERENCES: RecipePreferences = {
@@ -23,6 +26,7 @@ export const DEFAULT_RECIPE_PREFERENCES: RecipePreferences = {
 };
 
 export const ONBOARDING_RECIPE_PREFERENCE_KEYS = [
+  'cookingLevel', 'mealBudget',
   'cookingTime',
   'equipments',
   'favoriteDishType',
@@ -39,14 +43,6 @@ const DURATION_MAP: Record<string, string> = {
   less_than_30_minutes: 'fast',
   between_30_minutes_and_1_hour: 'medium',
   more_than_1_hour: 'long',
-};
-
-const EQUIPMENT_MAP: Record<string, string> = {
-  equipment_oven: 'oven',
-  equipment_airfryer: 'airfryer',
-  equipment_microwave: 'microwave',
-  equipment_blender: 'blender',
-  equipment_robot: 'robot',
 };
 
 const CUISINE_STYLE_MAP: Record<string, string[]> = {
@@ -113,7 +109,9 @@ export function normalizeRecipePreferences(value: unknown): RecipePreferences {
     allowOtherIngredients: input.allowOtherIngredients === true,
     allergies: Array.isArray(input.allergies) ? unique(input.allergies.map(String)) : [],
     goal: typeof input.goal === 'string' && input.goal ? input.goal : 'neutral',
-    equipments: Array.isArray(input.equipments) ? unique(input.equipments.map(String)) : [],
+    equipments: normalizeEquipments(input.equipments),
+    cookingLevel: normalizeCookingLevel(input.cookingLevel),
+    mealBudget: normalizeMealBudget(input.mealBudget),
   };
 }
 
@@ -128,13 +126,15 @@ export function getOnboardingRecipePreferenceOverrides(
   const overrides: Partial<RecipePreferences> = {};
 
   overrides.servings = 1;
+  if (answers.cookingLevel != null) overrides.cookingLevel = normalizeCookingLevel(answers.cookingLevel);
+  if (answers.mealBudget != null) overrides.mealBudget = normalizeMealBudget(answers.mealBudget);
 
   if (answers.cookingTime && DURATION_MAP[answers.cookingTime]) {
     overrides.duration = DURATION_MAP[answers.cookingTime];
   }
 
   if (answers.equipments !== null) {
-    overrides.equipments = unique(parseMulti(answers.equipments).map((item) => EQUIPMENT_MAP[item]).filter(Boolean));
+    overrides.equipments = normalizeEquipments(parseMulti(answers.equipments));
   }
 
   // Le type de plat est un choix ponctuel de génération, pas une préférence
@@ -183,5 +183,5 @@ export function mergeRecipePreferences(
 export function getOnboardingRecipeAnswersSignature(answers: OnboardingRecipeAnswers): string {
   // La version fait réappliquer proprement le mapping après une évolution de
   // sa sémantique (v2 : le type de plat d'onboarding ne devient plus un filtre).
-  return JSON.stringify(['v5', ...ONBOARDING_RECIPE_PREFERENCE_KEYS.map((key) => answers[key])]);
+  return JSON.stringify(['v6', ...ONBOARDING_RECIPE_PREFERENCE_KEYS.map((key) => answers[key])]);
 }

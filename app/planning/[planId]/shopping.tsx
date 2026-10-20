@@ -1,3 +1,4 @@
+import { AppRadii, AppTheme as theme, appStyles } from '../../../constants/AppTheme';
 import { EntranceView } from '../../../components/motion/Entrance';
 import { NavigationIconButton } from '../../../components/NavigationIconButton';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,7 +11,7 @@ import { ActivityIndicator, Share, ScrollView, StyleSheet, Text, TouchableOpacit
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../../../constants/Colors';
-import { AppTheme as theme, appStyles } from '../../../constants/AppTheme';
+
 import { contentColumn, useResponsive } from '../../../hooks/useResponsive';
 import { apiService, MealPlan, ShoppingListItem } from '../../../services/api';
 
@@ -157,22 +158,22 @@ export default function ShoppingListScreen() {
 }
 
 const styles = StyleSheet.create({
-  field: { minHeight: 48, borderWidth: 1, borderColor: theme.line, borderRadius: 12, padding: 12, marginVertical: 8, fontFamily: 'CronosPro', fontSize: 16 },
+  field: { minHeight: 48, borderWidth: 1, borderColor: theme.line, borderRadius: AppRadii.chip, padding: 12, marginVertical: 8, fontFamily: 'CronosPro', fontSize: 16 },
   fill: { flex: 1 },
   topBar: { paddingBottom: 12 },
-  iconButton: { width: 44, height: 44, borderRadius: 16, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
+  iconButton: { width: 44, height: 44, borderRadius: AppRadii.control, backgroundColor: theme.surface, alignItems: 'center', justifyContent: 'center' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  errorText: { fontFamily: 'CronosPro', color: '#82342D', textAlign: 'center' },
-  progressCard: { marginTop: 8, marginBottom: 16, borderRadius: 23, padding: 18, backgroundColor: 'white', borderWidth: 1, borderColor: theme.line },
+  errorText: { fontFamily: 'CronosPro', color: theme.danger, textAlign: 'center' },
+  progressCard: { marginTop: 8, marginBottom: 16, borderRadius: AppRadii.card, padding: 18, backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.line },
   progress: { fontFamily: 'Degular', fontSize: 25, color: Colors.light.text },
-  track: { height: 8, marginTop: 12, borderRadius: 4, backgroundColor: '#F1EBD8', overflow: 'hidden' },
+  track: { height: 8, marginTop: 12, borderRadius: 4, backgroundColor: theme.soft, overflow: 'hidden' },
   fillTrack: { height: '100%', borderRadius: 4, backgroundColor: Colors.light.button },
   actions: { flexDirection: 'row', gap: 8, marginTop: 16 },
-  actionButton: { flex: 1, minHeight: 44, borderRadius: 14, backgroundColor: '#FFF6D9', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
+  actionButton: { flex: 1, minHeight: 44, borderRadius: AppRadii.control, backgroundColor: theme.yellowSoft, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
   actionText: { fontFamily: 'CronosProBold', fontSize: 15, color: theme.ink },
-  inlineError: { marginBottom: 10, fontFamily: 'CronosPro', color: '#82342D' },
-  list: { borderRadius: 23, overflow: 'hidden', borderWidth: 1, borderColor: theme.line },
-  item: { minHeight: 68, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderBottomWidth: 1, borderBottomColor: '#F0EBDD' },
+  inlineError: { marginBottom: 10, fontFamily: 'CronosPro', color: theme.danger },
+  list: { borderRadius: AppRadii.card, overflow: 'hidden', borderWidth: 1, borderColor: theme.line },
+  item: { minHeight: 68, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', backgroundColor: theme.surface, borderBottomWidth: 1, borderBottomColor: '#F0EBDD' },
   itemDone: { backgroundColor: '#FFF9E8' },
   emoji: { width: 38, marginLeft: 9, fontSize: 23 },
   itemCopy: { flex: 1, paddingVertical: 10 },

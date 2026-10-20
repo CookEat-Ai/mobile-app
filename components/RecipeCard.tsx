@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native';
 import { feedback } from '../services/haptics';
@@ -76,7 +77,7 @@ export const RecipeCard = ({ item, onPress, onLongPress }: RecipeCardProps) => {
 
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
-              <IconSymbol name="list.bullet" size={14} color="#8E8E93" />
+              <IconSymbol name="list.bullet" size={14} color={designTheme.muted} />
               <Text style={styles.statText} numberOfLines={1} maxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}>
                 {ingredientsCount} {t('common.ingredientsShort')}
               </Text>
@@ -85,7 +86,7 @@ export const RecipeCard = ({ item, onPress, onLongPress }: RecipeCardProps) => {
               <>
                 <View style={styles.miniDot} />
                 <View style={styles.statItem}>
-                  <IconSymbol name="checklist" size={14} color="#8E8E93" />
+                  <IconSymbol name="checklist" size={14} color={designTheme.muted} />
                   <Text style={styles.statText} numberOfLines={1} maxFontSizeMultiplier={MAX_FONT_SIZE_MULTIPLIER}>
                     {stepsCount} {t(stepsCount > 1 ? 'common.stepsShort' : 'common.stepShort')}
                   </Text>
@@ -105,30 +106,18 @@ export const RecipeCard = ({ item, onPress, onLongPress }: RecipeCardProps) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#F8F8FD',
-    borderRadius: 24,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.card,
     marginBottom: 16,
-    // On ne met pas overflow: 'hidden' ici car ça coupe l'ombre sur Android
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.05,
-        shadowRadius: 15,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
+    ...{}, borderWidth: 1, borderColor: designTheme.line, shadowOpacity: 0, elevation: 0 },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 24,
+    borderRadius: AppRadii.card,
     overflow: 'hidden',
   },
   image: {
-    borderRadius: 18,
+    borderRadius: AppRadii.control,
     marginLeft: 12,
   },
   info: {
@@ -150,13 +139,13 @@ const styles = StyleSheet.create({
   timeLeft: {
     fontSize: font(18),
     fontFamily: 'CronosProBold',
-    color: '#CF817D',
+    color: designTheme.muted,
     flexShrink: 1,
   },
   timeRight: {
     fontSize: font(13),
     fontFamily: 'CronosProBold',
-    color: '#AEAEB2',
+    color: designTheme.muted,
   },
   statsRow: {
     flexDirection: 'row',
@@ -173,12 +162,12 @@ const styles = StyleSheet.create({
     width: 3,
     height: 3,
     borderRadius: 1.5,
-    backgroundColor: '#D1D1D6',
+    backgroundColor: designTheme.line,
   },
   statText: {
     fontSize: font(15),
     fontFamily: 'CronosProBold',
-    color: '#8E8E93'
+    color: designTheme.muted
   },
   recipeTitle: {
     fontSize: font(18),

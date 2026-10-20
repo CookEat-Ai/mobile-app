@@ -1,3 +1,5 @@
+import { NavigationIconButton } from './NavigationIconButton';
+import { AppRadii, AppTheme as theme, appStyles } from '../constants/AppTheme';
 import { feedback } from '../services/haptics';
 import { EntranceView } from './motion/Entrance';
 import { Ionicons } from '@expo/vector-icons';
@@ -5,7 +7,7 @@ import React, { useMemo, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
-import { AppTheme as theme, appStyles } from '../constants/AppTheme';
+
 import { weightChartPath, weightHistoryChart, type WeightChartPeriod } from '../services/weightChart';
 import { weightDateKey, type WeightLog } from '../services/weightTracking';
 
@@ -107,10 +109,7 @@ export function WeightProgressCard({ logs, initialWeight, initialDate, targetWei
     </View>
     {selected && <>
       <View style={styles.reading}>
-        <TouchableOpacity style={appStyles.iconButton} accessibilityRole="button" accessibilityLabel={t('weightTracking.previousMeasurement')}
-          disabled={selectedIndex === 0} onPress={() => selectAdjacent(-1)} accessibilityState={{ disabled: selectedIndex === 0 }}>
-          <Ionicons name="chevron-back" size={24} color={selectedIndex === 0 ? theme.line : theme.ink} />
-        </TouchableOpacity>
+        <NavigationIconButton style={appStyles.iconButton} accessibilityRole="button" accessibilityLabel={t('weightTracking.previousMeasurement')} disabled={selectedIndex === 0} onPress={() => selectAdjacent(-1)} accessibilityState={{ disabled: selectedIndex === 0 }} />
         <View style={styles.readingCopy} accessibilityLiveRegion="polite">
           <Text style={styles.label}>{dateLabel(selected.date)}</Text>
           <Text style={styles.readingValue}>{displayWeight(selected.weight)} kg</Text>
@@ -133,7 +132,7 @@ const styles = StyleSheet.create({
   card: { ...appStyles.card, marginBottom: 16 },
   label: { fontFamily: 'CronosPro', fontSize: 14, lineHeight: 19, color: theme.muted },
   periods: { flexDirection: 'row', gap: 6, paddingVertical: 16 },
-  period: { flex: 1, minWidth: 0, minHeight: 44, paddingHorizontal: 6, paddingVertical: 8, alignItems: 'center', justifyContent: 'center', borderRadius: 17, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface },
+  period: { flex: 1, minWidth: 0, minHeight: 44, paddingHorizontal: 6, paddingVertical: 8, alignItems: 'center', justifyContent: 'center', borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface },
   periodSelected: { backgroundColor: theme.yellow, borderColor: theme.yellow },
   periodText: { fontFamily: 'Degular', fontSize: 15, color: theme.muted, textAlign: 'center' },
   periodTextSelected: { color: appStyles.buttonText.color },

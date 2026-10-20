@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, Easing, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
@@ -107,7 +108,7 @@ export default function GenerationDemoScreen() {
 
           <View style={styles.resultRow}>
             <View style={styles.resultIcon}>
-              <Ionicons name="restaurant" size={21} color="white" />
+              <Ionicons name="restaurant" size={21} color={designTheme.onPrimary} />
             </View>
             <View style={styles.resultCopy}>
               <Text style={styles.resultTitle}>{t('onboarding.generationDemo.resultTitle')}</Text>
@@ -128,12 +129,12 @@ export default function GenerationDemoScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FDF9E2', paddingHorizontal: 22 },
+  container: { flex: 1, backgroundColor: designTheme.background, paddingHorizontal: 22 },
   content: { flex: 1, ...contentColumn(), justifyContent: 'space-between' },
   header: { alignItems: 'center' },
   badge: {
     flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#FFF2D1',
-    paddingHorizontal: 12, paddingVertical: 7, borderRadius: 100, marginBottom: 16,
+    paddingHorizontal: 12, paddingVertical: 7, borderRadius: AppRadii.pill, marginBottom: 16,
   },
   badgeText: { fontFamily: 'CronosProBold', fontSize: font(13), color: Colors.light.button },
   title: {
@@ -145,19 +146,19 @@ const styles = StyleSheet.create({
     color: Colors.light.textSecondary, textAlign: 'center', marginTop: 10, paddingHorizontal: 10,
   },
   previewCard: {
-    backgroundColor: 'white', borderRadius: 28, padding: 18, borderWidth: 1,
+    backgroundColor: designTheme.surface, borderRadius: AppRadii.card, padding: 18, borderWidth: 1,
     borderColor: '#F0EAD1', shadowColor: '#5A3B00', shadowOpacity: 0.08,
     shadowRadius: 18, shadowOffset: { width: 0, height: 8 }, elevation: 3,
   },
   previewHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
   previewEyebrow: { fontFamily: 'CronosProBold', fontSize: font(12), color: Colors.light.button, textTransform: 'uppercase', letterSpacing: 0.6 },
   previewTitle: { fontFamily: 'Degular', fontSize: font(24), color: Colors.light.text, marginTop: 2 },
-  countBadge: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#FFF4D8', alignItems: 'center', justifyContent: 'center' },
+  countBadge: { width: 36, height: 36, borderRadius: AppRadii.control, backgroundColor: '#FFF4D8', alignItems: 'center', justifyContent: 'center' },
   countText: { fontFamily: 'Degular', fontSize: font(18), color: Colors.light.button },
   ingredientsGrid: { gap: 8 },
   ingredientChip: {
     minHeight: 46, flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: '#FFFDF5', borderRadius: 15, paddingHorizontal: 12,
+    backgroundColor: '#FFFDF5', borderRadius: AppRadii.control, paddingHorizontal: 12,
   },
   ingredientEmoji: { fontSize: font(20) },
   ingredientLabel: { flex: 1, fontFamily: 'CronosProBold', fontSize: font(15), color: Colors.light.text },
@@ -165,15 +166,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 16,
     paddingTop: 16, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: '#E8E2CB',
   },
-  resultIcon: { width: 42, height: 42, borderRadius: 14, backgroundColor: Colors.light.button, alignItems: 'center', justifyContent: 'center' },
+  resultIcon: { width: 42, height: 42, borderRadius: AppRadii.control, backgroundColor: Colors.light.button, alignItems: 'center', justifyContent: 'center' },
   resultCopy: { flex: 1 },
   resultTitle: { fontFamily: 'Degular', fontSize: font(18), color: Colors.light.text },
   resultSubtitle: { fontFamily: 'CronosPro', fontSize: font(13), color: Colors.light.textSecondary, marginTop: 1 },
   actions: { gap: 6 },
   primaryButton: {
-    backgroundColor: Colors.light.button, borderRadius: 100, paddingVertical: 17,
+    backgroundColor: Colors.light.button, borderRadius: AppRadii.pill, paddingVertical: 17,
     alignItems: 'center', shadowColor: Colors.light.button, shadowOpacity: 0.25,
     shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 4,
   },
-  primaryButtonText: { color: 'white', fontFamily: 'Degular', fontSize: font(19) },
+  primaryButtonText: { color: designTheme.onPrimary, fontFamily: 'Degular', fontSize: font(19) },
 });

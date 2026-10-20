@@ -1,18 +1,21 @@
+import { AppModal as Modal } from '../ui/AppModal';
+import { NavigationIconButton } from '../NavigationIconButton';
+import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { rememberPantryCategory } from '../../services/pantryCategoryAssignments';
 import { PantryIngredientsSection } from './PantryIngredientsSection';
 import React, { useEffect, useState } from 'react';
-import { Alert, Keyboard, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Keyboard, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { ingredientCategories } from '../../services/ingredientCategories';
 import { normalizePantryIngredients as normalize, pantryIngredientKey } from '../../services/planningPantry';
-import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+
 import { AppScreenHeading } from '../AppScreenHeading';
 
 type Props = { visible: boolean; showPantry?: boolean; initialCategoryId?: string; ingredients: string[]; onChange: (names: string[]) => void; onClose: () => void; };
 export function PlanningPantryCategoryModal(props: Props) {
-  return <Modal visible={props.visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={props.onClose}><SafeAreaProvider><PantryCategoryContent {...props} /></SafeAreaProvider></Modal>;
+  return <Modal visible={props.visible} presentationStyle="pageSheet" onRequestClose={props.onClose}><SafeAreaProvider><PantryCategoryContent {...props} /></SafeAreaProvider></Modal>;
 }
 function PantryCategoryContent({ visible, showPantry = false, initialCategoryId, ingredients, onChange, onClose }: Props) {
   const { t } = useTranslation();
@@ -47,12 +50,12 @@ function PantryCategoryContent({ visible, showPantry = false, initialCategoryId,
         <View style={{ paddingLeft: 12 + insets.left, paddingRight: 12 + insets.right, marginBottom: 12 }}><AppScreenHeading title="CookEat" showAppLogo compact /></View>
         <View style={[styles.sheetHeader, { paddingLeft: 12 + insets.left, paddingRight: 12 + insets.right }]}>
           {browsingCategories ? <>
-            {(category || showPantry) && <Pressable accessibilityRole="button" accessibilityLabel={t('planningPantry.categories')} style={appStyles.iconButton} onPress={() => { if (category) setCategory(null); else setBrowsingCategories(false); }}><Ionicons name="arrow-back" size={24} color={theme.ink} /></Pressable>}
+            {(category || showPantry) && <NavigationIconButton accessibilityRole="button" accessibilityLabel={t('planningPantry.categories')} style={appStyles.iconButton} onPress={() => { if (category) setCategory(null); else setBrowsingCategories(false); }} />}
             <Text style={[appStyles.section, { flex: 1 }]}>{category ? (categories.find(group => group.id === category)?.title || t('recipeSummary.other')) : t('planningPantry.categories')}</Text>
-            <Pressable accessibilityRole="button" accessibilityLabel={t('planningOrganize.done')} style={appStyles.iconButton} onPress={onClose}><Ionicons name="close" size={24} color={theme.ink} /></Pressable>
+            <NavigationIconButton kind="close" accessibilityRole="button" accessibilityLabel={t('common.close')} style={appStyles.iconButton} onPress={onClose} />
           </> : <>
             <Text style={[appStyles.section, { flex: 1 }]}>{t('pantry.title')}</Text>
-            <Pressable accessibilityRole="button" accessibilityLabel={t('planningOrganize.done')} style={appStyles.iconButton} onPress={onClose}><Ionicons name="close" size={24} color={theme.ink} /></Pressable>
+            <NavigationIconButton kind="close" accessibilityRole="button" accessibilityLabel={t('common.close')} style={appStyles.iconButton} onPress={onClose} />
           </>}
         </View>
         <ScrollView style={{ marginLeft: insets.left, marginRight: insets.right }} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentInsetAdjustmentBehavior="never" contentContainerStyle={styles.browseContent}>
@@ -77,9 +80,9 @@ function PantryCategoryContent({ visible, showPantry = false, initialCategoryId,
   );
 }
 const styles = StyleSheet.create({
-  manualRow: { flexDirection: 'row', gap: 8 }, manualInput: { flex: 1, minHeight: 52, padding: 12, borderRadius: 14, borderWidth: 1, borderColor: theme.line, fontFamily: 'CronosPro', fontSize: 16, color: theme.ink, backgroundColor: theme.surface }, manualAdd: { width: 48, alignItems: 'center', justifyContent: 'center', borderRadius: 14, backgroundColor: theme.yellowSoft },
+  manualRow: { flexDirection: 'row', gap: 8 }, manualInput: { flex: 1, minHeight: 52, padding: 12, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, fontFamily: 'CronosPro', fontSize: 16, color: theme.ink, backgroundColor: theme.surface }, manualAdd: { width: 48, alignItems: 'center', justifyContent: 'center', borderRadius: AppRadii.control, backgroundColor: theme.yellowSoft },
   browseContent: { paddingHorizontal: 12, paddingBottom: 24, gap: 12 },
-  categoryRow: { flexDirection: 'row', alignItems: 'center', gap: 16, padding: 16, minHeight: 68, borderWidth: 1, borderColor: theme.line, borderRadius: 16, backgroundColor: theme.surface },
+  categoryRow: { flexDirection: 'row', alignItems: 'center', gap: 16, padding: 16, minHeight: 68, borderWidth: 1, borderColor: theme.line, borderRadius: AppRadii.control, backgroundColor: theme.surface },
   emoji: { fontSize: 28, width: 36, textAlign: 'center' },
   help: { fontFamily: 'CronosPro', fontSize: 14, lineHeight: 20, color: theme.muted },
   selected: { borderColor: theme.yellow, backgroundColor: theme.yellowSoft },

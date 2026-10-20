@@ -1,3 +1,6 @@
+import { useResponsive } from '../../hooks/useResponsive';
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
+import { COOKING_LEVELS, MEAL_BUDGETS, normalizeCookingLevel, normalizeMealBudget } from '../../services/cookingPreferences';
 import { EntranceView } from '../../components/motion/Entrance';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
 import { NutritionExplanation } from '../../components/NutritionExplanation';
@@ -17,7 +20,7 @@ import { OnboardingFooter } from '../../components/onboarding/OnboardingFooter';
 import { OnboardingProgressBar } from '../../components/onboarding/OnboardingProgressBar';
 import { OnboardingIconCard } from '../../components/onboarding/OnboardingIconCard';
 import { Colors } from '../../constants/Colors';
-import { rw } from '../../constants/Layout';
+import { FORM_CONTENT_MAX_WIDTH, rw } from '../../constants/Layout';
 import analytics from '../../services/analytics';
 import apiService from '../../services/api';
 import { getUniqueDeviceId } from '../../services/deviceStorage';
@@ -35,6 +38,7 @@ const requiresWeightTarget = (goal?: AnswerValue) => goal === 'lose_weight' || g
 export default function FitnessOnboardingScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const { gutter } = useResponsive();
   const { width: windowWidth } = useWindowDimensions();
   const routeParams = useLocalSearchParams<{ initialStep?: string }>();
   const [answers, setAnswers] = useState<Answers>({ includeSnack: 'false' });
@@ -66,8 +70,10 @@ export default function FitnessOnboardingScreen() {
     { id: 'trainingDays', kind: 'single', title: t('fitnessOnboarding.training.title'), subtitle: t('fitnessOnboarding.training.subtitle'), options: Array.from({ length: 8 }, (_, day) => option('training', String(day), day === 0 ? '😌' : '🔥')) },
     ...(Number(answers.trainingDays) > 0 ? [{ id: 'trainingDurationMinutes', kind: 'single' as const, title: t('nutritionEstimate.durationTitle'), subtitle: t('nutritionEstimate.durationSubtitle'), options: [20, 45, 75].map(minutes => ({ value: String(minutes), emoji: '⏱️', label: t(`nutritionEstimate.durations.${minutes}`) })) }] : []),
     { id: 'profileReflection', kind: 'interstitial', hideProgress: true, title: t('fitnessOnboarding.interstitials.profile.title'), subtitle: t('fitnessOnboarding.interstitials.profile.subtitle') },
+    { id: 'cookingLevel', kind: 'single', title: t('cookingPreferences.levelTitle'), subtitle: t('cookingPreferences.levelSubtitle'), options: COOKING_LEVELS.map(value => ({ value, emoji: { beginner: '🍳', medium: '🥘', advanced: '👨‍🍳' }[value], label: t(`onboarding.formQuestions.${value}`) })) },
+    { id: 'mealBudget', kind: 'single', title: t('cookingPreferences.budgetTitle'), subtitle: t('cookingPreferences.budgetSubtitle'), options: MEAL_BUDGETS.map(value => ({ value, emoji: { budget_small: '🪙', budget_medium: '🛒', budget_large: '✨' }[value], label: t(`onboarding.formQuestions.${value}`) })) },
     { id: 'cookingTime', kind: 'single', title: t('fitnessOnboarding.cookingTime.title'), subtitle: t('fitnessOnboarding.cookingTime.subtitle'), options: [option('cookingTime', 'less_than_30_minutes', '⏱️'), option('cookingTime', 'between_30_minutes_and_1_hour', '⏲️'), option('cookingTime', 'more_than_1_hour', '👨‍🍳')] },
-    { id: 'equipments', kind: 'multi', optional: true, title: t('onboarding.equipmentQuestion'), options: [['equipment_oven', '🔥'], ['equipment_airfryer', '🍟'], ['equipment_microwave', '📡'], ['equipment_blender', '🥤'], ['equipment_robot', '🤖'], ['equipment_none', '🙅']].map(([value, emoji]) => ({ value, emoji, label: t(`onboarding.formQuestions.${value}`) })) },
+    { id: 'equipments', kind: 'multi', title: t('cookingPreferences.equipmentTitle'), subtitle: t('cookingPreferences.equipmentSubtitle'), options: [['equipment_oven', '🔥'], ['equipment_airfryer', '🍟'], ['equipment_microwave', '📡'], ['equipment_blender', '🥤'], ['equipment_robot', '🤖'], ['equipment_none', '🙅']].map(([value, emoji]) => ({ value, emoji, label: value === 'equipment_none' ? t('cookingPreferences.basicKitchen') : t(`onboarding.formQuestions.${value}`) })) },
     { id: 'diet', kind: 'single', title: t('fitnessOnboarding.diet.title'), subtitle: t('fitnessOnboarding.diet.subtitle'), options: [option('diet', 'none', '🍽️'), option('diet', 'vegetarian', '🥬'), option('diet', 'vegan', '🌱'), option('diet', 'pescatarian', '🐟'), option('diet', 'halal', '🌙')] },
     { id: 'avoidIngredients', kind: 'multi', optional: true, title: t('fitnessOnboarding.avoid.title'), subtitle: t('fitnessOnboarding.avoid.subtitle'), options: [option('avoid', 'avoid_pork', '🥓'), option('avoid', 'avoid_alcohol', '🍷'), option('avoid', 'avoid_beef', '🥩'), option('avoid', 'avoid_fish', '🐟'), option('avoid', 'avoid_dairy', '🥛'), option('avoid', 'avoid_gluten', '🌾'), option('avoid', 'avoid_egg', '🥚'), option('avoid', 'avoid_peanut', '🥜')] },
     { id: 'favoriteCuisineStyle', kind: 'multi', optional: true, title: t('fitnessOnboarding.cuisine.title'), subtitle: t('fitnessOnboarding.cuisine.subtitle'), options: [option('cuisine', 'cuisine_mediterranean', '🫒'), option('cuisine', 'cuisine_french', '🥖'), option('cuisine', 'cuisine_italian', '🍝'), option('cuisine', 'cuisine_middle_eastern', '🧆'), option('cuisine', 'cuisine_indian', '🍛'), option('cuisine', 'cuisine_asian', '🥢')] },
@@ -93,6 +99,8 @@ export default function FitnessOnboardingScreen() {
       includeSnack: answers.includeSnack === 'true',
       diet: String(answers.diet || 'none'),
       avoidIngredients: Array.isArray(answers.avoidIngredients) ? answers.avoidIngredients : [],
+      cookingLevel: normalizeCookingLevel(answers.cookingLevel),
+      mealBudget: normalizeMealBudget(answers.mealBudget),
       cookingTime: String(answers.cookingTime || 'less_than_30_minutes'),
       favoriteCuisineStyle: Array.isArray(answers.favoriteCuisineStyle) ? answers.favoriteCuisineStyle : [],
       equipments: Array.isArray(answers.equipments) ? answers.equipments.filter((item) => item !== 'equipment_none') : [],
@@ -203,7 +211,7 @@ export default function FitnessOnboardingScreen() {
         }} style={styles.backButton} />
         <View style={styles.progressTrackContainer}><OnboardingProgressBar progress={(index + 1) / steps.length} /></View>
       </View>
-      <OnboardingScrollView stepKey={step.id} contentContainerStyle={[styles.scrollContent, { paddingTop: step.hideProgress ? insets.top + 18 : 0, paddingBottom: showContinue ? 140 + insets.bottom : 30 + insets.bottom }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} scrollEnabled>
+      <OnboardingScrollView stepKey={step.id} contentContainerStyle={[styles.scrollContent, { paddingHorizontal: Math.max(24, gutter), paddingTop: step.hideProgress ? insets.top + 18 : 0, paddingBottom: showContinue ? 140 + insets.bottom : 30 + insets.bottom }]} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} scrollEnabled>
         <Image source={require('../../assets/images/mascot.png')} contentFit="contain" transition={0} style={[styles.progressMascot, step.hideProgress && { display: 'none' }]} />
         <Animated.View style={[styles.content, { opacity: contentOpacity }]}>
           {step.kind === 'interstitial' && <Interstitial id={step.id} title={step.title} subtitle={step.subtitle} projection={projection} profile={profile} t={t} />}
@@ -227,7 +235,7 @@ export default function FitnessOnboardingScreen() {
                       <TouchableOpacity key={item.value} onPress={() => select(item.value)} activeOpacity={0.8} style={[styles.card, selected && styles.cardSelected]}>
                         <Text style={styles.emoji}>{item.emoji}</Text>
                         <View style={{ flex: 1 }}><Text style={[styles.cardTitle, selected && styles.cardTitleSelected]}>{item.label}</Text>{item.description && <Text style={styles.optionDescription}>{item.description}</Text>}</View>
-                        {step.kind === 'multi' ? <View style={[styles.checkboxBox, selected && styles.checkboxChecked]}>{selected && <Ionicons name="checkmark" size={16} color="white" />}</View> : <View style={[styles.radioButton, selected && styles.radioButtonSelected]}>{selected && <View style={styles.radioButtonInner} />}</View>}
+                        {step.kind === 'multi' ? <View style={[styles.checkboxBox, selected && styles.checkboxChecked]}>{selected && <Ionicons name="checkmark" size={16} color={designTheme.onPrimary} />}</View> : <View style={[styles.radioButton, selected && styles.radioButtonSelected]}>{selected && <View style={styles.radioButtonInner} />}</View>}
                       </TouchableOpacity>
                     );
                   })}
@@ -312,26 +320,26 @@ function ReadyContent({ title, subtitle, t, windowWidth }: { title: string; subt
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#FDF9E2' },
+  root: { flex: 1, backgroundColor: designTheme.background },
   progressHeader: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingBottom: 5, gap: 14 },
-  backButton: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#F1F2F5', justifyContent: 'center', alignItems: 'center' },
+  backButton: { width: 36, height: 36, borderRadius: AppRadii.control, backgroundColor: '#F1F2F5', justifyContent: 'center', alignItems: 'center' },
   progressTrackContainer: { flex: 1, height: 36, justifyContent: 'center' },
-  scrollContent: { flexGrow: 1, width: '100%', maxWidth: 560, alignSelf: 'center', paddingHorizontal: 24 },
+  scrollContent: { flexGrow: 1, width: '100%', maxWidth: FORM_CONTENT_MAX_WIDTH, alignSelf: 'center', paddingHorizontal: 24 },
   progressMascot: { width: rw(0.25), height: rw(0.25), alignSelf: 'center', transform: [{ rotate: '20deg' }] },
   content: { flex: 1 },
   title: { textAlign: 'center', fontSize: rw(0.08), lineHeight: rw(0.1), fontFamily: 'Degular', color: Colors.light.text },
   subtitle: { marginTop: 12, marginBottom: 32, paddingHorizontal: 12, textAlign: 'center', fontSize: 16, lineHeight: 22, fontFamily: 'CronosPro', color: Colors.light.textSecondary },
   cardsContainer: { width: '100%', gap: 16, paddingHorizontal: Platform.OS === 'android' ? 4 : 0, paddingBottom: 12 },
-  card: { minHeight: 68, backgroundColor: 'white', borderRadius: 200, paddingHorizontal: 20, paddingVertical: 16, borderWidth: 2, borderColor: 'transparent', flexDirection: 'row', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 3 },
+  card: { minHeight: 68, backgroundColor: designTheme.surface, borderRadius: AppRadii.pill, paddingHorizontal: 20, paddingVertical: 16, borderWidth: 2, borderColor: 'transparent', flexDirection: 'row', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 3 },
   cardSelected: { borderColor: Colors.light.button },
   emoji: { width: 34, marginRight: 12, textAlign: 'center', fontSize: 20 },
   cardTitle: { flex: 1, fontSize: rw(0.05), lineHeight: rw(0.06), fontFamily: 'Degular', color: Colors.light.text },
   optionDescription: { marginTop: 6, fontFamily: 'CronosPro', fontSize: 14, lineHeight: 19, color: Colors.light.textSecondary },
   cardTitleSelected: { color: Colors.light.button },
-  radioButton: { width: 24, height: 24, marginLeft: 16, borderRadius: 12, borderWidth: 2, borderColor: Colors.light.border, justifyContent: 'center', alignItems: 'center' },
+  radioButton: { width: 24, height: 24, marginLeft: 16, borderRadius: AppRadii.chip, borderWidth: 2, borderColor: Colors.light.border, justifyContent: 'center', alignItems: 'center' },
   radioButtonSelected: { borderColor: Colors.light.button },
-  radioButtonInner: { width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.light.button },
-  checkboxBox: { width: 24, height: 24, marginLeft: 16, borderRadius: 6, borderWidth: 2, borderColor: Colors.light.border, justifyContent: 'center', alignItems: 'center' },
+  radioButtonInner: { width: 12, height: 12, borderRadius: AppRadii.small, backgroundColor: Colors.light.button },
+  checkboxBox: { width: 24, height: 24, marginLeft: 16, borderRadius: AppRadii.small, borderWidth: 2, borderColor: Colors.light.border, justifyContent: 'center', alignItems: 'center' },
   checkboxChecked: { borderColor: Colors.light.button, backgroundColor: Colors.light.button },
   numberRow: { alignSelf: 'center', flexDirection: 'row', alignItems: 'baseline', gap: 10, marginTop: 24 },
   numberInput: { minWidth: 160, borderBottomWidth: 3, borderBottomColor: Colors.light.button, color: Colors.light.text, fontFamily: 'Degular', fontSize: 64, textAlign: 'center', padding: 8 },
@@ -341,26 +349,26 @@ const styles = StyleSheet.create({
   interstitialIcon: { marginBottom: 20 },
   answerContext: { marginTop: 18, gap: 5, width: '100%' },
   answerContextText: { textAlign: 'center', fontFamily: 'CronosPro', fontSize: 15, lineHeight: 21, color: Colors.light.textSecondary },
-  preferenceSummary: { width: '100%', marginTop: 24, padding: 18, borderRadius: 20, backgroundColor: 'white', gap: 14 },
+  preferenceSummary: { width: '100%', marginTop: 24, padding: 18, borderRadius: AppRadii.card, backgroundColor: designTheme.surface, gap: 14 },
   preferenceRow: { gap: 3 },
   preferenceLabel: { fontFamily: 'CronosPro', fontSize: 13, lineHeight: 18, color: Colors.light.textSecondary },
   preferenceValue: { fontFamily: 'CronosProBold', fontSize: 16, lineHeight: 22, color: Colors.light.text },
   interstitialTitle: { textAlign: 'center', fontSize: rw(0.085), lineHeight: rw(0.105), fontFamily: 'Degular', color: Colors.light.text },
   interstitialSubtitle: { marginTop: 18, maxWidth: 340, textAlign: 'center', fontSize: 17, lineHeight: 23, fontFamily: 'CronosPro', color: Colors.light.textSecondary },
   factRow: { width: '100%', flexDirection: 'row', gap: 9, marginTop: 28 },
-  factCard: { flex: 1, minHeight: 116, alignItems: 'center', justifyContent: 'center', borderRadius: 20, backgroundColor: 'white', paddingHorizontal: 7, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 2 },
+  factCard: { flex: 1, minHeight: 116, alignItems: 'center', justifyContent: 'center', borderRadius: AppRadii.card, backgroundColor: designTheme.surface, paddingHorizontal: 7, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 2 },
   factValue: { marginTop: 8, fontFamily: 'Degular', fontSize: 25, color: Colors.light.text },
   factLabel: { marginTop: 1, minHeight: 30, fontFamily: 'CronosPro', fontSize: 12, lineHeight: 15, color: Colors.light.textSecondary, textAlign: 'center' },
-  reassurance: { width: '100%', flexDirection: 'row', gap: 10, alignItems: 'center', marginTop: 16, padding: 14, borderRadius: 17, backgroundColor: '#FFFBEB', borderWidth: 1, borderColor: '#F4E6A8' },
+  reassurance: { width: '100%', flexDirection: 'row', gap: 10, alignItems: 'center', marginTop: 16, padding: 14, borderRadius: AppRadii.control, backgroundColor: designTheme.yellowSoft, borderWidth: 1, borderColor: '#F4E6A8' },
   reassuranceText: { flex: 1, fontFamily: 'CronosProBold', fontSize: 14, lineHeight: 18, color: '#6A4B00' },
   specialStepContainer: { width: '100%', alignItems: 'center' },
-  topBadge: { backgroundColor: '#FFFBEB', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 100, borderWidth: 1, borderColor: Colors.light.button, marginBottom: 20 },
+  topBadge: { backgroundColor: designTheme.yellowSoft, paddingHorizontal: 16, paddingVertical: 8, borderRadius: AppRadii.pill, borderWidth: 1, borderColor: Colors.light.button, marginBottom: 20 },
   topBadgeText: { color: Colors.light.button, fontSize: 14, fontFamily: 'Degular' },
-  ratingSection: { backgroundColor: 'white', padding: 20, borderRadius: 24, width: '100%', alignItems: 'center', marginVertical: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 3 },
+  ratingSection: { backgroundColor: designTheme.surface, padding: 20, borderRadius: AppRadii.card, width: '100%', alignItems: 'center', marginVertical: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 3 },
   ratingPrompt: { fontSize: 18, color: Colors.light.text, textAlign: 'center', marginBottom: 12, fontFamily: 'Degular' },
   starsContainer: { flexDirection: 'row', gap: 12 },
   reviewsContainer: { width: '100%', gap: 12, paddingBottom: 8 },
-  reviewCard: { backgroundColor: 'white', borderRadius: 16, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
+  reviewCard: { backgroundColor: designTheme.surface, borderRadius: AppRadii.control, padding: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
   reviewHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
   reviewName: { fontSize: 16, color: Colors.light.text, fontFamily: 'Degular' },
   stars: { flexDirection: 'row', gap: 2 },
@@ -368,6 +376,6 @@ const styles = StyleSheet.create({
   readyContainer: { flex: 1, minHeight: 520, alignItems: 'center', justifyContent: 'center' },
   readyMascotStage: { width: rw(0.32), height: rw(0.54), alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
   readyMascot: { width: rw(0.32), height: rw(0.32), transform: [{ rotate: '20deg' }] },
-  readyBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFFBEB', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 100, marginBottom: 20, gap: 8 },
+  readyBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: designTheme.yellowSoft, paddingHorizontal: 16, paddingVertical: 8, borderRadius: AppRadii.pill, marginBottom: 20, gap: 8 },
   readyBadgeText: { color: Colors.light.button, fontSize: 16, fontFamily: 'Degular' },
 });

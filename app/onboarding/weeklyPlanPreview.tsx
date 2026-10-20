@@ -1,8 +1,11 @@
+import { CONTENT_MAX_WIDTH } from '../../constants/Layout';
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { usePlanningClock } from '../../hooks/usePlanningClock';
 import { CookingDaysPicker } from '../../components/planning/CookingDaysPicker';
 import { PlanMealCard } from '../../components/planning/PlanMealCard';
 import { PlanningDayPicker } from '../../components/planning/PlanningDayPicker';
-import { PlanningNutritionSummary } from '../../components/planning/PlanningNutritionSummary';
+import { PlanningOverview } from '../../components/planning/PlanningOverview';
+import { useResponsive } from '../../hooks/useResponsive';
 import { PlanningShoppingLink } from '../../components/planning/PlanningShoppingLink';
 import { planningStyles } from '../../components/planning/PlanningStyles';
 import { PlanningCalorieNotice } from '../../components/planning/PlanningCalorieNotice';
@@ -39,6 +42,7 @@ import {
 export default function WeeklyPlanPreviewScreen() {
   const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
+  const { gutter } = useResponsive();
   const { ready: loadingReady, reset: resetLoadingBar, finish: finishLoadingBar, onComplete: completeLoadingBar } = usePlanningLoading();
   const { weekStart } = usePlanningClock();
   const [plan, setPlan] = useState<MealPlan | null>(null);
@@ -92,6 +96,7 @@ export default function WeeklyPlanPreviewScreen() {
         saveOnboardingWeeklyPlanId(nextPlan._id),
         savePlanningGenerationSettings({
           ...settings,
+          cookingLevel: profilePreferences.cookingLevel, mealBudget: profilePreferences.mealBudget, equipments: profilePreferences.equipments,
           pantryIngredients: [],
           pantryMode: 'priority',
           cookingDays: selectedCookingDays,
@@ -204,7 +209,7 @@ export default function WeeklyPlanPreviewScreen() {
   );
 
   if (!plan) return <View style={[styles.root, { paddingTop: insets.top + 8 }]}>
-    <OnboardingScrollView stepKey="configuration" style={{ marginLeft: insets.left, marginRight: insets.right }} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerStyle={[styles.configurationContent, { paddingBottom: 132 + insets.bottom }]} showsVerticalScrollIndicator={false}>
+    <OnboardingScrollView stepKey="configuration" style={{ marginLeft: insets.left, marginRight: insets.right }} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerStyle={[styles.configurationContent, { paddingHorizontal: gutter, paddingBottom: 132 + insets.bottom }]} showsVerticalScrollIndicator={false}>
       <View style={styles.configurationIcon}><Ionicons name="calendar" size={34} color={Colors.light.button} /></View>
       <Text style={styles.configurationTitle}>{t('planning.generation.title')}</Text>
       <Text style={styles.configurationSubtitle}>{t('planning.generation.subtitle')}</Text>
@@ -215,30 +220,30 @@ export default function WeeklyPlanPreviewScreen() {
   </View>;
 
   return <View style={[styles.root, { paddingTop: insets.top + 8 }]}>
-    <OnboardingScrollView stepKey="preview" contentContainerStyle={[styles.content, { paddingBottom: 132 + insets.bottom }]} showsVerticalScrollIndicator={false}>
+    <OnboardingScrollView stepKey="preview" contentContainerStyle={[styles.content, { paddingHorizontal: gutter, paddingBottom: 132 + insets.bottom }]} showsVerticalScrollIndicator={false}>
       <View style={styles.heroRow}><View style={styles.heroCopy}><View style={styles.badge}><Ionicons name="sparkles" size={14} color={Colors.light.button} /><Text style={styles.badgeText}>{t('weeklyOnboarding.preview.badge')}</Text></View><Text style={styles.title}>{t('fitnessOnboarding.preview.title')}</Text><View style={styles.weekCount}><Text style={styles.weekCountValue}>{plan?.meals.length || 0}</Text><Text style={styles.weekCountLabel}>{t('fitnessOnboarding.interstitials.facts.meals')}</Text></View></View></View>
       {revealControls}
       <PlanningDayPicker visibleCount={visibleDayCount} revealKey={dayAnimationKey} days={visibleDays} selectedDay={selectedDay} onSelect={day => { stopReveal(); setSelectedDay(day); }} />
-      <PlanningNutritionSummary key={`nutrition:${plan._id}:${selectedDay}`} meals={meals} />
+      <PlanningOverview plan={plan} meals={meals} day={selectedDay} />
       <PlanningCalorieNotice plan={plan} dayIndex={selectedDay} />
       <View style={styles.sectionRow}><Text style={styles.sectionTitle}>{t('planning.dayMeals', { day: selectedDayLabel })}</Text></View>
       <AnimatedPlanningMeals key={`meals:${plan._id}:${selectedDay}`} meals={meals} animationKey={animationKey} renderMeal={meal => <PlanMealCard meal={meal} loading={opening === meal.slotId} disabled={Boolean(opening)} onPress={() => void openMeal(meal)} />} />
       <PlanningShoppingLink onPress={() => router.push({ pathname: '/planning/[planId]/shopping', params: { planId: plan._id, source: 'onboarding_week_preview' } })} />
       <Text style={styles.disclaimer}>{t('fitnessOnboarding.preview.disclaimer')}</Text>
     </OnboardingScrollView>
-    <OnboardingFooter label={t('weeklyOnboarding.preview.cta')} onPress={() => router.replace('/onboarding/promoCode')} />
+    <OnboardingFooter label={t('weeklyOnboarding.preview.cta')} onPress={() => router.replace('/onboarding/photoTrackingDemo')} />
   </View>;
 }
 
 
 const styles = StyleSheet.create({
   ...planningStyles,
-  root: { flex: 1, backgroundColor: '#FDF9E2' }, content: { width: '100%', maxWidth: 560, alignSelf: 'center', paddingHorizontal: 20 }, state: { flex: 1, backgroundColor: '#FDF9E2', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30 }, sparkle: { width: 92, height: 92, borderRadius: 46, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF4CF' }, stateTitle: { marginTop: 20, fontFamily: 'Degular', fontSize: 29, color: Colors.light.text, textAlign: 'center' }, stateSubtitle: { marginTop: 10, fontFamily: 'CronosPro', fontSize: 17, lineHeight: 23, color: Colors.light.textSecondary, textAlign: 'center' }, retry: { width: '100%', maxWidth: 320, minHeight: 56, alignItems: 'center', justifyContent: 'center', marginTop: 22, borderRadius: 200, backgroundColor: Colors.light.button, paddingHorizontal: 24, paddingVertical: 14 }, retryText: { color: 'white', fontFamily: 'Degular', fontSize: 17, textAlign: 'center' },
-  configurationContent: { width: '100%', maxWidth: 560, alignSelf: 'center', paddingHorizontal: 24, paddingTop: 42 },
-  configurationIcon: { width: 66, height: 66, borderRadius: 24, backgroundColor: '#FFF1C5', alignItems: 'center', justifyContent: 'center' },
+  root: { flex: 1, backgroundColor: designTheme.background }, content: { width: '100%', maxWidth: CONTENT_MAX_WIDTH, alignSelf: 'center', paddingHorizontal: 20 }, state: { flex: 1, backgroundColor: designTheme.background, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30 }, sparkle: { width: 92, height: 92, borderRadius: AppRadii.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: designTheme.yellowSoft }, stateTitle: { marginTop: 20, fontFamily: 'Degular', fontSize: 29, color: Colors.light.text, textAlign: 'center' }, stateSubtitle: { marginTop: 10, fontFamily: 'CronosPro', fontSize: 17, lineHeight: 23, color: Colors.light.textSecondary, textAlign: 'center' }, retry: { width: '100%', maxWidth: 320, minHeight: 56, alignItems: 'center', justifyContent: 'center', marginTop: 22, borderRadius: AppRadii.pill, backgroundColor: Colors.light.button, paddingHorizontal: 24, paddingVertical: 14 }, retryText: { color: designTheme.onPrimary, fontFamily: 'Degular', fontSize: 17, textAlign: 'center' },
+  configurationContent: { width: '100%', maxWidth: CONTENT_MAX_WIDTH, alignSelf: 'center', paddingHorizontal: 24, paddingTop: 42 },
+  configurationIcon: { width: 66, height: 66, borderRadius: AppRadii.card, backgroundColor: '#FFF1C5', alignItems: 'center', justifyContent: 'center' },
   configurationTitle: { marginTop: 22, fontFamily: 'Degular', fontSize: 34, lineHeight: 37, color: Colors.light.text },
   configurationSubtitle: { marginTop: 7, fontFamily: 'CronosPro', fontSize: 17, lineHeight: 23, color: Colors.light.textSecondary },
   configurationLabel: { marginTop: 30, marginBottom: 11, fontFamily: 'CronosProBold', fontSize: 16, color: Colors.light.text },
-  heroRow: { marginTop: 8 }, heroCopy: { width: '100%' }, badge: { alignSelf: 'flex-start', flexDirection: 'row', gap: 6, alignItems: 'center', backgroundColor: '#FFF4CF', borderRadius: 999, paddingHorizontal: 11, minHeight: 30 }, badgeText: { color: Colors.light.button, fontFamily: 'CronosProBold', fontSize: 12 }, title: { marginTop: 11, fontFamily: 'Degular', fontSize: 31, lineHeight: 34, color: Colors.light.text },
-  weekCount: { alignSelf: 'flex-start', marginTop: 10, minHeight: 32, borderRadius: 999, backgroundColor: Colors.light.button, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4, paddingHorizontal: 12 }, weekCountValue: { fontFamily: 'Degular', fontSize: 18, lineHeight: 20, color: 'white' }, weekCountLabel: { fontFamily: 'CronosProBold', fontSize: 10, color: 'white' },
+  heroRow: { marginTop: 8 }, heroCopy: { width: '100%' }, badge: { alignSelf: 'flex-start', flexDirection: 'row', gap: 6, alignItems: 'center', backgroundColor: designTheme.yellowSoft, borderRadius: AppRadii.pill, paddingHorizontal: 11, minHeight: 30 }, badgeText: { color: Colors.light.button, fontFamily: 'CronosProBold', fontSize: 12 }, title: { marginTop: 11, fontFamily: 'Degular', fontSize: 31, lineHeight: 34, color: Colors.light.text },
+  weekCount: { alignSelf: 'flex-start', marginTop: 10, minHeight: 32, borderRadius: AppRadii.pill, backgroundColor: Colors.light.button, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4, paddingHorizontal: 12 }, weekCountValue: { fontFamily: 'Degular', fontSize: 18, lineHeight: 20, color: designTheme.onPrimary }, weekCountLabel: { fontFamily: 'CronosProBold', fontSize: 10, color: designTheme.onPrimary },
 });

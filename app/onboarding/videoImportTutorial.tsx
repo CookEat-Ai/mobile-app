@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -340,7 +341,7 @@ export default function VideoImportTutorialScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.background,
     justifyContent: 'space-between',
     paddingHorizontal: 20,
   },
@@ -360,7 +361,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     backgroundColor: '#FFF2D1',
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     paddingHorizontal: 11,
     paddingVertical: 6,
     marginBottom: 9,
@@ -380,7 +381,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     fontFamily: 'CronosPro',
-    color: '#666',
+    color: designTheme.muted,
     textAlign: 'center',
     lineHeight: 22,
     paddingHorizontal: 10,
@@ -433,7 +434,7 @@ const styles = StyleSheet.create({
     height: '98%',
     top: '2%',
     left: '5.25%',
-    borderRadius: 28,
+    borderRadius: AppRadii.sheet,
     zIndex: 1,
   },
   pagination: {
@@ -467,7 +468,7 @@ const styles = StyleSheet.create({
   orText: {
     fontSize: 18,
     fontFamily: 'Degular',
-    color: '#8C8C8C',
+    color: designTheme.muted,
     letterSpacing: 1,
   },
   actions: {
@@ -483,7 +484,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   skipButtonText: {
-    color: '#8C8C8C',
+    color: designTheme.muted,
     fontSize: rw(0.041),
     fontFamily: 'CronosPro',
     textDecorationLine: 'underline',
@@ -491,7 +492,7 @@ const styles = StyleSheet.create({
   continueButton: {
     backgroundColor: Colors.light.button,
     width: '100%',
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     paddingVertical: 16,
     alignItems: 'center',
     shadowColor: Colors.light.button,

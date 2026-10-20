@@ -1,7 +1,7 @@
 {
   "name": "CookEat",
   "main": "expo-router/entry",
-  "version": "1.7.2",
+  "version": "1.8.0",
   "packageManager": "yarn@1.22.22",
   "scripts": {
     "start": "expo start",
@@ -22,7 +22,15 @@
     "test:pantry-scan": "node scripts/test-pantry-scan.cjs",
     "test:onboarding-planning": "node scripts/test-onboarding-planning.cjs",
     "test:response-cache": "node scripts/test-response-cache.cjs",
-    "test:meals-cache": "node scripts/test-meals-cache.cjs"
+    "test:meals-cache": "node scripts/test-meals-cache.cjs",
+    "test:cooking-preferences": "node scripts/test-cooking-preferences.cjs",
+    "test:personal-recipe": "node scripts/test-personal-recipe.cjs",
+    "test:meal-tracking": "node scripts/test-meal-tracking.cjs && node scripts/test-manual-tracking.cjs && node scripts/test-food-defaults.cjs",
+    "test:notifications": "node scripts/test-notification-lifecycle.cjs",
+    "test:chat-interactions": "node scripts/test-chat-interactions.cjs",
+    "test:visual-system": "node scripts/test-visual-system.cjs",
+    "test:photo-reveal": "node scripts/test-photo-reveal.cjs && node scripts/test-tracking-capture.cjs && node scripts/test-photo-autosave.cjs",
+    "test:responsive-layout": "node scripts/test-responsive-layout.cjs"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",

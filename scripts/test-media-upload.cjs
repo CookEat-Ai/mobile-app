@@ -56,7 +56,6 @@ const api = load('services/api.ts', {
     } };
   },
 }, id => {
-  if (id.includes('responseCache')) return { responseCache: { invalidatePersonal() {} }, responseCachePolicy: () => null };
   if (id === 'expo-file-system') return { File: LocalFile };
   if (id.includes('anonymousSession')) return {
     getAnonymousSessionToken: async () => { sessionCalls++; throw Error('session unavailable'); },

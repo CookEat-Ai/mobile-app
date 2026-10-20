@@ -1,3 +1,5 @@
+import { AppModal as Modal } from '../components/ui/AppModal';
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { activateReviewerAccess } from '../services/reviewerAccess';
 import { CREATOR_PROMO_CODES_ENABLED } from '../config/storeCompliance';
 import { NavigationIconButton } from '../components/NavigationIconButton';
@@ -5,7 +7,7 @@ import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { feedback } from '../services/haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, View, ActivityIndicator, Text, TouchableOpacity, Animated, Easing, Image, Platform, BackHandler, Alert, Modal, TextInput, Keyboard, Pressable } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, Text, TouchableOpacity, Animated, Easing, Image, Platform, BackHandler, Alert, TextInput, Keyboard, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Purchases, { PurchasesOffering, PurchasesPackage } from 'react-native-purchases';
 import { PaywallView } from '../components/PaywallView';
@@ -860,7 +862,7 @@ export default function PaywallScreen() {
 
   return (
     <View style={styles.container}>
-      
+
       <Pressable
         onLongPress={() => openSecretCodeEntry('long_press')}
         delayLongPress={2000}
@@ -872,7 +874,6 @@ export default function PaywallScreen() {
       <Modal
         visible={showCodeModal}
         transparent
-        animationType="fade"
         onRequestClose={() => setShowCodeModal(false)}
       >
         <Pressable style={styles.codeBackdrop} onPress={() => setShowCodeModal(false)}>
@@ -955,7 +956,7 @@ export default function PaywallScreen() {
                   {/* Segment 2 (45-90°) - 20% - Couleur bouton */}
                   <Path d="M50,50 L85.35,85.35 A50,50 0 0,1 50,100 Z" fill={Colors.light.button} />
                   {/* Segment 3 (90-135°) - 15% - Blanc */}
-                  <Path d="M50,50 L50,100 A50,50 0 0,1 14.65,85.35 Z" fill="#FFFFFF" />
+                  <Path d="M50,50 L50,100 A50,50 0 0,1 14.65,85.35 Z" fill={designTheme.onPrimary} />
                   {/* Segment 4 (135-180°) - 25% - Couleur bouton */}
                   <Path d="M50,50 L14.65,85.35 A50,50 0 0,1 0,50 Z" fill={Colors.light.button} />
                   {/* Segment 5 (180-225°) - 33% - Noir */}
@@ -963,7 +964,7 @@ export default function PaywallScreen() {
                   {/* Segment 6 (225-270°) - 20% - Couleur bouton */}
                   <Path d="M50,50 L14.65,14.65 A50,50 0 0,1 50,0 Z" fill={Colors.light.button} />
                   {/* Segment 7 (270-315°) - 15% - Blanc */}
-                  <Path d="M50,50 L50,0 A50,50 0 0,1 85.35,14.65 Z" fill="#FFFFFF" />
+                  <Path d="M50,50 L50,0 A50,50 0 0,1 85.35,14.65 Z" fill={designTheme.onPrimary} />
                   {/* Segment 8 (315-360°) - 25% - Couleur bouton */}
                   <Path d="M50,50 L85.35,14.65 A50,50 0 0,1 100,50 Z" fill={Colors.light.button} />
                 </G>
@@ -977,7 +978,7 @@ export default function PaywallScreen() {
                 <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>20%</Text>
               </View>
               <View style={[styles.segment, { transform: [{ rotate: '112.5deg' }] }]}>
-                <Text style={[styles.segmentText, { color: '#000', fontSize: 18 }]}>15%</Text>
+                <Text style={[styles.segmentText, { color: designTheme.ink, fontSize: 18 }]}>15%</Text>
               </View>
               <View style={[styles.segment, { transform: [{ rotate: '157.5deg' }] }]}>
                 <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>25%</Text>
@@ -989,7 +990,7 @@ export default function PaywallScreen() {
                 <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>20%</Text>
               </View>
               <View style={[styles.segment, { transform: [{ rotate: '292.5deg' }] }]}>
-                <Text style={[styles.segmentText, { color: '#000', fontSize: 18 }]}>15%</Text>
+                <Text style={[styles.segmentText, { color: designTheme.ink, fontSize: 18 }]}>15%</Text>
               </View>
               <View style={[styles.segment, { transform: [{ rotate: '337.5deg' }] }]}>
                 <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>25%</Text>
@@ -1030,7 +1031,7 @@ export default function PaywallScreen() {
           </View>
         </Animated.View>
       ) : (
-        <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+        <View style={{ flex: 1, backgroundColor: designTheme.surface }}>
           {loading ? (
             <View style={styles.loadingModalOverlay}>
               <ActivityIndicator size="large" color={Colors.light.button} />
@@ -1104,8 +1105,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
   },
   codeCard: {
-    backgroundColor: '#FDF9E2',
-    borderRadius: 24,
+    backgroundColor: designTheme.background,
+    borderRadius: AppRadii.card,
     padding: 24,
     gap: 14,
     alignItems: 'center',
@@ -1124,8 +1125,8 @@ const styles = StyleSheet.create({
   },
   codeInput: {
     width: '100%',
-    backgroundColor: '#FFF',
-    borderRadius: 14,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.control,
     borderWidth: 2,
     borderColor: Colors.light.border,
     paddingVertical: 14,
@@ -1145,7 +1146,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: Colors.light.button,
     paddingVertical: 16,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     alignItems: 'center',
   },
   codeSubmitDisabled: {
@@ -1164,7 +1165,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: designTheme.surface,
   },
   center: {
     justifyContent: 'center',
@@ -1180,7 +1181,7 @@ const styles = StyleSheet.create({
   wheelContainer: {
     paddingTop: 70,
     alignItems: 'center',
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.background,
   },
   wheelHeader: {
     paddingHorizontal: 30,
@@ -1197,7 +1198,7 @@ const styles = StyleSheet.create({
   wheelSubtitle: {
     fontSize: font(16),
     fontFamily: 'CronosPro',
-    color: '#8C8C8C',
+    color: designTheme.muted,
     textAlign: 'center',
   },
   visualContainer: {
@@ -1237,8 +1238,8 @@ const styles = StyleSheet.create({
     left: '35%',
     width: '30%',
     height: '30%',
-    backgroundColor: 'white',
-    borderRadius: 100,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.pill,
     borderWidth: 4,
     borderColor: '#000',
     justifyContent: 'center',
@@ -1260,7 +1261,7 @@ const styles = StyleSheet.create({
   spinButton: {
     backgroundColor: Colors.light.button,
     paddingVertical: 18,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     alignItems: 'center',
     shadowColor: Colors.light.button,
     shadowOffset: { width: 0, height: 4 },
@@ -1269,7 +1270,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   spinButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: font(20),
     fontFamily: 'Degular'
   },
@@ -1298,12 +1299,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     paddingVertical: 16,
     paddingHorizontal: 40,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     width: '100%',
     alignItems: 'center',
   },
   claimButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 18,
     fontFamily: 'Degular'
   },
@@ -1327,12 +1328,12 @@ const styles = StyleSheet.create({
   errorRetryButton: {
     marginTop: 24,
     backgroundColor: Colors.light.button,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     paddingVertical: 14,
     paddingHorizontal: 32,
   },
   errorRetryText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 17,
     fontFamily: 'Degular',
   },

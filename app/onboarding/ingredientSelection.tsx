@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { CREATOR_PROMO_CODES_ENABLED } from '../../config/storeCompliance';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
 import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
@@ -238,7 +239,7 @@ export default function IngredientSelectionScreen() {
             ]}
           >
             {isLoading ? (
-              <ActivityIndicator color="white" />
+              <ActivityIndicator color={designTheme.onPrimary} />
             ) : (
               <>
                 <Text style={styles.buttonText}>{t('onboarding.ingredientSelection.generateRecipe')}</Text>
@@ -267,7 +268,7 @@ export default function IngredientSelectionScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.background,
   },
   progressHeader: {
     flexDirection: 'row',
@@ -279,8 +280,8 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: 'white',
+    borderRadius: AppRadii.card,
+    backgroundColor: designTheme.surface,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -308,7 +309,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     fontFamily: 'CronosProBold',
-    color: '#8C8C8C',
+    color: designTheme.muted,
     textAlign: 'center',
     marginTop: 12,
     paddingHorizontal: 10,
@@ -325,11 +326,11 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'android' ? 12 : 0, // Évite que les ombres en bas soient coupées
   },
   ingredientCard: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     // Deux colonnes : padding d'écran (48) + gouttière (12), plus la marge
     // supplémentaire qu'Android réserve à l'ombre.
     width: (rw(1) - 48 - 12 - (Platform.OS === 'android' ? 8 : 0)) / 2,
-    borderRadius: 20,
+    borderRadius: AppRadii.card,
     padding: 20,
     alignItems: 'center',
     justifyContent: 'center',
@@ -344,8 +345,8 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   ingredientCardSelected: {
-    borderColor: '#FEB50A',
-    backgroundColor: '#FFFBEB',
+    borderColor: designTheme.yellow,
+    backgroundColor: designTheme.yellowSoft,
   },
   ingredientEmoji: {
     fontSize: 32,
@@ -358,7 +359,7 @@ const styles = StyleSheet.create({
     lineHeight: Platform.OS === 'android' ? 22 : undefined, // Fix truncation on Android
   },
   ingredientLabelSelected: {
-    color: '#FEB50A',
+    color: designTheme.yellow,
   },
   bottomSection: {
     position: 'absolute',
@@ -370,7 +371,7 @@ const styles = StyleSheet.create({
   generateButton: {
     backgroundColor: Colors.light.button,
     paddingVertical: 18,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'center',
@@ -382,12 +383,12 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   generateButtonDisabled: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: designTheme.line,
     shadowOpacity: 0,
     elevation: 0,
   },
   buttonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 19,
     fontFamily: 'Degular',
   },
@@ -395,11 +396,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)',
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 10,
+    borderRadius: AppRadii.chip,
     marginLeft: 10,
   },
   badgeText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 14,
     fontFamily: 'Degular',
   },
@@ -408,7 +409,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   skipButtonText: {
-    color: '#8C8C8C',
+    color: designTheme.muted,
     fontSize: 16,
     fontFamily: 'CronosPro',
     textDecorationLine: 'underline',

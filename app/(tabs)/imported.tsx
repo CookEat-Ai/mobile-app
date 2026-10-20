@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { router, useFocusEffect } from "expo-router";
 import React, { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -239,7 +240,7 @@ export default function ImportedScreen() {
             </Text>
           </View>
           <View style={styles.premiumIconContainer}>
-            <IconSymbol name="square.and.arrow.down.fill" size={36} color="white" />
+            <IconSymbol name="square.and.arrow.down.fill" size={36} color={designTheme.onPrimary} />
           </View>
         </View>
       </LinearGradient>
@@ -261,7 +262,7 @@ export default function ImportedScreen() {
         onPress={handleOpenImportSheet}
         activeOpacity={0.85}
       >
-        <Ionicons name="link" size={18} color="white" />
+        <Ionicons name="link" size={18} color={designTheme.onPrimary} />
         <Text style={styles.emptyCtaText}>{t('importLink.submit')}</Text>
       </TouchableOpacity>
     </View>
@@ -288,7 +289,7 @@ export default function ImportedScreen() {
             accessibilityRole="button"
             accessibilityLabel={t('importLink.title')}
           >
-            <Ionicons name="add" size={22} color="white" />
+            <Ionicons name="add" size={22} color={designTheme.onPrimary} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.helpButton}
@@ -405,7 +406,7 @@ const styles = StyleSheet.create({
   importButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: AppRadii.card,
     backgroundColor: Colors.light.button,
     justifyContent: 'center',
     alignItems: 'center',
@@ -413,8 +414,8 @@ const styles = StyleSheet.create({
   helpButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F2F2F7',
+    borderRadius: AppRadii.card,
+    backgroundColor: designTheme.soft,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -423,13 +424,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     backgroundColor: Colors.light.button,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     paddingVertical: 14,
     paddingHorizontal: 24,
     marginTop: 24,
   },
   emptyCtaText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: font(17),
     fontFamily: 'Degular',
   },
@@ -446,7 +447,7 @@ const styles = StyleSheet.create({
     paddingTop: 100,
   },
   premiumCard: {
-    borderRadius: 24,
+    borderRadius: AppRadii.card,
     overflow: 'hidden',
     elevation: 8,
     shadowColor: '#FDB931',
@@ -468,18 +469,18 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 8,
+    borderRadius: AppRadii.small,
     marginBottom: 8,
   },
   proBadgeText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 12,
     letterSpacing: 1,
     fontFamily: 'Degular'
   },
   premiumTitle: {
     fontSize: font(22),
-    color: 'white',
+    color: designTheme.onPrimary,
     marginBottom: 4,
     fontFamily: 'Degular'
   },
@@ -493,7 +494,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 30,
+    borderRadius: AppRadii.sheet,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -505,8 +506,8 @@ const styles = StyleSheet.create({
   emptyIconWrapper: {
     width: 80,
     height: 80,
-    borderRadius: 40,
-    backgroundColor: '#F2F2F7',
+    borderRadius: AppRadii.pill,
+    backgroundColor: designTheme.soft,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,

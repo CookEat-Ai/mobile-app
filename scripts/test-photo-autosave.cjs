@@ -1,0 +1,26 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript');
+const compile=file=>ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const rows=new Map(),tracking={};
+vm.runInNewContext(compile('services/mealTracking.ts'),{exports:tracking,Date,Promise,Set,Number,encodeURIComponent,require:()=>({getItem:async key=>rows.get(key)||null,setItem:async(key,value)=>rows.set(key,value)})});
+const autosave={};vm.runInNewContext(compile('services/photoMealAutosave.ts'),{exports:autosave,Map,Promise,require:()=>tracking});
+const items=[{id:'rice',foodKey:'rice',name:'Riz',grams:200,per100g:{calories:130,proteins:3,carbs:28,fats:1}}];
+const input={userId:'photo-user',analysis:{scanId:'scan',kind:'meal'},photo:{uri:'camera',width:1000,height:800},title:'Repas',items,mealType:'dinner',nutritionOverride:null,date:'2026-10-19',createdAt:'2026-10-19T20:00:00Z'};
+(async()=>{
+ let confirms=0,copies=0,fail=false;
+ const deps={confirm:async value=>{confirms++;if(fail)throw Error('offline');return{meal:{id:value.analysis.scanId,title:value.title,items:value.items,mealType:value.mealType,nutrition:tracking.mealNutrition(value.items,value.nutritionOverride),estimated:true},catalogue:{status:'saved'}};},persistPhoto:async()=>{copies++;return'private/persisted.jpg';},saveMeal:tracking.saveTrackedMeal};
+ const saver=autosave.createPhotoMealSaver(deps);
+ const [saved,duplicate]=await Promise.all([saver.save(input),saver.save(input)]);
+ assert.equal(confirms,1);assert.equal(copies,1);assert.equal(saved,duplicate);assert.equal(saver.isSaved(input),true);
+ let meals=await tracking.loadTrackedMeals(input.userId);assert.equal(meals.length,1,'analysis saves to the day without a CTA');assert.equal(meals[0].nutrition.calories,260);assert.equal(meals[0].photoUri,'private/persisted.jpg');
+ const edit={...input,title:'Repas corrigé',items:[{...items[0],grams:100}],date:'2026-10-20',createdAt:'2026-10-20T10:00:00Z'};
+ assert.equal(saver.isSaved(edit),false);await saver.save(edit);
+ meals=await tracking.loadTrackedMeals(input.userId);assert.equal(meals.length,1,'edits upsert the same meal');assert.equal(meals[0].nutrition.calories,130);assert.equal(meals[0].date,input.date);assert.equal(meals[0].createdAt,input.createdAt);assert.equal(confirms,1,'edits do not create another catalog submission');
+ const restored=autosave.createPhotoMealSaver(deps);restored.restore(meals[0]);
+ await restored.save({...edit,nutritionOverride:{calories:400,proteins:20,carbs:40,fats:15}});
+ assert.equal(confirms,1);assert.equal((await tracking.loadTrackedMeals(input.userId))[0].nutrition.calories,400);
+ fail=true;const second={...input,analysis:{scanId:'second',kind:'meal'}};
+ await assert.rejects(saver.save(second));assert.equal((await tracking.loadTrackedMeals(input.userId)).length,1);
+ fail=false;await saver.save(second);assert.equal((await tracking.loadTrackedMeals(input.userId)).length,2,'retry succeeds without duplicating the first meal');
+ await assert.rejects(saver.save({...input,analysis:{scanId:'invalid',kind:'not_food'}}));
+ console.log('Photo autosave: immediate persistence, duplicate coalescing, retained photo, local edits, historical date, restored records, total override and retry passed.');
+})().catch(error=>{console.error(error);process.exitCode=1;});

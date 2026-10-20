@@ -30,7 +30,8 @@ export function scalePortionContent<T extends { ingredients?: Array<{ quantity: 
     const quantity = scaleIngredientQuantity(item.quantity, factor, (item as { name?: string }).name, exact);
     // Never replace naked numbers in steps: they can be cooking times/temperatures.
     if (/\d\s*(?:g|kg|ml|l|tbsp|tsp|tablespoons?|teaspoons?|cuill[eè]res?|cucharadas?|cucharaditas?|colheres?|œufs?|oeufs?|eggs?|gousses?|cloves?|c\.|EL|TL)\b/i.test(item.quantity)) replacements.set(item.quantity, quantity);
-    return { ...item, quantity };
+    const grams = (item as any).grams;
+    return { ...item, quantity, ...(Number.isFinite(grams) ? { grams: grams * factor } : {}) };
   });
   const keys = [...replacements.keys()].sort((a, b) => b.length - a.length);
   const pattern = keys.length ? new RegExp(`(?<![\\d.,])(?:${keys.map(key => key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})(?![\\w])`, 'g') : null;
@@ -40,5 +41,9 @@ export function scalePortionContent<T extends { ingredients?: Array<{ quantity: 
 
 
 export function recipeForServings<T extends { servings?: number; ingredients?: Array<{ quantity: string }>; steps?: Array<{ title?: string; description?: string }> }>(recipe: T, servings: number): T {
-  return { ...scalePortionContent(recipe, servings / (recipe.servings || 1)), servings };
+  const factor = servings / (recipe.servings || 1);
+  const cost = (recipe as any).estimatedCost;
+  const decimals = cost ? new Intl.NumberFormat('en',{style:'currency',currency:cost.currency || 'EUR'}).resolvedOptions().maximumFractionDigits : 2;
+  const adjustedCost = cost ? {...cost, servings, ...Object.fromEntries(['amount','low','high','knownAmount'].map(key=>[key, cost[key] === null ? null : Number((cost[key] * factor).toFixed(decimals))]))} : undefined;
+  return { ...scalePortionContent(recipe, factor), servings, ...(cost ? {estimatedCost: adjustedCost} : {}) };
 }

@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { NavigationIconButton } from '../components/NavigationIconButton';
 import { router, useFocusEffect } from "expo-router";
 import React, { useState, useCallback, useRef } from 'react';
@@ -146,8 +147,8 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: 'white',
+    borderRadius: AppRadii.card,
+    backgroundColor: designTheme.surface,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',

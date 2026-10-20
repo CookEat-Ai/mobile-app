@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useMemo, useState } from 'react';
 import {
@@ -171,7 +172,7 @@ export default function PersonalizedRecipesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.background,
   },
   content: {
     flex: 1,
@@ -185,8 +186,8 @@ const styles = StyleSheet.create({
     gap: -10, // Pour les rapprocher et créer un léger chevauchement visuel si nécessaire
   },
   card: {
-    backgroundColor: 'white',
-    borderRadius: 24,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.card,
     padding: 16,
     gap: 12,
     marginBottom: 8,
@@ -199,8 +200,8 @@ const styles = StyleSheet.create({
   emojiContainer: {
     width: 44,
     height: 44,
-    borderRadius: 12,
-    backgroundColor: '#F8F9FA',
+    borderRadius: AppRadii.chip,
+    backgroundColor: designTheme.soft,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
   cardDescription: {
     fontSize: 16,
     fontFamily: 'CronosProBold',
-    color: '#8C8C8C',
+    color: designTheme.muted,
     lineHeight: 16,
   },
   bottomSection: {
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
   continueButton: {
     backgroundColor: Colors.light.button,
     paddingVertical: 18,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     width: '100%',
     alignItems: 'center',
     shadowColor: Colors.light.button,
@@ -246,7 +247,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 19,
     fontFamily: 'Degular',
   },

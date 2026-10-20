@@ -7,8 +7,8 @@ import { NavigationIconButton } from '../NavigationIconButton';
 import { OnboardingProgressBar } from '../onboarding/OnboardingProgressBar';
 
 /** The brand stays outside scrolling content throughout planning. */
-export function PlanningFlowHeader({ onBack, progress, caption, inset = true }: {
-  onBack?: () => void; progress?: number; caption?: string; inset?: boolean;
+export function PlanningFlowHeader({ onBack, onClose, closeDisabled = false, progress, caption, inset = true }: {
+  onBack?: () => void; onClose?: () => void; closeDisabled?: boolean; progress?: number; caption?: string; inset?: boolean;
 }) {
   const insets = useSafeAreaInsets();
   return <View style={[styles.root, {
@@ -19,6 +19,7 @@ export function PlanningFlowHeader({ onBack, progress, caption, inset = true }: 
     <View style={styles.row}>
       {onBack && <NavigationIconButton onPress={onBack} />}
       <View style={styles.brand}><AppScreenHeading title="CookEat" showAppLogo compact action={caption ? <Text style={styles.caption}>{caption}</Text> : undefined} /></View>
+      {onClose && <NavigationIconButton kind="close" onPress={onClose} disabled={closeDisabled} />}
     </View>
     {progress !== undefined && <View style={styles.progress}><OnboardingProgressBar progress={progress} /></View>}
   </View>;

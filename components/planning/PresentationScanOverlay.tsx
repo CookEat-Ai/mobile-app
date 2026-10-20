@@ -1,9 +1,10 @@
+import { AppRadii, AppTheme as theme } from '../../constants/AppTheme';
 import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { AppTheme as theme } from '../../constants/AppTheme';
+
 import { useMotionAllowed } from '../../contexts/MotionPreferences';
 import { presentationScanPhotoIndex, usePresentationScanPhotos } from '../../services/presentationScan';
 
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
   deck: { flex: 1, marginHorizontal: 4 },
   photo: { position: 'absolute', overflow: 'hidden', borderRadius: theme.radius, backgroundColor: theme.soft },
   scan: { position: 'absolute', top: 0, left: 0, right: 0, height: 6, backgroundColor: theme.yellow, shadowColor: theme.yellow, shadowOpacity: 1, shadowRadius: 16, elevation: 8 },
-  counter: { position: 'absolute', right: 16, top: 16, backgroundColor: theme.surface, borderRadius: 100, paddingHorizontal: 14, paddingVertical: 8 },
+  counter: { position: 'absolute', right: 16, top: 16, backgroundColor: theme.surface, borderRadius: AppRadii.pill, paddingHorizontal: 14, paddingVertical: 8 },
   counterText: { color: theme.ink, fontFamily: 'CronosProBold', fontSize: 16 },
   title: { color: theme.ink, fontFamily: 'Degular', fontSize: 27, textAlign: 'center', marginTop: 14 },
   dots: { flexDirection: 'row', justifyContent: 'center', gap: 6, paddingTop: 8, paddingBottom: 4 },

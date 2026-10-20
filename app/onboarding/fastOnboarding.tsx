@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { CREATOR_PROMO_CODES_ENABLED } from '../../config/storeCompliance';
 import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
 import React, { useEffect, useRef, useState } from 'react';
@@ -66,7 +67,7 @@ const RatingBadge = ({ style }: { style?: any }) => {
           <Text style={styles.ratingBadgeScore}>5.0</Text>
           <View style={styles.ratingBadgeStars}>
             {[1, 2, 3, 4, 5].map((s) => (
-              <Ionicons key={s} name="star" size={16} color="#FEB50A" />
+              <Ionicons key={s} name="star" size={16} color={designTheme.yellow} />
             ))}
           </View>
         </View>
@@ -380,7 +381,7 @@ export default function FastOnboardingScreen() {
                 <Text style={styles.reviewName}>{r.name}</Text>
                 <View style={styles.starsSmall}>
                   {[1, 2, 3, 4, 5].map((s) => (
-                    <Ionicons key={s} name="star" size={12} color="#FEB50A" />
+                    <Ionicons key={s} name="star" size={12} color={designTheme.yellow} />
                   ))}
                 </View>
               </View>
@@ -585,7 +586,7 @@ export default function FastOnboardingScreen() {
                 router.push({ pathname: '/camera', params: { isOnboarding: 'true' } });
               }}
             >
-              <IconSymbol name="camera.fill" size={24} color="white" />
+              <IconSymbol name="camera.fill" size={24} color={designTheme.onPrimary} />
               <Text style={styles.mainButtonText}>{t('onboarding.ahaMoment.cameraButton')}</Text>
             </TouchableOpacity>
           )}
@@ -651,7 +652,7 @@ export default function FastOnboardingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.background,
   },
   header: {
     // Barre de progression : pleine largeur, comme sur téléphone.
@@ -663,14 +664,14 @@ const styles = StyleSheet.create({
   progressTrack: {
     width: '100%',
     height: 10,
-    borderRadius: 10,
-    backgroundColor: '#F1EACB',
+    borderRadius: AppRadii.chip,
+    backgroundColor: designTheme.soft,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
     backgroundColor: Colors.light.button,
-    borderRadius: 10,
+    borderRadius: AppRadii.chip,
   },
   mascotHeader: {
     marginTop: 20,
@@ -714,14 +715,14 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: font(18),
     fontFamily: 'CronosPro',
-    color: '#8C8C8C',
+    color: designTheme.muted,
     textAlign: 'center',
     paddingHorizontal: 10,
   },
   subtitleSmall: {
     fontSize: font(16),
     fontFamily: 'CronosPro',
-    color: '#666',
+    color: designTheme.muted,
     textAlign: 'center',
     marginBottom: 10,
   },
@@ -735,7 +736,7 @@ const styles = StyleSheet.create({
   mainButton: {
     backgroundColor: Colors.light.button,
     paddingVertical: 18,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     width: '100%',
     alignItems: 'center',
     flexDirection: 'row',
@@ -748,7 +749,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   mainButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: font(19),
     fontFamily: 'Degular',
   },
@@ -757,7 +758,7 @@ const styles = StyleSheet.create({
     minHeight: 56,
     paddingVertical: 16,
     paddingHorizontal: 20,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     borderWidth: 1.5,
     borderColor: '#BDB49C',
     backgroundColor: '#FFFDF5',
@@ -771,7 +772,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   disabledButton: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: designTheme.line,
     shadowOpacity: 0,
     elevation: 0,
   },
@@ -821,7 +822,7 @@ const styles = StyleSheet.create({
     height: '98%',
     top: '2%',
     left: '5.25%',
-    borderRadius: 24,
+    borderRadius: AppRadii.card,
     zIndex: 1,
   },
   pagination: {
@@ -849,16 +850,16 @@ const styles = StyleSheet.create({
 
   // Social Proof
   topBadge: {
-    backgroundColor: '#FFFBEB',
+    backgroundColor: designTheme.yellowSoft,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     borderWidth: 1,
-    borderColor: '#FEB50A',
+    borderColor: designTheme.yellow,
     marginBottom: 16,
   },
   topBadgeText: {
-    color: '#FEB50A',
+    color: designTheme.yellow,
     fontSize: 14,
     fontFamily: 'Degular',
   },
@@ -866,9 +867,9 @@ const styles = StyleSheet.create({
     color: Colors.light.button,
   },
   ratingSection: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     padding: 16,
-    borderRadius: 20,
+    borderRadius: AppRadii.card,
     width: '100%',
     alignItems: 'center',
     marginVertical: 16,
@@ -894,8 +895,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   reviewCard: {
-    backgroundColor: 'white',
-    borderRadius: 16,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.control,
     padding: 14,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -928,7 +929,7 @@ const styles = StyleSheet.create({
   promoIconContainer: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: AppRadii.pill,
     backgroundColor: 'rgba(254, 181, 10, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -938,10 +939,10 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 100,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.pill,
     borderWidth: 2,
-    borderColor: '#F2F2F7',
+    borderColor: designTheme.soft,
     paddingHorizontal: 16,
     marginTop: 20,
   },
@@ -971,7 +972,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
     padding: 12,
     backgroundColor: 'rgba(52, 199, 89, 0.1)',
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
   },
   successText: {
     color: '#34C759',
@@ -986,8 +987,8 @@ const styles = StyleSheet.create({
     gap: -15,
   },
   cardPersonalized: {
-    backgroundColor: 'white',
-    borderRadius: 24,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.card,
     padding: 12,
     gap: 8,
     marginBottom: 8,
@@ -1000,8 +1001,8 @@ const styles = StyleSheet.create({
   emojiContainerSmall: {
     width: 44,
     height: 44,
-    borderRadius: 12,
-    backgroundColor: '#F8F9FA',
+    borderRadius: AppRadii.chip,
+    backgroundColor: designTheme.soft,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -1018,7 +1019,7 @@ const styles = StyleSheet.create({
   cardDescriptionSmall: {
     fontSize: 16,
     fontFamily: 'CronosProBold',
-    color: '#8C8C8C',
+    color: designTheme.muted,
     lineHeight: 16,
   },
 
@@ -1067,7 +1068,7 @@ const styles = StyleSheet.create({
   },
   ratingBadgeScore: {
     fontSize: 32,
-    color: '#333',
+    color: designTheme.ink,
     lineHeight: 36,
     fontFamily: 'Degular',
   },

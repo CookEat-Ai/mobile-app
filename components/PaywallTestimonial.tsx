@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import React from 'react';
 import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,7 +24,7 @@ export function PaywallTestimonial({ testimonialKey, style }: Props) {
         <Text style={styles.author}>{t(authorKey)}</Text>
         <View style={styles.stars} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
           {[1, 2, 3, 4, 5].map((star) => (
-            <Ionicons key={star} name="star" size={14} color="#FEB50A" />
+            <Ionicons key={star} name="star" size={14} color={designTheme.yellow} />
           ))}
         </View>
       </View>
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
     width: '100%',
     minHeight: 92,
     backgroundColor: 'rgba(255,255,255,0.92)',
-    borderRadius: 24,
+    borderRadius: AppRadii.card,
     borderWidth: 1,
     borderColor: '#EDE7CE',
     paddingHorizontal: 18,

@@ -1,3 +1,4 @@
+import { useResponsive } from '../../hooks/useResponsive';
 import { useMotionAllowed } from '../../contexts/MotionPreferences';
 import Animated, { cancelAnimation, Easing, ReduceMotion, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { feedback } from '../../services/haptics';
@@ -10,22 +11,23 @@ export type PlanningDay = { key: string; dayIndex: number; short: string; number
 export function PlanningDayPicker({ days, selectedDay, onSelect, visibleCount = days.length, revealKey }: {
   days: PlanningDay[]; selectedDay: number; onSelect: (day: number) => void; visibleCount?: number; revealKey?: string;
 }) {
+  const { isTablet } = useResponsive();
   const scroll = useRef<ScrollView>(null);
   useEffect(() => {
     const index = days.findIndex(day => day.dayIndex === selectedDay);
     scroll.current?.scrollTo({ x: Math.max(0, index * 58 - 116), animated: true });
   }, [days, selectedDay]);
-  return <ScrollView ref={scroll} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.days}>
-    {days.slice(0, visibleCount).map(day => <DayEntrance key={`${day.key}:${revealKey || 'static'}`} enabled={Boolean(revealKey)}><TouchableOpacity onPress={() => { if (day.dayIndex !== selectedDay) feedback.selection(); onSelect(day.dayIndex); }} style={[styles.day, selectedDay === day.dayIndex && styles.dayActive]}
+  return <ScrollView ref={scroll} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={[styles.days, isTablet && { flexGrow: 1 }]}>
+    {days.slice(0, visibleCount).map(day => <DayEntrance key={`${day.key}:${revealKey || 'static'}`} enabled={Boolean(revealKey)} expanded={isTablet}><TouchableOpacity onPress={() => { if (day.dayIndex !== selectedDay) feedback.selection(); onSelect(day.dayIndex); }} style={[styles.day, isTablet && { width: '100%', height: 78 }, selectedDay === day.dayIndex && styles.dayActive]}
       accessibilityRole="button" accessibilityState={{ selected: selectedDay === day.dayIndex }} accessibilityLabel={`${day.label || day.short} ${day.number}`}>
-      <Text style={[styles.dayShort, selectedDay === day.dayIndex && styles.dayTextActive]}>{day.short}</Text>
-      <Text style={[styles.dayNumber, selectedDay === day.dayIndex && styles.dayTextActive]}>{day.number}</Text>
+      <Text style={[styles.dayShort, isTablet && { fontSize: 15 }, selectedDay === day.dayIndex && styles.dayTextActive]}>{day.short}</Text>
+      <Text style={[styles.dayNumber, isTablet && { fontSize: 25 }, selectedDay === day.dayIndex && styles.dayTextActive]}>{day.number}</Text>
     </TouchableOpacity></DayEntrance>)}
   </ScrollView>;
 }
 
 /** Newly revealed days slide in from the right; existing days stay in place. */
-function DayEntrance({ enabled, children }: { enabled: boolean; children: ReactNode }) {
+function DayEntrance({ enabled, expanded, children }: { enabled: boolean; expanded: boolean; children: ReactNode }) {
   const allowed = useMotionAllowed();
   const progress = useSharedValue(enabled && allowed ? 0 : 1);
   useLayoutEffect(() => {
@@ -35,5 +37,5 @@ function DayEntrance({ enabled, children }: { enabled: boolean; children: ReactN
     return () => cancelAnimation(progress);
   }, [allowed, enabled, progress]);
   const style = useAnimatedStyle(() => ({ opacity: progress.value, transform: [{ translateX: 64 * (1 - progress.value) }] }));
-  return <Animated.View style={style}>{children}</Animated.View>;
+  return <Animated.View style={[expanded && { flex: 1 }, style]}>{children}</Animated.View>;
 }

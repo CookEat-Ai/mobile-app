@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { CREATOR_PROMO_CODES_ENABLED } from '../../config/storeCompliance';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -314,7 +315,7 @@ function CreatorPromoCodeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.background,
   },
   content: {
     flex: 1,
@@ -330,7 +331,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     width: 90,
     height: 90,
-    borderRadius: 45,
+    borderRadius: AppRadii.pill,
     backgroundColor: 'rgba(254, 181, 10, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -347,7 +348,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     fontFamily: 'CronosProBold',
-    color: '#8C8C8C',
+    color: designTheme.muted,
     textAlign: 'center',
     marginTop: 12,
     paddingHorizontal: 10,
@@ -360,10 +361,10 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 16,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.control,
     borderWidth: 2,
-    borderColor: '#F2F2F7',
+    borderColor: designTheme.soft,
     paddingHorizontal: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -401,7 +402,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 12,
     backgroundColor: 'rgba(52, 199, 89, 0.1)',
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
   },
   successText: {
     color: '#34C759',
@@ -418,7 +419,7 @@ const styles = StyleSheet.create({
   validateButton: {
     backgroundColor: Colors.light.button,
     width: '100%',
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     paddingVertical: 18,
     alignItems: 'center',
     shadowColor: Colors.light.button,
@@ -428,7 +429,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   disabledButton: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: designTheme.line,
     shadowOpacity: 0,
     elevation: 0,
   },
@@ -442,7 +443,7 @@ const styles = StyleSheet.create({
     minHeight: 56,
     paddingVertical: 16,
     paddingHorizontal: 20,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     borderWidth: 1.5,
     borderColor: '#BDB49C',
     backgroundColor: '#FFFDF5',

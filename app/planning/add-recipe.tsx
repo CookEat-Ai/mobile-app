@@ -1,4 +1,5 @@
-import { compatiblePlanningSlots } from '../../services/planningDisplay';
+import { AppTheme as designTheme, AppRadii, appStyles } from '../../constants/AppTheme';
+import { compatiblePlanningSlots, planDays } from '../../services/planningDisplay';
 import { invalidatePlanning } from '../../services/planningUpdates';
 import { EntranceView } from '../../components/motion/Entrance';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
@@ -12,8 +13,9 @@ import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { PlanMealCard } from '../../components/planning/PlanMealCard';
+import { planningStyles } from '../../components/planning/PlanningStyles';
 import { Colors } from '../../constants/Colors';
-import { appStyles } from '../../constants/AppTheme';
+
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import apiService, { MealPlan, CatalogRecipe } from '../../services/api';
 import { replacedMealPlanningRoute } from '../../services/plannedMealNavigation';
@@ -58,13 +60,10 @@ export default function AddRecipeToPlanScreen() {
   }, [recipeId, t]);
 
   const slots = useMemo(() => plan && recipe ? compatiblePlanningSlots(plan, recipe.replacementMealTypes || []) : [], [plan, recipe]);
-  const day = (dayIndex = 0) => {
-    if (!plan) return '';
-    const date = new Date(`${plan.weekStart}T12:00:00`);
-    date.setDate(date.getDate() + dayIndex);
-    const label = new Intl.DateTimeFormat(i18n.resolvedLanguage, { weekday: 'long' }).format(date);
-    return label.charAt(0).toUpperCase() + label.slice(1);
-  };
+  const dayGroups = useMemo(() => plan ? planDays(plan.weekStart)
+    .map(day => ({ ...day, slots: slots.filter(slot => slot.dayIndex === day.dayIndex) }))
+    .filter(day => day.slots.length > 0) : [], [plan, slots]);
+  const dayFormatter = new Intl.DateTimeFormat(i18n.resolvedLanguage || 'fr', { weekday: 'long', day: 'numeric', month: 'short' });
 
   const replace = async (slotId: string) => {
     const slot = slots.find(item => item.slotId === slotId);
@@ -90,7 +89,7 @@ export default function AddRecipeToPlanScreen() {
   };
 
   return (
-    <LinearGradient colors={['#FDF9E2', '#FFFFFF']} locations={[0, 0.72]} style={styles.fill}>
+    <LinearGradient colors={[designTheme.background, '#FFFFFF']} locations={[0, 0.72]} style={styles.fill}>
       <View style={[appStyles.backHeader, styles.topBar, { paddingTop: insets.top + 8, paddingHorizontal: gutter }]}>
         <NavigationIconButton style={styles.iconButton} onPress={() => router.back()} accessibilityLabel={t('common.back')} />
         <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.65}
@@ -103,7 +102,10 @@ export default function AddRecipeToPlanScreen() {
       {!loading && plan && recipe ? <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ ...contentColumn(), paddingHorizontal: gutter, paddingBottom: insets.bottom + 30 }}>
         {error ? <Text style={styles.error}>{error}</Text> : null}
         {!slots.length && <Text style={styles.empty}>{t('addRecipe.noCompatibleMeals')}</Text>}
-        <View style={styles.list}>{slots.map((slot, index) => <EntranceView key={slot.slotId} entranceIndex={index}>{slot.meal ? <PlanMealCard meal={slot.meal} day={day(slot.dayIndex)} loading={replacing === slot.slotId} disabled={!!replacing} onPress={() => void replace(slot.slotId)} /> : <TouchableOpacity accessibilityRole="button" disabled={!!replacing} style={styles.emptySlot} onPress={() => void replace(slot.slotId)}><Ionicons name="add-circle-outline" size={26} color={Colors.light.button} /><View style={{ flex: 1 }}><Text style={styles.slotTitle}>{day(slot.dayIndex)} · {t(`planningConfig.meals.${slot.mealType}`)}</Text><Text style={styles.slotHelp}>{t('planningSlots.add')}</Text></View>{replacing === slot.slotId && <ActivityIndicator color={Colors.light.button} />}</TouchableOpacity>}</EntranceView>)}</View>
+        {dayGroups.map(day => <View key={day.key}>
+          <View style={planningStyles.dayHeading}><Text accessibilityRole="header" style={appStyles.section}>{dayFormatter.format(day.date)}</Text></View>
+          <View style={styles.list}>{day.slots.map(slot => <EntranceView key={slot.slotId} entranceIndex={slots.indexOf(slot)}>{slot.meal ? <PlanMealCard meal={slot.meal} loading={replacing === slot.slotId} disabled={!!replacing} onPress={() => void replace(slot.slotId)} /> : <TouchableOpacity accessibilityRole="button" disabled={!!replacing} style={styles.emptySlot} onPress={() => void replace(slot.slotId)}><Ionicons name="add-circle-outline" size={26} color={Colors.light.button} /><View style={{ flex: 1 }}><Text style={styles.slotTitle}>{t(`planningConfig.meals.${slot.mealType}`)}</Text><Text style={styles.slotHelp}>{t('planningSlots.add')}</Text></View>{replacing === slot.slotId && <ActivityIndicator color={Colors.light.button} />}</TouchableOpacity>}</EntranceView>)}</View>
+        </View>)}
       </ScrollView> : null}
     </LinearGradient>
   );
@@ -112,13 +114,13 @@ export default function AddRecipeToPlanScreen() {
 const styles = StyleSheet.create({
   fill: { flex: 1 },
   topBar: { paddingBottom: 14 },
-  iconButton: { width: 44, height: 44, borderRadius: 16, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
+  iconButton: { width: 44, height: 44, borderRadius: AppRadii.control, backgroundColor: designTheme.surface, alignItems: 'center', justifyContent: 'center' },
   placeholder: { width: 44, height: 44 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 14, padding: 26 },
   empty: { fontFamily: 'Degular', fontSize: 23, color: Colors.light.text, textAlign: 'center' },
-  button: { minHeight: 54, alignSelf: 'stretch', borderRadius: 22, backgroundColor: Colors.light.button, alignItems: 'center', justifyContent: 'center' },
-  buttonText: { fontFamily: 'Degular', fontSize: 20, color: 'white' },
-  error: { fontFamily: 'CronosPro', color: '#82342D', marginBottom: 10 },
-  emptySlot: { minHeight: 80, padding: 16, borderWidth: 1, borderStyle: 'dashed', borderColor: Colors.light.button, borderRadius: 18, flexDirection: 'row', alignItems: 'center', gap: 12 }, slotTitle: { fontFamily: 'CronosProBold', fontSize: 18, color: Colors.light.text }, slotHelp: { fontFamily: 'CronosPro', fontSize: 15, color: Colors.light.text },
+  button: { minHeight: 54, alignSelf: 'stretch', borderRadius: AppRadii.card, backgroundColor: Colors.light.button, alignItems: 'center', justifyContent: 'center' },
+  buttonText: { fontFamily: 'Degular', fontSize: 20, color: designTheme.onPrimary },
+  error: { fontFamily: 'CronosPro', color: designTheme.danger, marginBottom: 10 },
+  emptySlot: { minHeight: 80, padding: 16, borderWidth: 1, borderStyle: 'dashed', borderColor: Colors.light.button, borderRadius: AppRadii.control, flexDirection: 'row', alignItems: 'center', gap: 12 }, slotTitle: { fontFamily: 'CronosProBold', fontSize: 18, color: Colors.light.text }, slotHelp: { fontFamily: 'CronosPro', fontSize: 15, color: Colors.light.text },
   list: { gap: 12 },
 });

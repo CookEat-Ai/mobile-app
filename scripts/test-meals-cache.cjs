@@ -46,12 +46,13 @@ function harness() {
     'expo-router': { useFocusEffect: cb => { focus = cb; }, router: { push() {} } },
     'react-i18next': { useTranslation: () => ({ t: key => key, i18n: { resolvedLanguage: 'fr' } }) },
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) },
-    '../../hooks/useResponsive': { useResponsive: () => ({ gutter: 20 }), contentColumn: () => ({}) },
+    '../../hooks/useResponsive': { useResponsive: () => ({ gutter: 20, width: 390, columns: 1 }), contentColumn: () => ({}) },
     '../../hooks/useEntranceReplay': { useEntranceReplay: () => () => true },
     '../../services/haptics': { feedback: { selection() {} } },
-    '../../constants/AppTheme': { AppTheme: {}, appStyles: {} },
+    '../../constants/AppTheme': require('./helpers/ui-theme.cjs'),
     '../../constants/Colors': { Colors: { light: {} } },
     '../../services/api': { apiService },
+    '../../services/catalogCuisineFilters': compile('services/catalogCuisineFilters.ts', {}),
     '../../services/fitnessProfile': { loadFitnessProfile: async () => ({ goal: 'balanced' }), fitnessProfileToPlanningPreferences: () => ({ diet: 'none', allergies: [] }), calculateFitnessProjection: () => ({ dailyCalories: 2000, dailyProteinGrams: 100 }) },
   };
   const screen = compile('app/(tabs)/meals.tsx', deps);
@@ -68,7 +69,7 @@ function harness() {
     hold: () => { let release; gate = new Promise(resolve => { release = resolve; }); return () => { gate = null; release(); }; },
     holdCuisine: id => { let release; cuisineGates.set(id, new Promise(resolve => { release = resolve; })); return () => { cuisineGates.delete(id); release(); }; },
     filter: value => nodes(list().props.ListHeaderComponent).find(node => node.type === 'TouchableOpacity' && text(node) === `mealLibrary.types.${value}`).props.onPress(),
-    cuisine: value => nodes(tree).find(node => node.type === 'TouchableOpacity' && node.props.accessibilityRole === 'radio' && text(node) === value).props.onPress(),
+    cuisine: value => nodes(tree).find(node => node.type === 'TouchableOpacity' && node.props.accessibilityRole === 'checkbox' && text(node) === value).props.onPress(),
   };
 }
 (async () => {
@@ -112,18 +113,21 @@ function harness() {
   h.blur(); h.cuisine('italian'); h.render(); h.focus(); await tick(); h.render();
   assert(h.list().props.data.every(recipe => recipe.id.startsWith('all:main:')), 'previous results stay mounted while the new cuisine loads');
   const row = h.list().props.renderItem({ item: h.list().props.data[0], index: 0 });
-  assert.equal(row.props.disabled, true, 'previous results cannot be opened while the cuisine changes');
+  assert.equal(row.props.children[0].props.disabled, true, 'previous results cannot be opened while the cuisine changes');
   h.blur(); h.cuisine('japanese'); h.render(); h.focus(); await tick(); h.render();
-  assert(h.list().props.data.every(recipe => recipe.id.startsWith('japanese:main:1:')));
+  assert(h.list().props.data.every(recipe => recipe.id.startsWith('italian,japanese:main:1:')), 'both selected cuisines are queried together');
   releaseItalian(); await tick(); h.render();
-  assert(h.list().props.data.every(recipe => recipe.id.startsWith('japanese:main:1:')), 'the slow, obsolete cuisine cannot replace the latest results');
-  assert.equal(h.list().props.renderItem({ item: h.list().props.data[0], index: 0 }).props.disabled, false);
+  assert(h.list().props.data.every(recipe => recipe.id.startsWith('italian,japanese:main:1:')), 'the slow, obsolete cuisine cannot replace the latest results');
+  assert.equal(h.list().props.renderItem({ item: h.list().props.data[0], index: 0 }).props.children[0].props.disabled, false);
 
   h.list().props.onEndReached(); await tick(); h.render();
   const requestCount = h.network.length;
-  h.cuisine('japanese'); h.filter('main'); h.render();
+  h.filter('main'); h.render();
   h.list().props.onEndReached(); await tick(); h.render();
   assert.equal(h.network.length, requestCount + 1);
-  assert.equal(h.network.at(-1).page, 3, 'tapping the active cuisine or filter keeps pagination intact');
-  console.log('Meals cache passed: cache hits, preserved pagination, TTL revalidation, cuisine transitions with mounted/disabled cards, stale response protection and active-filter reselection.');
+  assert.equal(h.network.at(-1).page, 3, 'tapping the active category keeps pagination intact');
+  h.blur(); h.cuisine('italian'); h.render(); h.focus(); await tick(); h.render();
+  assert.equal(h.network.at(-1).cuisineId, 'japanese', 'tapping a selected cuisine removes it while retaining the other');
+  assert.equal(h.network.at(-1).page, 1, 'changing the cuisine selection resets pagination');
+  console.log('Meals cache passed: cache hits, preserved pagination, TTL revalidation, multiple cuisines with mounted/disabled cards, stale response protection, deselection and active-category reselection.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

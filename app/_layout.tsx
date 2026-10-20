@@ -1,3 +1,4 @@
+import { MODAL_ROUTE_ANIMATION } from '../constants/ModalPresentation';
 import { PresentationModeControl } from '../components/PresentationModeControl';
 import { MotionPreferencesProvider } from '../contexts/MotionPreferences';
 import * as SplashScreen from 'expo-splash-screen';
@@ -37,6 +38,7 @@ import {
 import { resolveQuickActionTrial } from '../services/trialEligibility';
 import { APP_ENVIRONMENT } from '../config/env';
 import { DevOnboardingResetButton } from '../components/onboarding/DevOnboardingResetButton';
+import { useNotifications } from '../hooks/useNotifications';
 import { syncTrialReminderWithCustomerInfo } from '../services/trialReminder';
 import { resolveAppEntryRoute } from '../services/appEntryRoute';
 import { hydrateRecipePreferencesFromServer } from '../services/recipePreferences';
@@ -257,6 +259,8 @@ function QuickActionHandler({ revenueCatReady }: { revenueCatReady: boolean }) {
   return null;
 }
 
+function NotificationLifecycle() { useNotifications(); return null; }
+
 function TrialReminderLifecycle({ revenueCatReady }: { revenueCatReady: boolean }) {
   useEffect(() => {
     if (!revenueCatReady) return;
@@ -432,6 +436,7 @@ function RootLayout() {
             <ShareIntentHandler />
             <QuickActionHandler revenueCatReady={revenueCatReady} />
             <TrialReminderLifecycle revenueCatReady={revenueCatReady} />
+            <NotificationLifecycle />
             <DevOnboardingResetButton />
             <PresentationModeControl />
             <Stack screenOptions={{ headerShown: false, statusBarStyle: 'dark', statusBarHidden: false }}>
@@ -442,10 +447,12 @@ function RootLayout() {
               <Stack.Screen name="favorites-list" options={{ headerShown: false }} />
               <Stack.Screen name="share-intent" options={{ headerShown: false, animation: 'fade' }} />
               <Stack.Screen name="recipe-loading" options={{ headerShown: false, animation: 'fade' }} />
-              <Stack.Screen name="recipe-loading-modal" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
-              <Stack.Screen name="planning/ingredients" options={{ presentation: 'modal', gestureEnabled: true }} />
+              <Stack.Screen name="recipe-loading-modal" options={{ headerShown: false, presentation: 'modal', animation: MODAL_ROUTE_ANIMATION, gestureEnabled: false }} />
+              <Stack.Screen name="planning/ingredients" options={{ presentation: 'modal', animation: MODAL_ROUTE_ANIMATION, gestureEnabled: true }} />
               <Stack.Screen name="planning/loading" options={{ animation: 'none', gestureEnabled: false }} />
-              <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+              <Stack.Screen name="tracking/manual" options={{ headerShown: false, presentation: 'modal', animation: MODAL_ROUTE_ANIMATION }} />
+              <Stack.Screen name="tracking/capture" options={{ headerShown: false, presentation: 'transparentModal', animation: MODAL_ROUTE_ANIMATION, contentStyle: {backgroundColor:'transparent'}, gestureEnabled: false }} />
+              <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'modal', animation: MODAL_ROUTE_ANIMATION, gestureEnabled: false }} />
               {/* Tous les points d'entrée poussent cette route au-dessus d'un
                   écran valide, mais le contrat visuel reste plein écran : le
                   paywall final contient l'offre, la preuve sociale et toutes
@@ -456,6 +463,7 @@ function RootLayout() {
                 options={{
                   headerShown: false,
                   presentation: 'fullScreenModal',
+                  animation: MODAL_ROUTE_ANIMATION,
                   gestureEnabled: false,
                 }}
               />

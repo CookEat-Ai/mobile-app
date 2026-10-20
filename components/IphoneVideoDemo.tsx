@@ -1,3 +1,4 @@
+import { AppRadii } from '../constants/AppTheme';
 import React from 'react';
 import { Image, Platform, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { useVideoPlayer, VideoView } from 'expo-video';
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
     height: '98%',
     top: '2%',
     left: '5.25%',
-    borderRadius: 32,
+    borderRadius: AppRadii.sheet,
   },
   frame: {
     width: '100%',

@@ -1,5 +1,10 @@
+import { AppModal as Modal } from '../../components/ui/AppModal';
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
+import { planningLastDay, planningGenerationWindow } from '../../services/planning-time';
+import { usePlanningClock } from '../../hooks/usePlanningClock';
 import { PlanningCalorieNotice } from '../../components/planning/PlanningCalorieNotice';
+import { MealCostEstimate } from '../../components/planning/MealCostEstimate';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
 import { feedback } from '../../services/haptics';
@@ -7,19 +12,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  Modal,
-  Platform,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Alert, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Reanimated, { FadeInDown, FadeOut, LinearTransition, useReducedMotion } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -59,6 +52,7 @@ function quantityText(item: ShoppingListItem): string {
 
 export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: PlanningView }) {
   const { t, i18n } = useTranslation();
+  const clock = usePlanningClock();
   const insets = useSafeAreaInsets();
   const { ready: loadingReady, reset: resetLoadingBar, finish: finishLoadingBar, onComplete: completeLoadingBar } = usePlanningLoading();
   const { width, height, gutter, font } = useResponsive();
@@ -120,7 +114,7 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
       if (cached) {
         try {
           const cachedPlan = JSON.parse(cached) as MealPlan;
-          if (isUsableWeeklyPlan(cachedPlan) && isDateInsideRollingWeek(cachedPlan.weekStart, cachedPlan.weekEnd, planningStartKey())) {
+          if (isUsableWeeklyPlan(cachedPlan) && isDateInsideRollingWeek(cachedPlan.weekStart, planningLastDay(cachedPlan), planningGenerationWindow().today)) {
             setPlan(cachedPlan);
             if (!refresh) setLoading(false);
           } else {
@@ -136,7 +130,7 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
       if (response.error) throw new Error(response.error);
       const latestPlan = response.data?.plan || null;
       const reusablePlan = latestPlan
-        && isDateInsideRollingWeek(latestPlan.weekStart, latestPlan.weekEnd, planningStartKey())
+        && isDateInsideRollingWeek(latestPlan.weekStart, planningLastDay(latestPlan), planningGenerationWindow().today)
         && isUsableWeeklyPlan(latestPlan)
         ? latestPlan
         : null;
@@ -292,6 +286,10 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
     return [...groups.entries()];
   }, [plan?.shoppingList]);
 
+  useEffect(() => {
+    if (plan && planningLastDay(plan) < clock.today) { replaceExistingOnCreate.current = false; setPlan(null); }
+  }, [clock.today, plan]);
+
   const startNewPlan = useCallback(() => {
     Alert.alert(t('planning.newPlanConfirm.title'), t('planning.newPlanConfirm.description'), [
       { text: t('common.cancel'), style: 'cancel' },
@@ -368,7 +366,7 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
   }
 
   return (
-    <LinearGradient colors={['#FDF9E2', '#FFFFFF']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0, 0.7]} style={styles.fill}>
+    <LinearGradient colors={[designTheme.background, '#FFFFFF']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0, 0.7]} style={styles.fill}>
       <ScrollView
         contentContainerStyle={{ paddingTop: insets.top, paddingHorizontal: gutter, paddingBottom: tabBottomPadding }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void loadPlan(true)} tintColor={Colors.light.button} />}
@@ -396,9 +394,9 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
 
           {error && (
             <Reanimated.View entering={reduceMotion ? undefined : FadeInDown.duration(220)} exiting={FadeOut.duration(150)} style={styles.errorBanner}>
-              <Ionicons name="alert-circle-outline" size={20} color="#9B3B32" />
+              <Ionicons name="alert-circle-outline" size={20} color={designTheme.danger} />
               <Text style={styles.errorText}>{error}</Text>
-              <Pressable onPress={() => setError(null)} hitSlop={10}><Ionicons name="close" size={19} color="#9B3B32" /></Pressable>
+              <NavigationIconButton kind="close" onPress={() => setError(null)} hitSlop={10} />
             </Reanimated.View>
           )}
 
@@ -425,9 +423,9 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
                 })}
               </View>
               <TouchableOpacity style={[styles.primaryButton, creating && styles.buttonDisabled]} onPress={() => void createPlan()} disabled={creating} activeOpacity={0.85}>
-                {creating ? <ActivityIndicator color="white" /> : <>
+                {creating ? <ActivityIndicator color={designTheme.onPrimary} /> : <>
                   <Text style={styles.primaryButtonText}>{t('planning.generation.cta')}</Text>
-                  <Ionicons name="arrow-forward" size={20} color="white" />
+                  <Ionicons name="arrow-forward" size={20} color={designTheme.onPrimary} />
                 </>}
               </TouchableOpacity>
             </Reanimated.View>
@@ -439,6 +437,7 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
                     <Text style={styles.summaryTitle}>{t('planning.weekTitle')}</Text>
                   </View>
 
+                  <MealCostEstimate cost={plan.estimatedCost} total budget={Number(plan.preferences?.weeklyBudget)||undefined} />
                   <PlanningCalorieNotice plan={plan} />
                   <View style={styles.mealList}>
                     {allMeals.map((meal, index) => {
@@ -455,7 +454,7 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
                               {meal.image ? <Image source={getRecipeImageSource(meal.image)} style={styles.mealImage} contentFit="cover" transition={reduceMotion ? 0 : 180} /> : (
                                 <MealArtwork meal={meal} style={styles.mealPlaceholder} />
                               )}
-                              {pending && <View style={styles.imageBusy}><ActivityIndicator size="small" color="white" /></View>}
+                              {pending && <View style={styles.imageBusy}><ActivityIndicator size="small" color={designTheme.onPrimary} /></View>}
                             </View>
                             <View style={styles.mealCopy}>
                               <View style={styles.mealBadges}>
@@ -468,6 +467,7 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
                                   ? t('planning.finishing')
                                   : `${roundNutritionValue(meal.calories)} kcal  ·  P ${roundNutritionValue(meal.proteins)}g  ·  G ${roundNutritionValue(meal.carbs)}g  ·  L ${roundNutritionValue(meal.fats)}g`}
                               </Text>
+                              <MealCostEstimate cost={meal.estimatedCost} compact />
                             </View>
                             {activeAction === `open:${meal.slotId}`
                               ? <ActivityIndicator size="small" color={Colors.light.button} />
@@ -484,8 +484,8 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
                     disabled={shoppingLoading}
                     activeOpacity={0.85}
                   >
-                    {shoppingLoading ? <ActivityIndicator color="white" /> : <>
-                      <Ionicons name="cart" size={20} color="white" />
+                    {shoppingLoading ? <ActivityIndicator color={designTheme.onPrimary} /> : <>
+                      <Ionicons name="cart" size={20} color={designTheme.onPrimary} />
                       <Text style={styles.primaryButtonText}>{plan.shoppingList.length ? t('planning.shopping.refresh') : t('planning.shopping.create')}</Text>
                     </>}
                   </TouchableOpacity>
@@ -498,7 +498,7 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
                       <Text style={styles.setupTitle}>{t('planning.shopping.emptyTitle')}</Text>
                       <Text style={styles.setupDescription}>{t('planning.shopping.emptyDescription')}</Text>
                       <TouchableOpacity style={[styles.primaryButton, shoppingLoading && styles.buttonDisabled]} disabled={shoppingLoading} onPress={() => void createShoppingList()}>
-                        {shoppingLoading ? <ActivityIndicator color="white" /> : <Text style={styles.primaryButtonText}>{t('planning.shopping.create')}</Text>}
+                        {shoppingLoading ? <ActivityIndicator color={designTheme.onPrimary} /> : <Text style={styles.primaryButtonText}>{t('planning.shopping.create')}</Text>}
                       </TouchableOpacity>
                     </View>
                   ) : (
@@ -545,8 +545,8 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
         </View>
       </ScrollView>
 
-      <Modal visible={settingsVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setSettingsVisible(false)}>
-        <LinearGradient colors={['#FDF9E2', '#FFFFFF']} style={styles.settingsFill}>
+      <Modal visible={settingsVisible} presentationStyle="pageSheet" onRequestClose={() => setSettingsVisible(false)}>
+        <LinearGradient colors={[designTheme.background, '#FFFFFF']} style={styles.settingsFill}>
           <ScrollView contentContainerStyle={[styles.settingsContent, { paddingTop: Math.max(insets.top, 24), paddingBottom: insets.bottom + 32 }]} showsVerticalScrollIndicator={false}>
             <View style={styles.settingsHeader}>
               <View>
@@ -609,103 +609,99 @@ const styles = StyleSheet.create({
   title: { fontFamily: 'Degular', color: Colors.light.text, lineHeight: 38 },
   subtitle: { fontFamily: 'CronosPro', color: Colors.light.textSecondary, lineHeight: 22, marginTop: 3 },
   newPlanButton: {
-    width: 44, height: 44, borderRadius: 16, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center',
+    width: 44, height: 44, borderRadius: AppRadii.control, backgroundColor: designTheme.surface, alignItems: 'center', justifyContent: 'center',
     ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 10 }, android: { elevation: 2 } }),
   },
-  errorBanner: { flexDirection: 'row', alignItems: 'center', gap: 9, backgroundColor: '#FFF0ED', borderRadius: 16, padding: 13, marginBottom: 14, borderWidth: 1, borderColor: '#F1C7C2' },
-  errorText: { flex: 1, fontFamily: 'CronosPro', fontSize: 15, color: '#82342D', lineHeight: 19 },
+  errorBanner: { flexDirection: 'row', alignItems: 'center', gap: 9, backgroundColor: designTheme.dangerSoft, borderRadius: AppRadii.control, padding: 13, marginBottom: 14, borderWidth: 1, borderColor: designTheme.dangerBorder },
+  errorText: { flex: 1, fontFamily: 'CronosPro', fontSize: 15, color: designTheme.danger, lineHeight: 19 },
   setupCard: {
-    backgroundColor: 'white', borderRadius: 24, padding: 22,
-    ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 15 }, android: { elevation: 2 } }),
-  },
-  setupIcon: { width: 60, height: 60, borderRadius: 30, backgroundColor: '#FFFBEB', alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
+    backgroundColor: designTheme.surface, borderRadius: AppRadii.card, padding: 22,
+    ...{}, borderWidth: 1, borderColor: designTheme.line, shadowOpacity: 0, elevation: 0 },
+  setupIcon: { width: 60, height: 60, borderRadius: AppRadii.sheet, backgroundColor: designTheme.yellowSoft, alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
   setupTitle: { fontFamily: 'Degular', color: Colors.light.text, lineHeight: 30 },
   setupDescription: { fontFamily: 'CronosPro', color: Colors.light.textSecondary, lineHeight: 22, marginTop: 5 },
   daySelectionLabel: { fontFamily: 'CronosProBold', fontSize: 16, color: Colors.light.text, marginTop: 22, marginBottom: 10 },
   weekdayGrid: { flexDirection: 'row', gap: 7 },
-  weekdayChoice: { flex: 1, height: 46, minWidth: 36, borderRadius: 15, backgroundColor: '#F4F1E7', borderWidth: 1, borderColor: '#E8E1C9', alignItems: 'center', justifyContent: 'center' },
+  weekdayChoice: { flex: 1, height: 46, minWidth: 36, borderRadius: AppRadii.control, backgroundColor: designTheme.soft, borderWidth: 1, borderColor: designTheme.line, alignItems: 'center', justifyContent: 'center' },
   weekdayChoiceActive: { backgroundColor: Colors.light.button, borderColor: Colors.light.button },
   weekdayChoiceText: { fontFamily: 'CronosProBold', fontSize: 13, color: Colors.light.textSecondary, textTransform: 'capitalize' },
-  weekdayChoiceTextActive: { color: 'white' },
+  weekdayChoiceTextActive: { color: designTheme.onPrimary },
   countLabel: { fontFamily: 'CronosProBold', fontSize: 16, color: Colors.light.text, marginTop: 24, marginBottom: 11 },
   countGrid: { flexDirection: 'row', justifyContent: 'space-between', gap: 6 },
-  countButton: { flex: 1, height: 44, minWidth: 38, borderRadius: 14, backgroundColor: '#F2F2F7', alignItems: 'center', justifyContent: 'center' },
+  countButton: { flex: 1, height: 44, minWidth: 38, borderRadius: AppRadii.control, backgroundColor: designTheme.soft, alignItems: 'center', justifyContent: 'center' },
   countButtonSelected: { backgroundColor: Colors.light.button, borderColor: Colors.light.button, transform: [{ scale: 1.04 }] },
   countText: { fontFamily: 'CronosProBold', fontSize: 17, color: Colors.light.textSecondary },
-  countTextSelected: { color: 'white' },
-  primaryButton: { minHeight: 56, borderRadius: 200, backgroundColor: Colors.light.button, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, marginTop: 20, paddingHorizontal: 20, shadowColor: Colors.light.button, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 5 },
-  primaryButtonText: { fontFamily: 'Degular', fontSize: 20, color: 'white' },
+  countTextSelected: { color: designTheme.onPrimary },
+  primaryButton: { minHeight: 56, borderRadius: AppRadii.pill, backgroundColor: Colors.light.button, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, marginTop: 20, paddingHorizontal: 20, shadowColor: Colors.light.button, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 5 },
+  primaryButtonText: { fontFamily: 'Degular', fontSize: 20, color: designTheme.onPrimary },
   buttonDisabled: { opacity: 0.52 },
   dayPicker: { gap: 8, paddingBottom: 16 },
-  dayButton: { width: 54, height: 64, borderRadius: 18, backgroundColor: 'white', borderWidth: 1, borderColor: '#E9E9E9', alignItems: 'center', justifyContent: 'center' },
+  dayButton: { width: 54, height: 64, borderRadius: AppRadii.control, backgroundColor: designTheme.surface, borderWidth: 1, borderColor: designTheme.line, alignItems: 'center', justifyContent: 'center' },
   dayButtonActive: { backgroundColor: Colors.light.button, borderColor: Colors.light.button },
   dayShort: { fontFamily: 'CronosProBold', fontSize: 12, color: Colors.light.textSecondary, textTransform: 'capitalize' },
   dayNumber: { fontFamily: 'Degular', fontSize: 20, color: Colors.light.text, marginTop: 1 },
-  dayTextActive: { color: 'white' },
-  dailyMacros: { flexDirection: 'row', gap: 6, backgroundColor: '#1E201D', borderRadius: 22, paddingVertical: 14, paddingHorizontal: 8, marginBottom: 18 },
+  dayTextActive: { color: designTheme.onPrimary },
+  dailyMacros: { flexDirection: 'row', gap: 6, backgroundColor: '#1E201D', borderRadius: AppRadii.card, paddingVertical: 14, paddingHorizontal: 8, marginBottom: 18 },
   dailyMacro: { flex: 1, alignItems: 'center' },
-  dailyMacroValue: { fontFamily: 'CronosProBold', fontSize: 16, color: 'white' },
+  dailyMacroValue: { fontFamily: 'CronosProBold', fontSize: 16, color: designTheme.onPrimary },
   dailyMacroLabel: { fontFamily: 'CronosPro', fontSize: 10, color: '#BFC3BC', marginTop: 1 },
   planSummary: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 11 },
   summaryTitle: { fontFamily: 'Degular', fontSize: 24, color: Colors.light.text },
-  servingsPill: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#FFFBEB', paddingHorizontal: 12, minHeight: 36, borderRadius: 18 },
+  servingsPill: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: designTheme.yellowSoft, paddingHorizontal: 12, minHeight: 36, borderRadius: AppRadii.control },
   servingsText: { fontFamily: 'CronosProBold', fontSize: 15, color: Colors.light.button },
   mealList: { gap: 12 },
   mealCard: {
-    backgroundColor: 'white', borderRadius: 22, overflow: 'hidden',
-    ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 15 }, android: { elevation: 3 } }),
-  },
+    backgroundColor: designTheme.surface, borderRadius: AppRadii.card, overflow: 'hidden',
+    ...{}, borderWidth: 1, borderColor: designTheme.line, shadowOpacity: 0, elevation: 0 },
   mealMain: { flexDirection: 'row', alignItems: 'center', padding: 10, gap: 10 },
-  mealImageWrap: { width: 96, height: 92, borderRadius: 18, overflow: 'hidden', backgroundColor: '#FFFBEB' },
+  mealImageWrap: { width: 96, height: 92, borderRadius: AppRadii.control, overflow: 'hidden', backgroundColor: designTheme.yellowSoft },
   mealImage: { width: '100%', height: '100%' },
   mealPlaceholder: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   imageBusy: { position: 'absolute', inset: 0, backgroundColor: 'rgba(254,181,10,0.72)', alignItems: 'center', justifyContent: 'center' },
   mealCopy: { flex: 1, minWidth: 0 },
   mealBadges: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 3 },
-  dayNameBadge: { fontFamily: 'CronosProBold', fontSize: 11, color: '#6A4B00', backgroundColor: '#FFF0BC', overflow: 'hidden', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8, textTransform: 'capitalize' },
-  lockBadge: { width: 21, height: 21, borderRadius: 11, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF4CF' },
-  sourceBadge: { fontFamily: 'CronosProBold', fontSize: 11, overflow: 'hidden', paddingHorizontal: 7, paddingVertical: 3, borderRadius: 7 },
+  dayNameBadge: { fontFamily: 'CronosProBold', fontSize: 11, color: '#6A4B00', backgroundColor: designTheme.yellowSoft, overflow: 'hidden', paddingHorizontal: 8, paddingVertical: 3, borderRadius: AppRadii.small, textTransform: 'capitalize' },
+  lockBadge: { width: 21, height: 21, borderRadius: AppRadii.chip, alignItems: 'center', justifyContent: 'center', backgroundColor: designTheme.yellowSoft },
+  sourceBadge: { fontFamily: 'CronosProBold', fontSize: 11, overflow: 'hidden', paddingHorizontal: 7, paddingVertical: 3, borderRadius: AppRadii.small },
   dateBadge: { fontFamily: 'CronosProBold', fontSize: 11, color: Colors.light.textSecondary, textTransform: 'capitalize' },
   libraryBadge: { backgroundColor: '#EDEBFE', color: '#6C5CE7' },
-  suggestionBadge: { backgroundColor: '#FFFBEB', color: Colors.light.button },
+  suggestionBadge: { backgroundColor: designTheme.yellowSoft, color: Colors.light.button },
   mealTitle: { fontFamily: 'Degular', fontSize: 19, color: Colors.light.text, lineHeight: 21 },
   mealMeta: { fontFamily: 'CronosPro', fontSize: 13, color: Colors.light.textSecondary, marginTop: 3 },
-  moreButton: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#F7F3E5', alignItems: 'center', justifyContent: 'center' },
+  moreButton: { width: 36, height: 36, borderRadius: AppRadii.control, backgroundColor: designTheme.soft, alignItems: 'center', justifyContent: 'center' },
   pendingHint: { fontFamily: 'CronosPro', fontSize: 14, textAlign: 'center', color: Colors.light.textSecondary, marginTop: 9 },
   shoppingEmpty: {
-    backgroundColor: 'white', borderRadius: 24, padding: 22,
-    ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 15 }, android: { elevation: 2 } }),
-  },
+    backgroundColor: designTheme.surface, borderRadius: AppRadii.card, padding: 22,
+    ...{}, borderWidth: 1, borderColor: designTheme.line, shadowOpacity: 0, elevation: 0 },
   shoppingProgress: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 15 },
   shoppingGroup: { marginBottom: 18 },
   shoppingGroupRows: {
-    borderRadius: 24, overflow: 'hidden', backgroundColor: '#F8F8FD',
-    ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 15 }, android: { elevation: 3 } }),
-  },
+    borderRadius: AppRadii.card, overflow: 'hidden', backgroundColor: designTheme.surface,
+    ...{}, borderWidth: 1, borderColor: designTheme.line, shadowOpacity: 0, elevation: 0 },
   categoryTitle: { fontFamily: 'CronosProBold', fontSize: 15, color: Colors.light.textSecondary, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8, marginLeft: 3 },
-  shoppingItem: { minHeight: 64, flexDirection: 'row', alignItems: 'center', backgroundColor: '#F8F8FD', paddingHorizontal: 11, borderBottomWidth: 1, borderBottomColor: '#EAEAEE' },
-  shoppingItemDone: { backgroundColor: '#FFF8EA' },
+  shoppingItem: { minHeight: 64, flexDirection: 'row', alignItems: 'center', backgroundColor: designTheme.soft, paddingHorizontal: 11, borderBottomWidth: 1, borderBottomColor: designTheme.line },
+  shoppingItemDone: { backgroundColor: designTheme.yellowSoft },
   checkButton: { width: 38, height: 48, alignItems: 'flex-start', justifyContent: 'center' },
   shoppingEmoji: { fontSize: 24, width: 36 },
   shoppingCopy: { flex: 1, paddingVertical: 8 },
   shoppingName: { fontFamily: 'CronosProBold', fontSize: 16, color: Colors.light.text },
   shoppingQuantity: { fontFamily: 'CronosPro', fontSize: 13, color: Colors.light.textSecondary, marginTop: 2 },
   struck: { textDecorationLine: 'line-through', color: '#8A8A8A' },
-  haveButton: { width: 38, height: 38, borderRadius: 13, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF4D6' },
+  haveButton: { width: 38, height: 38, borderRadius: AppRadii.chip, alignItems: 'center', justifyContent: 'center', backgroundColor: designTheme.yellowSoft },
   haveButtonActive: { backgroundColor: Colors.light.button },
   settingsFill: { flex: 1 },
   settingsContent: { paddingHorizontal: 22, gap: 14 },
   settingsHeader: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 },
-  closeSettingsButton: { width: 42, height: 42, borderRadius: 15, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
-  settingsCard: { backgroundColor: 'white', borderRadius: 22, padding: 18, borderWidth: 1, borderColor: '#EFE8CF' },
+  closeSettingsButton: { width: 42, height: 42, borderRadius: AppRadii.control, backgroundColor: designTheme.surface, alignItems: 'center', justifyContent: 'center' },
+  settingsCard: { backgroundColor: designTheme.surface, borderRadius: AppRadii.card, padding: 18, borderWidth: 1, borderColor: designTheme.line , shadowOpacity: 0, elevation: 0 },
   settingsSectionTitle: { fontFamily: 'Degular', fontSize: 22, lineHeight: 25, color: Colors.light.text },
   settingsHelp: { fontFamily: 'CronosPro', fontSize: 14, lineHeight: 19, color: Colors.light.textSecondary, marginTop: 3, marginBottom: 14 },
   settingRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
   settingCopy: { flex: 1 },
   durationChoices: { flexDirection: 'row', gap: 8 },
-  durationChoice: { flex: 1, minHeight: 44, borderRadius: 14, backgroundColor: '#F4F1E7', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8 },
+  durationChoice: { flex: 1, minHeight: 44, borderRadius: AppRadii.control, backgroundColor: designTheme.soft, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 8 },
   durationChoiceActive: { backgroundColor: Colors.light.button },
   durationChoiceText: { fontFamily: 'CronosProBold', fontSize: 13, color: Colors.light.textSecondary, textAlign: 'center' },
-  durationChoiceTextActive: { color: 'white' },
+  durationChoiceTextActive: { color: designTheme.onPrimary },
   settingsNotice: { fontFamily: 'CronosPro', fontSize: 14, lineHeight: 19, color: Colors.light.textSecondary, textAlign: 'center', paddingHorizontal: 12, marginTop: 2 },
 });

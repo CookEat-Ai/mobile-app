@@ -33,3 +33,9 @@ assert.equal(isElapsedPlanningMeal('2026-10-14', 0, 'breakfast', 'UTC', clock('1
 assert.equal(isElapsedPlanningMeal('2026-10-14', 0, 'lunch', 'UTC', clock('11:00')), false);
 assert.equal(isElapsedPlanningMeal('2026-10-14', 1, 'breakfast', 'UTC', clock('23:00')), false);
 console.log('Meal-time planning passed: every cutoff boundary, tomorrow start, partial first day, full following days, timezone, DST and year rollover.');
+
+const last = mod.exports.planningLastDay;
+assert.equal(last({weekStart:"2026-10-20",weekEnd:"2026-10-26",preferences:{cookingDays:[0,2]}}),"2026-10-22","short plan ignores unused legacy horizon");
+assert.equal(last({weekStart:"2026-12-30",preferences:{cookingDays:[0,1]},meals:[{dayIndex:3}]}),"2027-01-02","occupied later days count across year boundaries");
+assert.equal(last({weekStart:"2026-10-24",preferences:{cookingDays:[0,2]},meals:[]}),"2026-10-26","configured last day survives meal removal and DST");
+assert.equal(last({weekStart:"2026-10-20",weekEnd:"2026-10-23"}),"2026-10-23","metadata-free legacy plans retain their saved range");

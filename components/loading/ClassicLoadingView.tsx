@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { Image } from 'expo-image';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
@@ -121,15 +122,15 @@ export function ClassicLoadingView({ messageKey, durationMs = 7000, mode = 'inde
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#FDF9E2', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 },
+  root: { flex: 1, backgroundColor: designTheme.background, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 40 },
   content: { width: '100%', maxWidth: 520, alignItems: 'center', gap: 32 },
   mascot: { width: rw(0.5), height: rw(0.5), transform: [{ rotate: '20deg' }] },
-  percentPill: { borderRadius: 100, paddingHorizontal: 20, paddingVertical: 10, backgroundColor: 'rgba(254, 181, 10, 0.1)' },
+  percentPill: { borderRadius: AppRadii.pill, paddingHorizontal: 20, paddingVertical: 10, backgroundColor: 'rgba(254, 181, 10, 0.1)' },
   percent: { fontFamily: 'Degular', fontSize: 24, color: Colors.light.button },
   messageWrapper: { width: '100%', minHeight: 60, alignItems: 'center', justifyContent: 'center' },
   message: { width: '100%', fontFamily: 'Degular', fontSize: rw(0.06), lineHeight: rw(0.07), color: Colors.light.text, textAlign: 'center' },
   messageMeasurement: { position: 'absolute', opacity: 0, pointerEvents: 'none' },
   messageVisible: { position: 'absolute' },
-  progressTrack: { width: '100%', height: 10, borderRadius: 5, backgroundColor: '#F1EACB', overflow: 'hidden' },
-  progressFill: { height: '100%', borderRadius: 5, backgroundColor: Colors.light.button },
+  progressTrack: { width: '100%', height: 10, borderRadius: AppRadii.small, backgroundColor: designTheme.soft, overflow: 'hidden' },
+  progressFill: { height: '100%', borderRadius: AppRadii.small, backgroundColor: Colors.light.button },
 });

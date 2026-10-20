@@ -38,7 +38,7 @@ function harness() {
     'react-native-reanimated': {__esModule: true, default: {View: 'AnimatedView'}, useSharedValue: shared, cancelAnimation: value => {value.value = value.value;}, useAnimatedStyle: fn => fn,
       withTiming: (target, config) => ({animation: true, target, config}), withDelay: (delay, animation) => ({...animation, delay}), Easing: {out: x => x, cubic: 'cubic'}, ReduceMotion: {System: 'system'}},
     'expo-router': {useFocusEffect: fn => effect(fn, [fn], true)},
-    '../../contexts/MotionPreferences': {}, '@expo/vector-icons': {}, 'react-i18next': {}, '../../constants/AppTheme': {AppTheme: {}}, '../../hooks/useDevShakeReveal': {}, './PlanningStyles': {planningStyles: {meals: {}}},
+    '../../contexts/MotionPreferences': {}, '@expo/vector-icons': {}, 'react-i18next': {}, '../../constants/AppTheme': require('./helpers/ui-theme.cjs'), '../../hooks/useDevShakeReveal': {}, './PlanningStyles': {planningStyles: {meals: {}}},
   };
   const loaded = {};
   const source = fs.readFileSync(require.resolve('../components/planning/PlanningReveal.tsx'), 'utf8') + '\nexport { PlanningMealEntrance };';

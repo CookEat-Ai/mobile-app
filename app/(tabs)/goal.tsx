@@ -1,3 +1,5 @@
+import { AppModal as Modal } from '../../components/ui/AppModal';
+import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { EntranceView } from '../../components/motion/Entrance';
 import { AppScreenHeading } from '../../components/AppScreenHeading';
 import { NutritionMacros } from '../../components/planning/PlanningNutritionSummary';
@@ -6,10 +8,10 @@ import { NavigationIconButton } from '../../components/NavigationIconButton';
 import { feedback } from '../../services/haptics';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { NutritionExplanation } from '../../components/NutritionExplanation';
 import { WeightProgressCard } from '../../components/WeightProgressCard';
@@ -17,7 +19,7 @@ import { calculateFitnessProjection, FitnessProfile, loadFitnessProfile } from '
 import { decideWeightAdjustment, evaluateWeightTrend, loadWeightTracking, recordWeight, WeightLog, WeightReview } from '../../services/weightTracking';
 import analytics from '../../services/analytics';
 
-export default function GoalScreen() {
+export default function GoalScreen({ onBack }: { onBack?: () => void } = {}) {
   const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
   const { gutter } = useResponsive();
@@ -69,13 +71,13 @@ export default function GoalScreen() {
   };
 
   if (!profile || !projection) return <View style={[appStyles.screen, { padding: gutter, paddingTop: insets.top + 8 }]}>
-    <AppScreenHeading title={t('tabs.goal')} />
+    <AppScreenHeading title={t('tabs.goal')} action={onBack ? <NavigationIconButton onPress={onBack} accessibilityLabel={t('common.back')} /> : undefined} />
     {error ? <View style={appStyles.card}><Text style={styles.error}>{t(error)}</Text><TouchableOpacity accessibilityRole="button" style={styles.logButton} onPress={() => void load()}><Text style={styles.logButtonText}>{t('weightTracking.retry')}</Text></TouchableOpacity></View> : <ActivityIndicator color={theme.yellow} />}
   </View>;
   const hasTarget = ['gain_muscle', 'lose_weight'].includes(profile.goal);
   return <View style={appStyles.screen}>
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ ...contentColumn(), paddingTop: insets.top + 8, paddingHorizontal: gutter, paddingBottom: theme.bottomSpace }}>
-      <AppScreenHeading title={t('tabs.goal')} />
+      <AppScreenHeading title={t('tabs.goal')} action={onBack ? <NavigationIconButton onPress={onBack} accessibilityLabel={t('common.back')} /> : undefined} />
       {!!error && <Text accessibilityRole="alert" style={styles.error}>{t(error)}</Text>}
       {!!message && <Text accessibilityLiveRegion="polite" style={styles.note}>{t(message)}</Text>}
       <WeightProgressCard logs={logs} initialWeight={logs[0]?.weight ?? profile.nutritionWeightKg ?? profile.currentWeightKg}
@@ -107,7 +109,7 @@ export default function GoalScreen() {
         <Text style={styles.note}>{t('weightTracking.localOnly')}</Text>
       </EntranceView>}
     </ScrollView>
-    <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={() => { if (!busy) setModalVisible(false); }}>
+    <Modal visible={modalVisible} transparent onRequestClose={() => { if (!busy) setModalVisible(false); }}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={[styles.modalOverlay, { paddingTop: insets.top + 16, paddingBottom: Math.max(insets.bottom, 16) }]}>
         <ScrollView style={{ width: '100%', maxWidth: 420 }} keyboardShouldPersistTaps="handled" contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingVertical: 16 }}>
           <View style={styles.modalCard}>
@@ -115,7 +117,7 @@ export default function GoalScreen() {
             <Text style={styles.note}>{t('weightTracking.todayHint')}</Text>
             <View style={styles.inputRow}><TextInput accessibilityLabel={t('goal.modalTitle')} editable={!busy} value={weight} onChangeText={value => { setWeight(value); setInputError(''); }} keyboardType="decimal-pad" selectTextOnFocus maxLength={6} style={styles.input} /><Text style={styles.kg}>kg</Text></View>
             {!!inputError && <Text accessibilityRole="alert" style={styles.error}>{t(inputError)}</Text>}
-            <TouchableOpacity accessibilityRole="button" disabled={busy} style={[styles.saveButton, busy && { opacity: 0.5 }]} onPress={() => void saveWeight()}>{busy ? <ActivityIndicator color="white" /> : <Text style={styles.saveText}>{t('goal.save')}</Text>}</TouchableOpacity>
+            <TouchableOpacity accessibilityRole="button" disabled={busy} style={[styles.saveButton, busy && { opacity: 0.5 }]} onPress={() => void saveWeight()}>{busy ? <ActivityIndicator color={theme.onPrimary} /> : <Text style={styles.saveText}>{t('goal.save')}</Text>}</TouchableOpacity>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -138,7 +140,7 @@ const styles = StyleSheet.create({
   logButtonText: { ...appStyles.buttonText },
   modalOverlay: { flex: 1, backgroundColor: 'rgba(8,26,16,0.38)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20 },
   modalCard: { width: '100%', maxWidth: 420, borderRadius: theme.radius, padding: 20, backgroundColor: theme.background },
-  inputRow: { marginTop: 20, minHeight: 70, borderRadius: 17, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18 },
+  inputRow: { marginTop: 20, minHeight: 70, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18 },
   input: { flex: 1, fontFamily: 'Degular', fontSize: 32, color: theme.ink, textAlign: 'center', paddingVertical: 12 },
   kg: { fontFamily: 'CronosPro', fontSize: 17, color: theme.muted },
   saveButton: { ...appStyles.button, marginTop: 16 },

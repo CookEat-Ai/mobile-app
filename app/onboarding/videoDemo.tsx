@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { router } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -113,7 +114,7 @@ export default function AppDemoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9E2', // Ton jaune clair CookEat
+    backgroundColor: designTheme.background, // Ton jaune clair CookEat
   },
   progressHeader: {
     flexDirection: 'row',
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: AppRadii.card,
     backgroundColor: '#F1F2F5',
     justifyContent: 'center',
     alignItems: 'center',
@@ -139,13 +140,13 @@ const styles = StyleSheet.create({
   progressTrack: {
     width: '100%',
     height: 12,
-    borderRadius: 999,
-    backgroundColor: '#F1EACB',
+    borderRadius: AppRadii.pill,
+    backgroundColor: designTheme.soft,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 999,
+    borderRadius: AppRadii.pill,
     backgroundColor: Colors.light.button,
   },
   restoreButton: {
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
     zIndex: 10,
   },
   restoreText: {
-    color: '#8C8C8C',
+    color: designTheme.muted,
     fontSize: 14,
     fontFamily: 'CronosPro',
     textDecorationLine: 'underline',
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
   continueButton: {
     backgroundColor: Colors.light.button, // Ton bouton orange/jaune
     paddingVertical: 18,
-    borderRadius: 100, // Bouton très arrondi
+    borderRadius: AppRadii.pill, // Bouton très arrondi
     width: '100%',
     alignItems: 'center',
     shadowColor: Colors.light.button,
@@ -218,13 +219,13 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 19,
     fontFamily: 'Degular'
   },
   pricingText: {
     fontSize: 14,
-    color: '#8C8C8C',
+    color: designTheme.muted,
     fontFamily: 'CronosPro',
     marginTop: 4,
   },

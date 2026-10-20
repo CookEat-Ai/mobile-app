@@ -1,10 +1,11 @@
+import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { usePlanningClock } from '../../hooks/usePlanningClock';
 import { planningMealsByDay } from '../../services/planning-time';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+
 import { planDays } from '../../services/planningDisplay';
 import { feedback } from '../../services/haptics';
 
@@ -37,11 +38,11 @@ export function CookingDaysPicker({ weekStart, value, onChange }: {
 }
 const styles = StyleSheet.create({
   days: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10 },
-  day: { width: '21%', minWidth: 60, minHeight: 100, borderWidth: 1, borderColor: theme.line, borderRadius: 18, backgroundColor: theme.surface, alignItems: 'center', justifyContent: 'center', gap: 8 },
+  day: { width: '21%', minWidth: 60, minHeight: 100, borderWidth: 1, borderColor: theme.line, borderRadius: AppRadii.control, backgroundColor: theme.surface, alignItems: 'center', justifyContent: 'center', gap: 8 },
   dayName: { fontFamily: 'CronosProBold', fontSize: 14, color: theme.muted, textTransform: 'capitalize' },
   dayNumber: { fontFamily: 'Degular', fontSize: 26, color: theme.ink },
   weekendName: { color: appStyles.error.color },
-  selected: { backgroundColor: '#FFF6D9', borderColor: theme.yellow },
+  selected: { backgroundColor: theme.yellowSoft, borderColor: theme.yellow },
   help: { fontFamily: 'CronosPro', fontSize: 16, color: theme.muted, marginTop: 8 },
   selection: { fontFamily: 'CronosProBold', fontSize: 16, color: theme.ink, marginTop: 22 },
 });

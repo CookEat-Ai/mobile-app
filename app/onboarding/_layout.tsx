@@ -15,6 +15,7 @@ export default function OnboardingLayout() {
         <Stack.Screen name="generationDemo" options={{ headerShown: false }} />
         <Stack.Screen name="videoImportTutorial" options={{ headerShown: false }} />
         <Stack.Screen name="weeklyPlanPreview" options={{ headerShown: false }} />
+        <Stack.Screen name="photoTrackingDemo" options={{ headerShown: false }} />
         <Stack.Screen name="promoCode" options={{ headerShown: false }} />
         <Stack.Screen name="offerTrial" options={{ headerShown: false }} />
         <Stack.Screen name="reminder" options={{ headerShown: false }} />

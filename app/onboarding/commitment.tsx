@@ -1,3 +1,6 @@
+import { useResponsive } from '../../hooks/useResponsive';
+import { FORM_CONTENT_MAX_WIDTH } from '../../constants/Layout';
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
 import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,6 +25,7 @@ const OPTIONS = [
 export default function CommitmentScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const { gutter } = useResponsive();
   const [profile, setProfile] = useState<FitnessProfile | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -53,7 +57,7 @@ export default function CommitmentScreen() {
   return (
     <View style={[styles.root, { paddingTop: insets.top }]}>
       <NavigationIconButton accessibilityLabel={t('common.back')} onPress={() => router.back()} style={[styles.backButton, { top: insets.top + 8 }]} />
-      <OnboardingScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.content, { paddingBottom: 34 + insets.bottom }]}>
+      <OnboardingScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.content, { paddingHorizontal: Math.max(24, gutter), paddingBottom: 34 + insets.bottom }]}>
         <View style={styles.icon}><Text style={styles.iconEmoji}>🎯</Text></View>
         <Text style={styles.title}>{t('fitnessOnboarding.commitment.title')}</Text>
         <Text style={styles.subtitle}>{t(`fitnessOnboarding.commitment.subtitle.${profile.goal}`, { weight: projection.targetWeightKg })}</Text>
@@ -75,20 +79,20 @@ export default function CommitmentScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#FDF9E2' },
-  backButton: { position: 'absolute', zIndex: 2, left: 20, width: 36, height: 36, borderRadius: 18, backgroundColor: '#F1F2F5', alignItems: 'center', justifyContent: 'center' },
-  content: { flexGrow: 1, width: '100%', maxWidth: 560, alignSelf: 'center', justifyContent: 'center', paddingHorizontal: 24, paddingTop: 76 },
-  icon: { alignSelf: 'center', width: 68, height: 68, borderRadius: 24, backgroundColor: '#FFF1C5', alignItems: 'center', justifyContent: 'center' },
+  root: { flex: 1, backgroundColor: designTheme.background },
+  backButton: { position: 'absolute', zIndex: 2, left: 20, width: 36, height: 36, borderRadius: AppRadii.control, backgroundColor: '#F1F2F5', alignItems: 'center', justifyContent: 'center' },
+  content: { flexGrow: 1, width: '100%', maxWidth: FORM_CONTENT_MAX_WIDTH, alignSelf: 'center', justifyContent: 'center', paddingHorizontal: 24, paddingTop: 76 },
+  icon: { alignSelf: 'center', width: 68, height: 68, borderRadius: AppRadii.card, backgroundColor: '#FFF1C5', alignItems: 'center', justifyContent: 'center' },
   iconEmoji: { fontSize: 30 },
   title: { marginTop: 22, textAlign: 'center', fontFamily: 'Degular', fontSize: 34, lineHeight: 39, color: Colors.light.text },
   subtitle: { marginTop: 10, marginBottom: 30, paddingHorizontal: 10, textAlign: 'center', fontFamily: 'CronosPro', fontSize: 17, lineHeight: 23, color: Colors.light.textSecondary },
   cards: { gap: 15 },
-  card: { minHeight: 68, borderRadius: 200, borderWidth: 2, borderColor: 'transparent', backgroundColor: 'white', paddingHorizontal: 20, paddingVertical: 15, flexDirection: 'row', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 },
+  card: { minHeight: 68, borderRadius: AppRadii.pill, borderWidth: 2, borderColor: 'transparent', backgroundColor: designTheme.surface, paddingHorizontal: 20, paddingVertical: 15, flexDirection: 'row', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 3 },
   cardActive: { borderColor: Colors.light.button },
   emoji: { width: 34, marginRight: 12, fontSize: 21, textAlign: 'center' },
   cardLabel: { flex: 1, fontFamily: 'Degular', fontSize: 20, lineHeight: 23, color: Colors.light.text },
   cardLabelActive: { color: Colors.light.button },
-  radio: { width: 24, height: 24, marginLeft: 14, borderRadius: 12, borderWidth: 2, borderColor: Colors.light.border, alignItems: 'center', justifyContent: 'center' },
+  radio: { width: 24, height: 24, marginLeft: 14, borderRadius: AppRadii.chip, borderWidth: 2, borderColor: Colors.light.border, alignItems: 'center', justifyContent: 'center' },
   radioActive: { borderColor: Colors.light.button },
-  radioDot: { width: 12, height: 12, borderRadius: 6, backgroundColor: Colors.light.button },
+  radioDot: { width: 12, height: 12, borderRadius: AppRadii.small, backgroundColor: Colors.light.button },
 });

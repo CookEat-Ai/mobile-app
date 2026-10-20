@@ -1,21 +1,13 @@
+import { AppModal as Modal } from './ui/AppModal';
+import { AppIconBadge } from './ui/AppIconBadge';
+import { AppRadii, AppTheme as theme } from '../constants/AppTheme';
 import { NavigationIconButton } from './NavigationIconButton';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Modal,
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../constants/Colors';
+
 import { font } from '../constants/Layout';
 import { contentColumn } from '../hooks/useResponsive';
 import analytics from '../services/analytics';
@@ -36,11 +28,13 @@ type Props = {
 
 export function ImportLinkSheet({ visible, onClose, source, isOnboarding, onboardingNext, isPlanImport }: Props) {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [url, setUrl] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isPrefilling, setIsPrefilling] = useState(false);
   const [prefilledFromClipboard, setPrefilledFromClipboard] = useState(false);
   const inputRef = useRef<TextInput>(null);
+  const afterDismiss = useRef<(() => void) | null>(null);
 
   // À l'ouverture on lit le presse-papier : c'est le moment où l'utilisateur a
   // exprimé son intention, donc la bannière iOS « collé depuis TikTok » est
@@ -49,6 +43,7 @@ export function ImportLinkSheet({ visible, onClose, source, isOnboarding, onboar
     if (!visible) return;
 
     let cancelled = false;
+    afterDismiss.current = null;
     setUrl('');
     setError(null);
     setPrefilledFromClipboard(false);
@@ -82,6 +77,7 @@ export function ImportLinkSheet({ visible, onClose, source, isOnboarding, onboar
   };
 
   const handleSubmit = () => {
+    if (afterDismiss.current) return;
     const validUrl = extractVideoUrl(url);
     if (!validUrl) {
       setError(t('importLink.invalid'));
@@ -94,8 +90,7 @@ export function ImportLinkSheet({ visible, onClose, source, isOnboarding, onboar
       from_clipboard: prefilledFromClipboard,
     });
 
-    onClose();
-    router.push({
+    afterDismiss.current = () => router.push({
       pathname: '/share-intent',
       params: {
         url: validUrl,
@@ -105,27 +100,31 @@ export function ImportLinkSheet({ visible, onClose, source, isOnboarding, onboar
         ...(isPlanImport ? { isPlanImport: 'true' } : {}),
       },
     });
+    onClose();
   };
 
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
       onRequestClose={onClose}
+      onDismiss={() => {
+        const next = afterDismiss.current;
+        afterDismiss.current = null;
+        next?.();
+      }}
       statusBarTranslucent
     >
-      <Pressable style={styles.overlay} onPress={onClose}>
+      <Pressable accessible={false} style={styles.overlay} onPress={onClose}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={styles.centering}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={[styles.centering, { paddingTop: insets.top + 16 }]}
         >
           {/* Absorbe les taps sur la carte pour qu'ils ne ferment pas la modale. */}
-          <Pressable style={styles.card} onPress={() => {}}>
+          <Pressable accessible={false} style={styles.card} onPress={() => {}}>
+            <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} style={{ flexShrink: 1 }} contentContainerStyle={[styles.cardContent, { paddingBottom: Math.max(insets.bottom, 16) + 16 }]}>
             <View style={styles.header}>
-              <View style={styles.iconWrapper}>
-                <Ionicons name="link" size={22} color={Colors.light.button} />
-              </View>
+              <AppIconBadge name="link-outline" />
               <NavigationIconButton kind="close" onPress={onClose} hitSlop={12} accessibilityRole="button" />
             </View>
 
@@ -151,7 +150,7 @@ export function ImportLinkSheet({ visible, onClose, source, isOnboarding, onboar
                 editable={!isPrefilling}
               />
               {isPrefilling ? (
-                <ActivityIndicator size="small" color={Colors.light.button} />
+                <ActivityIndicator size="small" color={theme.yellow} />
               ) : (
                 <TouchableOpacity onPress={handlePasteFromClipboard} hitSlop={8}>
                   <Text style={styles.pasteText}>{t('importLink.paste')}</Text>
@@ -175,6 +174,7 @@ export function ImportLinkSheet({ visible, onClose, source, isOnboarding, onboar
             >
               <Text style={styles.submitText}>{t('importLink.submit')}</Text>
             </TouchableOpacity>
+            </ScrollView>
           </Pressable>
         </KeyboardAvoidingView>
       </Pressable>
@@ -185,18 +185,22 @@ export function ImportLinkSheet({ visible, onClose, source, isOnboarding, onboar
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: theme.overlay,
   },
   centering: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    paddingHorizontal: 20,
   },
   card: {
     ...contentColumn(),
-    backgroundColor: 'white',
-    borderRadius: 28,
+    backgroundColor: theme.background,
+    borderTopLeftRadius: AppRadii.sheet,
+    borderTopRightRadius: AppRadii.sheet,
+    flexShrink: 1,
+    overflow: 'hidden',
+  },
+  cardContent: {
     padding: 24,
   },
   header: {
@@ -208,21 +212,21 @@ const styles = StyleSheet.create({
   iconWrapper: {
     width: 44,
     height: 44,
-    borderRadius: 22,
-    backgroundColor: '#FDF0E8',
+    borderRadius: AppRadii.card,
+    backgroundColor: theme.yellow,
     justifyContent: 'center',
     alignItems: 'center',
   },
   title: {
     fontSize: font(24),
     fontFamily: 'Degular',
-    color: Colors.light.text,
+    color: theme.ink,
     marginBottom: 6,
   },
   subtitle: {
     fontSize: font(16),
     fontFamily: 'CronosPro',
-    color: Colors.light.textSecondary,
+    color: theme.muted,
     lineHeight: font(22),
     marginBottom: 18,
   },
@@ -231,11 +235,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
     borderWidth: 1,
-    borderColor: '#E9E9E9',
-    borderRadius: 16,
+    borderColor: theme.line,
+    borderRadius: AppRadii.control,
     paddingHorizontal: 14,
     height: 54,
-    backgroundColor: '#FAFAFA',
+    backgroundColor: theme.surface,
   },
   inputRowError: {
     borderColor: '#E5484D',
@@ -244,17 +248,17 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: font(15),
     fontFamily: 'CronosPro',
-    color: Colors.light.text,
+    color: theme.ink,
   },
   pasteText: {
     fontSize: font(15),
     fontFamily: 'CronosProBold',
-    color: Colors.light.button,
+    color: theme.ink,
   },
   hint: {
     fontSize: font(13),
     fontFamily: 'CronosPro',
-    color: '#8E8E93',
+    color: theme.muted,
     marginTop: 8,
     marginBottom: 18,
   },
@@ -266,8 +270,8 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
   submitButton: {
-    backgroundColor: Colors.light.button,
-    borderRadius: 100,
+    backgroundColor: theme.yellow,
+    borderRadius: AppRadii.pill,
     paddingVertical: 16,
     alignItems: 'center',
   },
@@ -275,7 +279,7 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   submitText: {
-    color: 'white',
+    color: theme.onPrimary,
     fontSize: font(17),
     fontFamily: 'Degular',
   },

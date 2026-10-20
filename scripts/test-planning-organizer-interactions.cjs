@@ -26,9 +26,11 @@ const react = { __esModule: true, Fragment: 'Fragment',
 const rn = Object.fromEntries(['View', 'Text', 'Pressable', 'ScrollView', 'Modal'].map(name => [name, name]));
 Object.assign(rn, { StyleSheet: { create: s => s }, Platform: { OS: 'ios' }, Alert: { alert: (...args) => { confirmation = args; } } });
 const deps = { react, 'react-native': rn,
+  '../ui/AppModal': { AppModal: 'Modal' },
+  './PlanningStyles': { planningStyles: { dayHeading: {} } },
   'react-i18next': { useTranslation: () => ({ t: key => key, i18n: { resolvedLanguage: 'fr' } }) },
   'react-native-safe-area-context': { useSafeAreaInsets: () => ({ bottom: 0 }) },
-  '../../constants/AppTheme': { AppTheme: {}, appStyles: {} },
+  '../../constants/AppTheme': require('./helpers/ui-theme.cjs'),
   '../../constants/RecipeImages': { getRecipeImageSource: image => image },
   '../../hooks/usePlanningClock': { usePlanningClock: () => ({ now: new Date('2026-10-14T10:00:00Z') }) },
   '../../services/planning-time': timeRules.exports,

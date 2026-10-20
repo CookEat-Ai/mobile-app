@@ -1,3 +1,4 @@
+import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { usePlanningClock } from '../../hooks/usePlanningClock';
 import { isElapsedPlanningMeal } from '../../services/planning-time';
 import { Ionicons } from '@expo/vector-icons';
@@ -6,7 +7,7 @@ import { router } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+
 import { apiService, type MealPlan, type MealPlanMeal } from '../../services/api';
 import analytics from '../../services/analytics';
 import { isPastPlan, isPastPlanDay, planningDaySlots, initialPlanDay, mealsForDay, selectedPlanDays } from '../../services/planningDisplay';
@@ -14,7 +15,7 @@ import { invalidatePlanning } from '../../services/planningUpdates';
 import { plannedMealRecipeParams, readyPlannedRecipeId } from '../../services/plannedMealNavigation';
 import { PlanMealCard } from './PlanMealCard';
 import { PlanningDayPicker } from './PlanningDayPicker';
-import { PlanningNutritionSummary } from './PlanningNutritionSummary';
+import { PlanningOverview } from './PlanningOverview';
 import { PlanningShoppingLink } from './PlanningShoppingLink';
 import { planningStyles } from './PlanningStyles';
 import { PlanningCalorieNotice } from './PlanningCalorieNotice';
@@ -84,7 +85,7 @@ export function PlanWeekContent({ plan, onPlanChange, initialDay, onRevealStart 
     Alert.alert(t('planning.delete.title'), t('planning.delete.description', { title: meal.title }), [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('common.delete'), style: 'destructive', onPress: () => {
-        if (openingRef.current) return;
+        if (openingRef.current || isPastPlanDay(plan.weekStart, meal.dayIndex ?? 0)) return;
         openingRef.current = true;
         setOpening(meal.slotId); setError('');
         void (async () => {
@@ -101,6 +102,38 @@ export function PlanWeekContent({ plan, onPlanChange, initialDay, onRevealStart 
       } },
     ]);
   };
+  const replaceMeal = async (meal: MealPlanMeal) => {
+    if (openingRef.current || isPastPlanDay(plan.weekStart, meal.dayIndex ?? 0)) return;
+    openingRef.current = true; setOpening(meal.slotId); setError('');
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      if (!userId) throw new Error(t('planning.errors.user'));
+      const response = await apiService.replaceMeal(plan._id, meal.slotId, userId);
+      if (!response.data?.plan) throw new Error(response.error || t('planning.errors.replace'));
+      invalidatePlanning(); onPlanChange(response.data.plan);
+      analytics.track('meal_plan_meal_replaced', { plan_id: plan._id, slot_id: meal.slotId });
+    } catch (caught) { setError(caught instanceof Error ? caught.message : t('planning.errors.replace')); }
+    finally { openingRef.current = false; setOpening(null); }
+  };
+  const showMealActions = (meal: MealPlanMeal) => {
+    if (openingRef.current || isPastPlanDay(plan.weekStart, meal.dayIndex ?? 0)) return;
+    stopReveal();
+    Alert.alert(t('planning.actions.manage'), meal.title, [
+      { text: t('planning.actions.replace'), onPress: () => {
+        if (openingRef.current || isPastPlanDay(plan.weekStart, meal.dayIndex ?? 0)) return;
+        Alert.alert(t('recipeDetail.changePlannedMeal'), meal.title, [
+          { text: t('recipeDetail.chooseReplacement'), onPress: () => {
+            if (openingRef.current || isPastPlanDay(plan.weekStart, meal.dayIndex ?? 0)) return;
+            router.push({ pathname: '/planning/choose-recipe', params: { planId: plan._id, slotId: meal.slotId } });
+          } },
+          { text: t('recipeDetail.automaticReplacement'), onPress: () => void replaceMeal(meal) },
+          { text: t('common.cancel'), style: 'cancel' },
+        ]);
+      } },
+      { text: t('common.delete'), style: 'destructive', onPress: () => removeMeal(meal) },
+      { text: t('common.cancel'), style: 'cancel' },
+    ]);
+  };
   return <View>
     {revealControls}
 
@@ -110,14 +143,14 @@ export function PlanWeekContent({ plan, onPlanChange, initialDay, onRevealStart 
       label: new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(item.date),
       number: item.date.getDate(),
     }))} selectedDay={day} onSelect={nextDay => { stopReveal(); setDay(nextDay); }} /></View>
-    {!!meals.length && <PlanningNutritionSummary key={`nutrition:${plan._id}:${day}`} meals={meals} />}
+    <PlanningOverview plan={plan} meals={meals} day={day} />
     <PlanningCalorieNotice plan={plan} dayIndex={day} />
     {selected && <View style={planningStyles.sectionRow}>
       <Text style={planningStyles.sectionTitle}>{t('planning.dayMeals', { day: new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(selected.date) })}</Text>
     </View>}
     {error ? <Text accessibilityRole="alert" style={appStyles.error}>{error}</Text> : null}
     <AnimatedPlanningMeals key={`meals:${plan._id}:${day}`} meals={planningDaySlots(plan, day)} animationKey={animationKey}
-      renderMeal={slot => slot.meal ? <PlanMealCard meal={slot.meal} loading={opening === slot.meal.slotId} disabled={!!opening} onLongPress={!isPastPlanDay(plan.weekStart, slot.meal.dayIndex ?? 0) ? () => removeMeal(slot.meal!) : undefined} onPress={() => void openMeal(slot.meal!)} /> : <TouchableOpacity key={slot.slotId} accessibilityRole="button" disabled={!!opening || isElapsedPlanningMeal(plan.weekStart, day, slot.mealType, undefined, clock.now)} style={[styles.emptySlot, isElapsedPlanningMeal(plan.weekStart, day, slot.mealType, undefined, clock.now) && { opacity: 0.5 }]}
+      renderMeal={slot => slot.meal ? <PlanMealCard meal={slot.meal} loading={opening === slot.meal.slotId} disabled={!!opening} onLongPress={!isPastPlanDay(plan.weekStart, slot.meal.dayIndex ?? 0) ? () => showMealActions(slot.meal!) : undefined} onPress={() => void openMeal(slot.meal!)} /> : <TouchableOpacity key={slot.slotId} accessibilityRole="button" disabled={!!opening || isElapsedPlanningMeal(plan.weekStart, day, slot.mealType, undefined, clock.now)} style={[styles.emptySlot, isElapsedPlanningMeal(plan.weekStart, day, slot.mealType, undefined, clock.now) && { opacity: 0.5 }]}
       onPress={() => Alert.alert(t('planningSlots.add'), t(`search.categories.${{ breakfast: 'Breakfast', lunch: 'Lunch', snack: 'Snack', dinner: 'Dinner' }[slot.mealType]}`), [
         { text: t('common.cancel'), style: 'cancel' },
         { text: t('recipeDetail.chooseReplacement'), onPress: () => { stopReveal(); router.push({ pathname: '/planning/choose-recipe', params: { planId: plan._id, dayIndex: day, mealType: slot.mealType } }); } },
@@ -134,7 +167,7 @@ export function PlanWeekContent({ plan, onPlanChange, initialDay, onRevealStart 
 }
 
 const styles = StyleSheet.create({
-  emptySlot: { minHeight: 80, borderWidth: 1, borderStyle: 'dashed', borderColor: theme.line, borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  emptySlot: { minHeight: 80, borderWidth: 1, borderStyle: 'dashed', borderColor: theme.line, borderRadius: AppRadii.control, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 },
   organize: { marginTop: 16, minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
   shoppingText: { flex: 1, fontFamily: 'CronosProBold', fontSize: 17, color: theme.ink },
   empty: { paddingVertical: 28, gap: 12 },

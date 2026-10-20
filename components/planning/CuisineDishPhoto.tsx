@@ -1,3 +1,4 @@
+import { AppRadii } from '../../constants/AppTheme';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
@@ -12,5 +13,5 @@ export function CuisineDishPhoto({ cuisineId }: { cuisineId: string }) {
 }
 
 const styles = StyleSheet.create({
-  photo: { width: '100%', aspectRatio: 1.35, borderRadius: 11 },
+  photo: { width: '100%', aspectRatio: 1.35, borderRadius: AppRadii.chip },
 });

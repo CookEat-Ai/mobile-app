@@ -1,17 +1,21 @@
+import { AppModal as Modal } from '../ui/AppModal';
+import { NavigationIconButton } from '../NavigationIconButton';
+import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { usePlanningClock } from '../../hooks/usePlanningClock';
 import { isElapsedPlanningMeal } from '../../services/planning-time';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, AppState, Modal, PanResponder, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, AppState, PanResponder, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+
 import { getRecipeImageSource } from '../../constants/RecipeImages';
 import type { MealPlan, MealPlanMeal } from '../../services/api';
 import { planDays, isPastPlanDay } from '../../services/planningDisplay';
 import { compatiblePlanningTypes, locationKey, movePlanningMeal, planningEditableDays, ORGANIZE_MEAL_TYPES, type MealLocation } from '../../services/planningOrganization';
 import { feedback } from '../../services/haptics';
+import { planningStyles } from './PlanningStyles';
 
 const labels = { breakfast: 'Breakfast', lunch: 'Lunch', snack: 'Snack', dinner: 'Dinner' } as const;
 type Drag = { slotId: string; x: number; y: number };
@@ -203,11 +207,11 @@ export function PlanningOrganizer({ plan, meals, disabled, onChange }: {
     {movingMeal && drag && <View pointerEvents="none" style={[styles.ghost, { top: drag.y - bounds.current.rootY - 36, left: 12, right: 12 }]}>
       <Ionicons name="swap-vertical-outline" size={22} color={theme.ink} /><Text style={styles.recipe}>{movingMeal.title}</Text>
     </View>}
-    <Modal visible={!!choosing} transparent animationType="fade" onRequestClose={() => setChoosing(null)}>
+    <Modal visible={!!choosing} transparent onRequestClose={() => setChoosing(null)}>
       <View style={styles.backdrop}>
         <View style={[styles.sheet, { paddingBottom: insets.bottom + 16 }]}>
           <View style={styles.sheetHeader}><Text style={appStyles.section}>{t('planningOrganize.moveTo')}</Text>
-            <Pressable style={appStyles.iconButton} accessibilityRole="button" accessibilityLabel={t('common.close')} onPress={() => setChoosing(null)}><Ionicons name="close" size={24} color={theme.ink} /></Pressable></View>
+            <NavigationIconButton kind="close" style={appStyles.iconButton} accessibilityRole="button" accessibilityLabel={t('common.close')} onPress={() => setChoosing(null)} /></View>
           <ScrollView showsVerticalScrollIndicator={false}>{days.filter(day => destinationTypes(day.dayIndex).length > 0).map(day => <View key={day.key}><Text style={[appStyles.section, styles.destinationDay]}>{dayLabel(day.dayIndex)}</Text>
             {destinationTypes(day.dayIndex).map(mealType => {
               const meal = meals.find(meal => meal.dayIndex === day.dayIndex && meal.mealType === mealType);
@@ -230,21 +234,21 @@ export function PlanningOrganizer({ plan, meals, disabled, onChange }: {
 
 const styles = StyleSheet.create({
   fill: { flex: 1 }, content: { paddingHorizontal: 20, paddingBottom: 24 },
-  dayHeading: { paddingTop: 24, paddingBottom: 12, gap: 3 },
-  slot: { flexDirection: 'row', alignItems: 'center', minHeight: 94, padding: 10, marginBottom: 8, gap: 12, borderRadius: 18, borderWidth: 2, borderColor: theme.line, backgroundColor: theme.surface },
+  dayHeading: planningStyles.dayHeading,
+  slot: { flexDirection: 'row', alignItems: 'center', minHeight: 94, padding: 10, marginBottom: 8, gap: 12, borderRadius: AppRadii.control, borderWidth: 2, borderColor: theme.line, backgroundColor: theme.surface },
   excludedHeading: { color: theme.muted },
   excludedSlot: { opacity: 0.4, backgroundColor: theme.soft },
   incompatible: { opacity: 0.25, backgroundColor: theme.soft },
   target: { borderColor: theme.yellow, backgroundColor: theme.yellowSoft }, source: { opacity: 0.45 },
-  image: { width: 54, height: 62, borderRadius: 12 }, emptyImage: { backgroundColor: theme.soft, justifyContent: 'center', alignItems: 'center' },
+  image: { width: 54, height: 62, borderRadius: AppRadii.chip }, emptyImage: { backgroundColor: theme.soft, justifyContent: 'center', alignItems: 'center' },
   copy: { flex: 1, gap: 3 }, label: { fontFamily: 'CronosProBold', fontSize: 13, color: theme.muted },
   recipe: { fontFamily: 'CronosProBold', fontSize: 17, color: theme.ink, flexShrink: 1 }, meta: { fontFamily: 'CronosPro', fontSize: 13, color: theme.muted },
   handle: { width: 44, minHeight: 62, alignItems: 'center', justifyContent: 'center' },
-  ghost: { position: 'absolute', backgroundColor: theme.yellowSoft, borderWidth: 2, borderColor: theme.yellow, borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, elevation: 8, shadowColor: theme.ink, shadowOpacity: 0.15, shadowRadius: 8 },
+  ghost: { position: 'absolute', backgroundColor: theme.yellowSoft, borderWidth: 2, borderColor: theme.yellow, borderRadius: AppRadii.control, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, elevation: 8, shadowColor: theme.ink, shadowOpacity: 0.15, shadowRadius: 8 },
   backdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(8,26,16,0.35)' },
-  sheet: { maxHeight: '85%', backgroundColor: theme.background, borderTopLeftRadius: theme.radius, borderTopRightRadius: theme.radius, padding: 20 },
+  sheet: { maxHeight: '85%', backgroundColor: theme.background, borderTopLeftRadius: AppRadii.sheet, borderTopRightRadius: AppRadii.sheet, padding: 20 },
   sheetHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  destinationImage: { width: 48, height: 48, borderRadius: 12 },
+  destinationImage: { width: 48, height: 48, borderRadius: AppRadii.chip },
   destinationTitle: { fontFamily: 'CronosProBold', fontSize: 16, color: theme.ink },
   destinationType: { fontFamily: 'CronosPro', fontSize: 12, color: theme.muted },
   destinationDay: { marginTop: 20, marginBottom: 8 }, destination: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, borderBottomWidth: 1, borderColor: theme.line },

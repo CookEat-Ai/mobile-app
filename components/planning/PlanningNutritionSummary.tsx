@@ -1,16 +1,17 @@
+import { AppRadii, AppTheme as theme, NutritionColors } from '../../constants/AppTheme';
 import { EntranceView } from '../motion/Entrance';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { AppTheme as theme } from '../../constants/AppTheme';
+import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+
 import { useTranslation } from 'react-i18next';
 import type { MealPlanMeal } from '../../services/api';
 import { roundNutritionValue } from '../../services/weeklyPlanning';
 import { planningStyles as styles } from './PlanningStyles';
 
-export function PlanningNutritionSummary({ meals }: { meals: MealPlanMeal[] }) {
+export function PlanningNutritionSummary({ meals, style }: { meals: MealPlanMeal[]; style?: StyleProp<ViewStyle> }) {
   const { t, i18n } = useTranslation();
   const totals = meals.reduce((sum, meal) => ({ calories: sum.calories + (meal.calories || 0), proteins: sum.proteins + (meal.proteins || 0), carbs: sum.carbs + (meal.carbs || 0), fats: sum.fats + (meal.fats || 0) }), { calories: 0, proteins: 0, carbs: 0, fats: 0 });
-  return <EntranceView entranceIndex={0} style={cardStyles.card}>
+  return <EntranceView entranceIndex={0} style={[cardStyles.card, style]}>
     <View style={cardStyles.energy}>
       <Text style={cardStyles.calories}>{new Intl.NumberFormat(i18n.language).format(roundNutritionValue(totals.calories))}<Text style={cardStyles.unit}> kcal</Text></Text>
       <Text style={cardStyles.caption}>{t('planningNutrition.dayTotal')}</Text>
@@ -23,9 +24,9 @@ export function PlanningNutritionSummary({ meals }: { meals: MealPlanMeal[] }) {
 export function NutritionMacros({ proteins, carbs, fats, separated = false }: { proteins: number; carbs: number; fats: number; separated?: boolean }) {
   const { t } = useTranslation();
   return <View style={separated ? cardStyles.macros : styles.macros}>
-    <Macro separated={separated} value={`${roundNutritionValue(proteins)}g`} label={t('fitnessOnboarding.projection.protein')} color="#E96C5D" />
-    <Macro separated={separated} value={`${roundNutritionValue(carbs)}g`} label={t('fitnessOnboarding.projection.carbs')} color="#75B878" />
-    <Macro separated={separated} value={`${roundNutritionValue(fats)}g`} label={t('fitnessOnboarding.projection.fats')} color="#5DA9E9" />
+    <Macro separated={separated} value={`${roundNutritionValue(proteins)}g`} label={t('fitnessOnboarding.projection.protein')} color={NutritionColors.proteins} />
+    <Macro separated={separated} value={`${roundNutritionValue(carbs)}g`} label={t('fitnessOnboarding.projection.carbs')} color={NutritionColors.carbs} />
+    <Macro separated={separated} value={`${roundNutritionValue(fats)}g`} label={t('fitnessOnboarding.projection.fats')} color={NutritionColors.fats} />
   </View>;
 }
 function Macro({ value, label, color, separated }: { value: string; label: string; color: string; separated?: boolean }) {
@@ -41,7 +42,7 @@ const cardStyles = StyleSheet.create({
   caption: { fontFamily: 'CronosPro', fontSize: 13, lineHeight: 17, color: theme.muted },
   divider: { height: 1, backgroundColor: theme.line, marginVertical: 10 },
   macros: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  macro: { flexGrow: 1, flexBasis: 85, gap: 4, padding: 8, borderRadius: 12, backgroundColor: theme.background },
+  macro: { flexGrow: 1, flexBasis: 85, gap: 4, padding: 8, borderRadius: AppRadii.chip, backgroundColor: theme.background },
   macroHeading: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   dot: { width: 6, height: 6, borderRadius: 3 },
   macroLabel: { flexShrink: 1, fontFamily: 'CronosPro', fontSize: 13, lineHeight: 17, color: theme.muted },

@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { router } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import {
@@ -87,7 +88,7 @@ export default function AhaMomentScreen() {
             style={styles.cameraButton}
             onPress={handleCameraPress}
           >
-            <IconSymbol name="camera.fill" size={24} color="white" />
+            <IconSymbol name="camera.fill" size={24} color={designTheme.onPrimary} />
             <Text style={styles.buttonText} numberOfLines={1} adjustsFontSizeToFit>
               {t('onboarding.ahaMoment.cameraButton')}
             </Text>
@@ -109,7 +110,7 @@ export default function AhaMomentScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.background,
   },
   progressHeader: {
     flexDirection: 'row',
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: AppRadii.card,
     backgroundColor: '#F1F2F5',
     justifyContent: 'center',
     alignItems: 'center',
@@ -135,13 +136,13 @@ const styles = StyleSheet.create({
   progressTrack: {
     width: '100%',
     height: 12,
-    borderRadius: 999,
-    backgroundColor: '#F1EACB',
+    borderRadius: AppRadii.pill,
+    backgroundColor: designTheme.soft,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 999,
+    borderRadius: AppRadii.pill,
     backgroundColor: Colors.light.button,
   },
   content: {
@@ -169,7 +170,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: rw(0.046),
     fontFamily: 'CronosPro',
-    color: '#8C8C8C',
+    color: designTheme.muted,
     textAlign: 'center',
     paddingHorizontal: 20,
   },
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
   cameraButton: {
     backgroundColor: Colors.light.button,
     paddingVertical: 16,
-    borderRadius: 200,
+    borderRadius: AppRadii.pill,
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -203,7 +204,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: rw(0.05),
     fontFamily: 'Degular',
     flexShrink: 1,
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   skipButtonText: {
-    color: '#8C8C8C',
+    color: designTheme.muted,
     fontSize: rw(0.041),
     fontFamily: 'CronosPro',
     textDecorationLine: 'underline',

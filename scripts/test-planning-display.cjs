@@ -40,9 +40,9 @@ assert.equal(initialPlanDay({ ...plan, meals: [] }, '2026-10-12'), 0);
 assert.deepEqual(Array.from(mealsForDay(plan, 2), meal => meal.slotId), ['lunch', 'dinner']);
 assert.equal(plan.meals[0].slotId, 'dinner', 'display must not mutate plan data');
 assert.equal(mealsForDay(plan, 5).length, 0);
-assert.match(formatPlanRange(plan, 'en-GB'), /4 Oct/);
-assert.equal(isPastPlan(plan, '2026-10-04'), false, 'last day remains regenerable');
-assert.equal(isPastPlan(plan, '2026-10-05'), true, 'completed week cannot be regenerated');
+assert.match(formatPlanRange(plan, 'en-GB'), /30 Sept?/);
+assert.equal(isPastPlan(plan, '2026-09-30'), false, 'last day remains regenerable');
+assert.equal(isPastPlan(plan, '2026-10-01'), true, 'completed week cannot be regenerated');
 assert.equal(isPastPlan(plan, '2026-09-27'), false, 'future week has not ended');
 assert.equal(isPastPlan({ ...plan, weekEnd: '2026-10-02' }, '2026-10-03'), true, 'use the saved end date');
 assert.equal(isPastPlan({ weekStart: '2026-12-28' }, '2027-01-03'), false);
@@ -54,8 +54,8 @@ for (const zone of ['Europe/Paris', 'America/Los_Angeles']) {
 }
 console.log('Planning display passed: today, empty days, historical weeks, meal order, DST and year boundaries.');
 const old = { ...plan, _id: 'old' };
-const rolling = { ...plan, _id: 'rolling', weekStart: '2026-10-07' };
-const newer = { ...plan, _id: 'newer', weekStart: '2026-10-09' };
+const rolling = { ...plan, _id: 'rolling', weekStart: '2026-10-07', preferences: {cookingDays: [0,1,2,3,4,5,6]} };
+const newer = { ...plan, _id: 'newer', weekStart: '2026-10-09', preferences: {cookingDays: [0,1,2,3,4,5,6]} };
 const future = { ...plan, _id: 'future', weekStart: '2026-10-14' };
 assert.equal(mod.exports.displayedPlan([old, rolling, future], '2026-10-07'), rolling, 'Wednesday generation is visible immediately');
 assert.equal(mod.exports.displayedPlan([old, rolling, future], '2026-10-12'), rolling, 'a Monday rollover cannot hide an active rolling week');
@@ -65,7 +65,7 @@ assert.equal(mod.exports.displayedPlan([rolling, newer, future], '2026-10-10'), 
 assert.equal(mod.exports.displayedPlan([old, future], '2026-10-07'), undefined, 'expired and future plans stay in history');
 assert.equal(mod.exports.displayedPlan([], '2026-10-07'), undefined);
 assert.equal(rolling.weekStart, '2026-10-07', 'selection never relabels saved dates');
-assert.equal(mod.exports.displayedPlan([{ ...rolling, weekEnd: '2026-10-10' }], '2026-10-11'), undefined, 'saved end date is authoritative');
+assert.equal(mod.exports.displayedPlan([{ ...rolling, preferences: {cookingDays: [0,3]}, meals: [], weekEnd: '2026-10-10' }], '2026-10-11'), undefined, 'saved end date is authoritative');
 console.log('Home rolling-week selection passed: Wednesday start, Monday rollover, expiry, newer weeks and history preservation.');
 
 const slotPlan = { weekStart: '2026-10-05', preferences: { includeSnack: false }, meals: [
@@ -79,3 +79,7 @@ assert.equal(slots[1].meal, undefined, 'empty lunch stays between breakfast and 
 assert.equal(slots[3].meal.slotId, 'dinner');
 assert.equal(mod.exports.planningDaySlots({ ...slotPlan, preferences: { includeSnack: true } }, 0).map(slot => slot.mealType).join(','), 'breakfast,lunch,snack,dinner');
 console.log('Planning slots passed: afternoon snack and empty slots in meal order.');
+
+assert.equal(mod.exports.displayedPlan([plan], "2026-09-30"),plan,"last actual planned day remains visible");
+assert.equal(mod.exports.displayedPlan([plan], "2026-10-01"),undefined,"renewal starts the day after the final actual day, even for legacy seven-day horizons");
+assert.equal(isPastPlan({...plan,preferences:{cookingDays:[0,4]},meals:[]},"2026-10-02"),false,"removing meals does not erase a configured final day");

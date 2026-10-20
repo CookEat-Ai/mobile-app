@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { createPantryScanHandoff, PANTRY_SCAN_HANDOFF_KEY } from '../services/pantryScanHandoff';
 import { PlanningFlowHeader } from '../components/planning/PlanningFlowHeader';
 import { PantryScanView } from '../components/planning/PantryScanView';
@@ -683,7 +684,7 @@ function CameraContent() {
       <Animated.View
         style={[
           StyleSheet.absoluteFill,
-          { backgroundColor: 'white', opacity: flashOpacity, zIndex: 100 }
+          { backgroundColor: designTheme.surface, opacity: flashOpacity, zIndex: 100 }
         ]}
         pointerEvents="none"
       />
@@ -715,14 +716,12 @@ function CameraContent() {
         <View style={[styles.topBar, { paddingTop: insets.top + 12, paddingLeft: 20 + insets.left, paddingRight: 20 + insets.right }]}>
           {!isRecording && (
             <>
-              <NavigationIconButton kind="close" style={styles.closeButton} onPress={handleClose} />
+              <NavigationIconButton kind="close" tone="overlay" style={styles.closeButton} onPress={handleClose} />
               <View style={styles.headerLogo} pointerEvents="none">
                 <Text style={styles.headerText}>CookEat</Text>
                 <Image source={require('../assets/images/mascot.png')} style={styles.headerMascot} contentFit="contain" accessible={false} />
               </View>
-              <TouchableOpacity style={styles.helpButton} onPress={showOnboarding}>
-                <IconSymbol name="help" size={30} color="white" />
-              </TouchableOpacity>
+              <NavigationIconButton icon="help" tone="overlay" accessibilityLabel={t('tracking.captureHelp')} onPress={showOnboarding} style={styles.helpButton} />
             </>
           )}
         </View>
@@ -834,7 +833,7 @@ function CameraContent() {
           {((mode === 'photo' && capturedImages.length > 0) || (mode === 'video' && recordedVideoUri)) && (
             <TouchableOpacity style={styles.finishButton} onPress={finishCapture}>
               <Text style={styles.finishButtonText}>{t(params.planningPantry === 'true' ? 'pantryReview.analyzePhotos' : 'camera.finishButton')}</Text>
-              <IconSymbol name="chevron-forward" size={20} color="white" weight="bold" />
+              <IconSymbol name="chevron-forward" size={20} color={designTheme.onPrimary} weight="bold" />
             </TouchableOpacity>
           )}
 
@@ -875,7 +874,7 @@ const styles = StyleSheet.create({
   closeButton: {
     padding: 10,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 25,
+    borderRadius: AppRadii.card,
     width: 50,
     height: 50,
     justifyContent: 'center',
@@ -885,7 +884,7 @@ const styles = StyleSheet.create({
   helpButton: {
     padding: 10,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 25,
+    borderRadius: AppRadii.card,
     width: 50,
     height: 50,
     justifyContent: 'center',
@@ -905,7 +904,7 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '20deg' }],
   },
   headerText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 22,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
@@ -931,17 +930,17 @@ const styles = StyleSheet.create({
   captureButton: {
     width: 85,
     height: 85,
-    borderRadius: 42.5,
+    borderRadius: AppRadii.pill,
     borderWidth: 5,
-    borderColor: 'white',
+    borderColor: designTheme.onPrimary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   captureButtonInner: {
     width: 68,
     height: 68,
-    borderRadius: 34,
-    backgroundColor: 'white',
+    borderRadius: AppRadii.sheet,
+    backgroundColor: designTheme.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -949,7 +948,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.5)',
   },
   limitText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 12,
     fontFamily: 'CronosProBold',
     marginTop: 8,
@@ -962,9 +961,9 @@ const styles = StyleSheet.create({
   thumbnailImageContainer: {
     width: '100%',
     height: '100%',
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
     borderWidth: 2,
-    borderColor: 'white',
+    borderColor: designTheme.onPrimary,
     overflow: 'hidden',
   },
   thumbnail: {
@@ -978,15 +977,15 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.button,
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: 'white',
+    borderColor: designTheme.onPrimary,
     zIndex: 10,
   },
   badgeText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 12,
     fontWeight: 'bold',
   },
@@ -994,7 +993,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.button,
     marginHorizontal: 40,
     height: 56,
-    borderRadius: 28,
+    borderRadius: AppRadii.sheet,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1006,7 +1005,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   finishButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 20,
     fontFamily: 'CronosProBold',
   },
@@ -1019,7 +1018,7 @@ const styles = StyleSheet.create({
   message: {
     textAlign: 'center',
     paddingBottom: 20,
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 18,
     fontFamily: 'CronosPro',
   },
@@ -1027,11 +1026,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.button,
     paddingHorizontal: 30,
     paddingVertical: 15,
-    borderRadius: 30,
+    borderRadius: AppRadii.sheet,
     marginBottom: 20,
   },
   permissionButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 16,
     fontFamily: 'CronosProBold',
   },
@@ -1039,7 +1038,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   backButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 16,
     fontFamily: 'CronosPro',
   },
@@ -1051,7 +1050,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   skipButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 17,
     fontFamily: 'CronosProBold',
     textDecorationLine: 'underline',
@@ -1070,7 +1069,7 @@ const styles = StyleSheet.create({
   modeButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    borderRadius: 20,
+    borderRadius: AppRadii.card,
   },
   modeButtonActive: {
     backgroundColor: 'rgba(255,255,255,0.2)',
@@ -1082,7 +1081,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   modeTextActive: {
-    color: 'white',
+    color: designTheme.onPrimary,
   },
   // Video Preview
   videoPreviewContainer: {
@@ -1097,17 +1096,17 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,0,0,0.5)',
   },
   captureButtonInnerVideo: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
   },
   captureButtonInnerRecording: {
     backgroundColor: '#FF3B30',
     width: 34,
     height: 34,
-    borderRadius: 6,
+    borderRadius: AppRadii.small,
   },
   // Loading Styles
   loadingContainer: {
-    backgroundColor: "#FDF9E2",
+    backgroundColor: designTheme.background,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 40,
@@ -1137,22 +1136,22 @@ const styles = StyleSheet.create({
   loadingBarTrack: {
     width: '100%',
     height: 10,
-    backgroundColor: '#F1EACB',
-    borderRadius: 5,
+    backgroundColor: designTheme.soft,
+    borderRadius: AppRadii.small,
     overflow: 'hidden',
   },
   loadingBarFill: {
     height: '100%',
     backgroundColor: Colors.light.button,
-    borderRadius: 5,
+    borderRadius: AppRadii.small,
   },
   focusPulse: {
     position: 'absolute',
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: AppRadii.card,
     borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderColor: designTheme.onPrimary,
     backgroundColor: 'rgba(255,255,255,0.12)',
     zIndex: 120,
   },

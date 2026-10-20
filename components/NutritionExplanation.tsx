@@ -1,3 +1,4 @@
+import { AppRadii } from '../constants/AppTheme';
 import React, { useState } from 'react';
 import { Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -30,6 +31,6 @@ const styles = StyleSheet.create({
   container: { width: '100%', marginTop: 8 },
   button: { minHeight: 44, flexDirection: 'row', gap: 8, justifyContent: 'center', alignItems: 'center', paddingVertical: 10 },
   link: { flexShrink: 1, fontFamily: 'CronosProBold', fontSize: 14, color: Colors.light.text, textDecorationLine: 'underline' },
-  details: { backgroundColor: '#FFFBEF', padding: 16, borderRadius: 16, gap: 10 },
+  details: { backgroundColor: '#FFFBEF', padding: 16, borderRadius: AppRadii.control, gap: 10 },
   body: { fontFamily: 'CronosPro', fontSize: 15, lineHeight: 21, color: Colors.light.textSecondary },
 });

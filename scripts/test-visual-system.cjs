@@ -1,0 +1,17 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),ts=require('typescript');
+const theme=require('./helpers/ui-theme.cjs'),glyphs=require('@expo/vector-icons/build/vendor/react-native-vector-icons/glyphmaps/Ionicons.json');
+let haptics=0;
+const React={createElement:(type,props,...children)=>({type,props:{...props,children}})};React.default=React;
+function load(file){const output={};vm.runInNewContext(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React,esModuleInterop:true,target:ts.ScriptTarget.ES2022}}).outputText,{exports:output,require:name=>{
+ if(name==='react')return React;if(name==='react-native')return{StyleSheet:{create:x=>x},TouchableOpacity:'Button',View:'View',ActivityIndicator:'Spinner'};if(name==='@expo/vector-icons')return{Ionicons:'Icon'};if(name==='react-i18next')return{useTranslation:()=>({t:k=>k})};if(name.includes('AppTheme'))return theme;if(name.includes('haptics'))return{feedback:{light:()=>haptics++}};throw Error(name);
+}});return output;}
+const flatten=styles=>Object.assign({},...[styles].flat(Infinity).filter(Boolean));
+const {NavigationIconButton}=load('components/NavigationIconButton.tsx');
+for(const tone of ['surface','overlay','primary']){let pressed=0;const tree=NavigationIconButton({kind:'close',tone,onPress:()=>pressed++,style:{width:12,height:90,borderRadius:0,padding:18,elevation:20}}),s=flatten(tree.props.style),icon=tree.props.children[0];assert.equal(s.width,44);assert.equal(s.height,44);assert.equal(s.borderRadius,16);assert.equal(s.padding,0);assert.equal(s.elevation,0);assert.equal(s.borderWidth,1);assert.equal(icon.props.size,24);assert.equal(icon.props.name,'close');assert.equal(icon.props.color,tone==='surface'?theme.AppTheme.ink:theme.AppTheme.onPrimary);assert.equal(tree.props.accessibilityLabel,'common.close');tree.props.onPress({});assert.equal(pressed,1);}
+const busy=NavigationIconButton({loading:true});assert.equal(busy.props.disabled,true);assert.equal(busy.props.accessibilityState.busy,true);assert.equal(busy.props.children[0].type,'Spinner');
+const disabled=NavigationIconButton({disabled:true,accessibilityState:{selected:true}});assert.equal(disabled.props.accessibilityState.selected,true);assert.equal(disabled.props.accessibilityState.disabled,true);assert(flatten(disabled.props.style).opacity<1);
+assert.equal(NavigationIconButton({}).props.children[0].props.name,'chevron-back');
+const {IconSymbol,ICON_ALIASES}=load('components/ui/IconSymbol.tsx');for(const [name,glyph]of Object.entries(ICON_ALIASES)){assert(glyph in glyphs,`${name} maps to an actual Ionicons glyph`);assert.equal(IconSymbol({name,color:theme.AppTheme.ink}).props.name,glyph);}
+const walk=dir=>fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e.isDirectory()?walk(path.join(dir,e.name)):[path.join(dir,e.name)]);
+for(const file of [...walk('app'),...walk('components')].filter(p=>p.endsWith('.tsx')&&!p.includes('/dev/'))){const code=fs.readFileSync(file,'utf8');assert(!/import.*(?:MaterialIcons|FontAwesome|SymbolView).*from/.test(code),`${file}: use the shared icon family`);for(const match of code.matchAll(/<Ionicons\b[^>]*?\bname="([^"]+)"/g))assert(match[1]in glyphs,`${file}: missing glyph ${match[1]}`);}
+console.log('Visual system: real glyph coverage, consistent controls and contrast, touch targets, custom-style resistance, loading/disabled accessibility and shared icon family passed.');

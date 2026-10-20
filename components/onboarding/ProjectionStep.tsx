@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -129,14 +130,14 @@ export function ProjectionStep({ profile }: { profile: OnboardingProfile | null 
           <Svg width={chartWidth} height={CHART_HEIGHT}>
             <Defs>
               <LinearGradient id="projectionFill" x1="0" y1="0" x2="0" y2="1">
-                <Stop offset="0" stopColor="#FEB50A" stopOpacity="0.35" />
-                <Stop offset="1" stopColor="#FEB50A" stopOpacity="0" />
+                <Stop offset="0" stopColor={designTheme.yellow} stopOpacity="0.35" />
+                <Stop offset="1" stopColor={designTheme.yellow} stopOpacity="0" />
               </LinearGradient>
             </Defs>
             <Path d={area} fill="url(#projectionFill)" />
-            <Path d={line} stroke="#FEB50A" strokeWidth={3} strokeLinecap="round" fill="none" />
-            <Circle cx={last.x} cy={last.y} r={11} fill="#FEB50A" opacity={0.2} />
-            <Circle cx={last.x} cy={last.y} r={6} fill="#FEB50A" />
+            <Path d={line} stroke={designTheme.yellow} strokeWidth={3} strokeLinecap="round" fill="none" />
+            <Circle cx={last.x} cy={last.y} r={11} fill={designTheme.yellow} opacity={0.2} />
+            <Circle cx={last.x} cy={last.y} r={6} fill={designTheme.yellow} />
           </Svg>
         </Animated.View>
 
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(230, 126, 34, 0.1)',
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     marginBottom: 16,
   },
   badgeText: {
@@ -193,8 +194,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   card: {
-    backgroundColor: 'white',
-    borderRadius: 24,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.card,
     paddingVertical: 24,
     paddingHorizontal: 24,
     width: '100%',

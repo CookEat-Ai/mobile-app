@@ -1,3 +1,6 @@
+import { AppModal as Modal } from '../../components/ui/AppModal';
+import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
+import { clearTrackingPhotos } from '../../services/trackingPhotos';
 import { CREATOR_PROMO_CODES_ENABLED } from '../../config/storeCompliance';
 import { feedback } from '../../services/haptics';
 import { EntranceView } from '../../components/motion/Entrance';
@@ -7,27 +10,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-  ActivityIndicator,
-  Alert,
-  Linking,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  Modal,
-  Animated,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard
-} from 'react-native';
+import { ActivityIndicator, Alert, Linking, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../../components/ui/IconSymbol';
-import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { useSubscription } from '../../hooks/useSubscription';
 import * as WebBrowser from "expo-web-browser";
@@ -64,45 +51,20 @@ export default function ProfileScreen() {
   // `useResponsive` suit la rotation / le Split View ; l'ancienne lecture de
   // `Dimensions` était figée au premier import du module.
   const { height: screenHeight, gutter } = useResponsive();
-  const slideAnim = useRef(new Animated.Value(screenHeight)).current;
-  const promoSlideAnim = useRef(new Animated.Value(screenHeight)).current;
-
-  useEffect(() => {
-    if (isSubscriptionModalVisible) {
-      Animated.spring(slideAnim, {
-        toValue: 0,
-        useNativeDriver: true,
-        tension: 50,
-        friction: 8
-      }).start();
-    } else {
-      slideAnim.setValue(screenHeight);
-    }
-  }, [isSubscriptionModalVisible, screenHeight, slideAnim]);
-
-  useEffect(() => {
-    if (isPromoModalVisible) {
-      Animated.spring(promoSlideAnim, {
-        toValue: 0,
-        useNativeDriver: true,
-        tension: 50,
-        friction: 8,
-      }).start();
-    } else {
-      promoSlideAnim.setValue(screenHeight);
-    }
-  }, [isPromoModalVisible, promoSlideAnim, screenHeight]);
-
-  const closePromoModal = () => {
-    Animated.timing(promoSlideAnim, {
-      toValue: screenHeight,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      setIsPromoModalVisible(false);
-      setPromoCode('');
-      setPromoError('');
-    });
+  const subscriptionAfterClose = useRef<(() => void) | undefined>(undefined);
+  const promoAfterClose = useRef<(() => void) | undefined>(undefined);
+  const dismissPromoModal = (afterClose?: () => void) => {
+    promoAfterClose.current = afterClose;
+    Keyboard.dismiss();
+    setIsPromoModalVisible(false);
+  };
+  const closePromoModal = () => dismissPromoModal();
+  const finishPromoDismiss = () => {
+    setPromoCode('');
+    setPromoError('');
+    const action = promoAfterClose.current;
+    promoAfterClose.current = undefined;
+    action?.();
   };
 
   const handleValidatePromoCode = async () => {
@@ -116,9 +78,7 @@ export default function ProfileScreen() {
       if (response.data?.isValid && response.data.discountPercentage) {
         await AsyncStorage.setItem('pending_promo_code', promoCode.trim().toUpperCase());
         await AsyncStorage.setItem('pending_promo_discount', String(response.data.discountPercentage));
-        closePromoModal();
-
-        setTimeout(() => {
+        dismissPromoModal(() => {
           router.push({
             pathname: '/paywall',
             params: {
@@ -127,7 +87,7 @@ export default function ProfileScreen() {
               promoDiscount: String(response.data!.discountPercentage),
             },
           });
-        }, 400);
+        });
       } else {
         setPromoError(response.error || t('promoCode.invalid'));
       }
@@ -139,16 +99,14 @@ export default function ProfileScreen() {
   };
 
   const dismissSubscriptionModal = (afterClose?: () => void) => {
-    Animated.timing(slideAnim, {
-      toValue: screenHeight,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
-      setIsSubscriptionModalVisible(false);
-      afterClose?.();
-    });
+    subscriptionAfterClose.current = afterClose;
+    setIsSubscriptionModalVisible(false);
   };
-
+  const finishSubscriptionDismiss = () => {
+    const action = subscriptionAfterClose.current;
+    subscriptionAfterClose.current = undefined;
+    action?.();
+  };
   const closeSubscriptionModal = () => dismissSubscriptionModal();
 
   useEffect(() => {
@@ -342,6 +300,8 @@ export default function ProfileScreen() {
 
                       // Conserver la langue avant de tout effacer
                       const currentLang = await AsyncStorage.getItem('app_language');
+                      const trackingOwner = await AsyncStorage.getItem('userId');
+                      if (trackingOwner) clearTrackingPhotos(trackingOwner);
                       await AsyncStorage.clear();
                       await analytics.resetIdentity({
                         rotateDeviceId: true,
@@ -404,9 +364,9 @@ export default function ProfileScreen() {
           <SettingsRow icon="language-outline" title={t('profile.language')} description={getLanguageText()} onPress={() => setIsLanguageModalVisible(true)} />
           <View style={styles.separator} />
           <SettingsRow icon="mail-outline" title={t('profile.feedback')} description={t('profile.feedbackDescription')} onPress={handleFeedbackPress} />
-          {!subscriptionStatus.isSubscribed && <>
+          {!subscriptionStatus.isSubscribed && CREATOR_PROMO_CODES_ENABLED && <>
             <View style={styles.separator} />
-            {CREATOR_PROMO_CODES_ENABLED && <SettingsRow icon="pricetag-outline" title={t('profile.promoCode')} description={t('profile.promoCodeDescription')} onPress={() => setIsPromoModalVisible(true)} />}
+            <SettingsRow icon="pricetag-outline" title={t('profile.promoCode')} description={t('profile.promoCodeDescription')} onPress={() => setIsPromoModalVisible(true)} />
           </>}
         </EntranceView>
 
@@ -433,6 +393,8 @@ export default function ProfileScreen() {
           <SettingsRow icon="shield-checkmark-outline" title={t('profile.privacyPolicy')} onPress={handlePrivacyPolicyPress} />
           <View style={styles.separator} />
           <SettingsRow icon="document-text-outline" title={t('profile.termsOfService')} onPress={handleTermsOfServicePress} />
+          <View style={styles.separator} />
+          <SettingsRow icon="library-outline" title={t('recipeCredits.title')} onPress={() => router.push('/sources-licenses')} />
         </EntranceView>
         <EntranceView entranceIndex={4} style={styles.card}><SettingsRow icon="trash-outline" title={t('profile.deleteAccount')} onPress={handleDeleteAccount} destructive /></EntranceView>
         {__DEV__ && <TouchableOpacity accessibilityRole="button" style={styles.devResetButton} onPress={handleResetOnboardingDev}><Text style={styles.devResetButtonText}>Reset onboarding (dev)</Text></TouchableOpacity>}
@@ -442,21 +404,20 @@ export default function ProfileScreen() {
       <Modal
         visible={isSubscriptionModalVisible}
         transparent={true}
-        animationType="fade"
         presentationStyle="overFullScreen"
         statusBarTranslucent={true}
         onRequestClose={closeSubscriptionModal}
+        onDismiss={finishSubscriptionDismiss}
       >
         <TouchableWithoutFeedback onPress={closeSubscriptionModal}>
           <View style={styles.modalOverlay}>
             <View style={styles.modalOverlayInner}>
               <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <Animated.View
+                <View
                   style={[
                     styles.modalContent,
                     {
-                      transform: [{ translateY: slideAnim }],
-                      paddingBottom: Math.max(insets.bottom, 16) + 16,
+                          paddingBottom: Math.max(insets.bottom, 16) + 16,
                       maxHeight: screenHeight - Math.max(insets.top, 16) - 16,
                     }
                   ]}
@@ -514,7 +475,7 @@ export default function ProfileScreen() {
                       </TouchableOpacity>
                     </View>
                   </ScrollView>
-                </Animated.View>
+                </View>
               </TouchableWithoutFeedback>
             </View>
           </View>
@@ -524,7 +485,6 @@ export default function ProfileScreen() {
       <Modal
         visible={isLanguageModalVisible}
         transparent={true}
-        animationType="fade"
         presentationStyle="overFullScreen"
         statusBarTranslucent={true}
         onRequestClose={() => setIsLanguageModalVisible(false)}
@@ -574,10 +534,10 @@ export default function ProfileScreen() {
       <Modal
         visible={isPromoModalVisible}
         transparent={true}
-        animationType="fade"
         presentationStyle="overFullScreen"
         statusBarTranslucent={true}
         onRequestClose={closePromoModal}
+        onDismiss={finishPromoDismiss}
       >
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -586,11 +546,10 @@ export default function ProfileScreen() {
           <TouchableWithoutFeedback onPress={closePromoModal}>
             <View style={styles.modalOverlayInner}>
               <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <Animated.View
+                <View
                   style={[
                     styles.modalContent,
                     {
-                      transform: [{ translateY: promoSlideAnim }],
                       maxHeight: screenHeight - insets.top - 24,
                       paddingBottom: Math.max(insets.bottom, 16) + 16,
                     },
@@ -640,7 +599,7 @@ export default function ProfileScreen() {
                       )}
                     </TouchableOpacity>
                   </ScrollView>
-                </Animated.View>
+                </View>
               </TouchableWithoutFeedback>
             </View>
           </TouchableWithoutFeedback>
@@ -655,21 +614,21 @@ const styles = StyleSheet.create({
   sectionTitle: { ...appStyles.section, marginBottom: 12 },
   separator: { height: 1, backgroundColor: theme.line, marginLeft: 52 },
   subscriptionCard: { ...appStyles.card, borderColor: theme.yellow, flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 24 },
-  planIcon: { width: 44, height: 44, borderRadius: 16, backgroundColor: theme.yellowSoft, alignItems: 'center', justifyContent: 'center' },
+  planIcon: { width: 44, height: 44, borderRadius: AppRadii.control, backgroundColor: theme.yellowSoft, alignItems: 'center', justifyContent: 'center' },
   currentPlanInfo: { flex: 1, minWidth: 0 },
   planBadge: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   planBadgeText: { fontFamily: 'CronosProBold', fontSize: 14, color: theme.ink },
   planName: { fontFamily: 'Degular', fontSize: 21, lineHeight: 25, color: theme.ink },
   planExpiration: { fontFamily: 'CronosPro', fontSize: 14, lineHeight: 20, marginTop: 4, color: theme.muted },
   manageText: { ...appStyles.textAction, marginTop: 8 },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(8,26,16,0.38)', justifyContent: 'flex-end', alignItems: 'center' },
+  modalOverlay: { flex: 1, backgroundColor: theme.overlay, justifyContent: 'flex-end', alignItems: 'center' },
   modalOverlayInner: { flex: 1, width: '100%', justifyContent: 'flex-end', alignItems: 'center' },
-  modalContent: { backgroundColor: theme.background, width: '100%', maxWidth: 560, alignSelf: 'center', borderTopLeftRadius: theme.radius, borderTopRightRadius: theme.radius, padding: 20, overflow: 'hidden' },
+  modalContent: { backgroundColor: theme.background, width: '100%', maxWidth: 560, alignSelf: 'center', borderTopLeftRadius: AppRadii.sheet, borderTopRightRadius: AppRadii.sheet, padding: 20, overflow: 'hidden' },
   modalCloseButton: {},
   modalScrollView: { width: '100%', flexShrink: 1 },
   modalScrollContent: { paddingBottom: 8 },
   modalBody: { alignItems: 'stretch' },
-  languageOption: { minHeight: 58, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, borderRadius: 17, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, marginBottom: 10 },
+  languageOption: { minHeight: 58, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, marginBottom: 10 },
   languageOptionSelected: { backgroundColor: theme.yellow, borderColor: theme.yellow },
   languageOptionText: { flex: 1, fontFamily: 'Degular', fontSize: 19, color: theme.ink },
   languageOptionSelectedText: { color: appStyles.buttonText.color },
@@ -686,7 +645,7 @@ const styles = StyleSheet.create({
   loadingText: { fontFamily: 'CronosPro', fontSize: 14, color: theme.muted },
   devResetButton: { minHeight: 44, justifyContent: 'center', alignItems: 'center' },
   devResetButtonText: { fontFamily: 'CronosPro', fontSize: 13, color: theme.muted },
-  promoInputContainer: { width: '100%', backgroundColor: theme.surface, borderRadius: 17, borderWidth: 1, borderColor: theme.line, paddingHorizontal: 16, marginBottom: 16 },
+  promoInputContainer: { width: '100%', backgroundColor: theme.surface, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, paddingHorizontal: 16, marginBottom: 16 },
   promoInput: { minHeight: 60, fontFamily: 'Degular', fontSize: 23, color: theme.ink, paddingVertical: 16, textAlign: 'center' },
   promoErrorText: { ...appStyles.error, textAlign: 'center' },
 });

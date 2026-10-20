@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import React from 'react';
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { feedback } from '../services/haptics';
@@ -61,7 +62,7 @@ export default function FavoriteRecipeCard({
         </Text>
         <View style={styles.detailsRow}>
           <View style={styles.timeContainer}>
-            <IconSymbol name={Platform.OS === 'ios' ? "timer" : "time"} size={18} color={colors.button} />
+            <IconSymbol name={"timer"} size={18} color={colors.button} />
             <Text style={[styles.cookingTime, { color: colors.textSecondary }]}>
               {formatCookingTime(cookingTime)}
             </Text>
@@ -84,7 +85,7 @@ export default function FavoriteRecipeCard({
             }}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <IconSymbol name="trash" size={24} color="grey" />
+            <IconSymbol name="trash" size={24} color={designTheme.muted} />
           </TouchableOpacity>
         )}
         {/* <IconSymbol name={Platform.OS === 'ios' ? "chevron.right" : "chevron-forward"} size={20} color={"grey"} /> */}
@@ -96,8 +97,8 @@ export default function FavoriteRecipeCard({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.card,
     marginBottom: 16,
     padding: 12,
     paddingVertical: 16,
@@ -106,10 +107,9 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0,
     shadowRadius: 8,
-    elevation: 3,
-  },
+    elevation: 0, borderWidth: 1, borderColor: designTheme.line },
   imageContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   image: {
     width: 60,
     height: 60,
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
   },
   content: {
     flex: 1,

@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useGlobalSearchParams, usePathname } from 'expo-router';
 import React, { useState } from 'react';
@@ -68,10 +69,10 @@ export function DevOnboardingResetButton() {
       accessibilityLabel="Recommencer l’onboarding"
     >
       {resetting ? (
-        <ActivityIndicator size="small" color="white" />
+        <ActivityIndicator size="small" color={designTheme.onPrimary} />
       ) : (
         <>
-          <Ionicons name="refresh" size={12} color="white" />
+          <Ionicons name="refresh" size={12} color={designTheme.onPrimary} />
           <Text style={styles.label}>DEV</Text>
         </>
       )}
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
     gap: 4,
     minHeight: 24,
     paddingHorizontal: 8,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     backgroundColor: Colors.light.text,
     shadowColor: '#000',
     shadowOpacity: 0.18,
@@ -98,7 +99,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   label: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontFamily: 'CronosProBold',
     fontSize: 10,
   },

@@ -1,9 +1,11 @@
+import { FORM_CONTENT_MAX_WIDTH } from '../../constants/Layout';
+import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+
 import { useMotionAllowed } from '../../contexts/MotionPreferences';
 
 /** Pending slots remain placeholders until the actual plan has been validated. */
@@ -45,8 +47,8 @@ export function PantryWeekLoading({ ingredients, days, ready, onComplete }: {
   </ScrollView></View>;
 }
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: theme.background }, content: { flexGrow: 1, justifyContent: 'center', padding: 24, gap: 16, maxWidth: 560, width: '100%', alignSelf: 'center' },
-  ingredients: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 }, chip: { paddingHorizontal: 12, paddingVertical: 9, borderRadius: 12, backgroundColor: theme.yellowSoft }, name: { fontFamily: 'CronosProBold', fontSize: 15, color: theme.ink }, connector: { alignItems: 'center' },
-  board: { padding: 12, borderRadius: 23, backgroundColor: theme.surface, overflow: 'hidden', borderWidth: 1, borderColor: theme.line }, columns: { flexDirection: 'row', gap: 5 }, day: { flex: 1, gap: 6 }, dayLabel: { fontFamily: 'CronosProBold', fontSize: 11, color: theme.ink, textAlign: 'center', marginBottom: 6 }, muted: { color: theme.muted }, slot: { aspectRatio: 0.85, borderRadius: 8, backgroundColor: theme.soft, alignItems: 'center', justifyContent: 'center', opacity: 0.45 }, activeSlot: { opacity: 1, backgroundColor: theme.yellowSoft }, readySlot: { backgroundColor: theme.yellow },
+  root: { flex: 1, backgroundColor: theme.background }, content: { flexGrow: 1, justifyContent: 'center', padding: 24, gap: 16, maxWidth: FORM_CONTENT_MAX_WIDTH, width: '100%', alignSelf: 'center' },
+  ingredients: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 }, chip: { paddingHorizontal: 12, paddingVertical: 9, borderRadius: AppRadii.chip, backgroundColor: theme.yellowSoft }, name: { fontFamily: 'CronosProBold', fontSize: 15, color: theme.ink }, connector: { alignItems: 'center' },
+  board: { padding: 12, borderRadius: AppRadii.card, backgroundColor: theme.surface, overflow: 'hidden', borderWidth: 1, borderColor: theme.line }, columns: { flexDirection: 'row', gap: 5 }, day: { flex: 1, gap: 6 }, dayLabel: { fontFamily: 'CronosProBold', fontSize: 11, color: theme.ink, textAlign: 'center', marginBottom: 6 }, muted: { color: theme.muted }, slot: { aspectRatio: 0.85, borderRadius: AppRadii.small, backgroundColor: theme.soft, alignItems: 'center', justifyContent: 'center', opacity: 0.45 }, activeSlot: { opacity: 1, backgroundColor: theme.yellowSoft }, readySlot: { backgroundColor: theme.yellow },
   scanLine: { position: 'absolute', left: 0, right: 0, height: 3, backgroundColor: theme.yellow, shadowColor: theme.yellow, shadowRadius: 12, shadowOpacity: 0.8, shadowOffset: { width: 0, height: 0 } }, caption: { flexDirection: 'row', gap: 10, alignItems: 'center' }, captionText: { fontFamily: 'Degular', fontSize: 22, color: theme.ink, flex: 1 }, help: { fontFamily: 'CronosPro', fontSize: 16, lineHeight: 22, color: theme.muted },
 });

@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import React, { useEffect, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, Easing, StyleSheet, View } from 'react-native';
 import { Colors } from '../../constants/Colors';
@@ -41,6 +42,6 @@ export function OnboardingProgressBar({ progress }: { progress: number }) {
 }
 
 const styles = StyleSheet.create({
-  track: { width: '100%', height: 12, borderRadius: 999, backgroundColor: '#F1EACB', overflow: 'hidden' },
-  fill: { height: '100%', borderRadius: 999, backgroundColor: Colors.light.button },
+  track: { width: '100%', height: 12, borderRadius: AppRadii.pill, backgroundColor: designTheme.soft, overflow: 'hidden' },
+  fill: { height: '100%', borderRadius: AppRadii.pill, backgroundColor: Colors.light.button },
 });

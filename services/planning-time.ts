@@ -28,3 +28,11 @@ export function isElapsedPlanningMeal(weekStart: string, day: number, type: Plan
   const date = planningCalendarDay(weekStart, day);
   return date < window.today || (date === window.today && !window.remainingMealTypes.includes(type));
 }
+
+/** The last configured or occupied calendar day, rather than an unused seven-day horizon. */
+export function planningLastDay(plan: {weekStart: string; weekEnd?: string; preferences?: {cookingDays?: unknown}; meals?: {dayIndex?: number}[]}): string {
+  const configured = Array.isArray(plan.preferences?.cookingDays) ? plan.preferences.cookingDays : [];
+  const days = [...configured, ...(plan.meals || []).map(meal => meal.dayIndex ?? 0)]
+    .filter((day): day is number => typeof day === 'number' && Number.isInteger(day) && day >= 0 && day <= 6);
+  return days.length ? planningCalendarDay(plan.weekStart, Math.max(...days)) : plan.weekEnd || planningCalendarDay(plan.weekStart, 6);
+}

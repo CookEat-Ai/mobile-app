@@ -1,3 +1,5 @@
+import { FORM_CONTENT_MAX_WIDTH } from '../../constants/Layout';
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { NutritionExplanation } from '../../components/NutritionExplanation';
 import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
 import { Ionicons } from '@expo/vector-icons';
@@ -67,7 +69,7 @@ export default function OnboardingProfileReadyScreen() {
 
       <OnboardingScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.scrollContent, { paddingBottom: 140 + insets.bottom }]}>
         <View style={styles.header}>
-          <View style={styles.checkCircle}><Ionicons name="checkmark" size={30} color="white" /></View>
+          <View style={styles.checkCircle}><Ionicons name="checkmark" size={30} color={designTheme.onPrimary} /></View>
           <Text style={styles.title}>{t('fitnessOnboarding.targets.title')}</Text>
           <Text style={styles.subtitle}>{t('fitnessOnboarding.targets.subtitle')}</Text>
         </View>
@@ -106,33 +108,33 @@ export default function OnboardingProfileReadyScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FDF9E2' },
+  container: { flex: 1, backgroundColor: designTheme.background },
   progressHeader: { paddingHorizontal: 20, marginTop: 20, height: 40, justifyContent: 'center' },
-  progressTrack: { width: '100%', height: 12, borderRadius: 999, backgroundColor: '#F1EACB', overflow: 'hidden' },
-  progressFill: { width: '100%', height: '100%', borderRadius: 999, backgroundColor: Colors.light.button },
-  scrollContent: { width: '100%', maxWidth: 560, alignSelf: 'center' },
+  progressTrack: { width: '100%', height: 12, borderRadius: AppRadii.pill, backgroundColor: designTheme.soft, overflow: 'hidden' },
+  progressFill: { width: '100%', height: '100%', borderRadius: AppRadii.pill, backgroundColor: Colors.light.button },
+  scrollContent: { width: '100%', maxWidth: FORM_CONTENT_MAX_WIDTH, alignSelf: 'center' },
   header: { alignItems: 'center', paddingHorizontal: 30, marginTop: 20 },
-  checkCircle: { width: 60, height: 60, borderRadius: 30, backgroundColor: Colors.light.button, justifyContent: 'center', alignItems: 'center', marginBottom: 20 },
+  checkCircle: { width: 60, height: 60, borderRadius: AppRadii.sheet, backgroundColor: Colors.light.button, justifyContent: 'center', alignItems: 'center', marginBottom: 20 },
   title: { fontSize: 28, lineHeight: 34, fontFamily: 'Degular', color: Colors.light.text, textAlign: 'center', marginBottom: 12 },
   subtitle: { fontSize: 16, lineHeight: 22, fontFamily: 'CronosPro', color: Colors.light.textSecondary, textAlign: 'center' },
-  dashboardContainer: { backgroundColor: 'white', marginHorizontal: 20, marginTop: 30, borderRadius: 24, padding: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.05, shadowRadius: 20, elevation: 5 },
+  dashboardContainer: { backgroundColor: designTheme.surface, marginHorizontal: 20, marginTop: 30, borderRadius: AppRadii.card, padding: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.05, shadowRadius: 20, elevation: 5 },
   sectionHeader: { marginBottom: 20 },
   sectionTitle: { fontSize: 18, color: Colors.light.text, fontFamily: 'Degular' },
-  sectionSubtitle: { fontSize: 14, color: '#8C8C8C', fontFamily: 'CronosProBold' },
+  sectionSubtitle: { fontSize: 14, color: designTheme.muted, fontFamily: 'CronosProBold' },
   grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 12 },
-  metricCard: { width: '48%', minWidth: 0, minHeight: 100, backgroundColor: '#F8F9FA', borderRadius: 16, padding: Platform.OS === 'android' ? 10 : 14, alignItems: 'flex-start' },
+  metricCard: { width: '48%', minWidth: 0, minHeight: 100, backgroundColor: designTheme.soft, borderRadius: AppRadii.control, padding: Platform.OS === 'android' ? 10 : 14, alignItems: 'flex-start' },
   metricHeader: { flexDirection: 'row', alignItems: 'center', gap: 7 },
-  metricIcon: { width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center', marginRight: 0 },
+  metricIcon: { width: 28, height: 28, borderRadius: AppRadii.control, justifyContent: 'center', alignItems: 'center', marginRight: 0 },
   metricCopy: { flex: 1, paddingRight: 18 },
-  metricLabel: { flexShrink: 1, fontSize: 12, fontFamily: 'CronosPro', color: '#8C8C8C', textTransform: 'capitalize' },
+  metricLabel: { flexShrink: 1, fontSize: 12, fontFamily: 'CronosPro', color: designTheme.muted, textTransform: 'capitalize' },
   metricValue: { marginTop: 10, fontSize: 22, fontFamily: 'Degular', color: Colors.light.text },
-  progressCircle: { position: 'absolute', right: 9, top: 10, width: 22, height: 22, borderRadius: 11, borderWidth: 2 },
-  progressCircleFill: { ...StyleSheet.absoluteFill, borderRadius: 11, borderWidth: 2, borderRightColor: 'transparent', borderBottomColor: 'transparent', transform: [{ rotate: '45deg' }] },
-  goalCard: { marginTop: 20, backgroundColor: '#F8F9FA', borderRadius: 16, padding: 16 },
+  progressCircle: { position: 'absolute', right: 9, top: 10, width: 22, height: 22, borderRadius: AppRadii.chip, borderWidth: 2 },
+  progressCircleFill: { ...StyleSheet.absoluteFill, borderRadius: AppRadii.chip, borderWidth: 2, borderRightColor: 'transparent', borderBottomColor: 'transparent', transform: [{ rotate: '45deg' }] },
+  goalCard: { marginTop: 20, backgroundColor: designTheme.soft, borderRadius: AppRadii.control, padding: 16 },
   goalHeader: { marginBottom: 10 },
   goalTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   goalTitle: { flex: 1, fontSize: 16, color: Colors.light.text, fontFamily: 'Degular' },
-  goalTrack: { height: 8, backgroundColor: '#E9E9E9', borderRadius: 4, overflow: 'hidden' },
+  goalTrack: { height: 8, backgroundColor: designTheme.line, borderRadius: 4, overflow: 'hidden' },
   goalFill: { width: '92%', height: '100%', backgroundColor: Colors.light.button, borderRadius: 4 },
   goalSubtitle: { marginTop: 9, fontSize: 13, color: Colors.light.textSecondary, fontFamily: 'CronosPro' },
   info: { flexDirection: 'row', gap: 8, marginTop: 16, paddingHorizontal: 28 },

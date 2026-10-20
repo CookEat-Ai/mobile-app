@@ -8,6 +8,7 @@ import EventSource from 'react-native-sse';
 import { API_BASE_URL, WS_URL } from '../config/api';
 import i18n, { resolveSupportedLanguage } from '../i18n';
 import { responseCache, responseCachePolicy, type ReadOptions } from './responseCache';
+import { personalMealPlan, writePersonalShoppingState } from './personalRecipe';
 
 function parsePartialJSON(text: string): any {
   if (!text || !text.trim()) return null;
@@ -90,7 +91,22 @@ export type RecipeIdentity = {
   main_ingredients?: string[];
 };
 
+export type CostEstimate = {
+  status: 'estimated' | 'partial' | 'unavailable';
+  country: string; currency: string; servings: number;
+  amount: number | null; perServing: number | null; low: number | null; high: number | null;
+  knownAmount: number; coverage: number; missingIngredients: string[];
+  modelVersion: string; priceDate: string; exchangeRateDate: string; basis: 'consumed-ingredients';
+  countryBasis: 'food-index' | 'household-index-proxy' | 'us-retail-reference' | 'unavailable';
+  exchangeRateSource: 'ECB' | 'ExchangeRate-API';
+};
+
 export type MealPlanMeal = {
+  ingredientServings?: number;
+  ingredientScales?: number[];
+  artworkOnly?: boolean;
+  catalogVariant?: string;
+  estimatedCost?: CostEstimate;
   pantryOwned?: number;
   pantryRequired?: number;
   portionScale?: number;
@@ -142,6 +158,7 @@ export type CatalogImageAttribution = {
 export type CatalogMealCategory = 'breakfast' | 'main' | 'snack';
 
 export type CatalogRecipe = {
+  artworkOnly?: boolean;
   id: string;
   title: string;
   difficulty: 'EASY' | 'MEDIUM' | 'HARD';
@@ -182,6 +199,7 @@ export type ShoppingListItem = {
 };
 
 export type MealPlan = {
+  estimatedCost?: CostEstimate;
   _id: string;
   userId: string;
   weekStart: string;
@@ -330,7 +348,15 @@ class ApiService {
     const mutation = method !== 'GET' && /^(?:\/meal-plans(?:\/|$)|\/recipe(?:\/|$)|\/user\/(?:delete|init|onboarding|admin-access)$)/.test(endpoint);
     if (mutation) {
       this.invalidateReadCache();
-      try { return await this.networkRequest<T>(endpoint, options, timeoutMs); }
+      try {
+        const response = await this.networkRequest<T>(endpoint, options, timeoutMs);
+        const data = response.data as any;
+        if (endpoint.startsWith('/meal-plans') && data?.plan) {
+          const userId = await AsyncStorage.getItem('userId').catch(()=>null);
+          if (userId) return {...response,data:{...data,plan:await personalMealPlan(data.plan,userId)}};
+        }
+        return response;
+      }
       finally { this.invalidateReadCache(); }
     }
     const policy = method === 'GET' ? responseCachePolicy(endpoint) : null;
@@ -356,6 +382,9 @@ class ApiService {
   ): Promise<ApiResponse<T>> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    const abort = () => controller.abort();
+    if(options.signal?.aborted)controller.abort();
+    options.signal?.addEventListener('abort',abort,{once:true});
 
     try {
       const url = `${API_BASE_URL}${endpoint}`;
@@ -403,6 +432,7 @@ class ApiService {
       return { error: i18n.t('common.networkError') };
     } finally {
       clearTimeout(timeoutId);
+      options.signal?.removeEventListener('abort',abort);
     }
   }
 
@@ -529,7 +559,7 @@ class ApiService {
       pendingStepsAccumulated = null;
     };
 
-    AsyncStorage.getItem('userId').then((userId) => {
+    Promise.all([AsyncStorage.getItem('userId'), AsyncStorage.getItem('cookingLevel'), AsyncStorage.getItem('mealBudget')]).then(([userId, cookingLevel, mealBudget]) => {
       ws = new WebSocket(WS_URL);
 
       ws.onopen = () => {
@@ -538,7 +568,7 @@ class ApiService {
           payload: {
             ingredients, dishType, duration, servings, cuisineStyle, diet,
             goal, equipments, allergies, allowOtherIngredients, isSubscribed,
-            month, language, userId
+            month, language, userId, cookingLevel, mealBudget
           }
         }));
       };
@@ -629,6 +659,20 @@ class ApiService {
         language: this.getCurrentLanguage()
       }),
     });
+  }
+
+  async analyzeTrackedMeal(uri:string,signal?:AbortSignal) {
+    const form=new FormData();form.append('image',new File(uri));form.append('language',this.getCurrentLanguage());
+    return this.request<{analysis:import('./mealTracking').MealPhotoAnalysis}>('/recipe/tracking/analyze',{method:'POST',body:form,signal},90000);
+  }
+  async confirmTrackedMeal(scanId:string,meal:{title:string;items:import('./mealTracking').PhotoFood[];mealType:string;nutritionOverride?:import('./mealTracking').FoodNutrition|null;shareWithCatalog?:boolean},photoUri?:string) {
+    const payload={...meal,language:this.getCurrentLanguage(),...(meal.shareWithCatalog?{referenceConsentVersion:'tracking-confirmation-v1'}:{})};
+    let body:FormData|string=JSON.stringify(payload);
+    if(meal.shareWithCatalog && photoUri){const form=new FormData();form.append('payload',JSON.stringify(payload));form.append('image',new File(photoUri));body=form;}
+    return this.request<{meal:{id:string;title:string;items:import('./mealTracking').PhotoFood[];nutrition:import('./mealTracking').FoodNutrition;mealType:'breakfast'|'lunch'|'snack'|'dinner';estimated:true};catalogue:{status:string;id:string|null}}>(`/recipe/tracking/${encodeURIComponent(scanId)}/confirm`,{method:'POST',body},30000);
+  }
+  async searchTrackingFoods(search:string) {
+    return this.request<{foods:{foodKey:string;name:string;description:string;sourceId:string;per100g:import('./mealTracking').FoodNutrition}[]}>(`/recipe/tracking/foods?search=${encodeURIComponent(search)}`,{},12000);
   }
 
   async processImageIngredients(imageUris: string[]) {
@@ -746,10 +790,28 @@ class ApiService {
     }, 60000, options);
   }
 
+  async chatAboutTrackedMeal(input: { title: string; items: import('./mealTracking').PhotoFood[]; message: string; history: import('./personalRecipe').RecipeChatMessage[] }) {
+    return this.request<{ action: 'answer' | 'modify' | 'refuse'; reply: string; meal: {title: string; items: import('./mealTracking').PhotoFood[]; nutrition: import('./mealTracking').FoodNutrition | null} | null }>('/recipe/tracking/chat', {
+      method: 'POST', body: JSON.stringify({...input, language:this.getCurrentLanguage()}),
+    }, 90000);
+  }
+
+  async chatAboutRecipe(input: { recipe: any; message: string; history: import('./personalRecipe').RecipeChatMessage[] }) {
+    const locale = Localization.getLocales()[0];
+    return this.request<{ action: 'answer' | 'modify' | 'refuse'; reply: string; recipe: Record<string, any> | null }>('/recipe/chat', {
+      method: 'POST', body: JSON.stringify({ ...input, language: this.getCurrentLanguage(), country: input.recipe.estimatedCost?.country || locale?.regionCode || 'FR', currency: input.recipe.estimatedCost?.currency || locale?.currencyCode || 'EUR' }),
+    }, 90000);
+  }
+
   async getRecipeById(id: string, readOptions: ReadOptions = {}) {
     return this.request<{ success: boolean; recipe: any }>(`/recipe/detail/${encodeURIComponent(id)}?language=${encodeURIComponent(this.getCurrentLanguage())}`, {
       method: 'GET',
     }, 12000, readOptions);
+  }
+
+  async getPlanningBudgetOptions(servings:number) {
+    const locale=Localization.getLocales()[0];
+    return this.request<{country:string;currency:string;servings:number;minimum:number;maximum:number;step:number;defaultAmount:number;horizonDays:number}>(`/meal-plans/budget-options?servings=${servings}&country=${encodeURIComponent(locale?.regionCode||'FR')}&currency=${encodeURIComponent(locale?.currencyCode||'EUR')}`);
   }
 
   async getMealPlan(userId: string, weekStart?: string, preview = false, readOptions: ReadOptions = {}) {
@@ -757,18 +819,24 @@ class ApiService {
     if (weekStart) params.set('weekStart', weekStart);
     if (preview) params.set('preview', 'true');
     const query = `?${params.toString()}`;
-    return this.request<{ success: boolean; plan: MealPlan | null }>(`/meal-plans/user/${userId}${query}`, { method: 'GET' }, 12000, readOptions);
+    const response = await this.request<{ success: boolean; plan: MealPlan | null }>(`/meal-plans/user/${userId}${query}`, { method: 'GET' }, 12000, readOptions);
+    if (response.data) return {...response,data:{...response.data,plan:await personalMealPlan(response.data.plan,userId)}};
+    return response;
   }
 
   async listMealPlans(userId: string, readOptions: ReadOptions = {}) {
-    return this.request<{ success: boolean; plans: MealPlan[] }>(`/meal-plans/user/${userId}/all?language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000, readOptions);
+    const response = await this.request<{ success: boolean; plans: MealPlan[] }>(`/meal-plans/user/${userId}/all?language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000, readOptions);
+    if (response.data) return {...response,data:{...response.data,plans:await Promise.all(response.data.plans.map(async plan=>(await personalMealPlan(plan,userId))!))}};
+    return response;
   }
 
-  async getMealPlanById(planId: string, userId: string, readOptions: ReadOptions = {}) {
+  async getMealPlanById(planId: string, userId: string, readOptions: ReadOptions = {}, personal = true) {
     if (!planId || planId === 'undefined' || planId === 'null') {
       return { error: i18n.t('planning.errors.load'), status: 400 } as ApiResponse<{ success: boolean; plan: MealPlan }>;
     }
-    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}?userId=${encodeURIComponent(userId)}&language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000, readOptions);
+    const response = await this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}?userId=${encodeURIComponent(userId)}&language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000, readOptions);
+    if (personal && response.data) return {...response,data:{...response.data,plan:(await personalMealPlan(response.data.plan,userId))!}};
+    return response;
   }
 
   async deleteMealPlan(planId: string, userId: string) {
@@ -786,9 +854,12 @@ class ApiService {
     preview?: boolean;
     replaceExisting?: boolean;
   }) {
+    const locale = Localization.getLocales()?.[0];
+    const preferences = { ...input.preferences, country: input.preferences.country || locale?.regionCode || 'FR',
+      currency: input.preferences.currency || locale?.currencyCode || undefined };
     const response = await this.request<{ success: boolean; plan: MealPlan; restored?: boolean }>('/meal-plans/draft', {
       method: 'POST',
-      body: JSON.stringify({ ...input, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage() }),
+      body: JSON.stringify({ ...input, preferences, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage() }),
     }, 90000);
     if (response.data?.plan?._id && !response.data.restored) markPlanningReveal(response.data.plan._id);
     return response;
@@ -853,6 +924,12 @@ class ApiService {
   }
 
   async updateShoppingItem(planId: string, itemId: string, userId: string, patch: { checked?: boolean; excluded?: boolean }, preview = false) {
+    if (itemId.startsWith('personal:')) {
+      const response = await this.getMealPlanById(planId,userId,{},false);
+      if (!response.data?.plan) return response;
+      await writePersonalShoppingState(userId,planId,itemId,patch);
+      return {...response,data:{...response.data,plan:(await personalMealPlan(response.data.plan,userId))!}};
+    }
     return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/shopping-list/${itemId}`, {
       method: 'PATCH', body: JSON.stringify({ language: this.getCurrentLanguage(), userId, ...patch, preview }),
     });
@@ -1050,7 +1127,7 @@ class ApiService {
     const country = Localization.getLocales()?.[0]?.regionCode || undefined;
     return this.request<{ success: boolean; message: string }>('/user/notification-token', {
       method: 'POST',
-      body: JSON.stringify({ mobileId, notificationToken, timezone, country }),
+      body: JSON.stringify({ mobileId, notificationToken, timezone, country, language: this.getCurrentLanguage() }),
     });
   }
 
@@ -1058,7 +1135,7 @@ class ApiService {
     const country = Localization.getLocales()?.[0]?.regionCode || undefined;
     return this.request<{ success: boolean; message: string }>('/user/activity', {
       method: 'POST',
-      body: JSON.stringify({ mobileId, timezone, country }),
+      body: JSON.stringify({ mobileId, timezone, country, language: this.getCurrentLanguage() }),
     });
   }
 

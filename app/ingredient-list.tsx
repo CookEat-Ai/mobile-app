@@ -1,25 +1,11 @@
+import { AppModal as Modal } from '../components/ui/AppModal';
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { IngredientCategoryAddModal } from '../components/IngredientCategoryAddModal';
 import { ingredientCategories as getIngredientCategories } from '../services/ingredientCategories';
 import { EntranceView } from '../components/motion/Entrance';
 import { NavigationIconButton } from '../components/NavigationIconButton';
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-  FlatList,
-  ScrollView,
-  Alert,
-  Switch,
-  Animated,
-  Platform,
-  Modal,
-  TextInput,
-  Pressable,
-  Keyboard,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, FlatList, ScrollView, Alert, Switch, Platform, TextInput, Pressable, Keyboard } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -35,7 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSubscription } from '../hooks/useSubscription';
 
 import { useVoice } from '../hooks/useVoice';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+
 import { font } from '../constants/Layout';
 import { contentColumn, useResponsive } from '../hooks/useResponsive';
 import {
@@ -156,7 +142,6 @@ export default function RecipeSummaryScreen() {
   // La grille garde exactement 3 colonnes sur téléphone ; au-delà de 480pt la
   // pastille cesse de grandir et la grille passe simplement à plus de colonnes.
   const chipWidth = (Math.min(windowWidth, 480) - 125) / 3;
-  const filterSlideAnim = useRef(new Animated.Value(screenHeight)).current;
 
   const [preferences, setPreferences] = useState<RecipePreferences>({
     ...DEFAULT_RECIPE_PREFERENCES,
@@ -263,15 +248,7 @@ export default function RecipeSummaryScreen() {
     }, [])
   );
 
-  const closeFilterModal = () => {
-    Animated.timing(filterSlideAnim, {
-      toValue: screenHeight,
-      duration: 300,
-      useNativeDriver: false,
-    }).start(() => {
-      setIsFilterModalVisible(false);
-    });
-  };
+  const closeFilterModal = () => setIsFilterModalVisible(false);
 
   useEffect(() => {
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
@@ -289,19 +266,6 @@ export default function RecipeSummaryScreen() {
     setCategoryAddModalCategoryId(categoryId);
     setIsCategoryAddModalVisible(true);
   };
-
-  useEffect(() => {
-    if (isFilterModalVisible) {
-      Animated.spring(filterSlideAnim, {
-        toValue: 0,
-        useNativeDriver: false,
-        tension: 50,
-        friction: 8
-      }).start();
-    } else {
-      filterSlideAnim.setValue(screenHeight);
-    }
-  }, [isFilterModalVisible, filterSlideAnim, screenHeight]);
 
   const saveIngredientsToPantry = async (items: Ingredient[]) => {
     try {
@@ -542,7 +506,7 @@ export default function RecipeSummaryScreen() {
           {label}
         </Text>
         {isPremium && !subscriptionStatus.isSubscribed && !isFirstGeneration && params.isOnboarding !== 'true' && (
-          <Ionicons name="lock-closed" size={12} color="#666" />
+          <Ionicons name="lock-closed" size={12} color={designTheme.muted} />
         )}
       </View>
     </Pressable>
@@ -824,7 +788,7 @@ export default function RecipeSummaryScreen() {
                 });
               }}
             >
-              <IconSymbol name="camera.fill" size={22} color="white" weight="bold" />
+              <IconSymbol name="camera.fill" size={22} color={designTheme.onPrimary} weight="bold" />
             </TouchableOpacity>
           </View>
 
@@ -843,7 +807,7 @@ export default function RecipeSummaryScreen() {
               style={[styles.microInlineButton, isRecording && styles.microInlineButtonActive]}
               onPress={() => isRecording ? stopRecording() : startRecording()}
             >
-              <FontAwesome name="microphone" size={20} color={isRecording ? "white" : Colors.light.button} />
+              <Ionicons name="mic-outline" size={20} color={isRecording ? "white" : Colors.light.button} />
             </TouchableOpacity>
             <TouchableOpacity
               style={[
@@ -854,7 +818,7 @@ export default function RecipeSummaryScreen() {
               disabled={!manualInput.trim() || isAddingIngredient}
             >
               {isAddingIngredient ? (
-                <ActivityIndicator size="small" color="white" />
+                <ActivityIndicator size="small" color={designTheme.onPrimary} />
               ) : (
                 <Text style={styles.manualAddButtonText}>{t('recipeSummary.add')}</Text>
               )}
@@ -885,7 +849,7 @@ export default function RecipeSummaryScreen() {
                       style={styles.categoryAddButton}
                       onPress={() => openCategoryAddModal(group.id)}
                     >
-                      <IconSymbol name="plus" size={16} color="white" weight="bold" />
+                      <IconSymbol name="plus" size={16} color={designTheme.onPrimary} weight="bold" />
                     </TouchableOpacity>
                   ) : null}
                 </View>
@@ -929,7 +893,6 @@ export default function RecipeSummaryScreen() {
       <Modal
         visible={isFilterModalVisible}
         transparent={true}
-        animationType="fade"
         statusBarTranslucent={true}
         onRequestClose={closeFilterModal}
       >
@@ -939,11 +902,10 @@ export default function RecipeSummaryScreen() {
             if (e.target === e.currentTarget) closeFilterModal();
           }}
         >
-          <Animated.View
+          <View
             style={[
               styles.modalContent,
               {
-                transform: [{ translateY: filterSlideAnim }],
                 maxHeight: screenHeight * 0.85,
                 paddingBottom: Math.max(insets.bottom, 16) + 8
               }
@@ -1016,7 +978,7 @@ export default function RecipeSummaryScreen() {
                 </View>
               </View>
 
-              <View style={[styles.filterSection, { borderTopWidth: 1, borderTopColor: '#F0F0F0', paddingTop: 20 }]}>
+              <View style={[styles.filterSection, { borderTopWidth: 1, borderTopColor: designTheme.soft, paddingTop: 20 }]}>
                 <TouchableOpacity
                   style={styles.switchContainer}
                   activeOpacity={subscriptionStatus.isSubscribed || isFirstGeneration || params.isOnboarding === 'true' ? 1 : 0.7}
@@ -1047,16 +1009,16 @@ export default function RecipeSummaryScreen() {
                       updatePreference('allowOtherIngredients', value);
                     }}
                     disabled={!subscriptionStatus.isSubscribed && !isFirstGeneration && params.isOnboarding !== 'true'}
-                    trackColor={{ false: '#E0E0E0', true: Colors.light.button }}
+                    trackColor={{ false: designTheme.line, true: Colors.light.button }}
                     thumbColor={preferences.allowOtherIngredients ? '#FFFFFF' : '#FFFFFF'}
-                    ios_backgroundColor="#E0E0E0"
+                    ios_backgroundColor={designTheme.line}
                   />
                 </TouchableOpacity>
               </View>
 
               <View style={{ height: 40 }} />
             </ScrollView>
-          </Animated.View>
+          </View>
         </View>
       </Modal>
 
@@ -1077,13 +1039,13 @@ export default function RecipeSummaryScreen() {
             disabled={isLoading || ingredients.length < MIN_INGREDIENTS}
           >
             {isLoading ? (
-              <ActivityIndicator size="small" color="white" />
+              <ActivityIndicator size="small" color={designTheme.onPrimary} />
             ) : (
               <>
                 <IconSymbol
                   name="sparkles"
                   size={20}
-                  color="white"
+                  color={designTheme.onPrimary}
                   weight="bold"
                 />
                 <Text style={styles.generateButtonText} numberOfLines={1}>
@@ -1101,11 +1063,11 @@ export default function RecipeSummaryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: designTheme.surface,
   },
   onboardingDemoBanner: {
     backgroundColor: '#FFF8E7',
-    borderRadius: 22,
+    borderRadius: AppRadii.card,
     padding: 17,
     marginBottom: 20,
     borderWidth: 1,
@@ -1116,8 +1078,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: 'white',
-    borderRadius: 100,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.pill,
     paddingHorizontal: 10,
     paddingVertical: 6,
     marginBottom: 10,
@@ -1144,8 +1106,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: 'white',
+    borderRadius: AppRadii.card,
+    backgroundColor: designTheme.surface,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
@@ -1156,18 +1118,18 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   cardContainer: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
   },
   cardTitle: {
     fontFamily: 'Degular'
   },
   filterTrigger: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: 16,
-    borderRadius: 15,
+    borderRadius: AppRadii.control,
     marginBottom: 25,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -1187,17 +1149,17 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: designTheme.overlay,
     justifyContent: 'flex-end',
     // Sur tablette la feuille est recentrée au lieu de traverser tout l'écran.
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     width: '100%',
     maxWidth: 640,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    borderTopLeftRadius: AppRadii.sheet,
+    borderTopRightRadius: AppRadii.sheet,
     padding: 24,
   },
   modalHeader: {
@@ -1208,7 +1170,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: font(24),
-    color: '#000',
+    color: designTheme.ink,
     fontFamily: 'Degular'
   },
   modalCloseButton: {
@@ -1234,7 +1196,7 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 20,
+    borderRadius: AppRadii.card,
     backgroundColor: '#F8F5F0',
     borderWidth: 1,
     borderColor: '#E8E0D5',
@@ -1254,7 +1216,7 @@ const styles = StyleSheet.create({
   chipTextSelected: {
     fontSize: 14,
     fontFamily: 'CronosProBold',
-    color: 'white'
+    color: designTheme.onPrimary
   },
   switchContainer: {
     flexDirection: 'row',
@@ -1290,8 +1252,8 @@ const styles = StyleSheet.create({
   filterCard: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: 'white',
-    borderRadius: 12,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.chip,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -1338,7 +1300,7 @@ const styles = StyleSheet.create({
   roundAddButton: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: AppRadii.card,
     backgroundColor: Colors.light.button,
     justifyContent: 'center',
     alignItems: 'center',
@@ -1375,16 +1337,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'CronosPro',
     color: Colors.light.textSecondary,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: designTheme.soft,
     paddingHorizontal: 10,
     paddingVertical: 3,
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
     overflow: 'hidden',
   },
   categoryAddButton: {
     width: 32,
     height: 32,
-    borderRadius: 16,
+    borderRadius: AppRadii.control,
     backgroundColor: '#B0B0B0',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1398,12 +1360,12 @@ const styles = StyleSheet.create({
     paddingLeft: 4,
   },
   ingredientItem: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderRadius: 16,
+    borderRadius: AppRadii.control,
     marginBottom: 8,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -1411,7 +1373,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
     borderWidth: 1,
-    borderColor: '#F0F0F0',
+    borderColor: designTheme.soft,
   },
   ingredientName: {
     flex: 1,
@@ -1425,9 +1387,9 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   emptyState: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     padding: 40,
-    borderRadius: 24,
+    borderRadius: AppRadii.card,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -1462,7 +1424,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.94)',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 999,
+    borderRadius: AppRadii.pill,
     overflow: 'hidden',
   },
   generateButton: {
@@ -1472,7 +1434,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 18,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     shadowColor: Colors.light.button,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
@@ -1480,7 +1442,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   generateButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 19,
     marginLeft: 10,
     fontFamily: 'Degular'
@@ -1502,8 +1464,8 @@ const styles = StyleSheet.create({
   categoryIndicator: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F5F5F5',
+    borderRadius: AppRadii.card,
+    backgroundColor: designTheme.soft,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
@@ -1522,8 +1484,8 @@ const styles = StyleSheet.create({
   searchBarContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 15,
+    backgroundColor: designTheme.soft,
+    borderRadius: AppRadii.control,
     paddingHorizontal: 15,
     minHeight: 50,
     marginBottom: 20,
@@ -1532,15 +1494,15 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: 'CronosPro',
     fontSize: 16,
-    color: '#000',
+    color: designTheme.ink,
     paddingRight: 10,
     minWidth: 0,
   },
   microInlineButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F0F0F0',
+    borderRadius: AppRadii.card,
+    backgroundColor: designTheme.soft,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
@@ -1553,13 +1515,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.button,
     paddingHorizontal: 15,
     paddingVertical: 8,
-    borderRadius: 10,
+    borderRadius: AppRadii.chip,
   },
   manualAddButtonDisabled: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: designTheme.line,
   },
   manualAddButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 14,
     fontFamily: 'Degular'
   },
@@ -1568,7 +1530,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFF9EB',
     padding: 12,
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#FFE4B5',
@@ -1605,14 +1567,14 @@ const styles = StyleSheet.create({
   cameraCircleOuter: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: AppRadii.pill,
     justifyContent: 'center',
     alignItems: 'center',
   },
   cameraCircleButton: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: AppRadii.sheet,
     backgroundColor: Colors.light.button,
     justifyContent: 'center',
     alignItems: 'center',
@@ -1624,7 +1586,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: '#F0F0F0',
+    backgroundColor: designTheme.soft,
     marginTop: 10,
     marginBottom: 20,
   },
@@ -1665,12 +1627,12 @@ const styles = StyleSheet.create({
   tag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F0F0F0',
+    backgroundColor: designTheme.soft,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    borderRadius: 15,
+    borderRadius: AppRadii.control,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderColor: designTheme.line,
   },
   tagText: {
     fontFamily: 'CronosPro',
@@ -1683,15 +1645,15 @@ const styles = StyleSheet.create({
   },
   categoryAddModalContent: {
     width: '100%',
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    borderTopLeftRadius: AppRadii.sheet,
+    borderTopRightRadius: AppRadii.sheet,
   },
   categoryAddModalSearchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 15,
+    backgroundColor: designTheme.soft,
+    borderRadius: AppRadii.control,
     paddingHorizontal: 15,
     minHeight: 48,
     marginBottom: 16,
@@ -1700,14 +1662,14 @@ const styles = StyleSheet.create({
     flex: 1,
     fontFamily: 'CronosPro',
     fontSize: 16,
-    color: '#000',
+    color: designTheme.ink,
     minWidth: 0,
     paddingVertical: 0,
   },
   categoryAddModalEmptyText: {
     fontFamily: 'CronosPro',
     fontSize: 15,
-    color: '#9A9A9A',
+    color: designTheme.muted,
     textAlign: 'center',
     paddingVertical: 32,
     paddingHorizontal: 16,
@@ -1732,15 +1694,15 @@ const styles = StyleSheet.create({
   },
   categoryAddModalFooter: {
     padding: 24,
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
+    borderTopColor: designTheme.soft,
     marginHorizontal: -24, // Pour toucher les bords de la modale
   },
   categoryAddModalButton: {
     backgroundColor: Colors.light.button,
     paddingVertical: 16,
-    borderRadius: 16,
+    borderRadius: AppRadii.control,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1749,13 +1711,13 @@ const styles = StyleSheet.create({
   },
   categoryAddModalButtonText: {
     fontSize: 18,
-    color: 'white',
+    color: designTheme.onPrimary,
     fontFamily: 'Degular'
   },
   manualIngredientItem: {
     // width fourni à l'usage (dérivé de la largeur de fenêtre courante).
     padding: 8,
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
     backgroundColor: '#F8F8F8',
     alignItems: 'center',
     borderWidth: 2,
@@ -1780,7 +1742,7 @@ const styles = StyleSheet.create({
   ingredientNameSelected: {
     fontSize: 12,
     fontFamily: 'CronosProBold',
-    color: 'white',
+    color: designTheme.onPrimary,
     textAlign: 'center'
   },
   loadingOverlay: {

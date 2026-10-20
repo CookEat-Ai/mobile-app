@@ -1,95 +1,31 @@
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolView, SymbolWeight } from 'expo-symbols';
-import { Platform } from 'react-native';
+import React from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import type { SymbolWeight } from 'expo-symbols';
 
-// Mapping pour MaterialIcons (Android/Web) et SF Symbols (iOS)
-const MAPPING = {
-  'wheel.fill': { ios: 'slowmo', android: 'wheel' },
-  'gift.fill': { ios: 'gift.fill', android: 'gift' },
-  'house': { ios: 'house', android: 'home' },
-  'house.fill': { ios: 'house.fill', android: 'home' },
-  'paperplane.fill': { ios: 'paperplane.fill', android: 'send' },
-  'search': { ios: 'magnifyingglass', android: 'search' },
-  'search.fill': { ios: 'magnifyingglass', android: 'search' },
-  'heart': { ios: 'heart', android: 'favorite-border' },
-  'heart.fill': { ios: 'heart.fill', android: 'favorite' },
-  'settings': { ios: 'gearshape', android: 'settings' },
-  'settings.fill': { ios: 'gearshape.fill', android: 'settings' },
-  'person': { ios: 'person', android: 'person-outline' },
-  'person.fill': { ios: 'person.fill', android: 'person' },
-  'plus': { ios: 'plus', android: 'add' },
-  'plus.fill': { ios: 'plus.fill', android: 'add' },
-  'camera': { ios: 'camera', android: 'camera-alt' },
-  'camera.fill': { ios: 'camera.fill', android: 'camera-alt' },
-  'archivebox': { ios: 'archivebox.fill', android: 'inventory' },
-  'crown.fill': { ios: 'crown.fill', android: 'workspace-premium' },
-  'sparkles': { ios: 'sparkles', android: 'auto-fix-high' },
-  'clock': { ios: 'clock', android: 'access-time' },
-  'list.bullet': { ios: 'list.bullet', android: 'list' },
-  'checklist': { ios: 'checklist', android: 'checklist' },
-  'chevron.left': { ios: 'chevron.left', android: 'chevron-left' },
-  'checkmark': { ios: 'checkmark', android: 'check' },
-  'close': { ios: 'xmark', android: 'close' },
-  'flip.camera': { ios: 'camera.rotate', android: 'flip-camera-ios' },
-  'chevron-forward': { ios: 'chevron.right', android: 'chevron-right' },
-  'slider.horizontal.3': { ios: 'slider.horizontal.3', android: 'tune' },
-  'trash': { ios: 'trash', android: 'delete' },
-  'arrow.right': { ios: 'arrow.right', android: 'arrow-forward' },
-  'wheel': { ios: 'slowmo', android: 'cached' },
-  'arrow_forward': { ios: 'arrow.right', android: 'arrow-forward' },
-  'help': { ios: 'questionmark.circle', android: 'help-outline' },
-  'square.and.arrow.down': { ios: 'square.and.arrow.down', android: 'file-download' },
-  'square.and.arrow.down.fill': { ios: 'square.and.arrow.down.fill', android: 'file-download' },
-  // Ces noms étaient utilisés dans les écrans mais absents du mapping : `MAPPING[name]`
-  // valait `undefined`, le composant retournait `null` et l'icône ne s'affichait tout
-  // simplement pas (chevrons et icônes de l'écran Profil, étoiles des favoris, micro).
-  // Les appelants font parfois `Platform.OS === 'ios' ? 'bell' : 'notifications'`, ce qui
-  // est redondant puisque le mapping gère déjà les deux plateformes : les deux clés sont
-  // donc déclarées pour que l'icône s'affiche quel que soit le nom passé.
-  'bell': { ios: 'bell', android: 'notifications' },
-  'notifications': { ios: 'bell', android: 'notifications' },
-  'chevron.right': { ios: 'chevron.right', android: 'chevron-right' },
-  'envelope': { ios: 'envelope', android: 'mail-outline' },
-  'globe': { ios: 'globe', android: 'language' },
-  'pricetag': { ios: 'tag', android: 'local-offer' },
-  'doc.text': { ios: 'doc.text', android: 'description' },
-  'star': { ios: 'star', android: 'star-border' },
-  'star.fill': { ios: 'star.fill', android: 'star' },
-  'time': { ios: 'clock', android: 'access-time' },
-  'timer': { ios: 'timer', android: 'timer' },
-  'xmark': { ios: 'xmark', android: 'close' },
-  'magnifyingglass': { ios: 'magnifyingglass', android: 'search' },
-  'microphone': { ios: 'mic', android: 'mic' },
-  'microphone.slash': { ios: 'mic.slash', android: 'mic-off' },
-} as const;
-
-export function IconSymbol({
-  name,
-  size = 24,
-  color,
-  style,
-  weight,
-}: {
-  name: keyof typeof MAPPING;
-  size?: number;
-  color: any;
-  style?: any;
-  weight?: SymbolWeight;
+/** Legacy names resolve to the same Ionicons glyph on iOS and Android. */
+export const ICON_ALIASES = {
+  'wheel.fill': 'refresh-circle', 'wheel': 'refresh-circle-outline',
+  'gift.fill': 'gift', 'house': 'home-outline', 'house.fill': 'home',
+  'paperplane.fill': 'send', 'search': 'search-outline', 'search.fill': 'search', 'magnifyingglass': 'search-outline',
+  'heart': 'heart-outline', 'heart.fill': 'heart', 'settings': 'settings-outline', 'settings.fill': 'settings',
+  'person': 'person-outline', 'person.fill': 'person', 'plus': 'add', 'plus.fill': 'add',
+  'camera': 'camera-outline', 'camera.fill': 'camera', 'archivebox': 'archive-outline',
+  'crown.fill': 'ribbon', 'sparkles': 'sparkles-outline', 'clock': 'time-outline',
+  'list.bullet': 'list-outline', 'checklist': 'checkbox-outline', 'chevron.left': 'chevron-back',
+  'checkmark': 'checkmark', 'close': 'close', 'xmark': 'close', 'flip.camera': 'camera-reverse-outline',
+  'chevron-forward': 'chevron-forward', 'chevron.right': 'chevron-forward', 'slider.horizontal.3': 'options-outline',
+  'trash': 'trash-outline', 'arrow.right': 'arrow-forward', 'arrow_forward': 'arrow-forward',
+  'help': 'help-circle-outline', 'square.and.arrow.down': 'download-outline', 'square.and.arrow.down.fill': 'download',
+  'bell': 'notifications-outline', 'notifications': 'notifications-outline', 'envelope': 'mail-outline',
+  'globe': 'globe-outline', 'pricetag': 'pricetag-outline', 'doc.text': 'document-text-outline',
+  'star': 'star-outline', 'star.fill': 'star', 'time': 'time-outline', 'timer': 'timer-outline',
+  'microphone': 'mic-outline', 'microphone.slash': 'mic-off-outline',
+} as const satisfies Record<string, React.ComponentProps<typeof Ionicons>['name']>;
+export function IconSymbol({ name, size = 24, color, style }: {
+  name: keyof typeof ICON_ALIASES; size?: number; color: React.ComponentProps<typeof Ionicons>['color'];
+  style?: React.ComponentProps<typeof Ionicons>['style']; weight?: SymbolWeight;
 }) {
-  const icon = MAPPING[name];
+  const icon = ICON_ALIASES[name];
   if (!icon) return null;
-
-  if (Platform.OS === 'ios') {
-    return (
-      <SymbolView
-        name={icon.ios as any}
-        size={size}
-        tintColor={color}
-        style={[{ width: size, height: size }, style]}
-        weight={weight}
-      />
-    );
-  } else {
-    return <MaterialIcons color={color} size={size} name={icon.android as any} style={style} />;
-  }
+  return <Ionicons name={icon} size={size} color={color} style={style} accessible={false} importantForAccessibility="no" />;
 }

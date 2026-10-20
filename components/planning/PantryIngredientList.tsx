@@ -1,3 +1,4 @@
+import { AppRadii, AppTheme as theme } from '../../constants/AppTheme';
 import { usePantryCategoryAssignments } from '../../services/pantryCategoryAssignments';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -5,7 +6,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { ingredientCategories } from '../../services/ingredientCategories';
 import { groupPantryIngredients } from '../../services/pantryCategories';
-import { AppTheme as theme } from '../../constants/AppTheme';
 
 export function PantryIngredientList({ ingredients, removed = [], disabled = false, onAddCategory, onToggle }: {
   ingredients: string[]; removed?: string[]; disabled?: boolean; onToggle: (name: string) => void; onAddCategory?: (categoryId: string) => void;
@@ -24,11 +24,11 @@ export function PantryIngredientList({ ingredients, removed = [], disabled = fal
   </View>)}</View>;
 }
 const styles = StyleSheet.create({
-  groups: { gap: 16 }, group: { padding: 16, borderWidth: 1, borderColor: theme.line, borderRadius: 20, backgroundColor: theme.surface, gap: 12 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }, addCategory: { minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center', borderRadius: 12, backgroundColor: theme.yellowSoft },
+  groups: { gap: 16 }, group: { padding: 16, borderWidth: 1, borderColor: theme.line, borderRadius: AppRadii.card, backgroundColor: theme.surface, gap: 12 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }, addCategory: { minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center', borderRadius: AppRadii.chip, backgroundColor: theme.yellowSoft },
   title: { flex: 1, fontFamily: 'CronosProBold', fontSize: 18, color: theme.ink },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 44, padding: 12, borderRadius: 14, backgroundColor: theme.yellowSoft, maxWidth: '100%' },
+  chip: { flexDirection: 'row', alignItems: 'center', gap: 8, minHeight: 44, padding: 12, borderRadius: AppRadii.control, backgroundColor: theme.yellowSoft, maxWidth: '100%' },
   name: { fontFamily: 'CronosProBold', fontSize: 16, color: theme.ink, flexShrink: 1 },
   removed: { opacity: 0.5, backgroundColor: theme.soft },
 });

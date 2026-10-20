@@ -1,8 +1,9 @@
+import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import React, { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+
 import { getIngredientIcon } from '../../constants/IngredientIcons';
 import { pantryIngredientKey } from '../../services/planningPantry';
 import { ingredientCategories } from '../../services/ingredientCategories';
@@ -34,9 +35,9 @@ export function PantryReviewSection({ ingredients, onChange, recognized = false,
   </View>;
 }
 const styles = StyleSheet.create({
-  root: { gap: 16 }, heading: { gap: 8 }, list: { paddingHorizontal: 14, borderWidth: 1, borderColor: theme.line, borderRadius: 20, backgroundColor: theme.surface },
+  root: { gap: 16 }, heading: { gap: 8 }, list: { paddingHorizontal: 14, borderWidth: 1, borderColor: theme.line, borderRadius: AppRadii.card, backgroundColor: theme.surface },
   row: { minHeight: 62, paddingVertical: 9, flexDirection: 'row', alignItems: 'center', gap: 12 }, separator: { borderTopWidth: 1, borderTopColor: theme.line },
   emoji: { fontSize: 28, width: 32, textAlign: 'center' }, name: { flex: 1, fontFamily: 'CronosProBold', fontSize: 18, color: theme.ink },
-  remove: { minWidth: 44, minHeight: 44, borderRadius: 22, backgroundColor: theme.yellowSoft, alignItems: 'center', justifyContent: 'center' },
-  add: { minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 16, borderWidth: 1, borderColor: theme.yellow, backgroundColor: theme.yellowSoft }, disabled: { opacity: 0.45 },
+  remove: { minWidth: 44, minHeight: 44, borderRadius: AppRadii.card, backgroundColor: theme.yellowSoft, alignItems: 'center', justifyContent: 'center' },
+  add: { minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.yellow, backgroundColor: theme.yellowSoft }, disabled: { opacity: 0.45 },
 });

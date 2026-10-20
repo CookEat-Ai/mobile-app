@@ -1,3 +1,7 @@
+import { FORM_CONTENT_MAX_WIDTH } from '../../constants/Layout';
+import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
+import { PlanningBudgetPicker } from '../../components/planning/PlanningBudgetPicker';
+import { COOKING_LEVELS, KITCHEN_EQUIPMENT, type CookingLevel, type MealBudget } from '../../services/cookingPreferences';
 import { usePlanningClock } from '../../hooks/usePlanningClock';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, BackHandler, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -12,7 +16,7 @@ import { PantryModeChoice } from '../../components/planning/PantryModeChoice';
 import { CookingDaysPicker } from '../../components/planning/CookingDaysPicker';
 import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
 import { ServingsControl } from '../../components/ServingsControl';
-import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { apiService, type CatalogCuisine } from '../../services/api';
 import { loadFitnessProfile, type FitnessGoal } from '../../services/fitnessProfile';
@@ -30,10 +34,15 @@ export default function ConfigurePlanningScreen() {
   const { replace } = useLocalSearchParams<{ replace?: string }>();
   const insets = useSafeAreaInsets();
   const { gutter } = useResponsive();
-  const [step, setStep] = useState<PlanningStep>('days');
+  const [step, setStep] = useState<PlanningStep>('goal');
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
   const [servings, setServings] = useState<number | null>(null);
   const [duration, setDuration] = useState<'all' | 'fast' | 'medium' | null>(null);
+  const [cookingLevel, setCookingLevel] = useState<CookingLevel | null>(null);
+  const [weeklyBudget,setWeeklyBudget]=useState<number|undefined>();
+  const [budgetRegion,setBudgetRegion]=useState<{country:string;currency:string}|null>(null);
+  const [mealBudget, setMealBudget] = useState<MealBudget | null>(null);
+  const [equipments, setEquipments] = useState<string[] | null>(null);
   const [diet, setDiet] = useState<PlanningDiet | null>(null);
   const [selectedCuisines, setSelectedCuisines] = useState<string[] | null>(null);
   const [excludedIngredients, setExcludedIngredients] = useState('');
@@ -51,9 +60,9 @@ export default function ConfigurePlanningScreen() {
   const savingRef = useRef(false);
   const steps = planningSteps(presentation);
   const index = steps.indexOf(step);
-  const isSingleChoiceStep = step === 'goal' || step === 'duration' || step === 'diet' || (step === 'ingredients' && pantryStage === 'shopping');
+  const isSingleChoiceStep = step === 'goal' || step === 'duration' || step === 'diet' || step === 'cookingLevel' || (step === 'ingredients' && pantryStage === 'shopping');
   const canContinue = ready && !saving && planningStepCanContinue(step, {
-    goal, cookingDays: selectedDays, duration, diet, cuisineIds: selectedCuisines, servings,
+    goal, cookingDays: selectedDays, duration, diet, cuisineIds: selectedCuisines, servings, cookingLevel, mealBudget, equipments, weeklyBudget,
   });
   const moveTo = useCallback((next: PlanningStep) => { Keyboard.dismiss(); setStep(next); }, []);
   const back = useCallback(() => {
@@ -74,11 +83,14 @@ export default function ConfigurePlanningScreen() {
     void Promise.all([loadPlanningGenerationSettings(), loadFitnessProfile(), isPresentationModeEnabled()]).then(([settings, profile, demo]) => {
       if (!active) return;
       const draft = planningChoiceDraft(settings, demo);
+      setWeeklyBudget(draft.weeklyBudget);
       setSelectedDays(draft.cookingDays); setDuration(draft.duration); setServings(draft.servings);
+      setCookingLevel(draft.cookingLevel ?? (demo ? null : 'beginner')); setMealBudget(draft.mealBudget ?? (demo ? null : 'budget_medium'));
+      setEquipments(draft.equipments ?? (demo ? null : ['standard-kitchen']));
       setSelectedCuisines(draft.cuisineIds); setDiet(draft.diet); setExcludedIngredients(draft.excludedIngredients.join(', '));
       setPantry({ pantryIngredients: draft.pantryIngredients || [], pantryMode: draft.pantryMode || 'priority' });
       setUseIngredients(!!draft.pantryIngredients?.length); setPresentation(demo);
-      setGoal(demo ? null : profile.goal); setStep(demo ? 'goal' : 'days');
+      setGoal(demo ? null : profile.goal); setStep('goal');
     }).catch(() => { if (active) setError(t('planning.errors.load')); })
       .finally(() => { if (active) setReady(true); });
     return () => { active = false; };
@@ -98,8 +110,8 @@ export default function ConfigurePlanningScreen() {
     return item.names.find(name => name.language === language)?.value || item.names.find(name => name.language === 'fr')?.value || item.id;
   };
   const configured = () => {
-    if (!selectedDays.length || duration === null || diet === null || selectedCuisines === null || servings === null || (presentation && goal === null)) return null;
-    return planningConfiguration({ ...pantry, servings, cookingDays: selectedDays,
+    if (cookingLevel === null || equipments === null || mealBudget === null || !selectedDays.length || duration === null || diet === null || selectedCuisines === null || servings === null || goal === null || !weeklyBudget || !budgetRegion) return null;
+    return planningConfiguration({ ...pantry, servings, weeklyBudget, ...budgetRegion, cookingLevel, mealBudget, equipments, cookingDays: selectedDays,
       mealsByDay: dailyMealsForDays(selectedDays), includeSnack: true, duration, cuisineIds: selectedCuisines, diet,
       excludedIngredients: [...new Set(excludedIngredients.split(',').map(item => item.trim()).filter(Boolean))],
     }, useIngredients);
@@ -110,7 +122,7 @@ export default function ConfigurePlanningScreen() {
     if (!configuration) return;
     savingRef.current = true; setSaving(true); setError('');
     try {
-      const settings = { ...configuration, ...(presentation && goal ? { goal } : {}) };
+      const settings = { ...configuration, ...(goal ? { goal } : {}) };
       await savePlanningGenerationSettings(settings);
       void feedback.confirm();
       router.push({ pathname: '/planning/loading', params: { config: JSON.stringify(settings), replace: replace || 'false' } });
@@ -133,7 +145,7 @@ export default function ConfigurePlanningScreen() {
   const next = () => {
     if (!canContinue) return;
     if (step === 'ingredients' && !pantry.pantryIngredients.length) setUseIngredients(false);
-    if (step === 'servings') { void generate(); return; }
+    if (index === steps.length-1) { void generate(); return; }
     void feedback.selection(); moveTo(steps[index + 1]);
   };
   const skipIngredients = () => { setPantryStage('review'); setUseIngredients(false); moveTo('duration'); feedback.selection(); };
@@ -165,6 +177,12 @@ export default function ConfigurePlanningScreen() {
           <Text style={appStyles.subtitle}>{t('pantryReview.keptCount', { count: pantry.pantryIngredients.length })}</Text>
         </View>}
         {step === 'duration' && <View style={styles.choices}>{(['fast', 'medium', 'all'] as const).map(item => <Choice key={item} emoji={{ fast: '⚡️', medium: '🍳', all: '👨‍🍳' }[item]} selected={duration === item} title={t(`planning.settings.duration.${item}`)} onPress={() => chooseAndAdvance(() => setDuration(item))} />)}</View>}
+        {step === 'cookingLevel' && <View style={styles.choices}><Text style={appStyles.subtitle}>{t('cookingPreferences.levelSubtitle')}</Text>{COOKING_LEVELS.map(item => <Choice key={item} emoji={{ beginner: '🍳', medium: '🥘', advanced: '👨‍🍳' }[item]} selected={cookingLevel === item} title={t(`onboarding.formQuestions.${item}`)} onPress={() => chooseAndAdvance(() => { setCookingLevel(item); void analytics.track('planning_preference_selected', { preference: 'cookingLevel', value: item }).catch(() => undefined); })} />)}</View>}
+        {step === 'mealBudget' && <PlanningBudgetPicker people={servings||1} value={weeklyBudget} onChange={(amount,region)=>{setWeeklyBudget(amount);setBudgetRegion({country:region.country,currency:region.currency});setMealBudget(amount&&amount>region.minimum*3?'budget_large':amount&&amount>region.minimum*1.5?'budget_medium':'budget_small');}}/>}
+        {step === 'equipments' && <View style={styles.choices}>
+          <Text style={appStyles.subtitle}>{t('cookingPreferences.equipmentSubtitle')}</Text>
+          {['standard-kitchen', ...KITCHEN_EQUIPMENT].map(item => <Choice key={item} multiple={item !== 'standard-kitchen'} emoji={item === 'standard-kitchen' ? '🍳' : { oven: '🔥', airfryer: '🍟', microwave: '📡', blender: '🥤', robot: '🤖' }[item as typeof KITCHEN_EQUIPMENT[number]]} selected={item === 'standard-kitchen' ? equipments?.length === 1 : !!equipments?.includes(item)} title={item === 'standard-kitchen' ? t('cookingPreferences.basicKitchen') : t(`onboarding.formQuestions.equipment_${item}`)} onPress={() => { feedback.selection(); setEquipments(previous => item === 'standard-kitchen' ? ['standard-kitchen'] : ['standard-kitchen', ...(previous || []).filter(tool => tool !== 'standard-kitchen' && tool !== item), ...(!previous?.includes(item) ? [item] : [])]); }} />)}
+        </View>}
         {step === 'cuisines' && <>
           {cuisinesLoading ? <ActivityIndicator color={theme.yellow} /> : cuisinesError ? <View style={styles.choices}>
             <Text accessibilityRole="alert" style={appStyles.error}>{t('planningFlow.cuisinesError')}</Text>
@@ -202,8 +220,8 @@ export default function ConfigurePlanningScreen() {
             placeholder={t('planningConfig.excludePlaceholder')} placeholderTextColor={theme.muted} style={styles.input} autoCapitalize="none" returnKeyType="done" onSubmitEditing={() => Keyboard.dismiss()} />
         </>}
         {step === 'servings' && <>
-          <View style={styles.people}><Text accessible={false} style={styles.peopleEmoji}>{servings === null ? '👥' : Array.from({ length: Math.min(4, servings) }, () => '🧑').join(' ')}{servings !== null && servings > 4 ? ' +' : ''}</Text><ServingsControl value={servings} onChange={setServings} /></View>
-          <Text style={styles.selection}>{t('planningFlow.meals', { days: selectedDays.length, meals: selectedDays.length * 4 })}</Text>
+          <View style={styles.people}><Text accessible={false} style={styles.peopleEmoji}>{servings === null ? '👥' : Array.from({ length: Math.min(4, servings) }, () => '🧑').join(' ')}{servings !== null && servings > 4 ? ' +' : ''}</Text><ServingsControl value={servings} onChange={value=>{setServings(value);setWeeklyBudget(undefined);}} /></View>
+          <Text style={styles.selection}>{t('planningBudget.peopleNote')}</Text>
         </>}
       </>}
     </OnboardingScrollView>
@@ -211,19 +229,19 @@ export default function ConfigurePlanningScreen() {
       {step === 'ingredients' ? <>
         {!!pantry.pantryIngredients.length && <TouchableOpacity accessibilityRole="button" disabled={!canContinue} style={styles.skip} onPress={skipIngredients}><Text style={appStyles.textAction}>{t('planningFlow.skip')}</Text></TouchableOpacity>}
         <TouchableOpacity accessibilityRole="button" disabled={!canContinue} accessibilityState={{ disabled: !canContinue }} style={[appStyles.button, styles.button, !canContinue && { opacity: 0.45 }]} onPress={() => pantry.pantryIngredients.length ? confirmPantry(pantry) : skipIngredients()}>
-          <Text style={appStyles.buttonText}>{t(pantry.pantryIngredients.length ? 'pantryScan.confirm' : 'planningFlow.skip')}</Text><Ionicons name="arrow-forward" size={22} color="white" />
+          <Text style={appStyles.buttonText}>{t(pantry.pantryIngredients.length ? 'pantryScan.confirm' : 'planningFlow.skip')}</Text><Ionicons name="arrow-forward" size={22} color={theme.onPrimary} />
         </TouchableOpacity>
       </> : <TouchableOpacity accessibilityRole="button" disabled={!canContinue} accessibilityState={{ disabled: !canContinue, busy: saving }} style={[appStyles.button, styles.button, !canContinue && { opacity: 0.45 }]} onPress={next}>
-        {saving ? <ActivityIndicator color="white" /> : <><Text style={appStyles.buttonText}>{t(step === 'servings' ? replace === 'true' ? 'planningDetail.regenerate' : 'dailyApp.createWeek' : 'common.continue')}</Text><Ionicons name="arrow-forward" size={22} color="white" /></>}
+        {saving ? <ActivityIndicator color={theme.onPrimary} /> : <><Text style={appStyles.buttonText}>{t(index === steps.length-1 ? replace === 'true' ? 'planningDetail.regenerate' : 'dailyApp.createWeek' : 'common.continue')}</Text><Ionicons name="arrow-forward" size={22} color={theme.onPrimary} /></>}
       </TouchableOpacity>}
 
     </View>}
   </KeyboardAvoidingView>;
 }
 const GOAL_EMOJI: Record<FitnessGoal, string> = { gain_muscle: '💪', lose_weight: '📉', maintain: '⚖️', balanced: '🥗' };
-const STEP_EMOJI: Record<PlanningStep, string> = { goal: '🎯', days: '📅', ingredients: '🧺', duration: '⏱️', cuisines: '🍽️', diet: '🥗', exclusions: '🚫', servings: '👥' };
-function Choice({ selected, title, emoji, onPress }: { selected: boolean; title: string; emoji?: string; onPress: () => void }) {
-  return <TouchableOpacity accessibilityRole="radio" accessibilityLabel={title} accessibilityState={{ checked: selected }} style={[styles.option, selected && styles.choiceActive]} onPress={onPress}>
+const STEP_EMOJI: Record<PlanningStep, string> = { goal: '🎯', days: '📅', ingredients: '🧺', duration: '⏱️', cookingLevel: '🍳', equipments: '🥘', mealBudget: '🪙', cuisines: '🍽️', diet: '🥗', exclusions: '🚫', servings: '👥' };
+function Choice({ selected, title, emoji, onPress, multiple = false }: { multiple?: boolean; selected: boolean; title: string; emoji?: string; onPress: () => void }) {
+  return <TouchableOpacity accessibilityRole={multiple ? "checkbox" : "radio"} accessibilityLabel={title} accessibilityState={{ checked: selected }} style={[styles.option, selected && styles.choiceActive]} onPress={onPress}>
     {emoji && <Text accessible={false} style={styles.choiceEmoji}>{emoji}</Text>}<Text style={[styles.optionText, { flex: 1 }]}>{title}</Text><Ionicons name={selected ? 'checkmark-circle' : 'ellipse-outline'} size={23} color={selected ? theme.yellow : '#CEC8B8'} />
   </TouchableOpacity>;
 }
@@ -231,19 +249,19 @@ const styles = StyleSheet.create({
   shopping: { gap: 24 }, fill: { flex: 1 }, hidden: { display: 'none' },
   goal: { paddingHorizontal: 20, paddingBottom: 8, fontFamily: 'CronosProBold', fontSize: 16, color: theme.ink },
   heading: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 24 }, headingEmoji: { fontSize: 40, width: 52, textAlign: 'center' }, headingTitle: { flex: 1 },
-  goals: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12 }, goalCard: { width: '48%', minHeight: 136, borderWidth: 1, borderColor: theme.line, borderRadius: 20, backgroundColor: theme.surface, alignItems: 'center', justifyContent: 'center', gap: 10, padding: 12 }, goalEmoji: { fontSize: 42 }, goalName: { fontFamily: 'Degular', fontSize: 20, color: theme.ink, textAlign: 'center' },
+  goals: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12 }, goalCard: { width: '48%', minHeight: 136, borderWidth: 1, borderColor: theme.line, borderRadius: AppRadii.card, backgroundColor: theme.surface, alignItems: 'center', justifyContent: 'center', gap: 10, padding: 12 }, goalEmoji: { fontSize: 42 }, goalName: { fontFamily: 'Degular', fontSize: 20, color: theme.ink, textAlign: 'center' },
   selection: { fontFamily: 'CronosProBold', fontSize: 16, color: theme.ink, marginTop: 22 },
   choices: { gap: 4 }, people: { ...appStyles.card, minHeight: 180, justifyContent: 'center', gap: 22 }, peopleEmoji: { fontSize: 44, textAlign: 'center' }, retry: { minHeight: 44, justifyContent: 'center' },
-  option: { minHeight: 64, paddingHorizontal: 16, paddingVertical: 16, borderRadius: 17, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 10 },
-  choiceActive: { backgroundColor: '#FFF6D9', borderColor: theme.yellow },
+  option: { minHeight: 64, paddingHorizontal: 16, paddingVertical: 16, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 10 },
+  choiceActive: { backgroundColor: theme.yellowSoft, borderColor: theme.yellow },
   optionText: { fontFamily: 'Degular', fontSize: 20, color: theme.ink, flexShrink: 1 }, choiceEmoji: { fontSize: 30 },
-  exclusions: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 18 }, exclusion: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 12, borderRadius: 17, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, minHeight: 64 }, exclusionName: { fontFamily: 'CronosProBold', fontSize: 15, color: theme.ink },
+  exclusions: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 18 }, exclusion: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 12, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, minHeight: 64 }, exclusionName: { fontFamily: 'CronosProBold', fontSize: 15, color: theme.ink },
   cuisines: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 12 },
-  cuisine: { width: '48%', padding: 8, borderRadius: 17, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, gap: 8 },
-  cuisineCheck: { position: 'absolute', top: 14, right: 14, borderRadius: 16, padding: 4, backgroundColor: theme.surface },
+  cuisine: { width: '48%', padding: 8, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, gap: 8 },
+  cuisineCheck: { position: 'absolute', top: 14, right: 14, borderRadius: AppRadii.control, padding: 4, backgroundColor: theme.surface },
   cuisineLabel: { minHeight: 48, justifyContent: 'center' },
   cuisineName: { fontFamily: 'Degular', fontSize: 20, color: theme.ink, textAlign: 'center' },
-  input: { minHeight: 54, borderRadius: 14, borderWidth: 1, borderColor: theme.line, backgroundColor: '#FFFCF4', padding: 14, fontFamily: 'CronosPro', fontSize: 16, color: theme.ink },
-  footer: { paddingTop: 12, backgroundColor: theme.background }, button: { width: '100%', maxWidth: 520, alignSelf: 'center' },
+  input: { minHeight: 54, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, backgroundColor: '#FFFCF4', padding: 14, fontFamily: 'CronosPro', fontSize: 16, color: theme.ink },
+  footer: { paddingTop: 12, backgroundColor: theme.background }, button: { width: '100%', maxWidth: FORM_CONTENT_MAX_WIDTH, alignSelf: 'center' },
   skip: { minHeight: 44, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
 });

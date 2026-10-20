@@ -22,7 +22,7 @@ vm.runInNewContext(ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
   compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
 }).outputText, {
   exports: exportsObject,
-  require: name => name === './planning-calorie-budget' ? loadBudgetModule('planning-calorie-budget')
+  require: name => name === './cookingPreferences' ? (() => { const result = {}; vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.resolve(__dirname, '../services/cookingPreferences.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: result }); return result; })() : name === './planning-calorie-budget' ? loadBudgetModule('planning-calorie-budget')
     : name === './planning-time' ? loadBudgetModule('planning-time')
     : name === '@react-native-async-storage/async-storage' ? {
       getItem: async () => storedSettings,
@@ -192,6 +192,7 @@ const tick = async target => {
       useState: value => [value, error => errors.push(error)],
     };
     const dependencies = {
+      '../../constants/AppTheme': require('./helpers/ui-theme.cjs'),
       react,
       'react-native': { StyleSheet: { create: value => value } },
       'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) },

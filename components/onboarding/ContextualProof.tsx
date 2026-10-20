@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -78,7 +79,7 @@ export function ContextualProof({
               <Text style={styles.reviewAuthor}>{reviewAuthor}</Text>
               <View style={styles.stars}>
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <Ionicons key={star} name="star" size={13} color="#FEB50A" />
+                  <Ionicons key={star} name="star" size={13} color={designTheme.yellow} />
                 ))}
               </View>
             </View>
@@ -100,16 +101,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   badge: {
-    backgroundColor: '#FFFBEB',
+    backgroundColor: designTheme.yellowSoft,
     borderWidth: 1,
-    borderColor: '#FEB50A',
+    borderColor: designTheme.yellow,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     marginBottom: 24,
   },
   badgeText: {
-    color: '#FEB50A',
+    color: designTheme.yellow,
     fontSize: 14,
     fontFamily: 'Degular',
   },
@@ -129,8 +130,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   reviewCard: {
-    backgroundColor: 'white',
-    borderRadius: 16,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.control,
     padding: 16,
     marginTop: 28,
     width: '100%',

@@ -26,7 +26,7 @@ function harness(filename, dependencies = {}, options = {}) {
     Keyboard: { dismiss() {} }, BackHandler: { addEventListener: () => ({ remove() {} }) }, FlatList: 'FlatList', TextInput: 'TextInput', KeyboardAvoidingView: 'KeyboardAvoidingView', Modal: 'Modal', ActivityIndicator: 'ActivityIndicator', View: 'View', Text: 'Text', ScrollView: 'ScrollView', Pressable: 'Pressable', TouchableOpacity: 'TouchableOpacity',
   };
   const deps = { react, 'react-native': rn, 'expo-image': { Image: 'Image' }, '@expo/vector-icons': { Ionicons: 'Icon' },
-    '../../hooks/usePlanningClock': { usePlanningClock: () => ({ now: new Date('2026-10-13T06:00:00Z'), today: '2026-10-13', weekStart: '2026-10-13', remainingMealTypes: ['breakfast','lunch','snack','dinner'] }) },
+    '../ui/AppModal': { AppModal: 'Modal' },
     'expo-router': { Stack: { Screen: 'StackScreen' } }, 'react-native-safe-area-context': { SafeAreaProvider: 'SafeAreaProvider', useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }) },
     '../../hooks/useResponsive': { useResponsive: () => ({ gutter: 20 }) }, 'react-i18next': { useTranslation: () => ({ t: key => key }) }, ...dependencies };
   const mod = { exports: {} };
@@ -52,6 +52,7 @@ assert.equal(loading.type, 'Modal', 'only analysis is a native full-screen surfa
 assert.equal(loading.props.presentationStyle, 'fullScreen');
 assert.equal(loading.props.onRequestClose, props.onBack, 'analysis can be cancelled with Android back');
 assert(!nodes(loading).some(node => node.type === 'PlanningFlowHeader'), 'analysis reserves no onboarding header');
+assert(!nodes(loading).some(node => node.type === 'NavigationIconButton'), 'analysis shows no close button');
 assert(!nodes(loading).some(node => node.type === 'ScrollView'), 'analysis fills its screen instead of scrolling a fixed-ratio card');
 
 assert.equal(nodes(scanView(props)).filter(node => node.type === 'Image').length, 2, 'photos remain visible while analysis runs');
@@ -65,6 +66,13 @@ for (const ingredients of [['Tomate', 'Riz'], []]) {
   assert(!nodes(tree).some(node => node.type === 'PantryModeChoice'), 'review never asks for a shopping rule');
 
 }
+const headerHarness = harness('components/planning/PlanningFlowHeader.tsx');
+const modalHeaderTree = headerHarness.render(mod => mod.PlanningFlowHeader({ onClose: props.onBack, closeDisabled: true }));
+const closeButton = nodes(modalHeaderTree).find(node => node.type === 'NavigationIconButton');
+assert.equal(closeButton.props.kind, 'close');
+assert.equal(closeButton.props.disabled, true, 'close is disabled while saving');
+const headerRow = nodes(modalHeaderTree).find(node => node.type === 'View' && node.props.children.some(child => child?.type === 'NavigationIconButton'));
+assert.equal(headerRow.props.children.at(-1), closeButton, 'close follows the brand on the right');
 const modeChoice = harness('components/planning/PantryModeChoice.tsx');
 const choiceTree = modeChoice.render(mod => mod.PantryModeChoice({ value: null, onChange() {} }));
 assert.equal(nodes(choiceTree).filter(node => node.type === 'Pressable' && node.props.accessibilityState.checked).length, 0, 'neither option is selected initially');
@@ -79,6 +87,9 @@ const reviewProps = { ingredients: ['Riz', 'Tomate'], saving: false, recognized:
 const reviewRender = () => reviewHarness.render(mod => mod.PantryIngredientReview(reviewProps));
 let reviewTree = reviewRender();
 assert(!nodes(reviewTree).some(node => node.type === 'PantryModeChoice'));
+const reviewHeader = nodes(reviewTree).find(node => node.type === 'PlanningFlowHeader');
+assert.equal(reviewHeader.props.onClose, reviewProps.onBack, 'closing the review keeps its cancellation behavior');
+assert.equal(reviewHeader.props.onBack, undefined, 'review has no back button');
 nodes(reviewTree).find(node => node.type === 'PantryReviewSection').props.onChange(['Tomate', 'Avocat']);
 reviewTree = reviewRender();
 nodes(reviewTree).find(node => node.type === 'Pressable' && text(node).includes('pantryScan.confirm')).props.onPress();
@@ -86,8 +97,8 @@ assert.equal(reviewConfirmed.join(','), 'Tomate,Avocat', 'the single CTA confirm
 const suggestions = [{ id: 'avocat', name: 'Avocat', icon: '🥑' }, { id: 'avoine', name: 'Avoine', icon: '🌾' }];
 const searchHarness = harness('components/planning/PantryIngredientSearchModal.tsx', {
   '../../services/planningPantry': pantryRules,
-  '../../services/ingredientCategories': { ingredientCategories: () => [{ ingredients: suggestions }] },
-  '../../services/pantryIngredientSearch': { pantrySearchSuggestions: (items, query) => items.filter(item => item.name.toLowerCase().includes(query.toLowerCase())) },
+  '../../services/ingredientCategories': { ingredientCategories: () => [{ id: 'legumes', title: 'Légumes', icon: '🥬', ingredients: [suggestions[0]] }, { id: 'cereales', title: 'Céréales', icon: '🌾', ingredients: [suggestions[1]] }] },
+  '../../services/pantryIngredientSearch': { pantrySearchGroups: (groups, query) => groups.map(group => ({ ...group, ingredients: group.ingredients.filter(item => item.name.toLowerCase().includes(query.toLowerCase())) })).filter(group => group.ingredients.length) },
   '../../services/haptics': { feedback }, '../../contexts/MotionPreferences': { useMotionAllowed: () => false },
 });
 let searchIngredients = ['Riz'], searchCloses = 0;
@@ -97,12 +108,22 @@ const searchRender = () => searchHarness.render(mod => {
   return child.type(child.props);
 });
 let searchTree = searchRender();
+let categoryList = nodes(searchTree).find(node => node.type === 'FlatList');
+assert.equal(categoryList.props.data.length, 2, 'initial view contains only closed categories');
+const vegetableCategory = categoryList.props.data[0];
+categoryList.props.renderItem({ item: vegetableCategory }).props.onPress();
+searchTree = searchRender(); categoryList = nodes(searchTree).find(node => node.type === 'FlatList');
+assert.equal(categoryList.props.data.filter(row => row.kind === 'ingredient').length, 1, 'expanding a category shows only its foods');
+categoryList.props.renderItem({ item: categoryList.props.data[0] }).props.onPress();
+searchTree = searchRender(); categoryList = nodes(searchTree).find(node => node.type === 'FlatList');
+assert.equal(categoryList.props.data.filter(row => row.kind === 'ingredient').length, 0, 'category closes again');
 nodes(searchTree).find(node => node.type === 'TextInput').props.onChangeText('avo');
 searchTree = searchRender();
 let list = nodes(searchTree).find(node => node.type === 'FlatList');
-list.props.renderItem({ item: suggestions[0] }).props.onPress();
+assert.equal(list.props.data.filter(row => row.kind === 'ingredient').length, 2, 'search opens matching categories automatically');
+list.props.renderItem({ item: list.props.data.find(row => row.kind === 'ingredient' && row.item.id === 'avocat') }).props.onPress();
 searchTree = searchRender(); list = nodes(searchTree).find(node => node.type === 'FlatList');
-list.props.renderItem({ item: suggestions[1] }).props.onPress();
+list.props.renderItem({ item: list.props.data.find(row => row.kind === 'ingredient' && row.item.id === 'avoine') }).props.onPress();
 assert.equal(searchIngredients.join(','), 'Riz,Avocat,Avoine', 'multiple ingredients can be added in one search session');
 assert.equal(searchCloses, 0, 'adding never closes the sheet');
 searchTree = searchRender();
@@ -200,14 +221,15 @@ function camera() {
     'expo-router': { router: { back() {}, push() { throw new Error('review cannot generate immediately'); } }, useLocalSearchParams: () => ({}), useFocusEffect() {} },
     'react-i18next': { useTranslation: () => ({ t: key => key, i18n: { language: 'fr' } }) },
     '../../hooks/useResponsive': { contentColumn: () => ({}), useResponsive: () => ({ gutter: 20 }) },
+    '../../hooks/usePlanningClock': { usePlanningClock: () => ({ weekStart: '2026-10-14', now: new Date('2026-10-14T12:00:00Z') }) },
     '../../services/haptics': { feedback },
     '../../services/api': { apiService: { getCatalogCuisines: async () => ({ data: { cuisines: [] } }) } },
     '../../services/fitnessProfile': { loadFitnessProfile: async () => ({ goal: 'gain_muscle' }) },
-    '../../services/nutritionModel': { FITNESS_GOALS: [] },
+    '../../services/nutritionModel': { FITNESS_GOALS: ['gain_muscle'] },
     '../../services/presentationMode': { isPresentationModeEnabled: async () => false },
     '../../services/ingredientCategories': { ingredientCategories: () => [] },
     '../../services/planningConfiguration': {
-      planningSteps: () => ['days', 'ingredients', 'duration', 'cuisines', 'diet', 'exclusions', 'servings'],
+      planningSteps: () => ['goal', 'days', 'ingredients', 'duration', 'cuisines', 'diet', 'exclusions', 'servings'],
       planningChoiceDraft: settings => settings, planningStepCanContinue: () => true, planningStepAfterScan: () => 'duration',
     },
     '../../services/weeklyPlanning': { loadPlanningGenerationSettings: async () => ({ cookingDays: [1, 3], duration: 'fast', servings: 1, diet: 'none', cuisineIds: [], excludedIngredients: [], pantryIngredients: [], pantryMode: 'priority' }), PLANNING_DIETS: [], startOfWeekMondayKey: () => '2026-10-12' },
@@ -215,6 +237,8 @@ function camera() {
   const configureRender = () => configureHarness.render(mod => mod.default());
   configureRender(); await tick();
   let configTree = configureRender();
+  nodes(configTree).find(node => node.props.accessibilityRole === 'radio' && node.props.accessibilityLabel === 'fitnessOnboarding.options.goal.gain_muscle').props.onPress();
+  configTree = configureRender();
   nodes(configTree).find(node => node.type === 'TouchableOpacity' && text(node).includes('common.continue')).props.onPress();
   configTree = configureRender();
   nodes(configTree).find(node => node.type === 'PlanningPantry').props.onConfirm({ pantryIngredients: ['Riz', 'Avocat'], pantryMode: 'priority' });

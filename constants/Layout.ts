@@ -9,10 +9,9 @@
  * 2. Les tailles étaient proportionnelles à la largeur réelle (`width * 0.15`).
  *    Sur un iPad de 1024pt ça donnait des titres de 150pt et des emojis de 512pt.
  *
- * La réponse est la notion de *largeur de mise en page* : la largeur de la fenêtre
- * plafonnée à CONTENT_MAX_WIDTH. Sur téléphone elle vaut la largeur réelle (donc
- * aucun changement de rendu), sur tablette elle se stabilise à la largeur d'un grand
- * téléphone et le contenu est simplement centré.
+ * Le contenu utilise la largeur de la tablette, avec des gouttières sobres.
+ * La base des tailles proportionnelles reste plafonnée séparément : élargir une
+ * carte ne doit pas transformer ses icônes ou ses titres en illustrations géantes.
  *
  * Utiliser `useResponsive()` dans les composants (réagit à la rotation).
  * Les helpers statiques (`rw`, `font`, `space`) restent disponibles pour les
@@ -34,14 +33,15 @@ export const BREAKPOINTS = {
   /** iPhone Pro Max, grands Android. */
   largePhone: 414,
   /** iPad mini portrait et au-delà. */
-  tablet: 768,
+  tablet: 744,
 } as const;
 
-/**
- * Largeur maximale d'une colonne de contenu. Au-delà, on centre au lieu d'étirer :
- * une carte de 900pt de large est illisible, et les lignes de texte trop longues.
- */
-export const CONTENT_MAX_WIDTH = 560;
+/** Colonne principale : exploite aussi le portrait des grands iPad. */
+export const CONTENT_MAX_WIDTH = 1120;
+/** Formulaires et textes courts : largeur confortable sans rail de téléphone. */
+export const FORM_CONTENT_MAX_WIDTH = 840;
+/** Base des calculs proportionnels, indépendante de la largeur du contenu. */
+export const SCALE_MAX_WIDTH = 560;
 
 /** Baseline commune des CTA principaux de l'onboarding, hors safe area. */
 export const ONBOARDING_CTA_BOTTOM_GAP = 24;
@@ -61,7 +61,7 @@ export type ResponsiveInfo = {
   width: number;
   /** Hauteur réelle de la fenêtre. */
   height: number;
-  /** Largeur utilisée pour tout calcul proportionnel (plafonnée à CONTENT_MAX_WIDTH). */
+  /** Largeur utilisée pour tout calcul proportionnel (plafonnée à SCALE_MAX_WIDTH). */
   layoutWidth: number;
   isTablet: boolean;
   isSmallPhone: boolean;
@@ -91,7 +91,7 @@ const clamp = (value: number, min: number, max: number) =>
 
 /** Largeur de mise en page : largeur réelle sur téléphone, plafonnée sur tablette. */
 export function getLayoutWidth(width: number): number {
-  return Math.min(width, CONTENT_MAX_WIDTH);
+  return Math.min(width, SCALE_MAX_WIDTH);
 }
 
 /**
@@ -114,9 +114,15 @@ export function getSpaceScale(width: number): number {
 }
 
 export function getGutter(width: number): number {
-  if (width >= BREAKPOINTS.tablet) return 32;
+  if (width >= 1024) return 48;
+  if (width >= BREAKPOINTS.tablet) return 40;
   if (width <= BREAKPOINTS.smallPhone) return 16;
   return 20;
+}
+
+/** Two summary cards need enough space for labels, including larger system text. */
+export function getOverviewColumns(contentWidth: number, fontScale = 1): 1 | 2 {
+  return contentWidth >= 720 * Math.max(1, fontScale) ? 2 : 1;
 }
 
 export function getColumns(width: number): number {

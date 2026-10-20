@@ -1,4 +1,4 @@
-import { planningGenerationWindow } from './planning-time';
+import { planningGenerationWindow, planningLastDay } from './planning-time';
 import type { MealPlan } from './api';
 
 export function localDateKey(date = new Date()): string {
@@ -13,8 +13,8 @@ export function planDays(weekStart: string) {
   });
 }
 
-export function isPastPlan(plan: Pick<MealPlan, 'weekStart' | 'weekEnd'>, today = localDateKey()): boolean {
-  const lastDay = plan.weekEnd || planDays(plan.weekStart)[6].key;
+export function isPastPlan(plan: Pick<MealPlan, 'weekStart' | 'weekEnd'> & Partial<Pick<MealPlan, 'meals' | 'preferences'>>, today = localDateKey()): boolean {
+  const lastDay = planningLastDay(plan);
   return lastDay < today;
 }
 
@@ -37,14 +37,14 @@ export function mealsForDay(plan: MealPlan, dayIndex: number) {
   return plan.meals.filter(meal => (meal.dayIndex ?? 0) === dayIndex).sort((a, b) => a.position - b.position);
 }
 
-export function formatPlanRange(plan: Pick<MealPlan, 'weekStart' | 'weekEnd'>, locale: string) {
+export function formatPlanRange(plan: Pick<MealPlan, 'weekStart' | 'weekEnd'> & Partial<Pick<MealPlan, 'meals' | 'preferences'>>, locale: string) {
   const formatter = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short' });
-  const lastDay = plan.weekEnd || planDays(plan.weekStart)[6].key;
+  const lastDay = planningLastDay(plan);
   return `${formatter.format(new Date(`${plan.weekStart}T12:00:00`))} – ${formatter.format(new Date(`${lastDay}T12:00:00`))}`;
 }
 
 /** Keep the newest active rolling week visible until its final calendar day. */
-export function displayedPlan(plans: MealPlan[], today = planningGenerationWindow().weekStart): MealPlan | undefined {
+export function displayedPlan(plans: MealPlan[], today = planningGenerationWindow().today): MealPlan | undefined {
   return plans.filter(plan => plan.weekStart <= today && !isPastPlan(plan, today))
     .sort((a, b) => b.weekStart.localeCompare(a.weekStart) || (b.updatedAt || '').localeCompare(a.updatedAt || ''))[0];
 }

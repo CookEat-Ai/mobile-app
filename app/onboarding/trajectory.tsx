@@ -1,3 +1,6 @@
+import { useResponsive } from '../../hooks/useResponsive';
+import { FORM_CONTENT_MAX_WIDTH } from '../../constants/Layout';
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { EntranceView } from '../../components/motion/Entrance';
 import { feedback } from '../../services/haptics';
 import { router } from 'expo-router';
@@ -20,6 +23,7 @@ import { calculateGoalTimeline } from '../../services/goalTimeline';
 export default function TrajectoryScreen() {
   const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
+  const { gutter } = useResponsive();
   const [profile, setProfile] = useState<FitnessProfile | null>(null);
   useEffect(() => {
     void loadFitnessProfile().then(setProfile);
@@ -51,7 +55,7 @@ export default function TrajectoryScreen() {
     ? t(`nutritionEstimate.curve.${profile.goal === 'gain_muscle' ? 'muscleEstimateNote' : 'estimateNote'}`)
     : t(`nutritionEstimate.curve.${hasTarget ? 'reviewTargetNote' : balanced ? 'balancedReviewNote' : 'maintainReviewNote'}`);
   return <View style={[styles.root, { paddingTop: insets.top }]}>
-    <OnboardingScrollView contentContainerStyle={[styles.content, { paddingBottom: 140 + insets.bottom }]} showsVerticalScrollIndicator={false}>
+    <OnboardingScrollView contentContainerStyle={[styles.content, { paddingHorizontal: Math.max(24, gutter), paddingBottom: 140 + insets.bottom }]} showsVerticalScrollIndicator={false}>
       <OnboardingIconCard name="flag-outline" />
       <Text style={styles.title}>{t(`nutritionEstimate.curve.${hasTarget ? 'title' : 'stableTitle'}`)}</Text>
       <Text style={styles.subtitle}>{t(hasTarget ? 'nutritionEstimate.toward' : balanced ? 'nutritionEstimate.followBalanced' : 'nutritionEstimate.curve.maintain', { weight: projection.targetWeightKg })}</Text>
@@ -77,12 +81,12 @@ export default function TrajectoryScreen() {
               <Stop offset="0" stopColor={Colors.light.button} stopOpacity={0.28} />
               <Stop offset="1" stopColor={Colors.light.button} stopOpacity={0.02} />
             </LinearGradient></Defs>
-            {[36, 80, 124].map(y => <Line key={y} x1={20} x2={300} y1={y} y2={y} stroke="#EFE8CF" strokeDasharray="4 6" />)}
+            {[36, 80, 124].map(y => <Line key={y} x1={20} x2={300} y1={y} y2={y} stroke={designTheme.line} strokeDasharray="4 6" />)}
             <Path d={`${path} L 300 150 L 20 150 Z`} fill="url(#goalFill)" />
             <Path d={path} stroke={Colors.light.button} strokeWidth={4} strokeLinecap="round" fill="none" />
             <Circle cx={160} cy={(startY + endY) / 2} r={4} fill={Colors.light.button} />
-            <Circle cx={20} cy={startY} r={6} fill="white" stroke={Colors.light.button} strokeWidth={3} />
-            <Circle cx={300} cy={endY} r={15} fill="#FFF4CF" />
+            <Circle cx={20} cy={startY} r={6} fill={designTheme.onPrimary} stroke={Colors.light.button} strokeWidth={3} />
+            <Circle cx={300} cy={endY} r={15} fill={designTheme.yellowSoft} />
             <Circle cx={300} cy={endY} r={7} fill={Colors.light.button} />
           </Svg>
           <View style={styles.timeAxis} accessible={false}>
@@ -103,11 +107,11 @@ export default function TrajectoryScreen() {
   </View>;
 }
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#FDF9E2' },
-  content: { width: '100%', maxWidth: 560, alignSelf: 'center', paddingHorizontal: 24, paddingTop: 16 },
+  root: { flex: 1, backgroundColor: designTheme.background },
+  content: { width: '100%', maxWidth: FORM_CONTENT_MAX_WIDTH, alignSelf: 'center', paddingHorizontal: 24, paddingTop: 16 },
   title: { marginTop: 16, textAlign: 'center', fontFamily: 'Degular', fontSize: 30, lineHeight: 36, color: Colors.light.text },
   subtitle: { marginTop: 12, textAlign: 'center', fontFamily: 'CronosPro', fontSize: 18, lineHeight: 24, color: Colors.light.textSecondary },
-  card: { marginTop: 20, padding: 20, borderRadius: 24, backgroundColor: 'white' },
+  card: { marginTop: 20, padding: 20, borderRadius: AppRadii.card, backgroundColor: designTheme.surface },
   caption: { fontFamily: 'CronosPro', fontSize: 14, color: Colors.light.textSecondary, textAlign: 'center' },
   period: { marginTop: 4, fontFamily: 'Degular', fontSize: 30, lineHeight: 36, color: Colors.light.text, textAlign: 'center' },
   pace: { marginTop: 4, marginBottom: 20, fontFamily: 'CronosPro', fontSize: 15, lineHeight: 20, color: Colors.light.textSecondary, textAlign: 'center' },

@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { AccessibilityInfo, AppState } from 'react-native';
+import { AccessibilityInfo, AppState, Platform } from 'react-native';
 
 const MotionContext = createContext(false);
 
 /** One system subscription for all entrance animations in the app. */
 export function MotionPreferencesProvider({ children }: { children: ReactNode }) {
   const [allowed, setAllowed] = useState(false);
-  const [foreground, setForeground] = useState(AppState.currentState === 'active');
+  const [foreground, setForeground] = useState(Platform.OS === 'web' || AppState.currentState === 'active');
   useEffect(() => {
     let active = true;
     let reduced = true;

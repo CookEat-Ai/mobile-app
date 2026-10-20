@@ -2,7 +2,7 @@
   "expo": {
     "name": "CookEat",
     "slug": "cookeat",
-    "version": "1.7.2",
+    "version": "1.8.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "cookeat",
@@ -45,11 +45,11 @@
         "android.permission.WAKE_LOCK",
         "com.google.android.gms.permission.AD_ID"
       ],
+      "package": "com.gokugen.cookeat",
+      "googleServicesFile": "./google-services.json",
       "blockedPermissions": [
         "android.permission.ACTIVITY_RECOGNITION"
-      ],
-      "package": "com.gokugen.cookeat",
-      "googleServicesFile": "./google-services.json"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -61,7 +61,8 @@
         "expo-build-properties",
         {
           "ios": {
-            "buildReactNativeFromSource": true
+            "buildReactNativeFromSource": true,
+            "enableSceneSupport": true
           }
         }
       ],

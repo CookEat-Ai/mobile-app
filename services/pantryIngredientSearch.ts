@@ -1,6 +1,7 @@
 import { pantryIngredientKey } from './planningPantry';
 
 export type PantrySuggestion = { id: string; name: string; icon: string };
+export type PantrySearchGroup = { id: string; title: string; icon: string; ingredients: PantrySuggestion[] };
 const quickSuggestions = ['poulet', 'oeufs', 'tomate', 'courgette', 'riz', 'feta', 'avocat', 'brocoli', 'pates', 'saumon'];
 
 /** Search the localized names, including accents and ligatures, without an API request. */
@@ -22,6 +23,12 @@ export function pantrySearchSuggestions(items: PantrySuggestion[], query: string
   const words = key.split(' ');
   return unique.filter(item => words.every(word => ingredientSearchKey(item.name).includes(word)))
     .sort((a, b) => Number(ingredientSearchKey(b.name).startsWith(key)) - Number(ingredientSearchKey(a.name).startsWith(key)));
+}
+
+/** Keep matching ingredients inside their familiar, localized food categories. */
+export function pantrySearchGroups(groups: PantrySearchGroup[], query: string): PantrySearchGroup[] {
+  return groups.map(group => ({ ...group, ingredients: pantrySearchSuggestions(group.ingredients, query) }))
+    .filter(group => group.ingredients.length > 0);
 }
 
 export function readPantryReviewIngredients(raw: unknown): string[] {

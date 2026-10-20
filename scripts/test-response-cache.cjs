@@ -28,6 +28,7 @@ function harness(storage = new Map([['userId', 'alice']]), base = 'https://examp
     '../config/storeCompliance': { CREATOR_PROMO_CODES_ENABLED: false },
     './anonymousSession': { getAnonymousSessionToken: async () => 'test-token', invalidateAnonymousSession() {} },
     './planningReveal': { markPlanningReveal() {} },
+    './personalRecipe': { personalMealPlan: async plan=>plan, writePersonalShoppingState: async()=>{} },
     'expo-localization': { getLocales: () => [] },
     'expo-file-system': { File: class {} },
     'react-native-sse': { __esModule: true, default: class {
@@ -75,7 +76,7 @@ function harness(storage = new Map([['userId', 'alice']]), base = 'https://examp
   response.data.recipe.id = 'edited';
   assert.equal((await h.api.getCatalogRecipe('a')).data.recipe.id, 'a', 'UI edits cannot mutate a cached recipe');
   await tick();
-  const saved = h.storage.get('@cookeat_catalog_response_cache_v1');
+  const saved = h.storage.get('@cookeat_catalog_response_cache_v4');
   assert(saved && !saved.includes('alice'), 'persistent cache contains public data only');
   const relaunched = harness(h.storage); relaunched.i18n.language = 'en';
   await relaunched.api.getRecipeCatalog();
@@ -163,7 +164,7 @@ function harness(storage = new Map([['userId', 'alice']]), base = 'https://examp
   await generated.api.deleteUser('device'); await generated.api.getRecipeHistory('alice');
   assert.equal(generated.calls.length, 5, 'account deletion invalidates personal reads');
 
-  const corrupt = harness(new Map([['@cookeat_catalog_response_cache_v1', '{bad']]));
+  const corrupt = harness(new Map([['@cookeat_catalog_response_cache_v4', '{bad']]));
   await corrupt.api.getRecipeCatalog(); assert.equal(corrupt.calls.length, 1, 'corrupt storage falls back to network');
   const unavailable = harness(); unavailable.failStorage();
   await unavailable.api.getRecipeCatalog(); await unavailable.api.getRecipeCatalog();
@@ -172,7 +173,7 @@ function harness(storage = new Map([['userId', 'alice']]), base = 'https://examp
   bounded.transport(async () => ok({ success: true, recipes: [{ text: 'x'.repeat(40000) }] }));
   for (let page = 1; page <= 100; page++) await bounded.api.getRecipeCatalog({ page });
   await tick();
-  assert(bounded.storage.get('@cookeat_catalog_response_cache_v1').length <= 1000000, 'persistent cache stays bounded');
+  assert(bounded.storage.get('@cookeat_catalog_response_cache_v4').length <= 1000000, 'persistent cache stays bounded');
   await bounded.api.getRecipeCatalog({ page: 1 });
   assert.equal(bounded.calls.length, 101, 'old memory entries are evicted');
   console.log('Response cache passed: hits, deduplication, persistence, scoping, refresh, TTL, offline policy, mutation/stream/account invalidation, races, corrupt/full storage and bounded eviction.');

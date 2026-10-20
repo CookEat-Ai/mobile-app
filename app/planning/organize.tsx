@@ -1,8 +1,9 @@
+import { AppModal as Modal } from '../../components/ui/AppModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { usePreventRemove } from 'expo-router/react-navigation';
 import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
@@ -90,7 +91,7 @@ export default function OrganizePlanScreen() {
         {saving ? <ActivityIndicator color={theme.ink} /> : <Text style={appStyles.buttonText}>{t(plan ? 'planningOrganize.done' : 'mealLibrary.retry')}</Text>}
       </Pressable>
     </View>
-    <Modal visible={!!leaveAction} transparent animationType="fade" onRequestClose={() => setLeaveAction(null)}>
+    <Modal visible={!!leaveAction} transparent onRequestClose={() => setLeaveAction(null)}>
       <View style={styles.backdrop}><View style={styles.dialog}>
         <Text style={appStyles.section}>{t('planningOrganize.discardTitle')}</Text><Text style={appStyles.subtitle}>{t('planningOrganize.discardBody')}</Text>
         <Pressable style={appStyles.button} accessibilityRole="button" onPress={() => setLeaveAction(null)}><Text style={appStyles.buttonText}>{t('planningOrganize.keepEditing')}</Text></Pressable>

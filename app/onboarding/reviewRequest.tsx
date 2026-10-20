@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -30,7 +31,7 @@ const RatingBadge = ({ style }: { style?: any }) => {
           <Text style={styles.ratingBadgeScore}>5.0</Text>
           <View style={styles.ratingBadgeStars}>
             {[1, 2, 3, 4, 5].map(s => (
-              <Ionicons key={s} name="star" size={16} color="#FEB50A" />
+              <Ionicons key={s} name="star" size={16} color={designTheme.yellow} />
             ))}
           </View>
         </View>
@@ -115,7 +116,7 @@ export default function ReviewRequestScreen() {
                     <Text style={styles.reviewName}>{review.name}</Text>
                     <View style={styles.stars}>
                       {[1, 2, 3, 4, 5].map(s => (
-                        <Ionicons key={s} name="star" size={14} color="#FEB50A" />
+                        <Ionicons key={s} name="star" size={14} color={designTheme.yellow} />
                       ))}
                     </View>
                   </View>
@@ -149,7 +150,7 @@ export default function ReviewRequestScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FDF9E2",
+    backgroundColor: designTheme.background,
   },
   content: {
     flex: 1,
@@ -182,16 +183,16 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   topBadge: {
-    backgroundColor: '#FFFBEB',
+    backgroundColor: designTheme.yellowSoft,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     borderWidth: 1,
-    borderColor: '#FEB50A',
+    borderColor: designTheme.yellow,
     marginBottom: 16,
   },
   topBadgeText: {
-    color: '#FEB50A',
+    color: designTheme.yellow,
     fontSize: 14,
     fontFamily: 'Degular'
   },
@@ -206,9 +207,9 @@ const styles = StyleSheet.create({
     color: Colors.light.button,
   },
   ratingSection: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     padding: 20,
-    borderRadius: 24,
+    borderRadius: AppRadii.card,
     width: '100%',
     alignItems: 'center',
     marginVertical: 24,
@@ -234,8 +235,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   reviewCard: {
-    backgroundColor: 'white',
-    borderRadius: 16,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.control,
     padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -269,7 +270,7 @@ const styles = StyleSheet.create({
   continueButton: {
     backgroundColor: Colors.light.button,
     paddingVertical: 18,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     width: '100%',
     alignItems: 'center',
     shadowColor: Colors.light.button,
@@ -283,7 +284,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 19,
     fontFamily: 'Degular',
   },
@@ -304,7 +305,7 @@ const styles = StyleSheet.create({
   },
   ratingBadgeScore: {
     fontSize: 32,
-    color: '#333',
+    color: designTheme.ink,
     lineHeight: 36,
     fontFamily: 'Degular'
   },

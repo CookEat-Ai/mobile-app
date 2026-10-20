@@ -11,10 +11,12 @@ import { useTranslation } from 'react-i18next';
 import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { apiService, type MealPlan } from '../../services/api';
+import { usePlanningClock } from '../../hooks/usePlanningClock';
 import { formatPlanRange, isPastPlan } from '../../services/planningDisplay';
 import { PlanWeekContent } from '../../components/planning/PlanWeekContent';
 
 export default function PlanDetailScreen() {
+  const clock = usePlanningClock();
   const { planId } = useLocalSearchParams<{ planId: string }>();
   const scrollRef = useRef<ScrollView>(null);
   const scrollOffset = useRef(0);
@@ -63,10 +65,11 @@ export default function PlanDetailScreen() {
       {error && <View><Text style={appStyles.error}>{error}</Text><TouchableOpacity style={appStyles.button} onPress={() => void loadPlan()}><Text style={appStyles.buttonText}>{t('mealLibrary.retry')}</Text></TouchableOpacity></View>}
       {plan && <><Text style={styles.week}>{formatPlanRange(plan, i18n.resolvedLanguage || 'fr')}</Text>
         <PlanWeekContent key={plan._id} plan={plan} onPlanChange={setPlan} onRevealStart={alignPlanningDays} />
-        {!isPastPlan(plan) && <TouchableOpacity accessibilityRole="button" style={styles.regenerate} onPress={() => {
-          if (isPastPlan(plan)) return;
+        {!isPastPlan(plan, clock.today) && <TouchableOpacity accessibilityRole="button" style={styles.regenerate} onPress={() => {
+          if (isPastPlan(plan, clock.today)) return;
           router.push({ pathname: '/planning/configure', params: { replace: 'true' } });
         }}><Ionicons name="refresh-outline" size={20} color={theme.ink} /><Text style={appStyles.textAction}>{t('planningDetail.regenerate')}</Text></TouchableOpacity>}
+        {isPastPlan(plan, clock.today) && <TouchableOpacity accessibilityRole="button" style={styles.regenerate} onPress={() => router.push('/planning/configure')}><Ionicons name="add-circle-outline" size={20} color={theme.ink}/><Text style={appStyles.textAction}>{t('dailyApp.createWeek')}</Text></TouchableOpacity>}
       </>}
     </ScrollView>
   </View>;

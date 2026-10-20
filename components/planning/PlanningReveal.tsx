@@ -1,3 +1,4 @@
+import { AppRadii, AppTheme as theme } from '../../constants/AppTheme';
 import { useMotionAllowed } from '../../contexts/MotionPreferences';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
@@ -5,7 +6,7 @@ import React, { useCallback, useLayoutEffect, useRef, useState, type ReactNode }
 import { StyleSheet, Text, TouchableOpacity, View, type LayoutRectangle } from 'react-native';
 import Animated, { cancelAnimation, Easing, ReduceMotion, useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
-import { AppTheme as theme } from '../../constants/AppTheme';
+
 import { consumePlanningReveal } from '../../services/planningReveal';
 import { planningStyles } from './PlanningStyles';
 
@@ -153,6 +154,6 @@ const styles = StyleSheet.create({
   measuring: { opacity: 0 },
   controls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 },
   progress: { fontFamily: 'CronosProBold', fontSize: 14, color: theme.muted },
-  replay: { alignSelf: 'center', minHeight: 44, paddingHorizontal: 14, borderRadius: 16, backgroundColor: theme.yellowSoft, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  replay: { alignSelf: 'center', minHeight: 44, paddingHorizontal: 14, borderRadius: AppRadii.control, backgroundColor: theme.yellowSoft, flexDirection: 'row', alignItems: 'center', gap: 8 },
   replayText: { fontFamily: 'CronosProBold', fontSize: 14, color: theme.ink },
 });

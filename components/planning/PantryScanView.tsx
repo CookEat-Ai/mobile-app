@@ -1,13 +1,14 @@
+import { AppModal as Modal } from '../ui/AppModal';
+import { AppRadii, AppTheme as theme } from '../../constants/AppTheme';
 import React, { useEffect, useRef } from 'react';
-import { ActivityIndicator, Animated, Easing, Modal, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Animated, Easing, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack } from 'expo-router';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { AppTheme as theme } from '../../constants/AppTheme';
+
 import { useMotionAllowed } from '../../contexts/MotionPreferences';
-import { NavigationIconButton } from '../NavigationIconButton';
 import { PantryIngredientReview } from './PantryIngredientReview';
 
 type PantryScanProps = {
@@ -16,11 +17,10 @@ type PantryScanProps = {
 };
 
 export function PantryScanView(props: PantryScanProps) {
-  const motion = useMotionAllowed();
   // Only analysis covers the phone. Capture and results stay in the camera sheet.
   const content = <SafeAreaProvider><PantryScanContent {...props} /></SafeAreaProvider>;
   return props.ingredients === null
-    ? <Modal visible presentationStyle="fullScreen" animationType={motion ? 'fade' : 'none'} statusBarTranslucent navigationBarTranslucent onRequestClose={props.onBack}>{content}</Modal>
+    ? <Modal visible presentationStyle="fullScreen" statusBarTranslucent navigationBarTranslucent onRequestClose={props.onBack}>{content}</Modal>
     : content;
 }
 
@@ -65,16 +65,15 @@ function PantryScanContent({ photoUris, ingredients, saving, onConfirm, onRetake
         <View style={[styles.corner, styles.topLeft]} /><View style={[styles.corner, styles.topRight]} /><View style={[styles.corner, styles.bottomLeft]} /><View style={[styles.corner, styles.bottomRight]} />
       </View>
       </View>
-    <NavigationIconButton kind="close" onPress={onBack} style={[styles.analysisClose, { top: insets.top + 24, left: insets.left + 24 }]} />
   </View>;
 }
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: theme.background }, analysisClose: { position: 'absolute' },
+  root: { flex: 1, backgroundColor: theme.background },
   photoStack: { width: '100%', flex: 1 },
-  stackedPhoto: { position: 'absolute', borderRadius: 24, overflow: 'hidden', borderWidth: 2, borderColor: theme.background, backgroundColor: theme.soft },
-  photo: { position: 'absolute', left: 0, bottom: 0, borderRadius: 24, overflow: 'hidden', backgroundColor: theme.soft, alignItems: 'center', justifyContent: 'center' },
+  stackedPhoto: { position: 'absolute', borderRadius: AppRadii.card, overflow: 'hidden', borderWidth: 2, borderColor: theme.background, backgroundColor: theme.soft },
+  photo: { position: 'absolute', left: 0, bottom: 0, borderRadius: AppRadii.card, overflow: 'hidden', backgroundColor: theme.soft, alignItems: 'center', justifyContent: 'center' },
   grid: { position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, flexDirection: 'row', flexWrap: 'wrap' }, cell: { width: '12.5%', height: '12.5%', borderWidth: 0.5, borderColor: 'rgba(255,255,255,0.35)' },
   scanLine: { position: 'absolute', left: 0, right: 0, height: 3, backgroundColor: theme.yellow, shadowColor: theme.yellow, shadowRadius: 16, shadowOpacity: 1, shadowOffset: { width: 0, height: 0 } },
-  photoBadge: { position: 'absolute', bottom: 18, backgroundColor: theme.yellowSoft, borderRadius: 100, paddingHorizontal: 14, paddingVertical: 10, flexDirection: 'row', gap: 8, alignItems: 'center' }, badgeText: { fontFamily: 'CronosProBold', fontSize: 14, color: theme.ink },
+  photoBadge: { position: 'absolute', bottom: 18, backgroundColor: theme.yellowSoft, borderRadius: AppRadii.pill, paddingHorizontal: 14, paddingVertical: 10, flexDirection: 'row', gap: 8, alignItems: 'center' }, badgeText: { fontFamily: 'CronosProBold', fontSize: 14, color: theme.ink },
   corner: { position: 'absolute', width: 30, height: 30, borderColor: theme.yellow }, topLeft: { left: 12, top: 12, borderLeftWidth: 3, borderTopWidth: 3 }, topRight: { right: 12, top: 12, borderRightWidth: 3, borderTopWidth: 3 }, bottomLeft: { left: 12, bottom: 12, borderLeftWidth: 3, borderBottomWidth: 3 }, bottomRight: { right: 12, bottom: 12, borderRightWidth: 3, borderBottomWidth: 3 },
 });

@@ -95,3 +95,107 @@ assert(temporary.steps[0].description.includes('10 minutes à 180 degrés'));
 assert.equal(library.ingredients[0].quantity, '1/2 kg', 'library source is never changed');
 assert.equal(servingsExports.recipeForServings(library, 1).servings, 1, 'reopening defaults to one');
 console.log('Temporary library servings preserve source recipes, fractions and cooking times.');
+
+// Exercise the real chooser handler and Expo's installed stack reducer.
+// This catches returns to Planning, duplicate detail screens and stale recipe params.
+const { StackRouter } = require('../node_modules/expo-router/build/react-navigation/routers/StackRouter');
+function findNode(file, predicate) {
+  const source = ts.createSourceFile(file, fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  let found;
+  function visit(node) { if (predicate(node, source)) found = node; ts.forEachChild(node, visit); }
+  visit(source); assert(found, `handler missing in ${file}`);
+  return found.initializer.getText(source);
+}
+const openChooser = findNode('app/recipe-detail.tsx', (node, source) => ts.isPropertyAssignment(node)
+  && node.name.getText(source) === 'onPress' && node.initializer.getText(source).includes("pathname: '/planning/choose-recipe'"));
+const previewRecipe = findNode('app/planning/choose-recipe.tsx', node => ts.isVariableDeclaration(node) && node.name.getText() === 'choose');
+const selectRecipe = findNode('app/recipe-detail.tsx', node => ts.isVariableDeclaration(node) && node.name.getText() === 'handleChoosePlannedMeal');
+const evaluate = (code, context) => vm.runInNewContext(ts.transpileModule(`globalThis.handler = ${code};`, {
+  compilerOptions: { target: ts.ScriptTarget.ES2022 },
+}).outputText, context);
+const replacementPlan = { _id: 'plan-a', meals: [{ slotId: 'slot-b', dayIndex: 3, mealType: 'dinner', status: 'ready', recipeId: 'recipe-new' }] };
+async function checkManualReturn(fromDetail, preview = false, fail = false, emptySlot = false) {
+  let params = { planId: 'plan-a', slotId: 'slot-b' };
+  if (fromDetail) {
+    const opener = { mealPlanId: 'plan-a', mealSlotId: 'slot-b', isWeeklyPlanPreview: preview,
+      router: { push: route => { assert.equal(route.pathname, '/planning/choose-recipe'); params = route.params; } } };
+    evaluate(openChooser, opener); opener.handler();
+    assert.equal(params.returnTo, 'recipe-detail', 'detail explicitly identifies its return destination');
+  }
+  if (emptySlot) params = { ...params, slotId: undefined, dayIndex: '3', mealType: 'dinner' };
+  const options = { routeNames: ['(tabs)', 'recipe-detail', 'planning/choose-recipe', 'planning/recipe-preview'], routeParamList: {}, routeGetIdList: {} };
+  const stack = StackRouter({ initialRouteName: '(tabs)' });
+  const oldParams = plannedMealRecipeParams('plan-a', 'slot-b', 'recipe-old', preview ? 'onboarding_week_preview' : 'meal_plan');
+  let state = { ...stack.getInitialState(options), index: fromDetail ? 2 : 1, routes: [
+    { name: '(tabs)', key: 'planning' },
+    ...(fromDetail ? [{ name: 'recipe-detail', key: 'original-detail', params: oldParams }] : []),
+    { name: 'planning/choose-recipe', key: 'chooser', params },
+  ] };
+  let navigations = 0, invalidations = 0, error = '', busy = false, requests = 0, previewRoute;
+  const previewContext = { ...params, selecting: { current: false }, setChoosing() {}, feedback: { light() {} },
+    plannedMealChoicePreviewRoute: exportsObject.plannedMealChoicePreviewRoute,
+    router: { push: route => {
+      previewRoute = route;
+      state = stack.getStateForAction(state, { type: 'PUSH', payload: { name: route.pathname.slice(1), params: route.params } }, options);
+    } },
+  };
+  previewContext.slotId ??= undefined; previewContext.dayIndex ??= undefined; previewContext.mealType ??= undefined;
+  previewContext.returnTo ??= undefined; previewContext.source ??= undefined;
+  evaluate(previewRecipe, previewContext); previewContext.handler('recipe-new');
+  assert.equal(previewRoute.pathname, '/planning/recipe-preview');
+  assert.equal(previewRoute.params.source, 'meal_library', 'preview loads the candidate from the catalogue');
+  assert.equal(previewRoute.params.selectForPlan, 'true');
+  assert.equal(previewRoute.params.recipeId, 'recipe-new');
+  assert(!isPlannedMealContext(previewRoute.params), 'an unconfirmed candidate does not receive the old meal’s portions');
+  assert.equal(requests, 0, 'opening the detail does not modify the plan');
+  const canceled = stack.getStateForAction(state, { type: 'GO_BACK' }, options);
+  assert.equal(canceled.routes.at(-1).key, 'chooser', 'Back from preview returns to the unchanged chooser');
+  const previewKey = state.routes.at(-1).key;
+  const request = async (planId, slotId, userId, recipeId) => {
+    requests++;
+    assert.equal(planId, 'plan-a'); assert.equal(slotId, 'slot-b'); assert.equal(userId, 'owner'); assert.equal(recipeId, 'recipe-new');
+    return fail ? { error: 'offline' } : { data: { plan: replacementPlan } };
+  };
+  const context = { params: previewRoute.params, selectionPlanId: previewRoute.params.selectionPlanId, selectionSlotId: previewRoute.params.selectionSlotId || null,
+    isMealSelectionPreview: true, choosingMealRef: { current: false }, loadingRecipe: false, recipeLoadError: null,
+    recipe: { id: 'recipe-new' }, setIsChoosingMeal: value => { busy = value; }, feedback: { confirm() {} },
+    Alert: { alert: (_, message) => { error = message; } }, t: key => key,
+    AsyncStorage: { getItem: async () => 'owner' }, apiService: { setPlannedMealRecipe: request,
+      addPlannedMeal: async (planId, userId, dayIndex, mealType, recipeId) => {
+        assert.equal(dayIndex, 3); assert.equal(mealType, 'dinner'); return request(planId, 'slot-b', userId, recipeId);
+      } },
+    invalidatePlanning: () => invalidations++, replacedMealPlanningRoute: exportsObject.replacedMealPlanningRoute,
+    router: { dismissTo: route => {
+      navigations++;
+      state = stack.getStateForAction(state, { type: 'POP_TO', payload: { name: route.pathname.slice(1), params: route.params } }, options);
+    } },
+  };
+  evaluate(selectRecipe, context);
+  context.loadingRecipe = true; await context.handler(); assert.equal(requests, 0, 'confirmation is blocked until the recipe has loaded');
+  context.loadingRecipe = false;
+  const saving = context.handler(); await context.handler(); await saving;
+  assert.equal(requests, 1, 'duplicate confirmations send one write');
+  assert.equal(busy, false); assert.equal(context.choosingMealRef.current, false);
+  if (fail) {
+    assert.equal(navigations, 0); assert.equal(invalidations, 0); assert.equal(error, 'offline');
+    assert.equal(state.routes.at(-1).key, previewKey, 'a failed save keeps the preview open for retry'); return;
+  }
+  assert.equal(navigations, 1); assert.equal(invalidations, 1);
+  assert.equal(state.routes.length, 1, 'confirmation dismisses the preview, chooser and previous detail');
+  assert.equal(state.routes[0].key, 'planning', 'confirmation returns directly to Planning from every entry point');
+  assert.equal(state.routes[0].params.selectedPlanId, replacementPlan._id);
+  assert.equal(state.routes[0].params.selectedDay, '3', 'Planning shows the day of the chosen meal');
+  assert(state.routes[0].params.selectionKey, 'Planning receives a fresh selection to reset its mounted day picker');
+}
+(async () => {
+  await checkManualReturn(true);
+  await checkManualReturn(true, true);
+  await checkManualReturn(false);
+  await checkManualReturn(false, false, false, true);
+  await checkManualReturn(true, false, true);
+  for (const locale of ['fr', 'en', 'de', 'es-ES', 'es-MX', 'pt-BR']) {
+    const strings = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'locales', `${locale}.json`), 'utf8'));
+    assert(strings.recipeDetail.chooseThisMeal && strings.recipeDetail.choosingMeal);
+  }
+  console.log('Manual meal preview passed: no write before confirmation, catalogue detail, Back to chooser, duplicate/loading guards, direct Planning return on the selected day, empty slots, errors and translated CTA.');
+})().catch(error => { console.error(error); process.exitCode = 1; });

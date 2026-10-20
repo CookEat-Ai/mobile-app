@@ -1,18 +1,20 @@
+import { AppModal as Modal } from '../../components/ui/AppModal';
+import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, FlatList, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { apiService, CatalogCuisine, CatalogRecipe } from '../../services/api';
+import { catalogCuisineQuery, toggleCatalogCuisine } from '../../services/catalogCuisineFilters';
 import { PlanMealCard } from '../../components/planning/PlanMealCard';
 import { AppScreenHeading } from '../../components/AppScreenHeading';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
 import { catalogMealCardData } from '../../services/catalogDisplay';
-import { invalidatePlanning } from '../../services/planningUpdates';
-import { replacedMealPlanningRoute } from '../../services/plannedMealNavigation';
-import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+import { plannedMealChoicePreviewRoute } from '../../services/plannedMealNavigation';
+
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { isPastPlanDay } from '../../services/planningDisplay';
 import { feedback } from '../../services/haptics';
@@ -21,7 +23,7 @@ type Filter = 'all' | 'protein' | 'express' | 'favorites';
 const FILTERS: Filter[] = ['all', 'protein', 'express', 'favorites'];
 
 export default function ChooseRecipe() {
-  const { planId, slotId, dayIndex, mealType } = useLocalSearchParams<{ planId: string; slotId?: string; dayIndex?: string; mealType?: string }>();
+  const { planId, slotId, dayIndex, mealType, returnTo, source } = useLocalSearchParams<{ planId: string; slotId?: string; dayIndex?: string; mealType?: string; returnTo?: string; source?: string }>();
   const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
   const { gutter, font } = useResponsive();
@@ -36,7 +38,7 @@ export default function ChooseRecipe() {
   const [choosing, setChoosing] = useState(false);
   const [error, setError] = useState('');
   const [filter, setFilter] = useState<Filter>('all');
-  const [cuisine, setCuisine] = useState('all');
+  const [cuisineIds, setCuisineIds] = useState<string[]>([]);
   const [cuisines, setCuisines] = useState<CatalogCuisine[]>([]);
   const [filtersVisible, setFiltersVisible] = useState(false);
   const page = useRef(0);
@@ -44,6 +46,10 @@ export default function ChooseRecipe() {
   const ended = useRef(false);
   const requestId = useRef(0);
   const selecting = useRef(false);
+  useFocusEffect(useCallback(() => {
+    selecting.current = false;
+    setChoosing(false);
+  }, []));
 
   const load = useCallback(async (append = false) => {
     if (selecting.current || (append && (pending.current || ended.current))) return;
@@ -76,7 +82,7 @@ export default function ChooseRecipe() {
       }
       const nextPage = append ? page.current + 1 : 1;
       const response = await apiService.getRecipeCatalog({
-        page: nextPage, limit: 50, cuisineId: cuisine, search: query,
+        page: nextPage, limit: 50, cuisineId: catalogCuisineQuery(cuisineIds), search: query,
         mealType: targetType === 'breakfast' || targetType === 'snack' ? 'breakfast' : 'main',
         highProtein: filter === 'protein', express: filter === 'express',
         diet: typeof plan?.preferences?.diet === 'string' ? plan.preferences.diet : undefined,
@@ -94,7 +100,7 @@ export default function ChooseRecipe() {
     } finally {
       if (version === requestId.current) { pending.current = false; setBusy(false); }
     }
-  }, [planId, slotId, dayIndex, mealType, cuisine, filter, query, t]);
+  }, [planId, slotId, dayIndex, mealType, cuisineIds, filter, query, t]);
 
   useEffect(() => {
     void load();
@@ -114,18 +120,18 @@ export default function ChooseRecipe() {
     id: item.id, label: item.names.find(name => name.language === language)?.value
       || item.names.find(name => name.language === 'fr')?.value || item.names[0]?.value || item.id,
   }))];
+  const hasCuisineFilters = cuisineIds.length > 0;
+  const selectCuisine = (id: string) => {
+    if (choosing || (id === 'all' && !hasCuisineFilters)) return;
+    feedback.selection();
+    setCuisineIds(current => toggleCatalogCuisine(current, id));
+  };
 
-  const choose = async (recipeId: string) => {
+  const choose = (recipeId: string) => {
     if (selecting.current) return;
-    selecting.current = true; setChoosing(true); setError('');
-    try {
-      const userId = await AsyncStorage.getItem('userId');
-      if (!userId) throw new Error(t('planning.errors.user'));
-      const response = slotId ? await apiService.setPlannedMealRecipe(planId, slotId, userId, recipeId) : await apiService.addPlannedMeal(planId, userId, Number(dayIndex), mealType!, recipeId);
-      if (!response.data?.plan) throw new Error(response.error || t('planning.errors.replace'));
-      invalidatePlanning(); router.dismissTo(replacedMealPlanningRoute(response.data.plan, slotId || response.data.plan.meals.find(meal => meal.dayIndex === Number(dayIndex) && meal.mealType === mealType)!.slotId));
-    } catch (e) { setError(e instanceof Error ? e.message : t('planning.errors.replace')); }
-    finally { selecting.current = false; setChoosing(false); }
+    selecting.current = true; setChoosing(true);
+    feedback.light();
+    router.push(plannedMealChoicePreviewRoute(recipeId, { planId, slotId, dayIndex, mealType, returnTo, source }));
   };
 
   return <View style={appStyles.screen}>
@@ -133,9 +139,9 @@ export default function ChooseRecipe() {
       <NavigationIconButton onPress={() => router.back()} accessibilityLabel={t('common.back')} />
       <Text accessibilityRole="header" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.65}
         style={[appStyles.headerTitle, appStyles.backHeaderLeadingTitle, { fontSize: font(29) }]}>{t('recipeDetail.chooseReplacement')}</Text>
-      {filter !== 'favorites' && <TouchableOpacity disabled={choosing} style={[appStyles.iconButton, cuisine !== 'all' && { backgroundColor: theme.yellow }]}
-        accessibilityRole="button" accessibilityLabel={t('dailyApp.filters')} accessibilityState={{ selected: cuisine !== 'all', disabled: choosing }}
-        onPress={() => { feedback.light(); setFiltersVisible(true); }}><Ionicons name="options-outline" size={24} color={theme.ink} /></TouchableOpacity>}
+      {filter !== 'favorites' && <TouchableOpacity disabled={choosing} style={[appStyles.iconButton, hasCuisineFilters && { backgroundColor: theme.yellow }]}
+        accessibilityRole="button" accessibilityLabel={t('dailyApp.filters')} accessibilityState={{ selected: hasCuisineFilters, disabled: choosing }}
+        onPress={() => { feedback.light(); setFiltersVisible(true); }}><Ionicons name="options-outline" size={24} color={hasCuisineFilters ? theme.surface : theme.ink} /></TouchableOpacity>}
     </View>
     <View style={[styles.search, { marginHorizontal: gutter }]}><Ionicons name="search" size={20} color={theme.muted} /><TextInput value={search} onChangeText={setSearch} editable={!choosing} placeholder={t('common.searchPlaceholder')} accessibilityLabel={t('common.searchPlaceholder')} style={styles.searchInput} returnKeyType="search" autoCorrect={false} onSubmitEditing={() => setQuery(search.trim())} />{!!search && <TouchableOpacity accessibilityRole="button" accessibilityLabel={t('dailyApp.clearFilters')} disabled={choosing} onPress={() => setSearch('')}><Ionicons name="close-circle" size={22} color={theme.muted} /></TouchableOpacity>}</View>
     <FlatList keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" style={{ flex: 1 }} contentContainerStyle={{ ...contentColumn(), paddingHorizontal: gutter, paddingBottom: insets.bottom + 30 }}
@@ -147,20 +153,25 @@ export default function ChooseRecipe() {
             <Text style={[styles.filterText, item === filter && styles.filterTextActive]}>{t(`mealLibrary.types.${item}`)}</Text>
           </TouchableOpacity>)}
         </ScrollView>
-        {filter !== 'favorites' && cuisine !== 'all' && <TouchableOpacity disabled={choosing} style={styles.appliedFilter} accessibilityRole="button" accessibilityLabel={t('dailyApp.clearFilters')}
-          onPress={() => { feedback.selection(); setCuisine('all'); }}><Text style={styles.filterText}>{cuisineChoices.find(item => item.id === cuisine)?.label}</Text><Ionicons name="close" size={16} color={theme.ink} /></TouchableOpacity>}
+        {filter !== 'favorites' && hasCuisineFilters && <View style={styles.appliedFilters}>{cuisineChoices.filter(item => cuisineIds.includes(item.id)).map(item =>
+          <TouchableOpacity key={item.id} disabled={choosing} style={styles.appliedFilter} accessibilityRole="button" accessibilityLabel={`${t('dailyApp.clearFilters')}: ${item.label}`}
+            onPress={() => selectCuisine(item.id)}><Text style={styles.filterText}>{item.label}</Text><Ionicons name="close" size={16} color={theme.ink} /></TouchableOpacity>
+        )}</View>}
         {!!error && <View style={styles.state}><Text style={appStyles.error}>{error}</Text><TouchableOpacity style={appStyles.button} onPress={() => void load(recipes.length > 0)}><Text style={appStyles.buttonText}>{t('mealLibrary.retry')}</Text></TouchableOpacity></View>}
       </>}
       ListEmptyComponent={!busy && !error ? <View style={styles.state}><Text style={appStyles.subtitle}>{t('mealLibrary.empty')}</Text></View> : null}
       renderItem={({ item }) => <PlanMealCard meal={catalogMealCardData(item)} disabled={choosing} onPress={() => void choose(item.id)} />}
       onEndReached={() => { if (!error && query === search.trim()) void load(true); }} onEndReachedThreshold={0.5}
       ListFooterComponent={busy || choosing ? <ActivityIndicator style={{ paddingVertical: 20 }} color={theme.yellow} /> : null} />
-    <Modal visible={filtersVisible} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setFiltersVisible(false)}>
+    <Modal visible={filtersVisible} presentationStyle="pageSheet" onRequestClose={() => setFiltersVisible(false)}>
       <View style={appStyles.screen}>
         <View style={{ ...contentColumn(), paddingHorizontal: gutter, paddingTop: 24 }}><AppScreenHeading title={t('dailyApp.cuisines')} action={<NavigationIconButton kind="close" onPress={() => setFiltersVisible(false)} />} /></View>
         <ScrollView contentContainerStyle={{ ...contentColumn(), paddingHorizontal: gutter, paddingBottom: insets.bottom + 32 }}>
-          {cuisineChoices.map(item => <TouchableOpacity key={item.id} style={[styles.cuisineRow, cuisine === item.id && styles.cuisineSelected]} accessibilityRole="radio" accessibilityState={{ checked: cuisine === item.id }}
-            onPress={() => { if (cuisine !== item.id) feedback.selection(); setCuisine(item.id); setFiltersVisible(false); }}><Text style={styles.cuisineText}>{item.label}</Text>{cuisine === item.id && <Ionicons name="checkmark-circle" size={23} color={theme.yellow} />}</TouchableOpacity>)}
+          {cuisineChoices.map(item => {
+            const selected = item.id === 'all' ? !hasCuisineFilters : cuisineIds.includes(item.id);
+            return <TouchableOpacity key={item.id} disabled={choosing} style={[styles.cuisineRow, selected && styles.cuisineSelected]} accessibilityRole="checkbox" accessibilityState={{ checked: selected, disabled: choosing }}
+              onPress={() => selectCuisine(item.id)}><Text style={styles.cuisineText}>{item.label}</Text>{selected && <Ionicons name="checkmark-circle" size={23} color={theme.yellow} />}</TouchableOpacity>;
+          })}
         </ScrollView>
       </View>
     </Modal>
@@ -168,16 +179,17 @@ export default function ChooseRecipe() {
 }
 
 const styles = StyleSheet.create({
-  search: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 52, paddingHorizontal: 16, marginBottom: 16, borderRadius: 18, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface },
+  search: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 52, paddingHorizontal: 16, marginBottom: 16, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface },
   searchInput: { flex: 1, minHeight: 52, fontFamily: 'CronosPro', fontSize: 17, color: theme.ink },
   filters: { gap: 8, paddingBottom: 20 },
-  filter: { minHeight: 48, justifyContent: 'center', borderRadius: 17, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, paddingHorizontal: 17 },
+  filter: { minHeight: 48, justifyContent: 'center', borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, paddingHorizontal: 17 },
   filterActive: { backgroundColor: theme.yellow, borderColor: theme.yellow },
   filterText: { fontFamily: 'Degular', fontSize: 17, color: theme.muted },
-  filterTextActive: { color: 'white' },
-  appliedFilter: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#FFF6D9', paddingHorizontal: 14, minHeight: 44, borderRadius: 14, marginBottom: 18 },
-  cuisineRow: { minHeight: 60, padding: 16, marginBottom: 10, borderRadius: 17, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  cuisineSelected: { backgroundColor: '#FFF6D9', borderColor: theme.yellow },
+  filterTextActive: { color: theme.onPrimary },
+  appliedFilters: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 18 },
+  appliedFilter: { alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: theme.yellowSoft, paddingHorizontal: 14, minHeight: 44, borderRadius: AppRadii.control },
+  cuisineRow: { minHeight: 60, padding: 16, marginBottom: 10, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  cuisineSelected: { backgroundColor: theme.yellowSoft, borderColor: theme.yellow },
   cuisineText: { fontFamily: 'Degular', fontSize: 19, color: theme.ink, flex: 1 },
   state: { ...appStyles.card, alignItems: 'center', gap: 16, marginBottom: 12 },
 });

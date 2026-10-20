@@ -1,4 +1,28 @@
 {
+  "mealCost": {
+    "recipeSource": "Originalrezept",
+    "adaptedRecipe": "Mengen und Text von CookEat angepasst",
+    "authors": "Mitwirkende und Versionsgeschichte",
+    "proxy": "Geringere Genauigkeit: Anpassung über das allgemeine Preisniveau des Landes (Weltbank), da kein Lebensmittelindex vorliegt.",
+    "total": "Geschätzte Plankosten: {{amount}}",
+    "portion": "≈ {{amount}} / Person",
+    "range": "Spanne: {{low}}–{{high}} insgesamt",
+    "note": "Geschätzte Kosten der verwendeten Zutaten, ohne ganze Packungen, Energie und Lieferung.",
+    "partial": "Teilschätzung: mindestens {{amount}}",
+    "unavailable": "Preisschätzung für dieses Land oder diese Zutaten nicht verfügbar",
+    "missing": "Ohne Preis: {{ingredients}}",
+    "household": "Gesamt für {{count}} Personen: {{amount}}",
+    "weekTitle": "Dein Wochenbudget",
+    "dishTitle": "Kosten dieses Gerichts",
+    "estimateLabel": "Geschätzte Zutatenkosten",
+    "details": "Über diese Schätzung",
+    "forWeek": "für den gesamten Plan",
+    "perPerson": "pro Person",
+    "incompleteLabel": "Teilschätzung",
+    "budgetLabel": "Dein Budget",
+    "remaining": "Geschätzt {{amount}} übrig",
+    "noTarget": "Kein Budgetziel festgelegt"
+  },
   "planningFlow": {
     "startsTomorrow": "Es ist spät: Dein Plan beginnt morgen.",
     "remainingToday": "Heute werden nur noch kommende Mahlzeiten geplant.",
@@ -20,7 +44,10 @@
     "cuisinesError": "Die Küchen konnten nicht geladen werden. Versuche es erneut.",
     "goalTitle": "Was ist dein Ziel?",
     "scanFridge": "Meinen Kühlschrank scannen",
-    "skip": "Überspringen"
+    "skip": "Überspringen",
+    "cookingLevelTitle": "Wie gut kannst du kochen?",
+    "equipmentsTitle": "Welche Küchengeräte hast du?",
+    "mealBudgetTitle": "Wie hoch ist dein Budget für Mahlzeiten?"
   },
   "planningReveal": {
     "replay": "Woche erneut ansehen",
@@ -194,7 +221,7 @@
       "macros": "Kalorien und Makros passend zu deinem Ziel",
       "shopping": "Automatische Einkaufsliste zum Abhaken im Laden",
       "cta": "Meine Richtwerte ansehen",
-      "subtitle": "Sieh dir jetzt deine täglichen Richtwerte an und erfahre, wie du dein Ziel verfolgen kannst."
+      "subtitle": "Sieh dir deine täglichen Richtwerte an und erfasse deine Mahlzeiten mit einem Foto."
     },
     "preview": {
       "generating": "Wir erstellen 7 vollständige, abwechslungsreiche Tage passend zu deinem Ziel. Das kann einen Moment dauern.",
@@ -658,7 +685,8 @@
     "profile": "Einstellungen",
     "planning": "Plan",
     "meals": "Mahlzeiten",
-    "goal": "Ziel"
+    "goal": "Ziel",
+    "tracking": "Tracking"
   },
   "planning": {
     "dayMeals": "Mahlzeiten am {{day}}",
@@ -786,7 +814,8 @@
     "ingredientsShort": "Zut.",
     "stepsShort": "Schritte",
     "stepShort": "Schritt",
-    "or": "ODER"
+    "or": "ODER",
+    "retry": "Erneut versuchen"
   },
   "promoCode": {
     "activated": "Promo-Code erfolgreich aktiviert!",
@@ -969,30 +998,30 @@
     "billedAnnually": "{{price}} jährlich abgerechnet",
     "weeklyPlanning": {
       "headline": "Iss besser, in deinem Tempo.",
-      "subheadline": "Plane jede Woche Rezepte für 7 Tage, passe Mahlzeiten an und erstelle die Einkaufsliste mit einem Tipp.",
+      "subheadline": "Plane Mahlzeiten und Einkäufe und schätze die Kalorien und das Protein auf deinem Teller per Foto.",
       "cta": "Meine Woche freischalten",
       "goals": {
         "lose_weight": {
           "headline": "Mahlzeiten für dein Abnehmziel.",
-          "subheadline": "Plane deine Woche mit passenden Portionen und Kalorienrichtwerten für dein Ziel. Deine Einkaufsliste passt sich deinem Plan an."
+          "subheadline": "Mahlzeiten passend zu deinem Ziel und Kalorientracking per Foto helfen dir, im Alltag dranzubleiben."
         },
         "gain_muscle": {
           "headline": "Ernähre dich für deinen Muskelaufbau.",
-          "subheadline": "Plane Mahlzeiten mit Protein über den Tag verteilt und Portionen passend zu deinem Ziel. Deine Einkaufsliste ist bereit."
+          "subheadline": "Mahlzeiten passend zu deinem Ziel und Kalorien- und Proteintracking per Foto unterstützen dein Training."
         },
         "maintain": {
           "headline": "Bleib im Gleichgewicht.",
-          "subheadline": "Plane Mahlzeiten nach deinem Bedarf, um dein Gewicht zu halten, mit klaren Portionen und fertiger Einkaufsliste."
+          "subheadline": "Plane Mahlzeiten nach deinem Bedarf und verfolge Kalorien per Foto für dein Gleichgewicht."
         },
         "balanced": {
           "headline": "Ausgewogen essen, ganz einfach.",
-          "subheadline": "Entdecke jede Woche abwechslungsreiche Mahlzeiten nach deinen Vorlieben, mit passenden Portionen und fertiger Einkaufsliste."
+          "subheadline": "Abwechslungsreiche Mahlzeiten, eine fertige Einkaufsliste und Kalorien- und Proteintracking per Foto."
         }
       }
     },
     "loadingOfferings": "Angebote werden geladen ...",
     "title": "Alle Funktionen freischalten",
-    "subtitle": "Erstelle Rezepte aus dem, was du hast, importiere Rezepte, die dich inspirieren, und finde alles an einem Ort – ohne Einschränkungen.",
+    "subtitle": "Plane Mahlzeiten und Einkäufe und schätze die Kalorien und das Protein auf deinem Teller per Foto.",
     "purchaseErrorTitle": "Kauffehler",
     "purchaseErrorDescription": "Beim Kauf ist ein Fehler aufgetreten. Bitte versuche es erneut.",
     "features": {
@@ -1005,7 +1034,8 @@
       "refine": "Ergebnis verfeinern",
       "diet": "Persönliche Ernährung",
       "world": "Weltküche",
-      "pantry": "Vorratskammer"
+      "pantry": "Vorratskammer",
+      "photoTracking": "Kalorien und Protein per Foto schätzen"
     },
     "plans": {
       "weekly": "7 Tage",
@@ -1047,7 +1077,7 @@
     "noPaymentDueNow": "Jetzt keine Zahlung fällig",
     "trialHeadline_one": "Alle Funktionen freischalten",
     "trialHeadline_other": "Alle Funktionen freischalten",
-    "trialSubheadline": "Erstelle Rezepte aus dem, was du hast, importiere Rezepte, die dich inspirieren, und finde alles an einem Ort – ohne Einschränkungen.",
+    "trialSubheadline": "Plane Mahlzeiten und Einkäufe und schätze die Kalorien und das Protein auf deinem Teller per Foto.",
     "startTrial_one": "KOSTENLOS starten",
     "startTrial_other": "KOSTENLOS starten",
     "unlimitedRecipes": "Unbegrenzte Rezepte",
@@ -1332,12 +1362,12 @@
       "title": "Probiere CookEat kostenlos aus",
       "subtitle": "Entdecke CookEat {{count}} Tage lang kostenlos.",
       "eligibleTitle": "Teste CookEat {{count}} Tage kostenlos",
-      "eligibleSubtitle": "Alle Rezepte – erstellt oder importiert – während deiner Testphase ohne Einschränkungen.",
+      "eligibleSubtitle": "Deine Rezepte, Speisepläne und dein Kalorientracking per Foto während der Testphase.",
       "standardTitle": "Probiere CookEat kostenlos aus",
-      "standardSubtitle": "Dein persönlicher Speiseplan und deine Einkaufsliste mit CookEat.",
+      "standardSubtitle": "Dein Speiseplan, deine Einkaufsliste und dein Kalorientracking per Foto an einem Ort.",
       "trialPill": "{{count}} Tage kostenlos",
       "storePill": "7 Tage kostenlos",
-      "includedTitle": "Alles fürs tägliche Kochen",
+      "includedTitle": "Alles für Mahlzeiten und tägliches Tracking",
       "noPayment": "Jetzt keine Zahlung fällig",
       "reviewOffer": "Jetzt keine Zahlung fällig",
       "button": "KOSTENLOS fortfahren",
@@ -1347,22 +1377,22 @@
       "annualPriceLineWithoutMonthly": "Danach nur {{price}} pro Jahr",
       "personalized": {
         "lose_weight": {
-          "subtitle": "Bleib an deinem Abnehmziel dran – mit Mahlzeiten, die für dich geplant sind.",
+          "subtitle": "Mahlzeiten passend zu deinem Ziel und Kalorientracking per Foto helfen dir, im Alltag dranzubleiben.",
           "includedTitle": "Dein Begleiter beim Abnehmen",
           "nutrition": "Portionen passend zu deinem Ziel"
         },
         "gain_muscle": {
-          "subtitle": "Unterstütze deinen Einsatz mit Mahlzeiten für deinen Muskelaufbau.",
+          "subtitle": "Mahlzeiten passend zu deinem Ziel und Kalorien- und Proteintracking per Foto unterstützen dein Training.",
           "includedTitle": "Ernährung für deinen Muskelaufbau",
           "nutrition": "Eiweißrichtwerte für deine Mahlzeiten"
         },
         "maintain": {
-          "subtitle": "Behalte deine guten Gewohnheiten bei, ohne täglich neu zu überlegen, was du kochst.",
+          "subtitle": "Plane Mahlzeiten nach deinem Bedarf und verfolge Kalorien per Foto für dein Gleichgewicht.",
           "includedTitle": "Dein Gleichgewicht, Tag für Tag",
           "nutrition": "Richtwerte zum Halten deines Gewichts"
         },
         "balanced": {
-          "subtitle": "Iss ausgewogener, ohne täglich neu zu überlegen, was du kochst.",
+          "subtitle": "Abwechslungsreiche Mahlzeiten, eine fertige Einkaufsliste und Kalorien- und Proteintracking per Foto.",
           "includedTitle": "Besser essen wird einfacher",
           "nutrition": "Orientierung für ausgewogene Mahlzeiten"
         }
@@ -1702,10 +1732,20 @@
       }
     },
     "welcomeTitle": "Dein Ernährungspartner für deine Ziele 💪",
-    "welcomeSubtitle": "Iss gesund, tanke Protein und mache Fortschritte in deinem Tempo.",
+    "welcomeSubtitle": "Plane deine Mahlzeiten und verfolge deine Kalorien mit einem Foto.",
     "welcomeCta": "Jetzt loslegen",
     "importHandoff": "Perfekt. Holen wir dein erstes importiertes Rezept 👇",
-    "welcomeSocialProof": "Schon über {{total}} Mahlzeiten für eine bessere Ernährung erstellt"
+    "welcomeSocialProof": "Schon über {{total}} Mahlzeiten für eine bessere Ernährung erstellt",
+    "photoTracking": {
+      "title": "Ein Foto, dein Überblick.",
+      "subtitle": "Deine Woche ist bereit. Möchtest du auch dein Essen erfassen?",
+      "cardTitle": "Fotografiere deine Mahlzeit",
+      "correct": "Die Lebensmittel erscheinen nach und nach. Passe die Mengen vor dem Speichern an.",
+      "try": "Mein Essen analysieren",
+      "later": "Später",
+      "savedTitle": "Deine erste Mahlzeit ist erfasst!",
+      "savedBody": "Sie ist in deinem Tagebuch gespeichert. Weiter mit der Einrichtung."
+    }
   },
   "weeklyOnboarding": {
     "preview": {
@@ -1907,7 +1947,9 @@
     "imageUpdateError": "Fehler beim Aktualisieren des Bildes",
     "imagePickError": "Fehler bei der Bildauswahl",
     "chooseReplacement": "Choose from recipes",
-    "automaticReplacement": "Choose automatically"
+    "automaticReplacement": "Choose automatically",
+    "chooseThisMeal": "Diese Mahlzeit wählen",
+    "choosingMeal": "Wird gespeichert…"
   },
   "planningHistory": {
     "empty": "Noch keine Pläne",
@@ -2131,7 +2173,7 @@
     "editSelection": "Tage ändern",
     "editPreferences": "Vorlieben bearbeiten",
     "offerTitle": "Iss besser. Ab heute.",
-    "offerSubtitle": "Entdecke die Abos für deinen Speiseplan und deine Einkaufsliste.",
+    "offerSubtitle": "Dein Speiseplan, deine Einkaufsliste und dein Kalorientracking per Foto an einem Ort.",
     "offerPill": "CookEat Premium",
     "offerReassurance": "Wähle dein Abo im nächsten Schritt",
     "seePlans": "Abos ansehen",
@@ -2410,5 +2452,186 @@
     "emptyManual": "Füge die Zutaten hinzu, die du diese Woche verwenden möchtest.",
     "limit": "Du kannst bis zu 100 Zutaten hinzufügen.",
     "analyzePhotos": "Fotos analysieren"
+  },
+  "cookingPreferences": {
+    "levelTitle": "Wie gut kannst du kochen?",
+    "levelSubtitle": "Rezepte passend zu deiner Erfahrung, mit einfachen Schritten.",
+    "equipmentTitle": "Welche Küchengeräte hast du?",
+    "equipmentSubtitle": "Herd, Pfanne und Topf reichen aus. Wähle deine zusätzlichen Geräte.",
+    "basicKitchen": "Nur die Grundausstattung",
+    "budgetTitle": "Wie hoch ist dein Budget für Mahlzeiten?",
+    "budgetSubtitle": "Bei kleinem Budget bevorzugen wir alltägliche Zutaten und verwenden sie mehrfach. Einige Gerichte können sich in der Woche wiederholen."
+  },
+  "recipeChat": {
+    "title": "Dein Rezept, deine Art",
+    "subtitle": "Eine Frage oder eine Zutat ersetzen?",
+    "personal": "Persönliche Version · auf diesem Gerät gespeichert",
+    "notice": "Fragen zu Kochen, Portionen, Nährwerten und Budget. Anpassungen bleiben auf diesem Gerät und ändern den Katalog nicht.",
+    "welcome": "Wie kann ich bei diesem Rezept helfen?",
+    "questionExample": "Kann ich dieses Rezept ohne {{ingredient}} zubereiten?",
+    "changeExample": "Schlage einen Ersatz für {{ingredient}} vor.",
+    "placeholder": "Deine Frage oder Änderung…",
+    "send": "Senden",
+    "close": "Schließen",
+    "thinking": "Antwort wird vorbereitet…",
+    "error": "Die Antwort konnte nicht erstellt werden. Deine Anfrage bleibt erhalten. Versuche es erneut.",
+    "loadError": "Der Chat konnte nicht geöffnet werden. Versuche es erneut.",
+    "reset": "Originalrezept wiederherstellen",
+    "resetDescription": "Anpassungen und Chat zu diesem Rezept werden von diesem Gerät entfernt.",
+    "adaptedNote": "Persönliche KI-Anpassung. Mengen, Nährwerte und Preise sind Schätzungen; Produktetiketten prüfen.",
+    "retry": "Erneut versuchen"
+  },
+  "tracking": {
+    "mealPhoto": "Foto der Mahlzeit",
+    "createFood": "Lebensmittel erstellen",
+    "foodName": "Name des Lebensmittels",
+    "portionGrams": "Verzehrte Menge (g)",
+    "editNutrition": "Nährwerte bearbeiten",
+    "editFoodNutrition": "Nährwerte für {{name}} bearbeiten",
+    "editMealNutrition": "Mahlzeitwerte bearbeiten",
+    "resetMealNutrition": "Aus Lebensmitteln neu berechnen",
+    "userNutrition": "Manuell eingegebene Werte",
+    "portionNutritionNote": "Gib Kalorien und Makros für die verzehrte Menge ein, nicht pro 100 g.",
+    "mealNutritionNote": "Gib Kalorien und Makros für die gesamte Mahlzeit ein. Einzelne Lebensmittel musst du nicht auflisten.",
+    "manualTotalNote": "Manuell eingegebene Werte. Änderungen an Lebensmitteln berechnen die Summe neu.",
+    "nutritionInputHelp": "Fülle alle vier Werte aus. Kommazahlen und 0 sind erlaubt.",
+    "applyNutrition": "Übernehmen",
+    "addManually": "Ohne Foto hinzufügen",
+    "manualTitle": "Mahlzeit ohne Foto",
+    "withoutPhoto": "Ohne Foto",
+    "manualBody": "Foto vergessen? Ergänze Lebensmittel und Mengen in deinem Tagebuch.",
+    "mealCategory": "Mahlzeit",
+    "title": "Mein Tracking",
+    "dailyJournal": "JEDE MAHLZEIT ZÄHLT",
+    "streakLabel": "{{count}} aufeinanderfolgende Tracking-Tage",
+    "today": "Heute",
+    "goal": "Ziel",
+    "dailyTarget": "MEIN RICHTWERT",
+    "kcalPerDay": "kcal pro Tag",
+    "flexibleTarget": "Ein flexibler Richtwert, Tag für Tag.",
+    "energyLabel": "{{current}} erfasste Kalorien bei einem Richtwert von {{goal}}",
+    "proteins": "Eiweiß",
+    "carbs": "Kohlenhydrate",
+    "fats": "Fett",
+    "yourMeals": "Meine Mahlzeiten",
+    "emptyTitle": "Dein Essen mit einem Foto",
+    "emptyBody": "Fotografiere deinen Teller, entdecke die Lebensmittel und passe die Mengen an.",
+    "scanMeal": "Mahlzeit scannen",
+    "editMeal": "Mahlzeit bearbeiten",
+    "deleteMeal": "{{name}} löschen",
+    "deleteTitle": "Diese Mahlzeit löschen?",
+    "deleteBody": "Diese Mahlzeit und ihr Foto werden aus deinem Tagebuch entfernt.",
+    "loadError": "Dein Tagebuch konnte nicht geladen werden. Versuche es erneut.",
+    "saveError": "Speichern fehlgeschlagen. Deine Änderungen bleiben erhalten.",
+    "captureTitle": "Eine Mahlzeit, ein Foto",
+    "photoPromise": "Entdecke, was auf deinem Teller ist",
+    "cameraPermission": "Erlaube den Kamerazugriff, um dein Essen zu analysieren. Du kannst auch ein Foto auswählen.",
+    "cameraUnavailable": "Kamera nicht verfügbar. Wähle ein Foto aus deiner Galerie.",
+    "allowCamera": "Kamera aktivieren",
+    "settings": "Einstellungen öffnen",
+    "frameMeal": "Fotografiere den ganzen Teller bei gutem Licht.",
+    "gallery": "Galerie",
+    "takePhoto": "Mahlzeit fotografieren",
+    "photoError": "Das Foto konnte nicht vorbereitet werden. Versuche es erneut.",
+    "analysisError": "Analyse nicht verfügbar. Versuche ein schärferes Foto.",
+    "untitledMeal": "Meine Mahlzeit",
+    "retake": "Anderes Foto wählen",
+    "saved": "Mahlzeit hinzugefügt!",
+    "autoSaved": "Zu deinem Tag hinzugefügt · Änderungen werden automatisch gespeichert",
+    "defaultNutritionNote": "Diese Werte werden künftig als Standard für dieses Lebensmittel verwendet.",
+    "viewDay": "Meinen Tag ansehen",
+    "catalogueCandidate": "Dieses Gericht wartet auf ein neues Foto und eine Prüfung, bevor es zu den CookEat-Rezepten kommt.",
+    "analyzing": "Dein Teller wird analysiert…",
+    "analyzingNote": "Die KI erkennt Lebensmittel und schätzt die Mengen.",
+    "revealing": "Dein Teller wird lebendig",
+    "skip": "Überspringen",
+    "yourMeal": "DEINE MAHLZEIT",
+    "adding": "Wird zum Teller hinzugefügt…",
+    "estimateNote": "Richtwerte · Lebensmittel, Mengen und Nährwerte sind bearbeitbar.",
+    "checkMeal": "Deine Mahlzeit im Detail",
+    "estimated": "Geschätzt",
+    "mealTitle": "Name der Mahlzeit",
+    "foods": "Die Lebensmittel",
+    "correctNote": "Ändere Lebensmittel oder Mengen: Kalorien und Makros werden neu berechnet.",
+    "foodGrams": "Menge von {{name}} in Gramm",
+    "hiddenEstimate": "Nicht sichtbare Zutat, geschätzt",
+    "noReference": "Lebensmittelreferenz erforderlich",
+    "chooseReference": "Lebensmittel wählen",
+    "changeReference": "Referenz ändern",
+    "removeFood": "{{name}} entfernen",
+    "addFood": "Lebensmittel hinzufügen",
+    "types": "Art der Mahlzeit",
+    "breakfast": "Frühstück",
+    "lunch": "Mittagessen",
+    "snack": "Snack",
+    "dinner": "Abendessen",
+    "addToDay": "Zu meinem Tag hinzufügen",
+    "saveChanges": "Änderungen speichern",
+    "replay": "Animation wiederholen",
+    "notFood": "Keine Mahlzeit erkannt. Versuche ein Foto deines Tellers.",
+    "uncertain": "Unscharfes Foto: Prüfe jedes Lebensmittel.",
+    "chooseFood": "Welches Lebensmittel?",
+    "searchFood": "Lebensmittel suchen…",
+    "searchError": "Suche nicht verfügbar. Versuche es erneut.",
+    "changeFood": "{{name}} ändern",
+    "calories": "Kalorien",
+    "streakLabel_one": "{{count}} Tracking-Tag in Folge",
+    "streakLabel_other": "{{count}} Tracking-Tage in Folge",
+    "analysisPaused": "Analyse unterbrochen",
+    "partialEstimate": "Teilschätzung: Wähle Referenzen für die unbekannten Lebensmittel, um die Summe zu sehen.",
+    "nutritionTitle": "Deine Nährwertübersicht",
+    "mealEnergy": "ENERGIE DER MAHLZEIT",
+    "kcalInMeal": "kcal in dieser Mahlzeit",
+    "macroDistribution": "Verteilung von Eiweiß, Kohlenhydraten und Fett",
+    "nutritionEstimateNote": "Schätzung der Mahlzeit inklusive Saucen · Lebensmittel und Mengen sind anpassbar.",
+    "estimatedFood": "Zusammensetzung geschätzt · bei Bedarf ändern",
+    "mealRecap": "Meine Mahlzeit",
+    "recapCount": "{{count}} Lebensmittel · geschätzte {{grams}} g",
+    "checkIngredients": "Lebensmittel und Mengen prüfen",
+    "shareDish": "Dieses Gericht CookEat vorschlagen",
+    "shareReferenceNote": "Mit meiner Zustimmung bleibt mein Foto bis zu 30 Tage eine private Vorlage für ein neues Bild. Mein Foto wird niemals veröffentlicht.",
+    "buildupNote": "Die Übersicht ergänzt sich mit jedem Lebensmittel.",
+    "recognitionCount": "{{count}} / {{total}} Lebensmittel erkannt",
+    "recognitionWaiting": "Die Lebensmittel erscheinen hier.",
+    "buildingSummary": "Übersicht wird erstellt…",
+    "backToCamera": "Zurück zur Kamera",
+    "captureHelp": "So fotografierst du dein Essen",
+    "captureHelpBody": "Fotografiere den ganzen Teller bei gutem Licht von oben oder leicht seitlich. Hände und Verpackungen sollten das Essen nicht verdecken. Prüfe danach Lebensmittel und Mengen: Kalorien und Makros werden automatisch neu berechnet. Du kannst auch ein Foto aus deiner Galerie wählen.",
+    "chatTitle": "Nährwerte mit KI anpassen",
+    "chatSubtitle": "Lebensmittel oder Menge falsch erkannt?",
+    "chatQuantityExample": "Wie korrigiere ich eine geschätzte Menge?",
+    "chatQuestionExample": "Welche Lebensmittel liefern hier am meisten Eiweiß?",
+    "chatWelcome": "Was möchtest du an dieser Mahlzeit korrigieren?"
+  },
+  "planningBudget": {
+    "loadError": "Budgets konnten nicht geladen werden. Versuche es erneut.",
+    "totalForPeople": "Gesamtes Haushaltsbudget · {{count}} Person(en)",
+    "totalWeek": "FÜR EINE WOCHE",
+    "less": "Budget verringern",
+    "more": "Budget erhöhen",
+    "amount": "Gesamtes Wochenbudget",
+    "perPerson": "{{amount}} pro Person für 7 Tage",
+    "range": "Insgesamt von {{minimum}} bis {{maximum}}",
+    "estimateNote": "Ungefähre Durchschnittspreise der verbrauchten Zutaten, an Land und Währung angepasst. Ganze Packungen können mehr kosten.",
+    "peopleNote": "Das nächste Budget gilt insgesamt für alle diese Personen.",
+    "cap": "Gewähltes Gesamtbudget: {{amount}}",
+    "over": "Die Schätzung liegt nach deinen Änderungen über dem Budget von {{amount}}.",
+    "totalForPeople_one": "Gesamtes Haushaltsbudget · {{count}} Person",
+    "totalForPeople_other": "Gesamtes Haushaltsbudget · {{count}} Personen"
+  },
+  "mealImport": {
+    "add": "Rezept importieren",
+    "title": "Rezept hinzufügen",
+    "link": "Link einfügen",
+    "linkNote": "TikTok, Instagram oder YouTube",
+    "share": "Per Teilen importieren",
+    "shareNote": "So sendest du ein Video an CookEat",
+    "history": "Meine importierten Rezepte"
+  },
+  "recipeCredits": {
+    "title": "Quellen und Lizenzen",
+    "description": "Quellen und Lizenzen der angepassten Rezepte im CookEat-Katalog.",
+    "empty": "Keine Rezepte gefunden.",
+    "adaptations": "Übersetzung, Mengen und Nährwertschätzungen von CookEat angepasst. Angepasste Texte behalten die angegebene Lizenz."
   }
 }

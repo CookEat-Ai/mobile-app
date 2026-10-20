@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { router, useFocusEffect } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -209,7 +210,7 @@ export default function WelcomeVideoScreen() {
             position: 'absolute',
             left: curveLeft,
             top: -width * 0.11,
-            backgroundColor: '#FDF9E2',
+            backgroundColor: designTheme.background,
             width: curveWidth,
             height: curveHeight,
             borderRadius: curveHeight,
@@ -332,14 +333,14 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     flexShrink: 0,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.background,
   },
   copy: {
     ...contentColumn(),
     paddingHorizontal: 24,
   },
   footer: {
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.background,
     paddingTop: 8,
   },
   bottomAction: {
@@ -374,7 +375,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.light.button,
-    borderRadius: 200,
+    borderRadius: AppRadii.pill,
     paddingHorizontal: 24,
     height: 56,
     shadowColor: Colors.light.button,
@@ -389,6 +390,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     textAlignVertical: 'center',
     fontFamily: 'Degular',
-    color: 'white',
+    color: designTheme.onPrimary,
   },
 });

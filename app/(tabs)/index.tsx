@@ -1,3 +1,5 @@
+import { AppModal as Modal } from '../../components/ui/AppModal';
+import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { invalidatePlanning, planningRevision } from '../../services/planningUpdates';
 import { usePresentationMode } from '../../services/presentationMode';
 import { clearDeletedPlanReferences } from '../../services/planningDeletion';
@@ -10,13 +12,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Modal, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
+
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { apiService, type MealPlan } from '../../services/api';
 import { planningStartKey } from '../../services/weeklyPlanning';
+import { usePlanningClock } from '../../hooks/usePlanningClock';
 import { displayedPlan, formatPlanRange } from '../../services/planningDisplay';
 import { getRecipeImageSource } from '../../constants/RecipeImages';
 import { PlanWeekContent } from '../../components/planning/PlanWeekContent';
@@ -71,7 +74,7 @@ export default function PlanningScreen() {
       let nextPlans = response.data.plans;
       const currentSummary = displayedPlan(nextPlans);
       if (currentSummary) {
-        // The history endpoint omits preferences and nutrition targets.
+        // The history endpoint only includes cooking days from preferences, without nutrition targets.
         const detail = await apiService.getMealPlanById(currentSummary._id, userId, { forceRefresh: refresh });
         if (!detail.data?.plan) throw new Error(detail.error || t('planning.errors.load'));
         const fullPlan = detail.data.plan;
@@ -87,7 +90,8 @@ export default function PlanningScreen() {
     return () => { loadRequest.current += 1; };
   }, [loadPlans, shouldReplay]));
   const ordered = useMemo(() => [...plans].sort((a, b) => b.weekStart.localeCompare(a.weekStart)), [plans]);
-  const current = displayedPlan(ordered);
+  const clock = usePlanningClock();
+  const current = displayedPlan(ordered, clock.today);
   const locale = i18n.resolvedLanguage || 'fr';
   const configure = () => {
     if (deleteBusy.current) return;
@@ -138,15 +142,15 @@ export default function PlanningScreen() {
         <View pointerEvents={deleting ? 'none' : 'auto'}><PlanWeekContent key={`${current._id}:${selectionKey || ''}`} plan={current} onPlanChange={updatePlan} onRevealStart={alignPlanningDays}
           initialDay={selectedPlanId === current._id && selectedDay !== undefined ? Number(selectedDay) : undefined} /></View>
         <TouchableOpacity accessibilityRole="button" style={styles.editWeek} disabled={deleting} onPress={configure}><Ionicons name="refresh-outline" size={20} color={theme.ink} /><Text style={appStyles.textAction}>{t('planningDetail.regenerate')}</Text></TouchableOpacity>
-        {presentationMode && <TouchableOpacity accessibilityRole="button" disabled={deleting} accessibilityState={{ disabled: deleting, busy: deleting }} style={styles.editWeek} onPress={deleteCurrentPlan}>{deleting ? <ActivityIndicator color="#963F32" /> : <Ionicons name="trash-outline" size={20} color="#963F32" />}<Text style={[appStyles.textAction, { color: '#963F32' }]}>{t('planningFlow.deleteAction')}</Text></TouchableOpacity>}
+        {presentationMode && <TouchableOpacity accessibilityRole="button" disabled={deleting} accessibilityState={{ disabled: deleting, busy: deleting }} style={styles.editWeek} onPress={deleteCurrentPlan}>{deleting ? <ActivityIndicator color={theme.danger} /> : <Ionicons name="trash-outline" size={20} color={theme.danger} />}<Text style={[appStyles.textAction, { color: theme.danger }]}>{t('planningFlow.deleteAction')}</Text></TouchableOpacity>}
       </> : !loading && !error ? <EntranceView entranceIndex={0} style={styles.empty}>
         <EntranceView entranceIndex={1} style={styles.emptyMark}><Ionicons name="calendar-outline" size={44} color={theme.ink} /></EntranceView>
         <Text style={styles.emptyTitle}>{t('dailyApp.emptyTitle')}</Text>
         <Text style={[appStyles.subtitle, styles.emptyCopy]}>{t('dailyApp.emptyBody')}</Text>
-        <TouchableOpacity accessibilityRole="button" style={appStyles.button} disabled={deleting} onPress={configure}><Text style={appStyles.buttonText}>{t('dailyApp.createWeek')}</Text><Ionicons name="arrow-forward" size={20} color="white" /></TouchableOpacity>
+        <TouchableOpacity accessibilityRole="button" style={appStyles.button} disabled={deleting} onPress={configure}><Text style={appStyles.buttonText}>{t('dailyApp.createWeek')}</Text><Ionicons name="arrow-forward" size={20} color={theme.onPrimary} /></TouchableOpacity>
       </EntranceView> : null}
     </ScrollView>
-    <Modal visible={history} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setHistory(false)}>
+    <Modal visible={history} presentationStyle="pageSheet" onRequestClose={() => setHistory(false)}>
       <View style={appStyles.screen}>
         <View style={[styles.modalHeader, { paddingHorizontal: gutter, paddingTop: 24 }]}><Text style={appStyles.section}>{t('dailyApp.history')}</Text><NavigationIconButton kind="close" accessibilityRole="button" accessibilityLabel={t('common.close')} style={appStyles.iconButton} onPress={() => setHistory(false)} /></View>
         <ScrollView contentContainerStyle={{ ...contentColumn(), paddingHorizontal: gutter, paddingTop: 4, paddingBottom: insets.bottom + 32, gap: 12 }}>
@@ -178,7 +182,7 @@ const styles = StyleSheet.create({
   loader: { marginVertical: 60 },
   editWeek: { minHeight: 48, marginTop: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
   empty: { paddingVertical: 48, gap: 20 },
-  emptyMark: { width: 88, height: 88, borderRadius: 28, backgroundColor: '#F8EAC0', alignItems: 'center', justifyContent: 'center' },
+  emptyMark: { width: 88, height: 88, borderRadius: AppRadii.sheet, backgroundColor: '#F8EAC0', alignItems: 'center', justifyContent: 'center' },
   emptyTitle: { fontFamily: 'Degular', fontSize: 32, lineHeight: 36, color: theme.ink, maxWidth: 290 },
   emptyCopy: { marginBottom: 12 },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingBottom: 20 },

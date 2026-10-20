@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, TextInput, View, Image } from 'react-native';
 import Reanimated, {
@@ -305,7 +306,7 @@ export default function RecipeLoadingScreen({ modalDefault = false }: { modalDef
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.background,
   },
   loadingContainer: {
     justifyContent: 'center',
@@ -326,7 +327,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(254, 181, 10, 0.1)',
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
   },
   percentText: {
     minWidth: 54,
@@ -351,14 +352,14 @@ const styles = StyleSheet.create({
   loadingBarTrack: {
     width: '100%',
     height: 10,
-    backgroundColor: '#F1EACB',
-    borderRadius: 5,
+    backgroundColor: designTheme.soft,
+    borderRadius: AppRadii.small,
     overflow: 'hidden',
   },
   loadingBarFill: {
     width: '100%',
     height: '100%',
     backgroundColor: Colors.light.button,
-    borderRadius: 5,
+    borderRadius: AppRadii.small,
   },
 });

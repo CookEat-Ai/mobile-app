@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const STORAGE_KEY = '@cookeat_catalog_response_cache_v1';
+const STORAGE_KEY = '@cookeat_catalog_response_cache_v4';
 const MAX_ENTRIES = 80;
 const MAX_MEMORY_CHARS = 3_000_000;
 const MAX_DISK_CHARS = 1_000_000;
