@@ -1,6 +1,7 @@
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, AppState, Linking, View } from 'react-native';
+import { AppState, Linking, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -12,7 +13,7 @@ import { MealPhotoCapture } from '../../components/tracking/MealPhotoCapture';
 import { PhotoMealReveal } from '../../components/tracking/PhotoMealReveal';
 import { apiService } from '../../services/api';
 import { getAnonymousUserId } from '../../services/anonymousSession';
-import { mealNutrition, loadFoodDefaults, applyFoodDefaults, foodNutrition, loadTrackedMeals, saveTrackedMeal, trackingDateKey, validTrackingDate, type FoodNutrition, type MealPhotoAnalysis, type PhotoFood, type TrackedMeal } from '../../services/mealTracking';
+import { mealNutrition, mealTypeAtLocalTime, loadFoodDefaults, applyFoodDefaults, foodNutrition, loadTrackedMeals, saveTrackedMeal, trackingDateKey, validTrackingDate, type FoodNutrition, type MealPhotoAnalysis, type PhotoFood, type TrackedMeal } from '../../services/mealTracking';
 import { createPhotoMealSaver, type PhotoMealSaveInput } from '../../services/photoMealAutosave';
 import { persistTrackingPhoto } from '../../services/trackingPhotos';
 import { feedback } from '../../services/haptics';
@@ -124,6 +125,7 @@ export default function TrackingCaptureScreen() {
             return;
         }
         trackStage('analysis_completed', { kind: detected.kind, item_count: detected.items.length });
+        detected.mealType = detected.kind === 'not_food' ? null : mealTypeAtLocalTime(capturedAt.current);
         setAnalysis(detected);
         setTitle(detected.title || t('tracking.untitledMeal'));
         setItems(detected.items);
@@ -238,7 +240,7 @@ export default function TrackingCaptureScreen() {
     };
     let content: React.ReactNode;
     if (loadingEntry) content = <View style={[appStyles.screen, {justifyContent:'center'}]}><ActivityIndicator color={theme.yellow}/></View>;
-    else if (phase === 'result' && photo) content = <PhotoMealReveal photo={photo} analysis={analysis} title={title} items={items} onTitle={setTitle} onItems={changeItems} nutritionOverride={nutritionOverride} onNutritionOverride={setNutritionOverride} onSave={()=>{void done();}} saveActionLabel={t(error ? 'common.retry' : 'tracking.viewDay')} autoSaved={!!saved} onExpand={()=>setExpanded(true)} onComplete={()=>setRecognitionReady(true)} onBack={close} onRetry={()=>{void analyze(photo);}} onRetake={retake} saving={saving} error={error} editing={!!params.entryId} processing={!error}/>;
+    else if (phase === 'result' && photo) content = <PhotoMealReveal photo={photo} analysis={analysis} title={title} items={items} onTitle={setTitle} onItems={changeItems} mealType={mealType} onMealType={setMealType} nutritionOverride={nutritionOverride} onNutritionOverride={setNutritionOverride} onSave={()=>{void done();}} saveActionLabel={t(error ? 'common.retry' : 'tracking.viewDay')} autoSaved={!!saved} onExpand={()=>setExpanded(true)} onComplete={()=>setRecognitionReady(true)} onBack={close} onRetry={()=>{void analyze(photo);}} onRetake={retake} saving={saving} error={error} editing={!!params.entryId} processing={!error}/>;
     else content = <MealPhotoCapture cameraRef={camera} granted={!!permission?.granted} cameraError={cameraError} canAskAgain={permission?.canAskAgain !== false} active={foreground} ready={cameraReady} busy={busy} error={error} onClose={close} onAllow={() => { if (permission?.canAskAgain === false) void Linking.openSettings(); else void requestPermission(); }} onReady={() => setCameraReady(true)} onCameraError={() => setCameraError(true)} onTake={() => { void take(); }} onPick={() => { void pick(); }} onManual={isOnboarding ? undefined : () => router.replace({ pathname: '/tracking/manual', params: { date: params.date || trackingDateKey() } })}/>;
     return <TrackingCaptureSurface expanded={expanded}><Stack.Screen options={{headerShown:false,gestureEnabled:false,statusBarStyle:expanded?'dark':'light',contentStyle:{backgroundColor:'transparent'}}}/>{content}</TrackingCaptureSurface>;
 

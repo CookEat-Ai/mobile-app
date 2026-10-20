@@ -1,8 +1,9 @@
+import { AppSpinner as ActivityIndicator } from '../ui/AppSpinner';
 import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useGlobalSearchParams, usePathname } from 'expo-router';
 import React, { useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/Colors';

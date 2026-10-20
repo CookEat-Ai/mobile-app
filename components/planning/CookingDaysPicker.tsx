@@ -33,7 +33,7 @@ export function CookingDaysPicker({ weekStart, value, onChange }: {
       </TouchableOpacity>;
     })}</View>
     <Text style={styles.selection}>{t('planningFlow.meals', { days: value.length, meals })}</Text>
-    {window.weekStart !== window.today ? <Text style={styles.help}>{t('planningFlow.startsTomorrow')}</Text> : value.includes(0) && window.remainingMealTypes.length < 4 ? <Text style={styles.help}>{t('planningFlow.remainingToday')}</Text> : null}
+    {window.weekStart !== window.today ? <Text style={styles.help}>{t('planningFlow.startsTomorrow')}</Text> : null}
   </View>;
 }
 const styles = StyleSheet.create({

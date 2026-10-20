@@ -1,10 +1,11 @@
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { FORM_CONTENT_MAX_WIDTH } from '../../constants/Layout';
 import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { PlanningBudgetPicker } from '../../components/planning/PlanningBudgetPicker';
 import { COOKING_LEVELS, KITCHEN_EQUIPMENT, type CookingLevel, type MealBudget } from '../../services/cookingPreferences';
 import { usePlanningClock } from '../../hooks/usePlanningClock';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, BackHandler, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { BackHandler, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';

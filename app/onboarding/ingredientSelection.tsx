@@ -1,3 +1,4 @@
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { CREATOR_PROMO_CODES_ENABLED } from '../../config/storeCompliance';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
@@ -9,9 +10,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Platform,
-  Animated,
-  ActivityIndicator,
-} from 'react-native';
+  Animated} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { feedback } from '../../services/haptics';
 import { router } from 'expo-router';

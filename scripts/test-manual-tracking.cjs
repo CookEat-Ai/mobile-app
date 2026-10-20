@@ -25,6 +25,7 @@ function harness(file, exportName, dependencies = {}) {
     if (name === 'react') return React;
     if (name === 'react-native') return { View: 'View', Text: 'Text', TextInput: 'TextInput', TouchableOpacity: 'Button', ScrollView: 'ScrollView', KeyboardAvoidingView: 'KeyboardAvoidingView', ActivityIndicator: 'Spinner', StyleSheet: { create: x => x }, Platform: { OS: 'ios' }, Keyboard: { addListener: () => ({ remove() {} }) } };
     if (name === 'react-i18next') return { useTranslation: () => ({ t, i18n: { language: 'fr' } }) };
+    if (name.includes('AppSpinner')) return { AppSpinner: 'Spinner' };
     if (name.includes('AppTheme')) return require('./helpers/ui-theme.cjs');
     if (name.includes('mealTracking')) return service;
     if (name.includes('anonymousSession')) return {getAnonymousUserId: async () => 'manual-user'};

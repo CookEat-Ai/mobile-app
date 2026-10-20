@@ -1,9 +1,10 @@
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { AppModal as Modal } from '../../components/ui/AppModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { usePreventRemove } from 'expo-router/react-navigation';
 import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NavigationIconButton } from '../../components/NavigationIconButton';

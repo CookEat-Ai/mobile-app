@@ -34,6 +34,7 @@ function controller(){
  return{render(){cursor=0;const tree=exports.default();while(effects.length)effects.shift()();return tree;},compression,request,calls};
 }
 function find(tree,type){if(!tree||typeof tree!=='object')return null;if(tree.type===type)return tree;for(const child of [tree.props?.children].flat(Infinity)){const value=find(child,type);if(value)return value;}return null;}
+for(const [hour,expected] of [[0,'dinner'],[4,'dinner'],[5,'breakfast'],[10,'breakfast'],[11,'lunch'],[14,'lunch'],[15,'snack'],[17,'snack'],[18,'dinner'],[23,'dinner']])assert.equal(tracking.mealTypeAtLocalTime(new Date(2026,9,20,hour)),expected,'device-local capture hour sets the default category');
 (async()=>{
  const c=controller(),asset={uri:'camera-original',width:1200,height:1600},processed={...asset,uri:'processed-photo'};
  let tree=c.render(),camera=find(tree,'Capture');camera.props.cameraRef.current={takePictureAsync:async()=>asset};camera.props.onReady();find(c.render(),'Capture').props.onTake();await tick();
@@ -41,7 +42,10 @@ function find(tree,type){if(!tree||typeof tree!=='object')return null;if(tree.ty
  c.compression.resolve(processed);await tick();tree=c.render();assert.equal(find(tree,'Reveal').props.photo,processed);assert.equal(c.calls[1],processed.uri);assert.equal(tree.props.expanded,false);
  c.request.resolve({data:{analysis:{scanId:'real',title:'Mon repas',kind:'meal',mealType:'dinner',items:[{id:'rice',foodKey:'rice',name:'Riz',grams:100,per100g:{calories:130,proteins:3,carbs:28,fats:1}}]}}});await tick();tree=c.render();assert.equal(find(tree,'Reveal').props.analysis.scanId,'real');find(tree,'Reveal').props.onExpand();assert.equal(c.render().props.expanded,true,'same outer surface grows full-screen');
  await new Promise(r=>setTimeout(r,20));tree=c.render();assert.equal(find(tree,'Reveal').props.autoSaved,true,'analysis saves before animation completion');assert.equal(find(tree,'Reveal').props.saveActionLabel,'tracking.viewDay');assert.equal(c.calls.filter(value=>value==='confirmed').length,1);assert.equal(c.calls.includes('navigated'),false,'autosave does not dismiss the nutrition result');
+ find(tree,'Reveal').props.onMealType('breakfast');tree=c.render();assert.equal(find(tree,'Reveal').props.mealType,'breakfast');
  find(tree,'Reveal').props.onTitle('Corrigé');tree=c.render();find(tree,'Reveal').props.onBack();await tick();assert.equal((await tracking.loadTrackedMeals('capture-user'))[0].title,'Corrigé','close flushes a pending debounced edit');
+ assert.equal((await tracking.loadTrackedMeals('capture-user'))[0].mealType,'breakfast','changing the meal category is persisted in the same journal entry');
+ assert.equal((await tracking.loadTrackedMeals('capture-user')).length,1);
  const failed=controller();camera=find(failed.render(),'Capture');camera.props.cameraRef.current={takePictureAsync:async()=>asset};camera.props.onReady();find(failed.render(),'Capture').props.onTake();await tick();failed.compression.resolve(processed);await tick();failed.request.reject(new Error('offline'));await tick();tree=failed.render();assert.ok(find(tree,'Reveal').props.error,'thrown request cannot leave the frozen scanner running forever');
  console.log('Capture: immediate frozen photo before compression, real analysis, one expanding surface and thrown-request recovery passed.');
 })().catch(error=>{console.error(error);process.exitCode=1;});

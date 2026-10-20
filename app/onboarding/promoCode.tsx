@@ -1,3 +1,4 @@
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { CREATOR_PROMO_CODES_ENABLED } from '../../config/storeCompliance';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -9,10 +10,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  ActivityIndicator,
   Keyboard,
-  TouchableWithoutFeedback,
-} from 'react-native';
+  TouchableWithoutFeedback} from 'react-native';
 import { Redirect, router, useFocusEffect } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { feedback } from '../../services/haptics';

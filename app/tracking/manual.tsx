@@ -1,5 +1,6 @@
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import uuid from 'react-native-uuid';

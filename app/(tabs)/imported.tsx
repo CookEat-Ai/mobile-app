@@ -1,8 +1,10 @@
+import { AppRefreshControl as RefreshControl } from '../../components/ui/AppRefreshControl';
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { router, useFocusEffect } from "expo-router";
 import React, { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, StyleSheet, Text, View, RefreshControl, TouchableOpacity, Alert, Animated, ActivityIndicator } from 'react-native';
+import { FlatList, StyleSheet, Text, View, TouchableOpacity, Alert, Animated} from 'react-native';
 import Reanimated, { FadeInDown, ReduceMotion } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';

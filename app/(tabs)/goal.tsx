@@ -1,3 +1,4 @@
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { AppModal as Modal } from '../../components/ui/AppModal';
 import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { EntranceView } from '../../components/motion/Entrance';
@@ -8,7 +9,7 @@ import { NavigationIconButton } from '../../components/NavigationIconButton';
 import { feedback } from '../../services/haptics';
 import { useFocusEffect } from 'expo-router';
 import React, { useCallback, useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 

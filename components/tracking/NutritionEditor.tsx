@@ -1,5 +1,6 @@
+import { AppSpinner as ActivityIndicator } from '../ui/AppSpinner';
 import React, { useRef, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppTheme as theme, appStyles } from '../../constants/AppTheme';

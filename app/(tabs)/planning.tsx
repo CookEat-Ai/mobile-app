@@ -1,3 +1,5 @@
+import { AppRefreshControl as RefreshControl } from '../../components/ui/AppRefreshControl';
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { AppModal as Modal } from '../../components/ui/AppModal';
 import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
@@ -12,7 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Reanimated, { FadeInDown, FadeOut, LinearTransition, useReducedMotion } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';

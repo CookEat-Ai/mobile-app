@@ -1,3 +1,4 @@
+import { AppSpinner as ActivityIndicator } from '../components/ui/AppSpinner';
 import { AppModal as Modal } from '../components/ui/AppModal';
 import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { IngredientCategoryAddModal } from '../components/IngredientCategoryAddModal';
@@ -5,7 +6,7 @@ import { ingredientCategories as getIngredientCategories } from '../services/ing
 import { EntranceView } from '../components/motion/Entrance';
 import { NavigationIconButton } from '../components/NavigationIconButton';
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, FlatList, ScrollView, Alert, Switch, Platform, TextInput, Pressable, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView, Alert, Switch, Platform, TextInput, Pressable, Keyboard } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';

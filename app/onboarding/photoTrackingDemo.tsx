@@ -1,8 +1,9 @@
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { useResponsive } from '../../hooks/useResponsive';
 import { FORM_CONTENT_MAX_WIDTH } from '../../constants/Layout';
 import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';

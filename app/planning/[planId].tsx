@@ -1,3 +1,4 @@
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { useEntranceReplay } from '../../hooks/useEntranceReplay';
 import { planningRevision } from '../../services/planningUpdates';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
@@ -5,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useRef, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { AppTheme as theme, appStyles } from '../../constants/AppTheme';

@@ -1,9 +1,10 @@
+import { AppSpinner as ActivityIndicator } from '../ui/AppSpinner';
 import { useResponsive } from '../../hooks/useResponsive';
 import { feedback } from '../../services/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import React from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../../constants/Colors';
 import { getRecipeImageSource } from '../../constants/RecipeImages';

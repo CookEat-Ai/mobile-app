@@ -1,3 +1,4 @@
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { AppTheme as designTheme, AppRadii, appStyles } from '../../constants/AppTheme';
 import { compatiblePlanningSlots, planDays } from '../../services/planningDisplay';
 import { invalidatePlanning } from '../../services/planningUpdates';
@@ -9,7 +10,7 @@ import { feedback } from '../../services/haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { PlanMealCard } from '../../components/planning/PlanMealCard';

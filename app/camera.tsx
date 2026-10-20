@@ -1,3 +1,4 @@
+import { CameraBrand } from '../components/CameraBrand';
 import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { createPantryScanHandoff, PANTRY_SCAN_HANDOFF_KEY } from '../services/pantryScanHandoff';
 import { PlanningFlowHeader } from '../components/planning/PlanningFlowHeader';
@@ -717,10 +718,7 @@ function CameraContent() {
           {!isRecording && (
             <>
               <NavigationIconButton kind="close" tone="overlay" style={styles.closeButton} onPress={handleClose} />
-              <View style={styles.headerLogo} pointerEvents="none">
-                <Text style={styles.headerText}>CookEat</Text>
-                <Image source={require('../assets/images/mascot.png')} style={styles.headerMascot} contentFit="contain" accessible={false} />
-              </View>
+              <CameraBrand />
               <NavigationIconButton icon="help" tone="overlay" accessibilityLabel={t('tracking.captureHelp')} onPress={showOnboarding} style={styles.helpButton} />
             </>
           )}

@@ -1,3 +1,4 @@
+import { AppSpinner as ActivityIndicator } from '../components/ui/AppSpinner';
 import { RecipeMetricCard } from '../components/RecipeMetricCard';
 import { AppModal as Modal } from '../components/ui/AppModal';
 import { AppRadii, AppTheme as designTheme, appStyles } from '../constants/AppTheme';
@@ -19,7 +20,7 @@ import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-rou
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import * as Linking from 'expo-linking';
-import { ActivityIndicator, BackHandler, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View, Share, Platform } from 'react-native';
+import { BackHandler, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View, Share, Platform } from 'react-native';
 import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../constants/Colors';
@@ -1470,8 +1471,6 @@ export default function RecipeDetailScreen() {
 
           {/* Section Ingrédients */}
           <View style={styles.ingredientsSection}>
-            {isPlannedMeal && recipe.portionScale && Math.abs(recipe.portionScale - 1) > 0.001
-              ? <Text style={{ fontFamily: 'CronosPro', fontSize: 15, color: '#746C56', marginBottom: 12 }}>{t('planningNutrition.adjustedPortion')}</Text> : null}
             <View style={styles.sectionTitleRow}>
               <Text style={styles.ingredientsTitle}>{t('recipeDetail.ingredients')} {!streamingTitleAndIngredients && recipe.ingredients?.length ? `(${recipe.ingredients.length})` : ''}</Text>
               {streamingTitleAndIngredients && <ActivityIndicator size="small" color={Colors.light.button} />}

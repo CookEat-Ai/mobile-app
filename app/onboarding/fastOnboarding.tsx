@@ -1,3 +1,4 @@
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import { CREATOR_PROMO_CODES_ENABLED } from '../../config/storeCompliance';
 import { OnboardingScrollView } from '../../components/onboarding/OnboardingScrollView';
@@ -11,11 +12,9 @@ import {
   TouchableOpacity,
   View,
   TextInput,
-  ActivityIndicator,
   Keyboard,
   TouchableWithoutFeedback,
-  FlatList,
-} from 'react-native';
+  FlatList} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Image } from 'expo-image';
 import { Asset } from 'expo-asset';

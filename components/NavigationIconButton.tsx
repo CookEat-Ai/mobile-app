@@ -1,7 +1,8 @@
+import { AppSpinner as ActivityIndicator } from './ui/AppSpinner';
 import { feedback } from '../services/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { ActivityIndicator, StyleSheet, TouchableOpacity, type TouchableOpacityProps } from 'react-native';
+import { StyleSheet, TouchableOpacity, type TouchableOpacityProps } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AppTheme, AppControl, appStyles } from '../constants/AppTheme';
 

@@ -37,6 +37,10 @@ for(const amount of [0,26.7,35,30000]) {
  assert(parseFloat(width)>=0&&parseFloat(width)<=100,'over-budget bar stays inside card');
  assert(!nodes.some(n=>JSON.stringify(n.props.children).includes('mealCost.range')),'range stays in expandable details');
 }
+const household = walk(MealCostEstimate({cost:{...cost,amount:7.2,perServing:3.6,servings:2}}));
+const prominentPrice = household.find(node=>node.type==='Text' && node.props.minimumFontScale===.65);
+assert(JSON.stringify(prominentPrice.props.children).includes('7,20'),'the prominent dish price is the total for all servings');
+assert(household.some(node=>node.type==='Text' && JSON.stringify(node.props.children).includes('3,60')),'per-person cost stays available as secondary copy');
 const budgetSummary=walk(MealCostEstimate({cost,total:true,budget:30}));
 assert(budgetSummary.some(n=>JSON.stringify(n.props.children).includes('mealCost.remaining')), 'a defined budget shows its remaining amount rather than an expandable range');
 for (const [width, scale, expected] of [[664,1,1],[754,1,2],[936,1,2],[754,1.3,1],[507,1,1]]) {

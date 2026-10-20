@@ -1,7 +1,9 @@
+import { AppSpinner as ActivityIndicator } from '../ui/AppSpinner';
 import { NavigationIconButton } from '../NavigationIconButton';
+import { CameraBrand } from '../CameraBrand';
 import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import React from 'react';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CameraView } from 'expo-camera';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -31,6 +33,7 @@ export function MealPhotoCapture({ cameraRef, granted, cameraError, canAskAgain,
     const header = <View style={[styles.header, { paddingTop: 24, paddingLeft: 16 + insets.left, paddingRight: 16 + insets.right }]}>
         <View style={styles.brandRow}>
             <NavigationIconButton kind="close" tone={live ? 'overlay' : 'surface'} onPress={onClose} />
+            <CameraBrand color={foreground} />
             <NavigationIconButton icon="help" tone={live ? 'overlay' : 'surface'} accessibilityLabel={t('tracking.captureHelp')} onPress={() => Alert.alert(t('tracking.photoPromise'), t('tracking.captureHelpBody'), [{text:t('common.ok')}])} />
         </View>
     </View>;

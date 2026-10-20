@@ -13,8 +13,8 @@ export function MealCostEstimate({ cost, compact = false, total = false, budget,
   if (!cost) return null;
   const money = (value: number) => new Intl.NumberFormat(i18n.language, { style: 'currency', currency: cost.currency }).format(value);
   const complete = cost.status === 'estimated' && cost.amount !== null && Number.isFinite(cost.amount);
-  const amount = complete ? (total ? cost.amount! : cost.perServing ?? cost.amount!)
-    : cost.status === 'partial' ? cost.knownAmount / (total ? 1 : Math.max(1, cost.servings)) : null;
+  const amount = complete ? cost.amount!
+    : cost.status === 'partial' ? cost.knownAmount : null;
   const cap = total && Number.isFinite(budget) && budget! > 0 ? budget! : null;
   const over = cap !== null && complete && cost.amount! > cap;
   const hasRange = complete && cost.low !== null && cost.high !== null && Number.isFinite(cost.low) && Number.isFinite(cost.high) && cost.high > cost.low;
@@ -36,7 +36,7 @@ export function MealCostEstimate({ cost, compact = false, total = false, budget,
   };
   if (compact) return <View style={styles.badge}>
     <Ionicons name="wallet-outline" size={14} color={theme.ink} />
-    <Text style={styles.badgeText}>{amount === null ? t('mealCost.unavailable') : t('mealCost.portion', { amount: money(amount) })}{!complete && amount !== null ? ' · ' + t('mealCost.incompleteLabel') : ''}</Text>
+    <Text style={styles.badgeText}>{amount === null ? t('mealCost.unavailable') : `${money(amount)} · ${t('mealCost.dishTitle')}`}{!complete && amount !== null ? ' · ' + t('mealCost.incompleteLabel') : ''}</Text>
   </View>;
   const price = <Text style={styles.amount} adjustsFontSizeToFit minimumFontScale={.65} numberOfLines={1}>{amount !== null ? `≈ ${money(amount)}` : '—'}</Text>;
   return <View style={[styles.card, style]}>
@@ -44,7 +44,7 @@ export function MealCostEstimate({ cost, compact = false, total = false, budget,
       <View style={styles.icon}><Ionicons name="wallet-outline" size={20} color={theme.onPrimary} /></View>
       <View style={styles.heading}>
         <Text style={styles.title}>{t(total ? 'mealCost.weekTitle' : 'mealCost.dishTitle')}</Text>
-        {(cap !== null || !total || !complete && amount !== null) && <Text style={styles.caption}>{cap !== null ? `${t('mealCost.budgetLabel')} ${money(cap)}` : !total ? t('mealCost.perPerson') : ''}{!complete && amount !== null ? (cap !== null || !total ? ' · ' : '') + t('mealCost.incompleteLabel') : ''}</Text>}
+        {(cap !== null || !complete && amount !== null) && <Text style={styles.caption}>{cap !== null ? `${t('mealCost.budgetLabel')} ${money(cap)}` : ''}{!complete && amount !== null ? (cap !== null || !total ? ' · ' : '') + t('mealCost.incompleteLabel') : ''}</Text>}
       </View>
       {!panel && price}
     </View>
@@ -55,7 +55,7 @@ export function MealCostEstimate({ cost, compact = false, total = false, budget,
       </View>
       <Text style={[styles.remaining, over && { color: theme.danger }]}>{progressLabel}</Text>
     </>}
-    {!total && complete && cost.servings > 1 && <Text style={styles.caption}>{t('mealCost.household', { amount: money(cost.amount!), count: cost.servings })}</Text>}
+    {!total && complete && cost.servings > 1 && <Text style={styles.caption}>{t('mealCost.portion', { amount: money(cost.perServing ?? cost.amount! / cost.servings) })}</Text>}
     {amount === null && (!total || cap === null) && <Text style={styles.caption}>{t('mealCost.unavailable')}</Text>}
   </View>;
 }

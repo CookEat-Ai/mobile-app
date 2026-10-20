@@ -1,9 +1,10 @@
+import { AppSpinner as ActivityIndicator } from './ui/AppSpinner';
 import { AppModal as Modal } from './ui/AppModal';
 import { AppIconBadge } from './ui/AppIconBadge';
 import { AppRadii, AppTheme as theme } from '../constants/AppTheme';
 import { NavigationIconButton } from './NavigationIconButton';
 import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';

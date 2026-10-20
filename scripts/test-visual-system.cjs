@@ -3,7 +3,7 @@ const theme=require('./helpers/ui-theme.cjs'),glyphs=require('@expo/vector-icons
 let haptics=0;
 const React={createElement:(type,props,...children)=>({type,props:{...props,children}})};React.default=React;
 function load(file){const output={};vm.runInNewContext(ts.transpileModule(fs.readFileSync(file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React,esModuleInterop:true,target:ts.ScriptTarget.ES2022}}).outputText,{exports:output,require:name=>{
- if(name==='react')return React;if(name==='react-native')return{StyleSheet:{create:x=>x},TouchableOpacity:'Button',View:'View',ActivityIndicator:'Spinner'};if(name==='@expo/vector-icons')return{Ionicons:'Icon'};if(name==='react-i18next')return{useTranslation:()=>({t:k=>k})};if(name.includes('AppTheme'))return theme;if(name.includes('haptics'))return{feedback:{light:()=>haptics++}};throw Error(name);
+ if(name==='react')return React;if(name==='react-native')return{StyleSheet:{create:x=>x},TouchableOpacity:'Button',View:'View',ActivityIndicator:'Spinner'};if(name==='@expo/vector-icons')return{Ionicons:'Icon'};if(name==='react-i18next')return{useTranslation:()=>({t:k=>k})};if(name.includes('AppSpinner'))return{AppSpinner:'Spinner'};if(name.includes('AppTheme'))return theme;if(name.includes('haptics'))return{feedback:{light:()=>haptics++}};throw Error(name);
 }});return output;}
 const flatten=styles=>Object.assign({},...[styles].flat(Infinity).filter(Boolean));
 const {NavigationIconButton}=load('components/NavigationIconButton.tsx');

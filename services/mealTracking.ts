@@ -185,3 +185,9 @@ export function matchingFoodDefaults(defaults: SavedFoodDefault[], query: string
     const search = normalizedFoodName(query);
     return defaults.filter(food => normalizedFoodName(food.name).includes(search));
 }
+
+/** Device-local capture time is the default; the user can always change the category. */
+export function mealTypeAtLocalTime(date: Date): TrackedMeal['mealType'] {
+    const hour = date.getHours();
+    return hour < 5 ? 'dinner' : hour < 11 ? 'breakfast' : hour < 15 ? 'lunch' : hour < 18 ? 'snack' : 'dinner';
+}

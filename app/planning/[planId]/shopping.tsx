@@ -1,3 +1,4 @@
+import { AppSpinner as ActivityIndicator } from '../../../components/ui/AppSpinner';
 import { AppRadii, AppTheme as theme, appStyles } from '../../../constants/AppTheme';
 import { EntranceView } from '../../../components/motion/Entrance';
 import { NavigationIconButton } from '../../../components/NavigationIconButton';
@@ -7,7 +8,7 @@ import * as Clipboard from 'expo-clipboard';
 import { feedback } from '../../../services/haptics';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, Share, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
+import { Share, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../../../constants/Colors';

@@ -1,7 +1,8 @@
+import { AppSpinner as ActivityIndicator } from '../ui/AppSpinner';
 import { useResponsive } from '../../hooks/useResponsive';
 import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/Colors';
 import { FORM_CONTENT_MAX_WIDTH, ONBOARDING_CTA_BOTTOM_GAP } from '../../constants/Layout';

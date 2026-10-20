@@ -1,3 +1,4 @@
+import { AppSpinner as ActivityIndicator } from '../components/ui/AppSpinner';
 import { AppModal as Modal } from '../components/ui/AppModal';
 import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { activateReviewerAccess } from '../services/reviewerAccess';
@@ -7,7 +8,7 @@ import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { feedback } from '../services/haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, View, ActivityIndicator, Text, TouchableOpacity, Animated, Easing, Image, Platform, BackHandler, Alert, TextInput, Keyboard, Pressable } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Animated, Easing, Image, Platform, BackHandler, Alert, TextInput, Keyboard, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Purchases, { PurchasesOffering, PurchasesPackage } from 'react-native-purchases';
 import { PaywallView } from '../components/PaywallView';

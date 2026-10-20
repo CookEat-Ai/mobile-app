@@ -1,7 +1,8 @@
+import { AppSpinner as ActivityIndicator } from '../ui/AppSpinner';
 import { AppModal as Modal } from '../ui/AppModal';
 import { AppRadii, AppTheme as theme } from '../../constants/AppTheme';
 import React, { useEffect, useRef } from 'react';
-import { ActivityIndicator, Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack } from 'expo-router';
