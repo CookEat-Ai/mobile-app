@@ -1,5 +1,6 @@
 import { CameraBrand } from '../components/CameraBrand';
 import { CameraFramingGuide } from '../components/CameraFramingGuide';
+import { CameraShutterButton } from '../components/CameraShutterButton';
 import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { createPantryScanHandoff, PANTRY_SCAN_HANDOFF_KEY } from '../services/pantryScanHandoff';
 import { PlanningFlowHeader } from '../components/planning/PlanningFlowHeader';
@@ -759,14 +760,19 @@ function CameraContent() {
                 <Animated.View
                   style={{ transform: [{ scale: shutterScale }] }}
                 >
-                  <TouchableOpacity
+                  {mode === 'photo' ? <CameraShutterButton
+                    accessibilityLabel={t('camera.takePhoto')}
+                    onPress={takePicture}
+                    busy={isCapturing}
+                    disabled={capturedImages.length >= MAX_PHOTOS}
+                  /> : <TouchableOpacity
                     style={[
                       styles.captureButton,
                       mode === 'video' && isRecording && styles.captureButtonRecording,
-                      (isCapturing || (mode === 'photo' && capturedImages.length >= MAX_PHOTOS)) && styles.captureButtonDisabled
+                      isCapturing && styles.captureButtonDisabled
                     ]}
-                    onPress={mode === 'photo' ? takePicture : handleVideoCapture}
-                    activeOpacity={(isCapturing || (mode === 'photo' && capturedImages.length >= MAX_PHOTOS)) ? 1 : 0.7}
+                    onPress={handleVideoCapture}
+                    activeOpacity={isCapturing ? 1 : 0.7}
                     disabled={isCapturing}
                   >
                     {mode === 'video' && isRecording && (
@@ -794,14 +800,8 @@ function CameraContent() {
                       mode === 'video' && styles.captureButtonInnerVideo,
                       mode === 'video' && isRecording && styles.captureButtonInnerRecording
                     ]}>
-                      {mode === 'photo' && capturedImages.length > 0 && capturedImages.length < MAX_PHOTOS && (
-                        <IconSymbol name="plus" size={40} color={Colors.light.button} weight="bold" />
-                      )}
-                      {mode === 'photo' && capturedImages.length >= MAX_PHOTOS && (
-                        <IconSymbol name="checkmark" size={40} color={Colors.light.button} weight="bold" />
-                      )}
                     </View>
-                  </TouchableOpacity>
+                  </TouchableOpacity>}
                 </Animated.View>
               )}
               {mode === 'photo' && capturedImages.length >= MAX_PHOTOS && (

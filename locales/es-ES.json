@@ -2098,7 +2098,8 @@
         "button": "¡Entendido!"
       }
     },
-    "extractionError": "Error de extracción"
+    "extractionError": "Error de extracción",
+    "takePhoto": "Fotografiar los ingredientes"
   },
   "onboarding_loading": {
     "messages": [
@@ -2603,7 +2604,7 @@
     "buildingSummary": "Calculando el resumen…",
     "backToCamera": "Volver a la cámara",
     "captureHelp": "Cómo fotografiar tu comida",
-    "captureHelpBody": "Encuadra todo el plato con buena luz, desde arriba o ligeramente de lado. Evita que las manos o los envases oculten alimentos. Después, revisa los alimentos y las cantidades: las calorías y macros se recalculan automáticamente. También puedes elegir una foto de tu galería.",
+    "captureHelpBody": "Encuadra todo el plato con buena luz, desde arriba o ligeramente de lado. Evita que las manos o los envases oculten alimentos. Después, revisa los alimentos y las cantidades. También puedes elegir una foto de tu galería.",
     "chatTitle": "Ajustar mi balance con IA",
     "chatSubtitle": "¿Un alimento o una cantidad incorrectos?",
     "chatQuantityExample": "¿Cómo corrijo una cantidad estimada?",

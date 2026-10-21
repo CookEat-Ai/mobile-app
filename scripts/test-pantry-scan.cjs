@@ -151,6 +151,7 @@ function camera() {
     'expo-image-manipulator': { manipulateAsync: async uri => ({ uri }), SaveFormat: { JPEG: 'jpeg' } },
     '../services/haptics': { feedback }, '../services/api': { __esModule: true, default: { processImageIngredients: () => { calls++; return pending; } } },
     '../components/planning/PantryScanView': { PantryScanView: 'PantryScanView' },
+    '../components/CameraShutterButton': { CameraShutterButton: 'TouchableOpacity' },
     '../services/pantryScanHandoff': { PANTRY_SCAN_HANDOFF_KEY: 'handoff', createPantryScanHandoff: (names, mode) => JSON.stringify({ ingredients: names, pantryMode: mode }) },
     '@react-native-async-storage/async-storage': { __esModule: true, default: { setItem: async (key, value) => { writes.push({ key, value }); } } },
   });

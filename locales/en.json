@@ -2096,7 +2096,8 @@
         "button": "Got it!"
       }
     },
-    "extractionError": "Extraction error"
+    "extractionError": "Extraction error",
+    "takePhoto": "Photograph ingredients"
   },
   "onboarding_loading": {
     "messages": [
@@ -2601,7 +2602,7 @@
     "buildingSummary": "Building your summary…",
     "backToCamera": "Back to camera",
     "captureHelp": "How to photograph your meal",
-    "captureHelpBody": "Frame the whole plate in good light, from above or slightly to the side. Keep hands and packaging away from the food. After analysis, check the foods and quantities: calories and macros update automatically. You can also choose a photo from your gallery.",
+    "captureHelpBody": "Frame the whole plate in good light, from above or slightly to the side. Keep hands and packaging away from the food. After analysis, check the foods and quantities. You can also choose a photo from your gallery.",
     "chatTitle": "Adjust my nutrition with AI",
     "chatSubtitle": "Wrong food or quantity? Correct it here.",
     "chatQuantityExample": "How can I correct an estimated quantity?",

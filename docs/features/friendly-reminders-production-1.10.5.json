@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-10-21T08:20:40.623535+00:00",
+  "apiVersion": "1.10.5",
+  "apiCommit": "e80035aaefdcb4a778df53a95db87ff2d336d755",
+  "userAuthorizedDeployment": true,
+  "container": "cookeat-api-prod",
+  "image": "cookeat-api-prod:1.10.5",
+  "state": "running",
+  "restartCount": 0,
+  "hostRepositoryClean": true,
+  "containerVersionVerified": true,
+  "runningFrenchTitlesVerified": [
+    "On note ton petit-déj ? ☀️",
+    "Alors, ce déjeuner ? 🍽️",
+    "Un petit point sur ton dîner ? 🌙"
+  ],
+  "localHealth": {
+    "status": "ok"
+  },
+  "publicHealth": {
+    "url": "https://cookeat.info/api/health",
+    "httpStatus": 200,
+    "body": {
+      "status": "ok"
+    }
+  },
+  "previousImageRetained": "cookeat-api-prod:1.10.4",
+  "databaseMigration": false,
+  "manualPushNotificationSent": false,
+  "mobileBuildCreated": false
+}

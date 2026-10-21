@@ -1,4 +1,4 @@
-import { AppSpinner as ActivityIndicator } from '../ui/AppSpinner';
+import { CameraShutterButton } from '../CameraShutterButton';
 import { NavigationIconButton } from '../NavigationIconButton';
 import { CameraBrand } from '../CameraBrand';
 import { CameraFramingGuide } from '../CameraFramingGuide';
@@ -44,7 +44,7 @@ export function MealPhotoCapture({ cameraRef, granted, cameraError, canAskAgain,
         {!!error && <Text accessibilityRole="alert" style={[appStyles.error, live && { color: theme.onPrimary }]}>{error}</Text>}
         <View style={styles.controls}>
             <TouchableOpacity accessibilityRole="button" accessibilityLabel={t('tracking.gallery')} disabled={busy} onPress={onPick} style={[styles.gallery, live && styles.darkPlate]}><Ionicons name="images-outline" size={26} color={foreground} /><Text style={[styles.galleryLabel, { color: foreground }]}>{t('tracking.gallery')}</Text></TouchableOpacity>
-            <TouchableOpacity accessibilityRole="button" accessibilityLabel={t('tracking.takePhoto')} disabled={busy || !ready || !live} onPress={onTake} style={[styles.shutter, (!ready || busy || !live) && { opacity: .45 }]}>{busy ? <ActivityIndicator color={theme.onPrimary} /> : <Ionicons name="camera" size={32} color={theme.onPrimary} />}</TouchableOpacity>
+            <CameraShutterButton accessibilityLabel={t('tracking.takePhoto')} busy={busy} disabled={!ready || !live} onPress={onTake} />
             {onManual ? <TouchableOpacity accessibilityRole="button" accessibilityLabel={t('tracking.addManually')} disabled={busy} onPress={onManual} style={[styles.gallery, live && styles.darkPlate]}><Ionicons name="create-outline" size={26} color={foreground}/><Text style={[styles.galleryLabel, {color:foreground, textAlign:'center'}]}>{t('tracking.withoutPhoto')}</Text></TouchableOpacity> : <View style={{ width: 88 }} />}
         </View>
     </View>;
@@ -75,7 +75,6 @@ const styles = StyleSheet.create({
     bottomOverlay: { position: 'absolute', bottom: 0, left: 0, right: 0, paddingTop: 40 },
     footer: { paddingTop: 12, gap: 18 },
     controls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 88 },
-    shutter: { height: 78, width: 78, borderRadius: AppRadii.pill, borderWidth: 5, borderColor: 'rgba(255,255,255,.65)', backgroundColor: theme.yellow, alignItems: 'center', justifyContent: 'center' },
     gallery: { width: 88, minHeight: 72, borderRadius:AppRadii.card, alignItems: 'center', justifyContent: 'center', gap: 5 },
     galleryLabel: { fontFamily: 'CronosPro', fontSize: 14 },
     permission: { flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 24, gap: 22 },

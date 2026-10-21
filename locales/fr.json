@@ -2102,7 +2102,8 @@
         "button": "Compris !"
       }
     },
-    "extractionError": "Impossible d’identifier les ingrédients"
+    "extractionError": "Impossible d’identifier les ingrédients",
+    "takePhoto": "Prendre une photo des ingrédients"
   },
   "onboarding_loading": {
     "messages": [
@@ -2607,7 +2608,7 @@
     "buildingSummary": "Bilan en cours…",
     "backToCamera": "Retour à la caméra",
     "captureHelp": "Comment photographier ton repas ?",
-    "captureHelpBody": "Cadre toute ton assiette, bien éclairée, vue de dessus ou légèrement de côté. Évite les mains et les emballages devant les aliments. Après l’analyse, vérifie les aliments et les quantités : les calories et macros se recalculent automatiquement. Tu peux aussi choisir une photo dans ta galerie.",
+    "captureHelpBody": "Cadre toute ton assiette, bien éclairée, vue de dessus ou légèrement de côté. Évite les mains et les emballages devant les aliments. Après l’analyse, vérifie les aliments et les quantités. Tu peux aussi choisir une photo dans ta galerie.",
     "chatTitle": "Ajuster mon bilan avec l’IA",
     "chatSubtitle": "Un aliment mal reconnu ou une quantité à corriger ?",
     "chatQuantityExample": "Comment corriger une quantité estimée ?",

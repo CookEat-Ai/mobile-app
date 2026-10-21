@@ -2098,7 +2098,8 @@
         "button": "Verstanden!"
       }
     },
-    "extractionError": "Fehler beim Auslesen"
+    "extractionError": "Fehler beim Auslesen",
+    "takePhoto": "Zutaten fotografieren"
   },
   "onboarding_loading": {
     "messages": [
@@ -2603,7 +2604,7 @@
     "buildingSummary": "Übersicht wird erstellt…",
     "backToCamera": "Zurück zur Kamera",
     "captureHelp": "So fotografierst du dein Essen",
-    "captureHelpBody": "Fotografiere den ganzen Teller bei gutem Licht von oben oder leicht seitlich. Hände und Verpackungen sollten das Essen nicht verdecken. Prüfe danach Lebensmittel und Mengen: Kalorien und Makros werden automatisch neu berechnet. Du kannst auch ein Foto aus deiner Galerie wählen.",
+    "captureHelpBody": "Fotografiere den ganzen Teller bei gutem Licht von oben oder leicht seitlich. Hände und Verpackungen sollten das Essen nicht verdecken. Prüfe danach Lebensmittel und Mengen. Du kannst auch ein Foto aus deiner Galerie wählen.",
     "chatTitle": "Nährwerte mit KI anpassen",
     "chatSubtitle": "Lebensmittel oder Menge falsch erkannt?",
     "chatQuantityExample": "Wie korrigiere ich eine geschätzte Menge?",
