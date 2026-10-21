@@ -1,0 +1,83 @@
+{
+  "createdAt": "2026-10-21T00:15:05.455Z",
+  "version": "1.8.0",
+  "appCommit": "c8f79d887a13b4da20dc5fa88ce8544e93afd336",
+  "apiCommit": "dac5e50d7e7a61c31d585f2eaa4cdcc7456982fa",
+  "apiVersion": "1.10.4",
+  "builds": [
+    {
+      "id": "45c0e810-2e62-4287-a2b1-78b07f8d3168",
+      "platform": "ANDROID",
+      "build": "13",
+      "status": "FINISHED",
+      "runtimeVersion": "05bd917869d2bd492c58e9af12b56f220a9d638d",
+      "url": "https://expo.dev/accounts/gokugen/projects/cookeat/builds/45c0e810-2e62-4287-a2b1-78b07f8d3168"
+    },
+    {
+      "id": "04864de1-220f-4ffa-8c1e-324fe8c4a790",
+      "platform": "IOS",
+      "build": "26",
+      "status": "FINISHED",
+      "runtimeVersion": "74ae75718d342e88e251141b0cbae282312e41b9",
+      "url": "https://expo.dev/accounts/gokugen/projects/cookeat/builds/04864de1-220f-4ffa-8c1e-324fe8c4a790"
+    }
+  ],
+  "releaseMode": "Manual after Store approval",
+  "reviewSubmitted": true,
+  "api": {
+    "version": "1.10.4",
+    "commit": "dac5e50d7e7a61c31d585f2eaa4cdcc7456982fa",
+    "deployed": true,
+    "httpHealth": 200,
+    "containerRunning": true,
+    "restartCount": 0,
+    "reviewAccessFreshSession": "PASS",
+    "deployedAt": "2026-10-21T00:13:40Z",
+    "fullRegressionSuite": "PASS yarn test, 457.52s, including strict pantry 32 weeks / 640 meals",
+    "liveVideoImport": "PASS 20s, 7 progress events, done recipe/photo/11 ingredients/8 steps"
+  },
+  "appleReview": {
+    "submissionId": "a262465e-a547-4212-bf85-9f5f3e90a7e8",
+    "state": "WAITING_FOR_REVIEW",
+    "submitted": true,
+    "subscriptionsAttached": [
+      39,
+      44,
+      49
+    ],
+    "reviewNotesThreeProductsUpdated": true,
+    "submittedAt": "2026-10-21T00:38:53.863Z",
+    "versionId": "3c361968-5b83-4412-8725-4e8c4345a7c0",
+    "buildId": "bad7c011-7832-405e-a7b1-d8dfe01eb86f",
+    "build": "26",
+    "releaseType": "MANUAL",
+    "subscriptionStates": "All three WAITING_FOR_REVIEW"
+  },
+  "googleManagedPublishing": true,
+  "verifiedAt": "2026-10-21T00:40:09.546081+00:00",
+  "googleReview": {
+    "build": "13",
+    "track": "Production",
+    "countries": 177,
+    "sendForReviewConfirmed": true,
+    "consoleSection": "Modifications en cours d\u2019examen",
+    "state": "Automatic preliminary checks running; review queued automatically after completion",
+    "managedPublishing": true,
+    "publicRolloutStarted": false,
+    "evidence": "google-build13-review.png"
+  },
+  "qaLimitations": [
+    "User explicitly requested Apple submission with existing checks; fresh TestFlight installation of build26 was not performed.",
+    "Three iOS annual purchases and restores passed on prior physical-device development binary. Eligible free trial not exercised because current Apple account is ineligible; user elected to keep current account.",
+    "Android build13 derived APK upgrade/launch/log smoke passed; genuine Google Play sandbox purchase/restore not exercised.",
+    "Sentry JS debug-ID uploads and native symbols verified; no fresh de-minified production-like event emitted."
+  ],
+  "releaseSource": {
+    "mobileBranch": "release/photo-tracking-1.8.0",
+    "mobileRemote": "git@github.com:CookEat-Ai/mobile-app.git",
+    "apiBranch": "release/photo-corrections-1.10.1",
+    "apiRemote": "git@github.com:CookEat-Ai/api.git",
+    "binarySourceCommit": "c8f79d887a13b4da20dc5fa88ce8544e93afd336",
+    "recordOnlyCommitDoesNotChangeBinary": true
+  }
+}

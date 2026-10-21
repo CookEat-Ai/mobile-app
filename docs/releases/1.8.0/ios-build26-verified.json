@@ -1,0 +1,13 @@
+{
+  "CFBundleIdentifier": "com.gokugen.cookeat",
+  "CFBundleShortVersionString": "1.8.0",
+  "CFBundleVersion": "26",
+  "MinimumOSVersion": "16.4",
+  "DTXcode": "2660",
+  "DTSDKName": "iphoneos26.5",
+  "DTPlatformName": "iphoneos",
+  "sha256": "bb78b150607e42096f4a46371df95e022d847f5b3d1722e8dec6602c6f97b6ef",
+  "easBuildId": "04864de1-220f-4ffa-8c1e-324fe8c4a790",
+  "commit": "c8f79d887a13b4da20dc5fa88ce8544e93afd336",
+  "runtimeVersion": "74ae75718d342e88e251141b0cbae282312e41b9"
+}

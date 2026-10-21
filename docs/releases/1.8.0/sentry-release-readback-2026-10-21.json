@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-10-21T00:23:04.546Z",
+  "results": [
+    {
+      "build": 13,
+      "httpStatus": 404,
+      "releaseFiles": null
+    },
+    {
+      "build": 26,
+      "httpStatus": 404,
+      "releaseFiles": null
+    }
+  ],
+  "note": "Native debug files are verified separately; debug-ID uploads do not always create legacy release-file records."
+}

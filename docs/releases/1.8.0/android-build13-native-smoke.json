@@ -1,0 +1,10 @@
+{
+  "checkedAt": "2026-10-21T00:31:17.549Z",
+  "binary": "Production EAS AAB 1.8.0 (13), derived universal APK, local debug signing only",
+  "install": "Upgrade from 12 to 13 passed; app data preserved",
+  "nativeVersion": "1.8.0 (13)",
+  "launchSucceeded": true,
+  "reactNativeFatal": false,
+  "purchaseAndRestore": "Not tested: no genuine Play Store/account on emulator",
+  "interactionQa": "Computer-use app binding for Android emulator unavailable; startup/screenshot/log observation only"
+}

@@ -1,0 +1,18 @@
+{
+  "status": "FINISHED",
+  "completedAt": "2026-10-21T00:21:43.514Z",
+  "profile": "production",
+  "environment": "production",
+  "channel": "production",
+  "runtimeVersion": "74ae75718d342e88e251141b0cbae282312e41b9",
+  "commit": "c8f79d887a13b4da20dc5fa88ce8544e93afd336",
+  "build": "26",
+  "iosSubmit": "WAITING_FOR_REVIEW",
+  "ipaSha256": "bb78b150607e42096f4a46371df95e022d847f5b3d1722e8dec6602c6f97b6ef",
+  "appleBuildId": "bad7c011-7832-405e-a7b1-d8dfe01eb86f",
+  "appleSubmissionId": "a262465e-a547-4212-bf85-9f5f3e90a7e8",
+  "submittedAt": "2026-10-21T00:38:53.863Z",
+  "appleProcessing": "VALID",
+  "releaseType": "MANUAL",
+  "freshTestFlightInstall": "Not performed; user authorized existing controls"
+}
