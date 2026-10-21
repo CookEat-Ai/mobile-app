@@ -1,6 +1,7 @@
 import { AppSpinner as ActivityIndicator } from '../ui/AppSpinner';
 import { NavigationIconButton } from '../NavigationIconButton';
 import { CameraBrand } from '../CameraBrand';
+import { CameraFramingGuide } from '../CameraFramingGuide';
 import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import React from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -50,7 +51,7 @@ export function MealPhotoCapture({ cameraRef, granted, cameraError, canAskAgain,
     return <View style={[appStyles.screen, live && { backgroundColor: '#000000' }]}>
         {live ? <>
             {cameraPreview ?? <CameraView ref={cameraRef} style={StyleSheet.absoluteFill} facing="back" active={active} onCameraReady={onReady} onMountError={onCameraError} />}
-            <View pointerEvents="none" style={styles.guide}><View style={[styles.corner, styles.tl]} /><View style={[styles.corner, styles.tr]} /><View style={[styles.corner, styles.bl]} /><View style={[styles.corner, styles.br]} /></View>
+            <CameraFramingGuide />
             <LinearGradient pointerEvents="box-none" colors={['rgba(0,0,0,.72)', 'transparent']} style={styles.topOverlay}>{header}</LinearGradient>
             <LinearGradient pointerEvents="box-none" colors={['transparent', 'rgba(0,0,0,.88)']} locations={[0, .45]} style={styles.bottomOverlay}>{controls}</LinearGradient>
         </> : <>
@@ -79,10 +80,4 @@ const styles = StyleSheet.create({
     galleryLabel: { fontFamily: 'CronosPro', fontSize: 14 },
     permission: { flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 24, gap: 22 },
     permissionIcon: { width: 82, height: 82, borderRadius: AppRadii.pill, backgroundColor: theme.yellow, alignItems: 'center', justifyContent: 'center' },
-    guide: { position: 'absolute', left: '8%', right: '8%', top: '30%', bottom: '30%' },
-    corner: { position: 'absolute', width: 32, height: 32, borderColor: theme.yellow },
-    tl: { left: 0, top: 0, borderTopWidth: 3, borderLeftWidth: 3 },
-    tr: { right: 0, top: 0, borderTopWidth: 3, borderRightWidth: 3 },
-    bl: { left: 0, bottom: 0, borderBottomWidth: 3, borderLeftWidth: 3 },
-    br: { right: 0, bottom: 0, borderBottomWidth: 3, borderRightWidth: 3 },
 });

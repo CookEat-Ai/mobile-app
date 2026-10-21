@@ -1,4 +1,5 @@
 import { CameraBrand } from '../components/CameraBrand';
+import { CameraFramingGuide } from '../components/CameraFramingGuide';
 import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { createPantryScanHandoff, PANTRY_SCAN_HANDOFF_KEY } from '../services/pantryScanHandoff';
 import { PlanningFlowHeader } from '../components/planning/PlanningFlowHeader';
@@ -700,6 +701,7 @@ function CameraContent() {
       )}
 
       <View style={styles.overlay} {...panResponder.panHandlers} onTouchEnd={handleTapToFocus}>
+        {mode === 'photo' && !recordedVideoUri && <CameraFramingGuide />}
         {focusPulsePoint && (
           <Animated.View
             pointerEvents="none"

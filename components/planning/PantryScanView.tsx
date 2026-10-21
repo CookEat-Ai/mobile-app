@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useMotionAllowed } from '../../contexts/MotionPreferences';
 import { PantryIngredientReview } from './PantryIngredientReview';
+import { CameraFramingGuide } from '../CameraFramingGuide';
 
 type PantryScanProps = {
   photoUris: string[]; ingredients: string[] | null; saving: boolean;
@@ -63,7 +64,7 @@ function PantryScanContent({ photoUris, ingredients, saving, onConfirm, onRetake
         <View style={styles.grid} accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">{Array.from({ length: 64 }, (_, index) => <View key={index} style={styles.cell} />)}</View>
         <Animated.View style={[styles.scanLine, { top: sweep.interpolate({ inputRange: [0, 1], outputRange: ['2%', '96%'] }) }]} />
         <View style={styles.photoBadge} accessibilityRole="progressbar" accessibilityLabel={t('pantryScan.scanning')}><ActivityIndicator size="small" color={theme.ink} accessible={false} /><Text style={styles.badgeText}>{t('pantryScan.scanning')}</Text></View>
-        <View style={[styles.corner, styles.topLeft]} /><View style={[styles.corner, styles.topRight]} /><View style={[styles.corner, styles.bottomLeft]} /><View style={[styles.corner, styles.bottomRight]} />
+        <CameraFramingGuide style={styles.analysisGuide} />
       </View>
       </View>
   </View>;
@@ -76,5 +77,5 @@ const styles = StyleSheet.create({
   grid: { position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, flexDirection: 'row', flexWrap: 'wrap' }, cell: { width: '12.5%', height: '12.5%', borderWidth: 0.5, borderColor: 'rgba(255,255,255,0.35)' },
   scanLine: { position: 'absolute', left: 0, right: 0, height: 3, backgroundColor: theme.yellow, shadowColor: theme.yellow, shadowRadius: 16, shadowOpacity: 1, shadowOffset: { width: 0, height: 0 } },
   photoBadge: { position: 'absolute', bottom: 18, backgroundColor: theme.yellowSoft, borderRadius: AppRadii.pill, paddingHorizontal: 14, paddingVertical: 10, flexDirection: 'row', gap: 8, alignItems: 'center' }, badgeText: { fontFamily: 'CronosProBold', fontSize: 14, color: theme.ink },
-  corner: { position: 'absolute', width: 30, height: 30, borderColor: theme.yellow }, topLeft: { left: 12, top: 12, borderLeftWidth: 3, borderTopWidth: 3 }, topRight: { right: 12, top: 12, borderRightWidth: 3, borderTopWidth: 3 }, bottomLeft: { left: 12, bottom: 12, borderLeftWidth: 3, borderBottomWidth: 3 }, bottomRight: { right: 12, bottom: 12, borderRightWidth: 3, borderBottomWidth: 3 },
+  analysisGuide: { left: 12, right: 12, top: 12, bottom: 12 },
 });
