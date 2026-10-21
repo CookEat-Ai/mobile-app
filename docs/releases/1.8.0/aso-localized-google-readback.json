@@ -1,0 +1,50 @@
+[
+  {
+    "locale": "de-DE",
+    "name": "CookEat: Kalorienzähler",
+    "short": "Fotografiere dein Essen, tracke Kalorien und Makros und plane deine Mahlzeiten.",
+    "fullDescriptionPreserved": true
+  },
+  {
+    "locale": "en-AU",
+    "name": "CookEat: Calorie Counter",
+    "short": "Photograph your meals, track calories and macros, and plan your weekly menu.",
+    "fullDescriptionPreserved": true
+  },
+  {
+    "locale": "en-CA",
+    "name": "CookEat: Calorie Counter",
+    "short": "Snap your meals, track calories and macros, and plan your weekly menu.",
+    "fullDescriptionPreserved": true
+  },
+  {
+    "locale": "en-GB",
+    "name": "CookEat: Calorie Counter",
+    "short": "Photograph your meals, track calories and macros, and plan your weekly menu.",
+    "fullDescriptionPreserved": true
+  },
+  {
+    "locale": "en-US",
+    "name": "CookEat: Calorie Counter",
+    "short": "Snap your meals, track calories and macros, and plan your weekly menu.",
+    "fullDescriptionPreserved": true
+  },
+  {
+    "locale": "es-MX",
+    "name": "CookEat: Contador de calorías",
+    "short": "Registra tus comidas con fotos, lleva el control de tus macros y planea menús.",
+    "fullDescriptionMatchesApprovedSource": true
+  },
+  {
+    "locale": "es-ES",
+    "name": "CookEat: Contador de calorías",
+    "short": "Registra tus comidas con una foto, controla tus macros y planifica tus menús.",
+    "fullDescriptionMatchesApprovedSource": true
+  },
+  {
+    "locale": "pt-BR",
+    "name": "CookEat: Contador de calorias",
+    "short": "Registre suas refeições com fotos, acompanhe seus macros e planeje seu cardápio.",
+    "fullDescriptionMatchesApprovedSource": true
+  }
+]
