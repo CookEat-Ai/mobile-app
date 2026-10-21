@@ -15,7 +15,7 @@ vm.runInNewContext(compileRules('services/planningDisplay.ts'),{exports:displayR
 function harness(demo = true) {
   let today = '2026-10-13';
   const slots = []; let cursor = 0, focus, alert, tree, revision = 0, load = async () => ({ data: { plans: [current, older] } });
-  const deletion = deferred(); let deleteCalls = 0, navigation = 0, cleanup = 0;
+  const deletion = deferred(); let deleteCalls = 0, navigation = 0, cleanup = 0, lastRoute;
   const react = { __esModule: true, createElement: jsx, Fragment: 'Fragment',
     useRef: value => { const index = cursor++; if (!(index in slots)) slots[index] = { current: value }; return slots[index]; },
     useState: value => { const index = cursor++; if (!(index in slots)) slots[index] = value; return [slots[index], next => { slots[index] = typeof next === 'function' ? next(slots[index]) : next; }]; },
@@ -24,7 +24,7 @@ function harness(demo = true) {
   const rn = { __esModule: true, ActivityIndicator: 'ActivityIndicator', Alert: { alert: (...args) => { alert = args; } }, Modal: 'Modal', RefreshControl: 'RefreshControl', ScrollView: 'ScrollView', StyleSheet: { create: s => s }, Text: 'Text', TouchableOpacity: 'TouchableOpacity', View: 'View' };
   const deps = {
     react, 'react-native': rn, '@react-native-async-storage/async-storage': { default: { getItem: async () => 'owner' }, __esModule: true },
-    'expo-router': { router: { push: () => { navigation++; } }, useFocusEffect: cb => { focus = cb; }, useLocalSearchParams: () => ({}) },
+    'expo-router': { router: { push: route => { navigation++; lastRoute = route; } }, useFocusEffect: cb => { focus = cb; }, useLocalSearchParams: () => ({}) },
     'react-i18next': { useTranslation: () => ({ t: key => key, i18n: { language: 'fr', resolvedLanguage: 'fr' } }) },
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) },
     '../../hooks/usePlanningClock': {usePlanningClock:()=>({today})},
@@ -46,14 +46,22 @@ function harness(demo = true) {
   const render = () => { cursor = 0; tree = mod.exports.default(); return tree; };
   function nodes(node) { if (node == null || typeof node !== 'object') return []; if (Array.isArray(node)) return node.flatMap(nodes); return [node, ...nodes(node.props?.children)]; }
   function text(node) { if (node == null) return ''; if (typeof node !== 'object') return String(node); if (Array.isArray(node)) return node.map(text).join(''); return text(node.props?.children); }
-  const button = key => nodes(tree).find(n => n.type === 'TouchableOpacity' && text(n).includes(key));
+  const button = key => {
+    if (key === 'planningFlow.deleteAction') {
+      const week = nodes(tree).find(node => node.type === 'PlanWeekContent');
+      return week?.props.onDelete ? {props: {onPress: week.props.onDelete}} : undefined;
+    }
+    return nodes(tree).find(n => n.type === 'TouchableOpacity' && text(n).includes(key));
+  };
   render();
-  return { render, button, setDay: value => {today=value;}, focus: () => focus(), deleteResult: deletion.resolve, confirm: () => alert[2].find(item => item.style === 'destructive').onPress(), setLoad: fn => { load = fn; },
+  return { render, button, regenerate: () => nodes(tree).find(node => node.type === 'PlanWeekContent').props.onRegenerate(), get lastRoute() { return lastRoute; }, setDay: value => {today=value;}, focus: () => focus(), deleteResult: deletion.resolve, confirm: () => alert[2].find(item => item.style === 'destructive').onPress(), setLoad: fn => { load = fn; },
     get calls() { return deleteCalls; }, get cleanup() { return cleanup; }, get navigation() { return navigation; }, get planIds() { return slots.find(value => Array.isArray(value) && value.some(v => v?._id))?.map(v => v._id) || []; } };
 }
 (async () => {
   const normal = harness(false); normal.focus(); await tick(); normal.render();
   assert.equal(normal.button('planningFlow.deleteAction'), undefined, 'delete action stays exclusive to presentation mode');
+  normal.regenerate();
+  assert.equal(normal.lastRoute.params.sourcePlanId, current._id, 'regeneration identifies the selected plan for preference prefill');
   const failed = harness(); failed.focus(); await tick(); failed.render();
   failed.button('planningFlow.deleteAction').props.onPress(); assert.equal(failed.calls, 0, 'confirmation is required before request');
   failed.confirm(); failed.confirm(); await tick(); assert.equal(failed.calls, 1, 'double confirmation sends one request');
@@ -71,6 +79,7 @@ function harness(demo = true) {
   const rollover=harness(false);rollover.focus();await tick();rollover.render();
   assert.equal(rollover.button('dailyApp.createWeek'),undefined,'last configured day is still active');
   rollover.setDay('2026-10-14');rollover.render();assert(rollover.button('dailyApp.createWeek'),'next local day immediately enables creation despite the legacy seven-day horizon');
+  rollover.button('dailyApp.createWeek').props.onPress(); assert.equal(rollover.lastRoute.params.sourcePlanId, undefined, 'creating the next plan does not reload expired preferences');
   assert.equal(rollover.planIds.join(','),'current,older','expired plans stay in history');
   console.log('Home deletion passed: demo-only action, confirmation, duplicates, failure, empty state, preserved history and stale loading.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

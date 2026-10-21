@@ -17,9 +17,9 @@ import { planningStyles as styles } from './PlanningStyles';
 const MEAL_LABELS = { breakfast: 'Breakfast', lunch: 'Lunch', snack: 'Snack', dinner: 'Dinner' } as const;
 
 /** The exact meal card shown in the onboarding preview, shared with every week. */
-export function PlanMealCard({ meal, day, loading, disabled, imageTransition = 180, tile = false, onPress, onLongPress }: {
+export function PlanMealCard({ meal, day, badgeLabel, loading, disabled, imageTransition = 180, tile = false, onPress, onLongPress }: {
   meal: Pick<MealPlanMeal, 'title' | 'image' | 'mealType' | 'calories' | 'proteins' | 'cookingTime' | 'ingredients' | 'pantryOwned' | 'pantryRequired' | 'estimatedCost'> & { catalogCategory?: CatalogMealCategory };
-  tile?: boolean; day?: string; loading?: boolean; disabled?: boolean; imageTransition?: number; onPress: () => void; onLongPress?: () => void;
+  tile?: boolean; day?: string; badgeLabel?: string; loading?: boolean; disabled?: boolean; imageTransition?: number; onPress: () => void; onLongPress?: () => void;
 }) {
   const { t } = useTranslation();
   const { isTablet } = useResponsive();
@@ -34,12 +34,16 @@ export function PlanMealCard({ meal, day, loading, disabled, imageTransition = 1
       } : undefined}>
       <View style={[styles.imageWrap, largeRow && tabletStyles.rowImage, tile && tabletStyles.tileImage]}>
         {meal.image ? <Image source={getRecipeImageSource(meal.image)} contentFit="cover" cachePolicy="memory-disk" enforceEarlyResizing style={styles.mealImage} transition={imageTransition} /> : <MealArtwork meal={meal} style={styles.mealImage} />}
-        <View style={styles.mealTypePill}><Text style={styles.mealType}>{t(meal.catalogCategory ? `mealLibrary.types.${meal.catalogCategory}` : `search.categories.${MEAL_LABELS[meal.mealType || 'lunch']}`)}</Text></View>
+        <View style={styles.mealTypePill}><Text style={styles.mealType}>{badgeLabel || t(meal.catalogCategory ? `mealLibrary.types.${meal.catalogCategory}` : `search.categories.${MEAL_LABELS[meal.mealType || 'lunch']}`)}</Text></View>
       </View>
       <View style={[styles.mealBody, tile && tabletStyles.tileBody]}>
         {day ? <Text style={styles.mealDay}>{day}</Text> : null}
         <Text numberOfLines={2} style={[styles.mealTitle, isTablet && tabletStyles.title]}>{meal.title}</Text>
-        <View style={styles.mealMetaRow}><Text style={[styles.mealMeta, isTablet && tabletStyles.meta]}>{roundNutritionValue(meal.calories)} kcal</Text><View style={styles.metaDot} /><Text style={[styles.mealMetaStrong, isTablet && tabletStyles.meta]}>{roundNutritionValue(meal.proteins)}g {t('fitnessOnboarding.projection.protein')}</Text></View>
+        {(meal.calories !== undefined || meal.proteins !== undefined) && <View style={styles.mealMetaRow}>
+          {meal.calories !== undefined && <Text style={[styles.mealMeta, isTablet && tabletStyles.meta]}>{roundNutritionValue(meal.calories)} kcal</Text>}
+          {meal.calories !== undefined && meal.proteins !== undefined && <View style={styles.metaDot} />}
+          {meal.proteins !== undefined && <Text style={[styles.mealMetaStrong, isTablet && tabletStyles.meta]}>{roundNutritionValue(meal.proteins)}g {t('fitnessOnboarding.projection.protein')}</Text>}
+        </View>}
         <MealCostEstimate cost={meal.estimatedCost} compact />
         {Number(meal.pantryRequired) > 0 && <Text style={styles.timeText}>{t('planningPantry.coverage', { owned: meal.pantryOwned || 0, required: meal.pantryRequired })}</Text>}
         {!!meal.cookingTime && <View style={styles.timeRow}><Ionicons name="time-outline" size={14} color={Colors.light.textSecondary} /><Text style={styles.timeText}>{meal.cookingTime}</Text></View>}

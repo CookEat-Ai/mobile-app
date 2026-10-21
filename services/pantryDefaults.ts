@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { TFunction } from 'i18next';
+import { normalizePantryIngredients, pantryIngredientKey } from './planningPantry';
 
 export const PANTRY_STORAGE_KEY = 'pantry_ingredients';
 
@@ -85,6 +86,32 @@ function parseStoredPantry(raw: string): PantryIngredient[] {
   });
 }
 
+/** null means no inventory has been saved; [] means the user emptied it. */
+export async function loadSavedPantryIngredientNames(): Promise<string[] | null> {
+  const raw = await AsyncStorage.getItem(PANTRY_STORAGE_KEY);
+  return raw === null ? null : normalizePantryIngredients(parseStoredPantry(raw).map(item => item.name));
+}
+
+let pantryWrite: Promise<void> = Promise.resolve();
+
+/** Share the device pantry with the planner and preserve existing item metadata. */
+export function savePantryIngredientNames(names: string[]): Promise<void> {
+  const snapshot = normalizePantryIngredients(names);
+  const write = pantryWrite.then(async () => {
+    const raw = await AsyncStorage.getItem(PANTRY_STORAGE_KEY);
+    const previous = raw === null ? [] : parseStoredPantry(raw);
+    const byName = new Map(previous.map(item => [pantryIngredientKey(item.name), item]));
+    const addedAt = new Date().toISOString();
+    const items = snapshot.map(name => byName.get(pantryIngredientKey(name)) || {
+      id: `pantry-${pantryIngredientKey(name)}`, name, category: 'other', addedAt,
+    });
+    await AsyncStorage.setItem(PANTRY_STORAGE_KEY, JSON.stringify(items));
+  });
+  // A failed write is reported to its caller without blocking subsequent edits.
+  pantryWrite = write.catch(() => undefined);
+  return write;
+}
+
 /**
  * Initialise uniquement une installation qui n'a encore jamais possédé de
  * garde-manger. Une valeur existante — y compris `[]` — exprime un choix de
@@ -109,4 +136,3 @@ export async function loadOrCreateStarterPantry(t: TFunction): Promise<{
   await AsyncStorage.setItem(PANTRY_STORAGE_KEY, JSON.stringify(ingredients));
   return { ingredients, initialized: true };
 }
-

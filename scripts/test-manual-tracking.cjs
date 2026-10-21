@@ -160,6 +160,18 @@ const button = (tree, label) => all(tree, 'Button').find(node => text(node) === 
   const cumulative = summary.render({nutrition:{calories:625,proteins:55,carbs:80,fats:7},partial:true,recognizing:true,compact:true});
   assert(all(cumulative,'Text').some(node=>text(node)==='625'),'recognized calories accumulate during analysis');
   assert(!text(cumulative).includes('+ ?'),'no unknown-calorie placeholder');
+  const recap = harness('components/tracking/PhotoMealReview.tsx', 'PhotoMealReview', {'../../services/api':{apiService:{}}});
+  const recapProps = {...props, manual:false, mealType:'dinner', items:[rice], photo:{uri:'meal-photo',width:1000,height:800}, analysis:{kind:'meal',mealType:'dinner',items:[rice]}, onMealType:value=>{recapProps.mealType=value;}};
+  tree=recap.render(recapProps);
+  assert.equal(button(tree,'tracking.breakfast'),undefined,'category choices are collapsed on the recap');
+  const category=all(tree,'Button').find(node=>node.props.accessibilityLabel==='tracking.mealCategory: tracking.dinner');
+  assert(category,'current category is directly accessible from the recap');category.props.onPress();
+  tree=recap.render(recapProps);button(tree,'tracking.lunch').props.onPress();
+  tree=recap.render(recapProps);assert.equal(recapProps.mealType,'lunch');
+  assert.equal(button(tree,'tracking.breakfast'),undefined,'selection closes the category choices');
+  assert(all(tree,'Button').some(node=>node.props.accessibilityLabel==='tracking.mealCategory: tracking.lunch'),'recap immediately reflects the manual correction');
+  assert(!all(recap.render({...recapProps,pending:true}),'Button').some(node=>node.props.accessibilityLabel?.startsWith('tracking.mealCategory:')),'analysis does not expose an unfinished category');
+  recap.unmount();
   summary.unmount(); nutrientEditor.unmount(); ui.unmount(); route.unmount(); edit.unmount();
   await service.deleteTrackedMeal('manual-user', 'stable-id'); assert.equal((await service.loadTrackedMeals('manual-user')).length, 0);
   console.log('Manual tracking: search without photo, category/quantity validation, selected day, totals, error recovery, duplicate taps, persisted edit/delete and user isolation passed.');

@@ -217,9 +217,11 @@ function camera() {
   assert(nodes(recovered).some(node => node.type === 'CameraView'), 'dismissing the error returns to capture');
   assert(nodes(recovered).some(node => text(node).includes('pantryReview.analyzePhotos')), 'failed analysis keeps photos for retry');
 
+  const configureTranslation = key => key;
   const configureHarness = harness('app/planning/configure.tsx', {
+    '../../services/pantryDefaults': { loadSavedPantryIngredientNames: async () => null, savePantryIngredientNames: async () => {} },
     'expo-router': { router: { back() {}, push() { throw new Error('review cannot generate immediately'); } }, useLocalSearchParams: () => ({}), useFocusEffect() {} },
-    'react-i18next': { useTranslation: () => ({ t: key => key, i18n: { language: 'fr' } }) },
+    'react-i18next': { useTranslation: () => ({ t: configureTranslation, i18n: { language: 'fr' } }) },
     '../../hooks/useResponsive': { contentColumn: () => ({}), useResponsive: () => ({ gutter: 20 }) },
     '../../hooks/usePlanningClock': { usePlanningClock: () => ({ weekStart: '2026-10-14', now: new Date('2026-10-14T12:00:00Z') }) },
     '../../services/haptics': { feedback },

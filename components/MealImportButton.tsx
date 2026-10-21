@@ -11,14 +11,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ImportLinkSheet } from './ImportLinkSheet';
 import { feedback } from '../services/haptics';
+import { importedMealsRoute } from '../services/importedMealNavigation';
 export function MealImportButton() {
     const { t } = useTranslation(), insets = useSafeAreaInsets();
     const [chooser, setChooser] = useState(false), [link, setLink] = useState(false);
     const pending = useRef<null | 'link' | 'share' | 'history'>(null);
     const finishDismiss = () => { const action = pending.current; pending.current = null; if (action === 'link')
         setLink(true); if (action === 'share')
-        router.push({ pathname: '/onboarding/videoImportTutorial', params: { isFromImport: 'true' } }); if (action === 'history')
-        router.push('/(tabs)/imported'); };
+        router.push({ pathname: '/import-tutorial', params: { isFromImport: 'true' } }); if (action === 'history')
+        router.navigate(importedMealsRoute()); };
     const choose = (action: 'link' | 'share' | 'history') => { pending.current = action; setChooser(false); };
     return <><NavigationIconButton icon="add" tone="primary" accessibilityLabel={t('mealImport.add')} onPress={() => { void feedback.light(); setChooser(true); }} />
  <Modal visible={chooser} onDismiss={finishDismiss} transparent onRequestClose={() => setChooser(false)}><Pressable accessible={false} accessibilityLabel={t('common.cancel')} style={styles.overlay} onPress={() => setChooser(false)}><Pressable accessible={false} style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 20) }]} onPress={() => { }}>
@@ -30,4 +31,4 @@ export function MealImportButton() {
  <ImportLinkSheet visible={link} onClose={() => setLink(false)} source="meal_library"/>
  </>;
 }
-const styles = StyleSheet.create({ overlay: { flex: 1, backgroundColor: theme.overlay, justifyContent: 'flex-end' }, sheet: { backgroundColor: theme.background, borderTopLeftRadius: AppRadii.sheet, borderTopRightRadius: AppRadii.sheet, padding: 20, gap: 14 }, heading: { flexDirection: 'row', gap: 12, alignItems: 'center', marginBottom: 6 }, option: { ...appStyles.card, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, minHeight: 88 }, icon: { width: 46, height: 46, borderRadius: AppRadii.card, backgroundColor: theme.yellow, alignItems: 'center', justifyContent: 'center' }, history: { minHeight: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 } });
+const styles = StyleSheet.create({ overlay: { flex: 1, justifyContent: 'flex-end' }, sheet: { backgroundColor: theme.background, borderTopLeftRadius: AppRadii.sheet, borderTopRightRadius: AppRadii.sheet, padding: 20, gap: 14 }, heading: { flexDirection: 'row', gap: 12, alignItems: 'center', marginBottom: 6 }, option: { ...appStyles.card, flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, minHeight: 88 }, icon: { width: 46, height: 46, borderRadius: AppRadii.card, backgroundColor: theme.yellow, alignItems: 'center', justifyContent: 'center' }, history: { minHeight: 50, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 } });

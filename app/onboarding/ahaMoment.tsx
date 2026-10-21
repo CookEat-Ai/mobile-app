@@ -52,7 +52,7 @@ export default function AhaMomentScreen() {
     analytics.track('onboarding_aha_moment_skipped');
     const variant = await analytics.getOnboardingVariant();
     if (variant === 'E' || variant === 'F') {
-      router.replace('/onboarding/videoImportTutorial');
+      router.push('/onboarding/videoImportTutorial');
     } else {
       router.push('/onboarding/ingredientSelection');
     }

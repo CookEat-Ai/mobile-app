@@ -14,10 +14,10 @@ function compile(file, dependencies, globals = {}) {
   return module.exports;
 }
 function harness() {
-  const slots = []; let cursor = 0, focus, cleanup, tree, now = 1000000, version = 'old', gate = null, failPage = 0;
+  const slots = [], effects = [], effectCleanups = new Map(); let params = {}; let cursor = 0, focus, cleanup, tree, now = 1000000, version = 'old', gate = null, failPage = 0;
   const network = [];
   const cuisineGates = new Map();
-  const storage = { getItem: async () => null, setItem: async () => undefined };
+  const storage = { getItem: async key => key === 'userId' ? 'owner' : null, setItem: async () => undefined };
   const { ResponseCache, responseCachePolicy } = compile('services/responseCache.ts', {
     '@react-native-async-storage/async-storage': { __esModule: true, default: storage },
   }, { Date: class extends Date { static now() { return now; } } });
@@ -26,11 +26,17 @@ function harness() {
     memo: component => component,
     useRef: initial => { const index = cursor++; if (!(index in slots)) slots[index] = { current: initial }; return slots[index]; },
     useState: initial => { const index = cursor++; if (!(index in slots)) slots[index] = initial; return [slots[index], next => { slots[index] = typeof next === 'function' ? next(slots[index]) : next; }]; },
-    useCallback: fn => fn, useMemo: fn => fn(), useEffect() {},
+    useCallback: fn => fn, useMemo: fn => fn(), useEffect(fn, deps) {
+      const index = cursor++, previous = slots[index];
+      if (!previous || deps.some((value, i) => value !== previous[i])) { slots[index] = deps; effects.push(() => { effectCleanups.get(index)?.(); effectCleanups.set(index, fn()); }); }
+    },
   }; react.default = react;
   const rn = { __esModule: true, StyleSheet: { create: s => s } };
   for (const name of ['ActivityIndicator', 'FlatList', 'Modal', 'ScrollView', 'Text', 'TextInput', 'TouchableOpacity', 'View']) rn[name] = name;
+  const historyRequests = [];
+  const imports = Array.from({length:60},(_,i)=>({id:`import-${i}`,title:`Imported ${i}`,isImported:true,cooking_time:'20 min',image:'photo.jpg',usedIngredients:['Riz']}));
   const apiService = {
+    getRecipeHistory: async (userId,page,limit,options) => { historyRequests.push({userId,page,limit,options}); return {data:{history:imports.slice((page-1)*limit,page*limit),pagination:{page,total:imports.length,hasMore:page*limit<imports.length}}}; },
     getRecipeCatalog: options => cache.read(JSON.stringify(options), responseCachePolicy('/catalog/recipes'), async () => {
       network.push(options);
       if (gate) await gate;
@@ -43,7 +49,7 @@ function harness() {
   const deps = {
     react, 'react-native': rn,
     '@react-native-async-storage/async-storage': { __esModule: true, default: storage },
-    'expo-router': { useFocusEffect: cb => { focus = cb; }, router: { push() {} } },
+    'expo-router': { useLocalSearchParams: () => params, useFocusEffect: cb => { focus = cb; }, router: { push() {} } },
     'react-i18next': { useTranslation: () => ({ t: key => key, i18n: { resolvedLanguage: 'fr' } }) },
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) },
     '../../hooks/useResponsive': { useResponsive: () => ({ gutter: 20, width: 390, columns: 1 }), contentColumn: () => ({}) },
@@ -52,17 +58,19 @@ function harness() {
     '../../constants/AppTheme': require('./helpers/ui-theme.cjs'),
     '../../constants/Colors': { Colors: { light: {} } },
     '../../services/api': { apiService },
+    '../../services/importedMealNavigation': compile('services/importedMealNavigation.ts', {}, {Date}),
+    '../../services/importedMeals': compile('services/importedMeals.ts', {'./api':{apiService},'./recipeStorage':{recipeStorageService:{getStoredRecipes:async()=>[],getCachedImages:async()=>({})}},'../i18n':{__esModule:true,default:{t:key=>key}}}),
     '../../services/catalogCuisineFilters': compile('services/catalogCuisineFilters.ts', {}),
     '../../services/fitnessProfile': { loadFitnessProfile: async () => ({ goal: 'balanced' }), fitnessProfileToPlanningPreferences: () => ({ diet: 'none', allergies: [] }), calculateFitnessProjection: () => ({ dailyCalories: 2000, dailyProteinGrams: 100 }) },
   };
-  const screen = compile('app/(tabs)/meals.tsx', deps);
-  const render = () => { cursor = 0; tree = screen.default(); return tree; };
+  const screen = compile('app/(tabs)/meals.tsx', deps, {setTimeout:()=>1,clearTimeout(){}});
+  const render = () => { cursor = 0; tree = screen.default(); for(const effect of effects.splice(0))effect(); return tree; };
   function nodes(node) { if (!node || typeof node !== 'object') return []; if (Array.isArray(node)) return node.flatMap(nodes); return [node, ...nodes(node.props?.children)]; }
   function text(node) { if (node == null || typeof node === 'boolean') return ''; if (typeof node !== 'object') return String(node); if (Array.isArray(node)) return node.map(text).join(''); return text(node.props?.children); }
   const list = () => nodes(tree).find(node => node.type === 'FlatList');
   render();
   return {
-    render, list, network, focus: () => { cleanup = focus(); }, blur: () => cleanup?.(),
+    render, list, network, historyRequests, route: value => {params=value;}, focus: () => { cleanup = focus(); }, blur: () => cleanup?.(),
     advance: ms => { now += ms; }, setVersion: value => { version = value; },
     failPage: value => { failPage = value; },
     retry: () => nodes(list().props.ListFooterComponent).find(node => node.type === 'TouchableOpacity').props.onPress(),
@@ -129,5 +137,13 @@ function harness() {
   h.blur(); h.cuisine('italian'); h.render(); h.focus(); await tick(); h.render();
   assert.equal(h.network.at(-1).cuisineId, 'japanese', 'tapping a selected cuisine removes it while retaining the other');
   assert.equal(h.network.at(-1).page, 1, 'changing the cuisine selection resets pagination');
+  h.blur();h.filter('imported');h.render();h.focus();await tick();h.render();
+  assert.equal(h.list().props.data.length,50);assert.equal(h.historyRequests[0].userId,'owner');assert.equal(h.historyRequests[0].options.isImported,true);
+  assert(h.list().props.data.every(row=>row.id.startsWith('import-')),'the imported filter contains no catalogue meals');
+  h.list().props.onEndReached();await tick();h.render();assert.equal(h.list().props.data.length,60,'older imports paginate within Meals');
+  h.blur();h.filter('all');h.render();h.focus();await tick();h.render();
+  h.blur();h.route({filter:'imported',selectionKey:'after-import'});h.render();h.render();h.focus();await tick();h.render();
+  assert.equal(h.list().props.data.length,50);assert(h.list().props.data.every(row=>row.id.startsWith('import-')),'post-import navigation reapplies the filter on an already mounted tab');
+  const importedRow=h.list().props.renderItem({item:h.list().props.data[0],index:0}).props.children[0];assert.equal(importedRow.props.type,'imported');assert.equal(typeof importedRow.props.onDelete,'function','long-press management remains available');
   console.log('Meals cache passed: cache hits, preserved pagination, TTL revalidation, multiple cuisines with mounted/disabled cards, stale response protection, deselection and active-category reselection.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -31,6 +31,7 @@ class FormData {
   entries() { return this.parts; }
 }
 let sessionCalls = 0;
+let cacheInvalidations = 0;
 let requests = 0;
 let mode = 'ok';
 const api = load('services/api.ts', {
@@ -57,6 +58,7 @@ const api = load('services/api.ts', {
   },
 }, id => {
   if (id === 'expo-file-system') return { File: LocalFile };
+  if (id === './responseCache') return { responseCachePolicy: () => null, responseCache: { invalidatePersonal: () => { cacheInvalidations++; } } };
   if (id.includes('anonymousSession')) return {
     getAnonymousSessionToken: async () => { sessionCalls++; throw Error('session unavailable'); },
     invalidateAnonymousSession() {},
@@ -83,5 +85,6 @@ const api = load('services/api.ts', {
   assert.equal((await api.processImageIngredients(['file:///photo.jpg'])).status, 502);
   mode = 'network';
   assert.equal((await api.processImageIngredients(['file:///photo.jpg'])).error, 'common.networkError');
+  assert.equal(cacheInvalidations, 8, 'each of the four media mutations invalidates personal data before and after, including failed attempts');
   console.log('Media upload regression checks passed (installed Expo multipart serializer)');
 })().catch(error => { console.error(error); process.exitCode = 1; });

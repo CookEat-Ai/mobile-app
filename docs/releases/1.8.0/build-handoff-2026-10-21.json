@@ -1,0 +1,95 @@
+{
+  "preparedAt": "2026-10-21T00:09:42.995Z",
+  "version": "1.8.0",
+  "platforms": [
+    "ios",
+    "android"
+  ],
+  "previousBuilds": {
+    "ios": "25",
+    "android": "12"
+  },
+  "plannedBuilds": "EAS remote autoIncrement, verify assigned numbers",
+  "branch": "release/photo-tracking-1.8.0",
+  "baseCommit": "88043fe3c5f4dbf051d271292f7e37bdd01beced",
+  "api": {
+    "productionVersion": "1.10.3",
+    "productionCommit": "5aa301e5b99db740f25bede69c758948978bd270",
+    "compatibleCandidateVersion": "1.10.4",
+    "compatibleCandidateCommit": "dac5e50d7e7a61c31d585f2eaa4cdcc7456982fa",
+    "candidateProductionDeployment": "Awaiting explicit VPS authorization"
+  },
+  "scope": [
+    "Photo tracking, editable category and ingredient nutrition",
+    "Planning budget, pantry preservation, regeneration and action rows",
+    "Shared modal presentation and tablet spacing",
+    "Imported recipes in Meals and resilient video import progress"
+  ],
+  "preflight": {
+    "reproducibleInstall": "PASS yarn install --frozen-lockfile",
+    "typescript": "PASS",
+    "lint": {
+      "errors": 0,
+      "warnings": 58
+    },
+    "tests": {
+      "total": 58,
+      "passed": 58,
+      "note": "55 passed in full run; 3 obsolete harnesses fixed and all 3 passed in targeted reruns"
+    },
+    "expoDoctor": "21/21 PASS",
+    "exports": "PASS Hermes iOS and Android",
+    "diffCheck": "PASS",
+    "lockfile": "yarn.lock only"
+  },
+  "stack": {
+    "expo": "57.0.30",
+    "reactNative": "0.86.3",
+    "node": "24.19.0",
+    "localXcode": "27.1",
+    "androidTarget": 36,
+    "minimumIos": "16.4",
+    "minimumAndroid": 24
+  },
+  "eas": {
+    "project": "014735a5-662a-4ab0-84a8-d1e8653c94d6",
+    "account": "gokugen",
+    "profile": "production",
+    "environment": "production",
+    "channel": "production",
+    "runtimeVersionPolicy": "fingerprint",
+    "nativeProjects": "Managed prebuild; ios/android excluded from archive"
+  },
+  "store": {
+    "appleApp": "6748924011",
+    "versionId": "3c361968-5b83-4412-8725-4e8c4345a7c0",
+    "releaseType": "MANUAL",
+    "googlePackage": "com.gokugen.cookeat",
+    "googleTrack": "production",
+    "googleDelivery": "Upload draft, submit review with managed/manual publication"
+  },
+  "monetization": {
+    "nativePaywallUnchanged": true,
+    "entitlement": "Pro",
+    "annualPrices": [
+      49.99,
+      39.99,
+      44.99
+    ],
+    "trialDays": 7,
+    "experiment": "exp46ca5ef93c",
+    "status": "DRAFT",
+    "worldwide": true,
+    "allocation": "1/3 each",
+    "iosSandbox": "All 3 purchases and restores PASS",
+    "eligibleTrial": "Not tested; user requested retaining existing ineligible account",
+    "androidSandbox": "No authenticated genuine Play Store device available"
+  },
+  "newBuildCreated": false,
+  "storeSubmitted": false,
+  "primarySources": [
+    "https://docs.expo.dev/versions/v57.0.0/",
+    "https://developer.apple.com/news/upcoming-requirements/",
+    "https://support.google.com/googleplay/android-developer/answer/11926878"
+  ]
+}

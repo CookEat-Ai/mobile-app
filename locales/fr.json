@@ -2013,6 +2013,7 @@
   },
   "mealLibrary": {
     "types": {
+      "imported": "Importées",
       "light": "Repas légers",
       "all": "Tous",
       "protein": "Protéinées",
@@ -2124,6 +2125,7 @@
     "success": "Recette importée !",
     "errorTitle": "Impossible d'importer",
     "genericError": "Une erreur est survenue lors de l'import de la recette. Vérifie que la vidéo contient bien une recette.",
+    "timeout": "L’import prend trop de temps. Réessaie dans un instant.",
     "retry": "Réessayer",
     "upgrade": "Passer au Premium",
     "goHome": "Retour à l'accueil"
@@ -2135,6 +2137,8 @@
     "secondaryBadge": "Fonctionnalité supplémentaire",
     "secondaryTitle": "Importe aussi les recettes que tu repères en vidéo 😋",
     "secondaryHowTo": "Voici comment faire 👇🏼",
+    "swipeHint": "Glisse pour voir les étapes",
+    "step": "Étape {{current}} sur {{total}}",
     "secondaryStepLink": "Colle le lien de la vidéo",
     "secondaryStepRecipe": "CookEat crée la recette",
     "description": "Partage la vidéo vers CookEat et l'IA s'occupe de tout : ingrédients, étapes et valeurs nutritionnelles.",

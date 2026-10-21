@@ -1025,79 +1025,69 @@ class ApiService {
     isSubscribed: boolean = false,
     callbacks?: {
       onProgress?: (progress: number, step?: string) => void;
+      signal?: AbortSignal;
     }
   ): Promise<ApiResponse<{ success: boolean; recipe: any }>> {
     this.invalidateReadCache();
-    let token: string;
-    try { token = await getAnonymousSessionToken(); } catch { return { error: i18n.t('common.networkError') }; }
-    const userId = await AsyncStorage.getItem('userId');
-    const url = `${API_BASE_URL}/recipe/import-from-video`;
-
     return new Promise((resolve) => {
-      const es = new EventSource(url, {
-        method: 'POST',
-        headers: {
-          ...this.getHeaders() as any,
-          Authorization: 'Bearer ' + token,
-        },
-        body: JSON.stringify({
-          url: videoUrl,
-          userId,
-          isSubscribed,
-          language: this.getCurrentLanguage(),
-        }),
-      });
-
-      let hasResolved = false;
-
-      (es as any).addEventListener('progress', (event: any) => {
-        try {
-          const data = JSON.parse(event.data);
-          callbacks?.onProgress?.(data.progress ?? 0, data.step);
-        } catch (e) {
-          console.error('[SSE] Parse progress error:', e);
-        }
-      });
-
-      (es as any).addEventListener('done', (event: any) => {
+      let settled = false;
+      let source: EventSource | null = null;
+      const signal = callbacks?.signal;
+      const finish = (response: ApiResponse<{ success: boolean; recipe: any }>) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(deadline);
+        signal?.removeEventListener('abort', onAbort);
+        source?.close();
         this.invalidateReadCache();
+        resolve(response);
+      };
+      const onAbort = () => finish({ error: i18n.t('shareIntent.genericError') });
+      const deadline = setTimeout(() => finish({ error: i18n.t('shareIntent.timeout') }), 300000);
+      signal?.addEventListener('abort', onAbort, { once: true });
+      if (signal?.aborted) { onAbort(); return; }
+
+      void (async () => {
         try {
-          const data = JSON.parse(event.data);
-          es.close();
-          if (!hasResolved) {
-            hasResolved = true;
-            resolve({ data: { success: data.success, recipe: data.recipe } });
-          }
-        } catch (e) {
-          console.error('[SSE] Parse done error:', e);
-          es.close();
-          if (!hasResolved) {
-            hasResolved = true;
-            resolve({ error: 'Erreur de réponse finale' });
-          }
-        }
-      });
-
-      es.addEventListener('error', (event: any) => {
-        this.invalidateReadCache();
-        console.error('[SSE] Error event:', event);
-        es.close();
-        if (!hasResolved) {
-          hasResolved = true;
-          const message = event.data ? JSON.parse(event.data).message : 'Erreur d\'import';
-          resolve({ error: message });
-        }
-      });
-
-      // Timeout de sécurité si rien ne se passe pendant 5 minutes
-      setTimeout(() => {
-        if (!hasResolved) {
-          es.close();
-          this.invalidateReadCache();
-          hasResolved = true;
-          resolve({ error: 'Délai d\'importation dépassé' });
-        }
-      }, 300000);
+          const token = await getAnonymousSessionToken();
+          const userId = await AsyncStorage.getItem('userId');
+          if (settled) return;
+          source = new EventSource(`${API_BASE_URL}/recipe/import-from-video`, {
+            method: 'POST',
+            headers: { ...this.getHeaders() as any, Authorization: 'Bearer ' + token },
+            body: JSON.stringify({ url: videoUrl, userId, isSubscribed, language: this.getCurrentLanguage() }),
+            // Reconnecting a POST would create another import and consume quota.
+            pollingInterval: 0,
+            lineEndingCharacter: '\n',
+          });
+          source.addEventListener('progress' as any, (event: any) => {
+            if (settled) return;
+            try {
+              const data = JSON.parse(event.data);
+              if (typeof data.progress === 'number' && Number.isFinite(data.progress))
+                callbacks?.onProgress?.(Math.max(0, Math.min(100, data.progress)), data.step);
+            } catch { /* Ignore a malformed progress frame, never the terminal response. */ }
+          });
+          source.addEventListener('done' as any, (event: any) => {
+            if (settled) return;
+            try {
+              const data = JSON.parse(event.data);
+              if (!data.success || !data.recipe?.id) throw new Error('invalid_import_response');
+              finish({ data: { success: true, recipe: data.recipe } });
+            } catch { finish({ error: i18n.t('shareIntent.genericError') }); }
+          });
+          source.addEventListener('error', (event: any) => {
+            let message = i18n.t('shareIntent.genericError');
+            // react-native-sse puts HTTP failures in message, SSE errors in data.
+            // Neither is guaranteed to contain JSON (e.g. an iOS network error).
+            try {
+              const parsed = JSON.parse(event.data || event.message || '{}');
+              if (typeof parsed.message === 'string' && parsed.message.trim()) message = parsed.message;
+            } catch { /* Use the localized fallback rather than throwing in the listener. */ }
+            finish({ error: message, status: event.xhrStatus || undefined });
+          });
+        } catch { finish({ error: i18n.t('common.networkError') }); }
+      })();
     });
   }
 

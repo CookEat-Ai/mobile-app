@@ -1101,7 +1101,6 @@ const styles = StyleSheet.create({
   },
   codeBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
     paddingHorizontal: 28,
   },

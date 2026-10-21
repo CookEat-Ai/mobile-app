@@ -34,6 +34,7 @@ function harness(file) {
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) },
     '@react-native-async-storage/async-storage': { __esModule: true, default: { getItem: async () => 'owner' } },
     '../../constants/AppTheme': require('./helpers/ui-theme.cjs'),
+    '../../components/ui/AppModal': { AppModal: 'Modal' },
     '../../constants/Colors': { Colors: { light: {} } },
     '../../hooks/useResponsive': { useResponsive: () => ({ gutter: 20, font: size => size }), contentColumn: () => ({}) },
     '../../hooks/useEntranceReplay': { useEntranceReplay: () => () => true },

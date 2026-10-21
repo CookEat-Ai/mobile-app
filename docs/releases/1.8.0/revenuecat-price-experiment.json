@@ -6,10 +6,7 @@
   "nativePaywallUnchanged": true,
   "hostedPaywallAssigned": false,
   "existingDefaultOfferingsUnchanged": true,
-  "countriesInExperiment": [
-    "FRA",
-    "USA"
-  ],
+  "countriesInExperiment": "ALL",
   "minimumAppVersion": "1.8.0",
   "trialDays": 7,
   "entitlement": "Pro",
@@ -17,12 +14,44 @@
     "49InApp": "ofrngf00fec1c00",
     "49Onboarding": "ofrng7ae6fdaa71",
     "39InApp": "ofrng51e7b5b039",
-    "39Onboarding": "ofrngb7ea18de6b"
+    "39Onboarding": "ofrngb7ea18de6b",
+    "44InApp": "ofrngd5e72c4dde",
+    "44Onboarding": "ofrng684152a532"
   },
   "activationPending": [
-    "Apple approval for both new subscriptions",
-    "Physical sandbox purchase and restore validation"
+    "Apple approval for all three price-test subscriptions",
+    "Android sandbox purchase and restore validation",
+    "Eligible-account free-trial validation",
+    "Production 1.8.0 binary validation"
   ],
   "mobileBuildCreated": false,
-  "storeReviewSubmissionCreated": false
+  "storeReviewSubmissionCreated": false,
+  "annualPrices": [
+    49.99,
+    39.99,
+    44.99
+  ],
+  "44Products": {
+    "apple": "prod4c89fcc807",
+    "google": "prod739467cd19"
+  },
+  "44ProductsAttachedToProVerified": true,
+  "44AppleState": "READY_TO_SUBMIT",
+  "44AppleReviewScreenshotState": "COMPLETE",
+  "worldwide": true,
+  "audiencePercentage": 100,
+  "newCustomersOnly": true,
+  "variantAllocation": {
+    "A49.99": 0.3333333333333333,
+    "B39.99": 0.3333333333333333,
+    "C44.99": 0.3333333333333333
+  },
+  "sandboxQA": {
+    "report": "price-sandbox-qa-2026-10-21.json",
+    "iosPurchasesAndRestore": "PASS all three annual prices",
+    "eligibleTrial": "Pending eligible account",
+    "android": "Pending Play Store/license tester device",
+    "productionBinary": "Not tested by this development-binary session",
+    "publicEnrollment": "Not exercised while DRAFT"
+  }
 }

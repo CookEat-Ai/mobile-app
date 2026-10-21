@@ -1,3 +1,4 @@
+require('./test-photo-meal-category.cjs');
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript');
 const deferred=()=>{let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no;});return{promise,resolve,reject};};
 const tracking={},autosave={},rows=new Map();
@@ -11,7 +12,7 @@ function controller(){
  const exports={};vm.runInNewContext(ts.transpileModule(fs.readFileSync('app/tracking/capture.tsx','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,jsx:ts.JsxEmit.React,esModuleInterop:true,target:ts.ScriptTarget.ES2022}}).outputText,{exports,Date,AbortController,setTimeout,clearTimeout,require:name=>{
   if(name==='react')return React;
   if(name==='react-native')return{AppState:{currentState:'active',addEventListener:()=>({remove(){}})},StyleSheet:{create:x=>x},View:'View',Text:'Text',TouchableOpacity:'Button'};
-  if(name==='expo-router')return{useLocalSearchParams:()=>({}),useFocusEffect(){},Stack:{Screen:'Screen'},router:{back(){calls.push('closed');},dismissTo(){calls.push('navigated');}}};
+  if(name==='expo-router')return{useLocalSearchParams:()=>({}),useFocusEffect(){},Stack:{Screen:'Screen'},router:{back(){calls.push('closed');},dismissTo(){calls.push('navigated');},replace(){calls.push('replaced');}}};
   if(name==='expo-camera')return{useCameraPermissions:()=>[{granted:true},()=>{}]};
   if(name==='expo-image-picker')return{};
   if(name==='expo-image-manipulator')return{manipulateAsync:(...args)=>{calls.push(args);return compression.promise;},SaveFormat:{JPEG:'jpeg'}};
@@ -46,6 +47,9 @@ for(const [hour,expected] of [[0,'dinner'],[4,'dinner'],[5,'breakfast'],[10,'bre
  find(tree,'Reveal').props.onTitle('Corrigé');tree=c.render();find(tree,'Reveal').props.onBack();await tick();assert.equal((await tracking.loadTrackedMeals('capture-user'))[0].title,'Corrigé','close flushes a pending debounced edit');
  assert.equal((await tracking.loadTrackedMeals('capture-user'))[0].mealType,'breakfast','changing the meal category is persisted in the same journal entry');
  assert.equal((await tracking.loadTrackedMeals('capture-user')).length,1);
+ tree=c.render();assert.equal(tree.props.visible,false,'close starts the sheet exit');assert.equal(c.calls.includes('closed'),false,'the route remains in place until the native modal is dismissed');
+ tree.props.onRequestClose();tree.props.onDismiss();tree.props.onDismiss();assert.equal(c.calls.filter(value=>value==='closed').length,1,'rapid close and duplicate dismissal cannot pop the underlying tab');
+ const manual=controller();find(manual.render(),'Capture').props.onManual();tree=manual.render();assert.equal(tree.props.visible,false);assert.equal(manual.calls.includes('replaced'),false,'manual entry waits for the camera sheet to close');tree.props.onDismiss();assert.equal(manual.calls.filter(value=>value==='replaced').length,1);
  const failed=controller();camera=find(failed.render(),'Capture');camera.props.cameraRef.current={takePictureAsync:async()=>asset};camera.props.onReady();find(failed.render(),'Capture').props.onTake();await tick();failed.compression.resolve(processed);await tick();failed.request.reject(new Error('offline'));await tick();tree=failed.render();assert.ok(find(tree,'Reveal').props.error,'thrown request cannot leave the frozen scanner running forever');
  console.log('Capture: immediate frozen photo before compression, real analysis, one expanding surface and thrown-request recovery passed.');
 })().catch(error=>{console.error(error);process.exitCode=1;});

@@ -97,7 +97,7 @@ export default function PlanningScreen() {
   const locale = i18n.resolvedLanguage || 'fr';
   const configure = () => {
     if (deleteBusy.current) return;
-    router.push({ pathname: '/planning/configure', params: { replace: current?.weekStart === planningStartKey() ? 'true' : 'false' } });
+    router.push({ pathname: '/planning/configure', params: { replace: current?.weekStart === planningStartKey() ? 'true' : 'false', ...(current ? { sourcePlanId: current._id } : {}) } });
   };
   const updatePlan = (next: MealPlan) => setPlans(previous => previous.map(plan => plan._id === next._id ? next : plan));
 
@@ -142,9 +142,8 @@ export default function PlanningScreen() {
       {error && <View><Text accessibilityRole="alert" style={appStyles.error}>{error}</Text><TouchableOpacity accessibilityRole="button" style={styles.historyButton} onPress={() => void loadPlans(true)}><Text style={styles.historyText}>{t('mealLibrary.retry')}</Text></TouchableOpacity></View>}
       {current ? <>
         <View pointerEvents={deleting ? 'none' : 'auto'}><PlanWeekContent key={`${current._id}:${selectionKey || ''}`} plan={current} onPlanChange={updatePlan} onRevealStart={alignPlanningDays}
+          onRegenerate={configure} onDelete={presentationMode ? deleteCurrentPlan : undefined} deleting={deleting}
           initialDay={selectedPlanId === current._id && selectedDay !== undefined ? Number(selectedDay) : undefined} /></View>
-        <TouchableOpacity accessibilityRole="button" style={styles.editWeek} disabled={deleting} onPress={configure}><Ionicons name="refresh-outline" size={20} color={theme.ink} /><Text style={appStyles.textAction}>{t('planningDetail.regenerate')}</Text></TouchableOpacity>
-        {presentationMode && <TouchableOpacity accessibilityRole="button" disabled={deleting} accessibilityState={{ disabled: deleting, busy: deleting }} style={styles.editWeek} onPress={deleteCurrentPlan}>{deleting ? <ActivityIndicator color={theme.danger} /> : <Ionicons name="trash-outline" size={20} color={theme.danger} />}<Text style={[appStyles.textAction, { color: theme.danger }]}>{t('planningFlow.deleteAction')}</Text></TouchableOpacity>}
       </> : !loading && !error ? <EntranceView entranceIndex={0} style={styles.empty}>
         <EntranceView entranceIndex={1} style={styles.emptyMark}><Ionicons name="calendar-outline" size={44} color={theme.ink} /></EntranceView>
         <Text style={styles.emptyTitle}>{t('dailyApp.emptyTitle')}</Text>
@@ -182,7 +181,6 @@ const styles = StyleSheet.create({
   historyText: { fontFamily: 'CronosPro', fontSize: 15, lineHeight: 20, color: theme.muted },
   range: { marginTop: 6, fontFamily: 'CronosPro', fontSize: 17, color: theme.muted },
   loader: { marginVertical: 60 },
-  editWeek: { minHeight: 48, marginTop: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
   empty: { paddingVertical: 48, gap: 20 },
   emptyMark: { width: 88, height: 88, borderRadius: AppRadii.sheet, backgroundColor: '#F8EAC0', alignItems: 'center', justifyContent: 'center' },
   emptyTitle: { fontFamily: 'Degular', fontSize: 32, lineHeight: 36, color: theme.ink, maxWidth: 290 },

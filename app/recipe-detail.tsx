@@ -1,3 +1,4 @@
+import { importedMealsRoute } from '../services/importedMealNavigation';
 import { AppSpinner as ActivityIndicator } from '../components/ui/AppSpinner';
 import { RecipeMetricCard } from '../components/RecipeMetricCard';
 import { AppModal as Modal } from '../components/ui/AppModal';
@@ -784,6 +785,8 @@ export default function RecipeDetailScreen() {
     if (choosingMealRef.current) return;
     if (params.isOnboarding === 'true') {
       handleOnboardingContinue();
+    } else if (params.source === 'imported' && !router.canGoBack()) {
+      router.replace(importedMealsRoute());
     } else {
       router.back();
     }

@@ -23,7 +23,7 @@ import analytics from '../../services/analytics';
 export default function GoalScreen({ onBack }: { onBack?: () => void } = {}) {
   const { t, i18n } = useTranslation();
   const insets = useSafeAreaInsets();
-  const { gutter } = useResponsive();
+  const { gutter, font } = useResponsive();
   const [profile, setProfile] = useState<FitnessProfile | null>(null);
   const [logs, setLogs] = useState<WeightLog[]>([]);
   const [review, setReview] = useState<WeightReview | null>(null);
@@ -71,14 +71,20 @@ export default function GoalScreen({ onBack }: { onBack?: () => void } = {}) {
     finally { setBusy(false); }
   };
 
+  const heading = onBack ? <View style={[appStyles.backHeader, styles.heading]}>
+    <NavigationIconButton onPress={onBack} accessibilityLabel={t('common.back')} />
+    <Text accessibilityRole="header" numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.65}
+      style={[appStyles.headerTitle, appStyles.backHeaderLeadingTitle, { fontSize: font(29) }]}>{t('tabs.goal')}</Text>
+  </View> : <AppScreenHeading title={t('tabs.goal')} />;
+
   if (!profile || !projection) return <View style={[appStyles.screen, { padding: gutter, paddingTop: insets.top + 8 }]}>
-    <AppScreenHeading title={t('tabs.goal')} action={onBack ? <NavigationIconButton onPress={onBack} accessibilityLabel={t('common.back')} /> : undefined} />
+    {heading}
     {error ? <View style={appStyles.card}><Text style={styles.error}>{t(error)}</Text><TouchableOpacity accessibilityRole="button" style={styles.logButton} onPress={() => void load()}><Text style={styles.logButtonText}>{t('weightTracking.retry')}</Text></TouchableOpacity></View> : <ActivityIndicator color={theme.yellow} />}
   </View>;
   const hasTarget = ['gain_muscle', 'lose_weight'].includes(profile.goal);
   return <View style={appStyles.screen}>
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ ...contentColumn(), paddingTop: insets.top + 8, paddingHorizontal: gutter, paddingBottom: theme.bottomSpace }}>
-      <AppScreenHeading title={t('tabs.goal')} action={onBack ? <NavigationIconButton onPress={onBack} accessibilityLabel={t('common.back')} /> : undefined} />
+      {heading}
       {!!error && <Text accessibilityRole="alert" style={styles.error}>{t(error)}</Text>}
       {!!message && <Text accessibilityLiveRegion="polite" style={styles.note}>{t(message)}</Text>}
       <WeightProgressCard logs={logs} initialWeight={logs[0]?.weight ?? profile.nutritionWeightKg ?? profile.currentWeightKg}
@@ -126,6 +132,7 @@ export default function GoalScreen({ onBack }: { onBack?: () => void } = {}) {
   </View>;
 }
 const styles = StyleSheet.create({
+  heading: { marginBottom: 24 },
   sectionTitle: { ...appStyles.section },
   note: { marginTop: 12, fontFamily: 'CronosPro', fontSize: 15, lineHeight: 21, color: theme.muted },
   error: { ...appStyles.error },
@@ -139,7 +146,7 @@ const styles = StyleSheet.create({
   weightValue: { marginTop: 4, fontFamily: 'Degular', fontSize: 32, color: theme.ink, flexShrink: 1 },
   logButton: { ...appStyles.button },
   logButtonText: { ...appStyles.buttonText },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(8,26,16,0.38)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20 },
+  modalOverlay: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20 },
   modalCard: { width: '100%', maxWidth: 420, borderRadius: theme.radius, padding: 20, backgroundColor: theme.background },
   inputRow: { marginTop: 20, minHeight: 70, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18 },
   input: { flex: 1, fontFamily: 'Degular', fontSize: 32, color: theme.ink, textAlign: 'center', paddingVertical: 12 },

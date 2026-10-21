@@ -1,11 +1,8 @@
 import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Animated,
-  Easing,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
   Platform,
   FlatList,
@@ -16,15 +13,13 @@ import { Image } from 'expo-image';
 import { Asset } from 'expo-asset';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { feedback } from '../../services/haptics';
 import { Colors } from '../../constants/Colors';
-import { rw } from '../../constants/Layout';
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { useTranslation } from 'react-i18next';
 import analytics, { EntryFeature } from '../../services/analytics';
-import { ImportLinkSheet } from '../../components/ImportLinkSheet';
-import { clipboardMayHoldLink } from '../../services/videoLink';
+import { NavigationIconButton } from '../../components/NavigationIconButton';
 
 const TUTORIAL_IMAGES_IOS = [
   require('../../assets/images/tuto/ios/tuto-import-tiktok-1.png'),
@@ -45,49 +40,36 @@ const TUTORIAL_IMAGES_ANDROID = [
 ];
 
 export default function VideoImportTutorialScreen() {
+  return <SafeAreaProvider><VideoImportTutorialContent /></SafeAreaProvider>;
+}
+
+function VideoImportTutorialContent() {
   const insets = useSafeAreaInsets();
   const { isFromImport } = useLocalSearchParams();
   const isExternalCall = isFromImport === 'true';
 
   const TUTORIAL_IMAGES = Platform.OS === 'ios' ? TUTORIAL_IMAGES_IOS : TUTORIAL_IMAGES_ANDROID;
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
-  const scaleAnim = useRef(new Animated.Value(0.9)).current;
-
   const [activeIndex, setActiveIndex] = useState(0);
   const [entryFeature, setEntryFeature] = useState<EntryFeature | null>(null);
-  // La branche est lue en asynchrone : sans ce drapeau, le CTA passif s'affiche
-  // une fraction de seconde avant de basculer sur le CTA d'import.
-  const [branchResolved, setBranchResolved] = useState(false);
-  const [showImportSheet, setShowImportSheet] = useState(false);
-  // Un lien détecté permet de préciser le CTA, mais la saisie manuelle reste
-  // toujours possible : l'import est présenté comme fonctionnalité secondaire
-  // à la branche génération, pas comme une option cachée.
-  const [clipboardHasLink, setClipboardHasLink] = useState(false);
-  const { layoutWidth } = useResponsive();
-  // La maquette fait 2x sa largeur en hauteur. Bornée seulement par la largeur,
-  // elle mesurait 488pt de haut sur iPhone SE et passait sous le bouton.
-  // On réserve la pagination (~26pt) et un peu d'air (~20pt).
+  const { layoutWidth, gutter } = useResponsive();
+  const [carouselWidth, setCarouselWidth] = useState(0);
+  // Fit the phone into the available area while retaining space for pagination.
   const [carouselHeight, setCarouselHeight] = useState(0);
   const phoneWidth = carouselHeight > 0
-    ? Math.min(layoutWidth * 0.65, Math.max(carouselHeight - 46, 0) * (538 / 1076))
+    ? Math.min(layoutWidth * 0.65, Math.max(carouselHeight - 20, 0) * (538 / 1076))
     : layoutWidth * 0.65;
   const { t } = useTranslation();
 
   useEffect(() => {
+    let active = true;
     // Preload images for better responsiveness
-    Asset.loadAsync([...TUTORIAL_IMAGES, require('../../assets/images/iphone.png'), require('../../assets/images/android.png')]);
+    void Asset.loadAsync([...TUTORIAL_IMAGES, require('../../assets/images/iphone.png'), require('../../assets/images/android.png')]).catch(() => undefined);
 
-    (async () => {
+    void (async () => {
       const branch = await analytics.getEntryFeature();
+      if (!active) return;
       setEntryFeature(branch);
-
-      // Appelé depuis l'onglet Importées ou par un utilisateur venu pour
-      // l'import : le CTA est de toute façon affiché, inutile de sonder.
-      if (!isExternalCall && branch !== 'import') {
-        setClipboardHasLink(await clipboardMayHoldLink());
-      }
 
       analytics.track(isExternalCall ? 'import_tutorial_viewed' : 'onboarding_video_import_tutorial_viewed', {
         entry_feature: branch,
@@ -100,85 +82,39 @@ export default function VideoImportTutorialScreen() {
           demo_role: 'secondary',
         });
       }
-      setBranchResolved(true);
-    })();
+    })().catch(() => undefined);
 
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 800,
-        easing: Easing.out(Easing.back(1.5)),
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        friction: 7,
-        tension: 50,
-        useNativeDriver: true,
-      })
-    ]).start();
-  }, [fadeAnim, scaleAnim, slideAnim]);
+    return () => { active = false; };
+  }, [isExternalCall, TUTORIAL_IMAGES]);
 
-  const isImportFirst = isExternalCall || entryFeature === 'import';
-  // Le rappel « ou colle un lien » ne doit apparaître que si le bouton
-  // correspondant est réellement là (branche génération sans lien détecté : non).
-  const canPasteLink = isImportFirst || entryFeature === 'generate' || clipboardHasLink;
-
-  const handleOpenImportSheet = () => {
-    feedback.confirm();
-    analytics.track('import_tutorial_paste_cta_pressed', {
-      entry_feature: entryFeature,
-      is_primary_cta: isImportFirst || entryFeature === 'generate',
-      from_clipboard_hint: clipboardHasLink,
-    });
-    if (!isExternalCall && entryFeature === 'generate') {
-      analytics.track('onboarding_cross_feature_demo_started', {
-        primary_feature: 'generate',
-        demo_feature: 'import',
-        demo_role: 'secondary',
-      });
-    }
-    setShowImportSheet(true);
-  };
-
-  const handleContinue = async () => {
-    feedback.confirm();
-
+  const handleClose = () => {
     if (isExternalCall) {
       analytics.track('import_tutorial_closed');
       router.back();
       return;
     }
 
-    const variant = await analytics.getOnboardingVariant();
-
-    analytics.track('onboarding_video_import_tutorial_continue', {
-      variant,
-      entry_feature: entryFeature,
-      imported: false,
-    });
-
-    if (entryFeature === 'generate') {
-      analytics.track('onboarding_cross_feature_demo_completed', {
-        primary_feature: 'generate',
-        demo_feature: 'import',
-        demo_role: 'secondary',
-        interaction: 'tutorial_viewed',
+    // Dismissal keeps the onboarding destination; analytics must not delay it.
+    void (async () => {
+      const variant = await analytics.getOnboardingVariant();
+      analytics.track('onboarding_video_import_tutorial_continue', {
+        variant, entry_feature: entryFeature, imported: false,
       });
-    }
-
-    router.replace('/onboarding/weeklyPlanPreview' as any);
+      if (entryFeature === 'generate') {
+        analytics.track('onboarding_cross_feature_demo_completed', {
+          primary_feature: 'generate', demo_feature: 'import',
+          demo_role: 'secondary', interaction: 'tutorial_viewed',
+        });
+      }
+    })().catch(() => undefined);
+    router.replace('/onboarding/weeklyPlanPreview');
   };
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const slideSize = event.nativeEvent.layoutMeasurement.width;
+    if (slideSize <= 0) return;
     const index = event.nativeEvent.contentOffset.x / slideSize;
-    const roundIndex = Math.round(index);
+    const roundIndex = Math.max(0, Math.min(TUTORIAL_IMAGES.length - 1, Math.round(index)));
     if (roundIndex !== activeIndex) {
       setActiveIndex(roundIndex);
       feedback.selection();
@@ -186,7 +122,7 @@ export default function VideoImportTutorialScreen() {
   };
 
   const renderItem = ({ item, index }: { item: any, index: number }) => (
-    <View style={styles.carouselItem}>
+    <View style={[styles.carouselItem, { width: carouselWidth }]}>
       <View style={[styles.iphoneWrapper, { width: phoneWidth }]}>
         <Image 
           source={item} 
@@ -208,23 +144,20 @@ export default function VideoImportTutorialScreen() {
         styles.container,
         // La zone sûre s'applique sur les deux plateformes : 28pt en dur sur iOS
         // laissait un vide sur iPhone SE et n'était pas assez sur Android gestuel.
-        { paddingTop: insets.top + 12, paddingBottom: Math.max(insets.bottom, 16) + 12 },
+        { paddingTop: insets.top + 12, paddingBottom: Math.max(insets.bottom, 16) + 12, paddingLeft: gutter + insets.left, paddingRight: gutter + insets.right },
       ]}
     >
       <View style={styles.topSection}>
-        <Animated.View style={[styles.header, { opacity: fadeAnim, transform: [{ translateY: slideAnim }] }]}>
-          {branchResolved && entryFeature === 'generate' && (
-            <View style={styles.secondaryBadge}>
-              <Ionicons name="add-circle" size={15} color={Colors.light.button} />
-              <Text style={styles.secondaryBadgeText}>{t('onboardingVideoImport.secondaryBadge')}</Text>
-            </View>
-          )}
+        <View style={styles.toolbar}>
+          <NavigationIconButton kind="close" onPress={handleClose} />
+        </View>
+        <View style={styles.header}>
           <Text style={styles.title}>
             {t(entryFeature === 'generate'
               ? 'onboardingVideoImport.secondaryTitle'
               : 'onboardingVideoImport.title')}
           </Text>
-          {branchResolved && entryFeature !== 'generate' && (
+          {entryFeature !== 'generate' && (
             <Text
               style={styles.subtitle}
               numberOfLines={1}
@@ -234,106 +167,43 @@ export default function VideoImportTutorialScreen() {
               {t('onboardingVideoImport.subtitle')}
             </Text>
           )}
-          <Text style={styles.howToText}>
-            {t(entryFeature === 'generate'
-              ? 'onboardingVideoImport.secondaryHowTo'
-              : 'onboardingVideoImport.howTo')}
-          </Text>
-        </Animated.View>
-
-        <Animated.View
-          style={[styles.carouselContainer, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}
-          onLayout={(e) => setCarouselHeight(e.nativeEvent.layout.height)}
-        >
-          <FlatList
-            data={TUTORIAL_IMAGES}
-            renderItem={renderItem}
-            keyExtractor={(_, index) => index.toString()}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onScroll={onScroll}
-            scrollEventThrottle={16}
-            style={styles.flatList}
-            initialNumToRender={1}
-            maxToRenderPerBatch={2}
-            windowSize={3}
-            removeClippedSubviews={false}
-          />
+          <Text style={styles.howToText}>{t('onboardingVideoImport.secondaryHowTo')}</Text>
+        </View>
+        <View style={styles.carouselContainer}>
+          <View style={styles.slideArea} onLayout={(e) => { setCarouselHeight(e.nativeEvent.layout.height); setCarouselWidth(e.nativeEvent.layout.width); }}>
+            <FlatList
+              data={TUTORIAL_IMAGES}
+              renderItem={renderItem}
+              keyExtractor={(_, index) => index.toString()}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onScroll={onScroll}
+              scrollEventThrottle={16}
+              style={styles.flatList}
+              initialNumToRender={1}
+              maxToRenderPerBatch={2}
+              windowSize={3}
+              removeClippedSubviews={false}
+            />
+          </View>
 
           <View style={styles.pagination}>
-            {TUTORIAL_IMAGES.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.dot,
-                  activeIndex === index && styles.activeDot
-                ]}
-              />
-            ))}
+            <View style={styles.paginationProgress} accessible accessibilityRole="text"
+              accessibilityLabel={t('onboardingVideoImport.step', { current: activeIndex + 1, total: TUTORIAL_IMAGES.length })}>
+              <View style={styles.dots}>
+                {TUTORIAL_IMAGES.map((_, index) => <View key={index} style={[styles.dot, activeIndex === index && styles.activeDot]} />)}
+              </View>
+              <Text accessible={false} style={styles.pageCount}>{activeIndex + 1} / {TUTORIAL_IMAGES.length}</Text>
+            </View>
+            <View style={styles.swipeHint}>
+              <Ionicons accessible={false} name="swap-horizontal-outline" size={22} color={designTheme.ink} />
+              <Text style={styles.swipeText}>{t('onboardingVideoImport.swipeHint')}</Text>
+            </View>
           </View>
-        </Animated.View>
+        </View>
 
-        {/* Sépare les deux méthodes d'import : au-dessus le partage depuis
-            TikTok (illustré par le carrousel), en dessous le collage de lien
-            (le bouton). Sans ce séparateur, l'écran semblait se contredire. */}
-        {canPasteLink && (
-          <Animated.View style={[styles.orSeparator, { opacity: fadeAnim }]}>
-            <View style={styles.orLine} />
-            <Text style={styles.orText}>{t('common.or')}</Text>
-            <View style={styles.orLine} />
-          </Animated.View>
-        )}
       </View>
-
-      {/* L'import est l'action principale pour qui est venu pour ça (et depuis
-          l'onglet Importées). Sinon il reste secondaire et conditionnel. */}
-      {!branchResolved ? (
-        // Réserve la hauteur des deux boutons pour éviter un saut de mise en page.
-        <View style={[styles.actions, styles.actionsPlaceholder]} />
-      ) : isImportFirst ? (
-        <View style={styles.actions}>
-          <TouchableOpacity
-            activeOpacity={0.85}
-            style={styles.continueButton}
-            onPress={handleOpenImportSheet}
-          >
-            <Text style={styles.buttonText}>{t('onboardingVideoImport.pasteLink')}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.6} style={styles.skipButton} onPress={handleContinue}>
-            <Text style={styles.skipButtonText}>
-              {isExternalCall ? t('onboardingVideoImport.button') : t('onboardingVideoImport.skip')}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View style={styles.actions}>
-          <TouchableOpacity
-            activeOpacity={0.85}
-            style={styles.continueButton}
-            onPress={handleOpenImportSheet}
-          >
-            <Text style={styles.buttonText}>
-              {t(clipboardHasLink
-                ? 'onboardingVideoImport.clipboardCta'
-                : 'onboardingVideoImport.tryImport')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity activeOpacity={0.6} style={styles.skipButton} onPress={handleContinue}>
-            <Text style={styles.skipButtonText}>{t('onboardingVideoImport.skip')}</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      <ImportLinkSheet
-        visible={showImportSheet}
-        onClose={() => setShowImportSheet(false)}
-        source={isExternalCall ? 'import_tutorial' : 'onboarding'}
-        isOnboarding={!isExternalCall}
-        onboardingNext={isExternalCall
-          ? undefined
-          : '/onboarding/weeklyPlanPreview'}
-      />
     </View>
   );
 }
@@ -342,8 +212,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: designTheme.background,
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
   },
   topSection: {
     flex: 1,
@@ -356,20 +224,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
   },
-  secondaryBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#FFF2D1',
-    borderRadius: AppRadii.pill,
-    paddingHorizontal: 11,
-    paddingVertical: 6,
-    marginBottom: 9,
-  },
-  secondaryBadgeText: {
-    color: Colors.light.button,
-    fontFamily: 'CronosProBold',
-    fontSize: 12,
+  toolbar: {
+    width: '100%',
+    alignItems: 'flex-end',
+    marginBottom: 12,
   },
   title: {
     fontSize: 26,
@@ -408,10 +266,17 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   flatList: {
+    width: '100%',
     flexGrow: 0,
   },
+  slideArea: {
+    flex: 1,
+    minHeight: 0,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   carouselItem: {
-    width: rw(1) - 40,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -438,72 +303,51 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   pagination: {
-    flexDirection: 'row',
-    marginTop: 8,
-    gap: 6,
+    alignItems: 'center',
+    flexShrink: 0,
+    marginTop: 16,
+    gap: 12,
+    width: '100%',
   },
-  dot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  activeDot: {
-    backgroundColor: Colors.light.button,
-    width: 16,
-  },
-  orSeparator: {
-    ...contentColumn(),
+  paginationProgress: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
-    paddingTop: 8,
-    paddingBottom: 16,
+    gap: 16,
   },
-  orLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#E4DFC4',
-  },
-  orText: {
-    fontSize: 18,
-    fontFamily: 'Degular',
-    color: designTheme.muted,
-    letterSpacing: 1,
-  },
-  actions: {
-    ...contentColumn(),
+  dots: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
   },
-  actionsPlaceholder: {
-    // Hauteur du bouton principal (16pt de padding vertical) + le lien secondaire.
-    height: 96,
-  },
-  skipButton: {
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  skipButtonText: {
-    color: designTheme.muted,
-    fontSize: rw(0.041),
-    fontFamily: 'CronosPro',
-    textDecorationLine: 'underline',
-  },
-  continueButton: {
-    backgroundColor: Colors.light.button,
-    width: '100%',
+  dot: {
+    width: 12,
+    height: 12,
     borderRadius: AppRadii.pill,
-    paddingVertical: 16,
-    alignItems: 'center',
-    shadowColor: Colors.light.button,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 8,
-    elevation: 5,
+    backgroundColor: designTheme.muted,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: rw(0.05),
-    fontFamily: 'Degular',
+  activeDot: {
+    backgroundColor: designTheme.yellow,
+    width: 32,
+  },
+  pageCount: {
+    fontFamily: 'CronosProBold',
+    fontSize: 18,
+    lineHeight: 24,
+    color: designTheme.ink,
+  },
+  swipeHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    maxWidth: '100%',
+  },
+  swipeText: {
+    fontFamily: 'CronosProBold',
+    fontSize: 16,
+    lineHeight: 22,
+    color: designTheme.ink,
+    textAlign: 'center',
+    flexShrink: 1,
   },
 });

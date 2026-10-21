@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   recipe: { fontFamily: 'CronosProBold', fontSize: 17, color: theme.ink, flexShrink: 1 }, meta: { fontFamily: 'CronosPro', fontSize: 13, color: theme.muted },
   handle: { width: 44, minHeight: 62, alignItems: 'center', justifyContent: 'center' },
   ghost: { position: 'absolute', backgroundColor: theme.yellowSoft, borderWidth: 2, borderColor: theme.yellow, borderRadius: AppRadii.control, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, elevation: 8, shadowColor: theme.ink, shadowOpacity: 0.15, shadowRadius: 8 },
-  backdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(8,26,16,0.35)' },
+  backdrop: { flex: 1, justifyContent: 'flex-end' },
   sheet: { maxHeight: '85%', backgroundColor: theme.background, borderTopLeftRadius: AppRadii.sheet, borderTopRightRadius: AppRadii.sheet, padding: 20 },
   sheetHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   destinationImage: { width: 48, height: 48, borderRadius: AppRadii.chip },

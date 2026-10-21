@@ -1151,7 +1151,6 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: designTheme.overlay,
     justifyContent: 'flex-end',
     // Sur tablette la feuille est recentrée au lieu de traverser tout l'écran.
     alignItems: 'center',

@@ -7,6 +7,7 @@ import { usePlanningClock } from '../../hooks/usePlanningClock';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { BackHandler, Keyboard, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +25,8 @@ import { loadFitnessProfile, type FitnessGoal } from '../../services/fitnessProf
 import { FITNESS_GOALS } from '../../services/nutritionModel';
 import { isPresentationModeEnabled } from '../../services/presentationMode';
 import { ingredientCategories } from '../../services/ingredientCategories';
+import { loadSavedPantryIngredientNames, savePantryIngredientNames } from '../../services/pantryDefaults';
+import { planningGoalFromPlan, planningSettingsFromPlan } from '../../services/planningRegeneration';
 import analytics from '../../services/analytics';
 import { feedback } from '../../services/haptics';
 import { planningSteps, planningConfiguration, planningStepAfterScan, planningChoiceDraft, planningStepCanContinue, type PlanningStep } from '../../services/planningConfiguration';
@@ -32,7 +35,7 @@ import { dailyMealsForDays, loadPlanningGenerationSettings, PLANNING_DIETS, type
 export default function ConfigurePlanningScreen() {
   const { t, i18n } = useTranslation();
   const { weekStart } = usePlanningClock();
-  const { replace } = useLocalSearchParams<{ replace?: string }>();
+  const { replace, sourcePlanId } = useLocalSearchParams<{ replace?: string; sourcePlanId?: string }>();
   const insets = useSafeAreaInsets();
   const { gutter } = useResponsive();
   const [step, setStep] = useState<PlanningStep>('goal');
@@ -81,21 +84,32 @@ export default function ConfigurePlanningScreen() {
   }, [back, index]));
   useEffect(() => {
     let active = true;
-    void Promise.all([loadPlanningGenerationSettings(), loadFitnessProfile(), isPresentationModeEnabled()]).then(([settings, profile, demo]) => {
+    setReady(false); setError('');
+    const sourcePlan = (async () => {
+      if (!sourcePlanId) return null;
+      const userId = await AsyncStorage.getItem('userId');
+      if (!userId) throw new Error('missing_user');
+      const response = await apiService.getMealPlanById(sourcePlanId, userId);
+      if (!response.data?.plan) throw new Error('missing_source_plan');
+      return response.data.plan;
+    })();
+    void Promise.all([loadPlanningGenerationSettings(), loadFitnessProfile(), isPresentationModeEnabled(), loadSavedPantryIngredientNames(), sourcePlan]).then(([settings, profile, demo, storedPantry, plan]) => {
       if (!active) return;
-      const draft = planningChoiceDraft(settings, demo);
+      const draft = planningChoiceDraft(plan ? planningSettingsFromPlan(plan) : settings, demo && !plan);
       setWeeklyBudget(draft.weeklyBudget);
+      setBudgetRegion(draft.country && draft.currency ? { country: draft.country, currency: draft.currency } : null);
       setSelectedDays(draft.cookingDays); setDuration(draft.duration); setServings(draft.servings);
       setCookingLevel(draft.cookingLevel ?? (demo ? null : 'beginner')); setMealBudget(draft.mealBudget ?? (demo ? null : 'budget_medium'));
       setEquipments(draft.equipments ?? (demo ? null : ['standard-kitchen']));
       setSelectedCuisines(draft.cuisineIds); setDiet(draft.diet); setExcludedIngredients(draft.excludedIngredients.join(', '));
-      setPantry({ pantryIngredients: draft.pantryIngredients || [], pantryMode: draft.pantryMode || 'priority' });
-      setUseIngredients(!!draft.pantryIngredients?.length); setPresentation(demo);
-      setGoal(demo ? null : profile.goal); setStep('goal');
+      const pantryIngredients = plan ? draft.pantryIngredients || [] : storedPantry ?? settings.pantryIngredients ?? [];
+      setPantry({ pantryIngredients, pantryMode: draft.pantryMode || 'priority' });
+      setUseIngredients(pantryIngredients.length > 0); setPresentation(demo);
+      setGoal(plan ? planningGoalFromPlan(plan, profile.goal) : demo ? null : profile.goal); setStep('goal');
     }).catch(() => { if (active) setError(t('planning.errors.load')); })
       .finally(() => { if (active) setReady(true); });
     return () => { active = false; };
-  }, [t]);
+  }, [t, sourcePlanId]);
   const loadCuisines = useCallback(async () => {
     setCuisinesLoading(true); setCuisinesError(false);
     try {
@@ -124,19 +138,25 @@ export default function ConfigurePlanningScreen() {
     savingRef.current = true; setSaving(true); setError('');
     try {
       const settings = { ...configuration, ...(goal ? { goal } : {}) };
+      // Skipping pantry constraints for this plan must not empty the device inventory.
+      await savePantryIngredientNames(pantry.pantryIngredients);
       await savePlanningGenerationSettings(settings);
       void feedback.confirm();
       router.push({ pathname: '/planning/loading', params: { config: JSON.stringify(settings), replace: replace || 'false' } });
     } catch { feedback.error(); setError(t('planning.errors.update')); }
     finally { savingRef.current = false; setSaving(false); }
   };
-  const confirmPantry = useCallback((value: PlanningPantryValue) => {
+  const updatePantry = useCallback((value: PlanningPantryValue) => {
     setPantry(value); setUseIngredients(value.pantryIngredients.length > 0);
+    void savePantryIngredientNames(value.pantryIngredients).catch(() => setError(t('planning.errors.update')));
+  }, [t]);
+  const confirmPantry = useCallback((value: PlanningPantryValue) => {
+    updatePantry(value);
     void analytics.track('planning_pantry_review_confirmed', { ingredient_count: value.pantryIngredients.length }).catch(() => undefined);
     void feedback.selection();
     if (value.pantryIngredients.length) { setPantryStage('shopping'); Keyboard.dismiss(); }
     else { setPantryStage('review'); moveTo(planningStepAfterScan()); }
-  }, [moveTo]);
+  }, [moveTo, updatePantry]);
   const chooseAndAdvance = (select: () => void) => {
     if (!ready || savingRef.current) return;
     select();
@@ -154,7 +174,7 @@ export default function ConfigurePlanningScreen() {
     .filter(item => ['porc', 'lait', 'cacahuete', 'champignon', 'oignon', 'saumon'].includes(item.id));
   const excludedNames = excludedIngredients.split(',').map(name => name.trim()).filter(Boolean);
   return <KeyboardAvoidingView style={appStyles.screen} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-    <PlanningFlowHeader onBack={back} progress={(index + 1) / steps.length} caption={t('planningFlow.step', { current: index + 1, total: steps.length })} />
+    <PlanningFlowHeader onBack={back} progress={(index + 1) / steps.length} />
     {goal && step !== 'goal' && <Text style={[styles.goal, { paddingLeft: 20 + insets.left, paddingRight: 20 + insets.right }]}>{GOAL_EMOJI[goal]} {t('planningFlow.goal', { goal: t(`fitnessOnboarding.options.goal.${goal}`) })}</Text>}
     <OnboardingScrollView stepKey={`${step}:${pantryStage}`} style={[styles.fill, { marginLeft: insets.left, marginRight: insets.right }]} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" showsVerticalScrollIndicator={false}
       contentContainerStyle={{ ...contentColumn(), paddingHorizontal: gutter, paddingTop: 14, paddingBottom: 28 }}>
@@ -168,10 +188,10 @@ export default function ConfigurePlanningScreen() {
         </TouchableOpacity>)}</View>}
         {step === 'days' && <CookingDaysPicker weekStart={weekStart} value={selectedDays} onChange={days => { setSelectedDays(days); setWeeklyBudget(undefined); setBudgetRegion(null); }} />}
         <View style={step === 'ingredients' && pantryStage === 'review' ? undefined : styles.hidden}>
-          <PlanningPantry value={pantry} onChange={value => { setPantry(value); setUseIngredients(value.pantryIngredients.length > 0); }} onConfirm={confirmPantry} active={step === 'ingredients'} />
+          <PlanningPantry value={pantry} onChange={updatePantry} onConfirm={confirmPantry} active={step === 'ingredients'} />
         </View>
         {step === 'ingredients' && pantryStage === 'shopping' && <View style={styles.shopping}>
-          <PantryModeChoice value={null} disabled={!canContinue} onChange={pantryMode => {
+          <PantryModeChoice value={sourcePlanId ? pantry.pantryMode : null} disabled={!canContinue} onChange={pantryMode => {
             void analytics.track('planning_pantry_shopping_selected', { pantry_mode: pantryMode, ingredient_count: pantry.pantryIngredients.length }).catch(() => undefined);
             setPantry({ ...pantry, pantryMode }); void feedback.selection(); moveTo('duration');
           }} />
@@ -179,7 +199,7 @@ export default function ConfigurePlanningScreen() {
         </View>}
         {step === 'duration' && <View style={styles.choices}>{(['fast', 'medium', 'all'] as const).map(item => <Choice key={item} emoji={{ fast: '⚡️', medium: '🍳', all: '👨‍🍳' }[item]} selected={duration === item} title={t(`planning.settings.duration.${item}`)} onPress={() => chooseAndAdvance(() => setDuration(item))} />)}</View>}
         {step === 'cookingLevel' && <View style={styles.choices}>{COOKING_LEVELS.map(item => <Choice key={item} emoji={{ beginner: '🍳', medium: '🥘', advanced: '👨‍🍳' }[item]} selected={cookingLevel === item} title={t(`onboarding.formQuestions.${item}`)} onPress={() => chooseAndAdvance(() => { setCookingLevel(item); void analytics.track('planning_preference_selected', { preference: 'cookingLevel', value: item }).catch(() => undefined); })} />)}</View>}
-        {step === 'mealBudget' && <PlanningBudgetPicker people={servings||1} days={selectedDays.length} value={weeklyBudget} onChange={(amount,region)=>{setWeeklyBudget(amount);setBudgetRegion({country:region.country,currency:region.currency});setMealBudget(amount&&amount>region.minimum*3?'budget_large':amount&&amount>region.minimum*1.5?'budget_medium':'budget_small');}}/>}
+        {step === 'mealBudget' && <PlanningBudgetPicker people={servings||1} days={selectedDays.length} value={weeklyBudget} onChange={(amount,region)=>{setWeeklyBudget(amount);setBudgetRegion({country:region.country,currency:region.currency});if(amount!==weeklyBudget||mealBudget===null)setMealBudget(amount&&amount>region.minimum*3?'budget_large':amount&&amount>region.minimum*1.5?'budget_medium':'budget_small');}}/>}
         {step === 'equipments' && <View style={styles.choices}>
           {['standard-kitchen', ...KITCHEN_EQUIPMENT].map(item => <Choice key={item} multiple={item !== 'standard-kitchen'} emoji={item === 'standard-kitchen' ? '🍳' : { oven: '🔥', airfryer: '🍟', fryer: '🍟', microwave: '📡', blender: '🥤', robot: '🤖' }[item as typeof KITCHEN_EQUIPMENT[number]]} selected={item === 'standard-kitchen' ? equipments?.length === 1 : !!equipments?.includes(item)} title={item === 'standard-kitchen' ? t('cookingPreferences.basicKitchen') : t(`onboarding.formQuestions.equipment_${item}`)} onPress={() => { feedback.selection(); setEquipments(previous => item === 'standard-kitchen' ? ['standard-kitchen'] : ['standard-kitchen', ...(previous || []).filter(tool => tool !== 'standard-kitchen' && tool !== item), ...(!previous?.includes(item) ? [item] : [])]); }} />)}
         </View>}
@@ -221,7 +241,6 @@ export default function ConfigurePlanningScreen() {
         </>}
         {step === 'servings' && <>
           <View style={styles.people}><Text accessible={false} style={styles.peopleEmoji}>{servings === null ? '👥' : Array.from({ length: Math.min(4, servings) }, () => '🧑').join(' ')}{servings !== null && servings > 4 ? ' +' : ''}</Text><ServingsControl value={servings} onChange={value=>{setServings(value);setWeeklyBudget(undefined);setBudgetRegion(null);}} /></View>
-          <Text style={styles.selection}>{t('planningBudget.peopleNote')}</Text>
         </>}
       </>}
     </OnboardingScrollView>
@@ -250,7 +269,6 @@ const styles = StyleSheet.create({
   goal: { paddingHorizontal: 20, paddingBottom: 8, fontFamily: 'CronosProBold', fontSize: 16, color: theme.ink },
   heading: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 24 }, headingEmoji: { fontSize: 40, width: 52, textAlign: 'center' }, headingTitle: { flex: 1 },
   goals: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12 }, goalCard: { width: '48%', minHeight: 136, borderWidth: 1, borderColor: theme.line, borderRadius: AppRadii.card, backgroundColor: theme.surface, alignItems: 'center', justifyContent: 'center', gap: 10, padding: 12 }, goalEmoji: { fontSize: 42 }, goalName: { fontFamily: 'Degular', fontSize: 20, color: theme.ink, textAlign: 'center' },
-  selection: { fontFamily: 'CronosProBold', fontSize: 16, color: theme.ink, marginTop: 22 },
   choices: { gap: 4 }, people: { ...appStyles.card, minHeight: 180, justifyContent: 'center', gap: 22 }, peopleEmoji: { fontSize: 44, textAlign: 'center' }, retry: { minHeight: 44, justifyContent: 'center' },
   option: { minHeight: 64, paddingHorizontal: 16, paddingVertical: 16, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.line, backgroundColor: theme.surface, flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 10 },
   choiceActive: { backgroundColor: theme.yellowSoft, borderColor: theme.yellow },

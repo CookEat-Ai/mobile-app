@@ -60,7 +60,6 @@ export function PlanningBudgetPicker({ people, days, value, onChange }: {
       <Text style={styles.amount}>{money(value ?? options.defaultAmount)}</Text>
       <AppSlider minimum={options.minimum} maximum={options.maximum} step={options.step}
         value={value ?? options.defaultAmount} onChange={select} label={t('planningBudget.amount')} valueText={money(value ?? options.defaultAmount)} />
-      <Text style={appStyles.subtitle}>{t('planningBudget.perPerson', { amount: money((value || options.minimum) / people) })}</Text>
     </View>
   </View>;
 }

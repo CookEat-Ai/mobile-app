@@ -1,8 +1,7 @@
 import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
-  Easing,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -10,12 +9,12 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Image } from 'expo-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../constants/Colors';
-import { rw } from '../constants/Layout';
 import { contentColumn } from '../hooks/useResponsive';
+import { ClassicLoadingView } from '../components/loading/ClassicLoadingView';
+import { importedMealsRoute, importedRecipeRoute } from '../services/importedMealNavigation';
 import { apiService } from '../services/api';
 import { recipeStorageService } from '../services/recipeStorage';
 import analytics from '../services/analytics';
@@ -51,7 +50,7 @@ export default function ShareIntentScreen() {
    *
    * Pendant l'onboarding on ne clôt jamais : la fiche recette reprend le flux.
    */
-  const markOnboardingDoneIfEntitled = async () => {
+  const markOnboardingDoneIfEntitled = useCallback(async () => {
     if (isOnboarding) return;
     let completionMethod: 'subscription' | 'promo_code' = 'subscription';
     try {
@@ -72,91 +71,24 @@ export default function ShareIntentScreen() {
       source: importSource,
       completion_method: completionMethod,
     });
-  };
+  }, [isOnboarding, importSource]);
 
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
   const [errorMessage, setErrorMessage] = useState('');
   const [isQuotaError, setIsQuotaError] = useState(false);
   const [recipe, setRecipe] = useState<any>(null);
-  const [progress, setProgress] = useState(0);
-  const [displayProgress, setDisplayProgress] = useState(0);
-  const [isDataReady, setIsDataReady] = useState(false);
   const [progressStep, setProgressStep] = useState<string>('init');
 
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-  const progressAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const hasStarted = useRef(false);
-
-  // Fluid progression logic
-  useEffect(() => {
-    if (status !== 'loading') return;
-
-    const interval = setInterval(() => {
-      setDisplayProgress((prev) => {
-        if (prev >= 100) {
-          if (isDataReady) {
-            // Wait a tiny bit at 100% for the visual impact
-            setTimeout(() => setStatus('success'), 200);
-          }
-          return 100;
-        }
-
-        let increment = 0;
-        if (progress > prev) {
-          // Catch up phase: move faster to reach the real progress
-          // The speed depends on the distance
-          const distance = progress - prev;
-          increment = Math.max(0.3, distance / 12);
-        } else {
-          // Slow crawl phase: continue moving to feel "alive"
-          // Speed decreases as we get closer to 100% to never actually reach it
-          // unless progress is set to 100
-          increment = Math.max(0.01, (100 - prev) / 600);
-        }
-
-        const next = prev + increment;
-        return next >= 100 ? (isDataReady ? 100 : 99.9) : next;
-      });
-    }, 50);
-
-    return () => clearInterval(interval);
-  }, [status, progress, isDataReady]);
-
-  // Sync Animated.Value with displayProgress
-  useEffect(() => {
-    Animated.timing(progressAnim, {
-      toValue: displayProgress,
-      duration: 50,
-      easing: Easing.linear,
-      useNativeDriver: false,
-    }).start();
-  }, [displayProgress, progressAnim]);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(scaleAnim, {
-          toValue: 1.15,
-          duration: 800,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(scaleAnim, {
-          toValue: 1,
-          duration: 800,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 400,
       useNativeDriver: true,
     }).start();
-  }, [scaleAnim, fadeAnim]);
+  }, [fadeAnim]);
 
   useEffect(() => {
     if (status !== 'success' || !recipe) return;
@@ -182,109 +114,80 @@ export default function ShareIntentScreen() {
     }
 
     const timer = setTimeout(() => {
-      router.replace('/(tabs)/imported');
+      router.dismissTo(importedMealsRoute());
       setTimeout(() => {
-        router.push({
-          pathname: '/recipe-detail',
-          params: {
-            recipeId: recipe.id,
-            showGenerateButton: 'false',
-            isHistory: 'true',
-          },
-        });
+        router.push(importedRecipeRoute(recipe.id));
       }, 100);
     }, 1500);
     return () => clearTimeout(timer);
   }, [status, recipe, router, isOnboarding, params.onboardingNext, params.isPlanImport]);
 
   useEffect(() => {
-    if (hasStarted.current) return;
-    if (!params.url) {
-      console.log('[ShareIntent] no url param, aborting');
-      setErrorMessage(t('shareIntent.genericError'));
-      setStatus('error');
-      return;
-    }
-    hasStarted.current = true;
-
-    // Ne jamais envoyer l'URL complète à l'analytics : elle peut contenir un
-    // identifiant de compte, de vidéo ou un paramètre de partage personnel.
-    console.log('[ShareIntent] import started from:', importSource);
-    analytics.track('import_started', { source: importSource });
-
-    (async () => {
-      try {
-        // S'assurer qu'un utilisateur existe côté serveur avant l'importation
-        // car l'importation a besoin d'un userId pour le quota et l'historique
-        let userId = await AsyncStorage.getItem('userId');
-        if (!userId) {
-          const mobileId = await getUniqueDeviceId();
-          console.log('[ShareIntent] Creating minimal user');
-          const userResponse = await apiService.saveOnboardingAnswers({ skipped_onboarding: 'true' }, mobileId);
-          if (userResponse.data?.userId) {
-            userId = userResponse.data.userId;
-            await AsyncStorage.setItem('userId', userId);
-            analytics.identify(userId);
-            console.log('[ShareIntent] Minimal user created');
+    let active = true;
+    const abort = new AbortController();
+    setStatus('loading'); setRecipe(null); setIsQuotaError(false);
+    setErrorMessage(''); setProgressStep('init');
+    const fail = (message: string, quota = false) => {
+      if (!active) return;
+      setIsQuotaError(quota); setErrorMessage(message); setStatus('error');
+    };
+    // Also bound identity/subscription preparation, before an SSE exists.
+    const deadline = setTimeout(() => {
+      fail(t('shareIntent.timeout'));
+      active = false;
+      abort.abort();
+    }, 330000);
+    const start = setTimeout(() => {
+      void (async () => {
+        try {
+          if (!params.url) { fail(t('shareIntent.genericError')); return; }
+          void analytics.track('import_started', { source: importSource }).catch(() => undefined);
+          let userId = await AsyncStorage.getItem('userId');
+          if (!active) return;
+          if (!userId) {
+            const mobileId = await getUniqueDeviceId();
+            if (!active) return;
+            const userResponse = await apiService.saveOnboardingAnswers({ skipped_onboarding: 'true' }, mobileId);
+            if (!active) return;
+            if (userResponse.data?.userId) {
+              userId = userResponse.data.userId;
+              await AsyncStorage.setItem('userId', userId);
+              void analytics.identify(userId).catch(() => undefined);
+            }
           }
-        }
-
-        const { isSubscribed } = await revenueCatService.getSubscriptionStatus();
-        const response = await apiService.importRecipeFromVideo(params.url!, isSubscribed, {
-          onProgress: (p, step) => {
-            setProgress(p);
-            if (step) setProgressStep(step);
-          },
-        });
-
-        if (response.error || !response.data?.recipe) {
-          const quotaReached = response.error?.includes('quota') || response.error?.includes('Premium');
-          if (quotaReached) {
-            setIsQuotaError(true);
-          }
-          setErrorMessage(response.error || t('shareIntent.genericError'));
-          setStatus('error');
-          return;
-        }
-
-        // Un import via le partage OS fait office d'onboarding — mais seulement
-        // pour qui a déjà l'accès. Sans la condition d'abonnement, partager une
-        // vidéo depuis TikTok suffisait à marquer l'onboarding terminé et à
-        // entrer dans l'app sans jamais passer par le paywall, ce qui contourne
-        // entièrement le tunnel fermé.
-        //
-        // Un import *pendant* l'onboarding ne le clôt pas non plus : la fiche
-        // recette reprend le flux elle-même (promo, paywall).
-        await markOnboardingDoneIfEntitled();
-
-        setRecipe(response.data.recipe);
-        setProgress(100);
-        setIsDataReady(true);
-
-        recipeStorageService.saveGeneratedRecipe(response.data.recipe, []);
-        if (isOnboarding && params.isPlanImport === 'true') {
-          await savePendingOnboardingPlanImport(response.data.recipe.id);
-          analytics.track('onboarding_weekly_plan_import_ready', {
-            source: importSource,
+          const { isSubscribed } = await revenueCatService.getSubscriptionStatus();
+          if (!active) return;
+          const response = await apiService.importRecipeFromVideo(params.url, isSubscribed, {
+            signal: abort.signal,
+            onProgress: (_value, step) => {
+              if (!active) return;
+              if (step) setProgressStep(step);
+            },
           });
-        }
-        analytics.track('import_completed', {
-          source: importSource,
-          during_onboarding: isOnboarding,
-        });
-        analytics.markFeatureUsed('import');
-        analytics.trackFirstAction('import', { source: importSource });
-      } catch (error) {
-        console.error('[ShareIntent] catch error:', error);
-        setErrorMessage(t('shareIntent.genericError'));
-        setStatus('error');
-        analytics.track('import_failed', {
-          error_type: error instanceof Error ? error.name : 'unknown',
-          source: importSource,
-        });
-      }
-    })();
-  }, [params.url, params.isPlanImport, router]);
+          if (!active) return;
+          if (response.error || !response.data?.recipe) {
+            fail(response.error || t('shareIntent.genericError'), /quota|premium/i.test(response.error || ''));
+            return;
+          }
+          const imported = response.data.recipe;
+          // The saved recipe is ready. Optional subscription/analytics work
+          // must never hold the success screen or delay access to that recipe.
+          if (isOnboarding && params.isPlanImport === 'true') await savePendingOnboardingPlanImport(imported.id);
+          if (!active) return;
+          setRecipe(imported); setStatus('success');
+          void recipeStorageService.saveGeneratedRecipe(imported, []).catch(() => undefined);
+          void markOnboardingDoneIfEntitled().catch(() => undefined);
+          void analytics.track('import_completed', { source: importSource, during_onboarding: isOnboarding, is_retry: attempt > 0 }).catch(() => undefined);
+          void analytics.markFeatureUsed('import').catch(() => undefined);
+          void analytics.trackFirstAction('import', { source: importSource }).catch(() => undefined);
+        } catch {
+          fail(t('shareIntent.genericError'));
+          void analytics.track('import_failed', { error_type: 'import_error', source: importSource }).catch(() => undefined);
+        } finally { clearTimeout(deadline); }
+      })();
+    }, 0);
+    return () => { active = false; clearTimeout(start); clearTimeout(deadline); abort.abort(); };
+  }, [params.url, params.isPlanImport, importSource, isOnboarding, attempt, t, markOnboardingDoneIfEntitled]);
 
   const handleGoHome = () => {
     // Un import raté pendant l'onboarding ne doit pas éjecter vers les onglets :
@@ -297,105 +200,14 @@ export default function ShareIntentScreen() {
   };
 
   const handleRetry = () => {
-    if (!params.url) return;
-    hasStarted.current = false;
-    setStatus('loading');
-    setIsDataReady(false);
-    setErrorMessage('');
-    setProgress(0);
-    setDisplayProgress(0);
-    setProgressStep('init');
-    progressAnim.setValue(0);
-    setTimeout(() => {
-      hasStarted.current = true;
-      (async () => {
-        try {
-          // S'assurer qu'un utilisateur existe côté serveur avant l'importation
-          let userId = await AsyncStorage.getItem('userId');
-          if (!userId) {
-            const mobileId = await getUniqueDeviceId();
-            const userResponse = await apiService.saveOnboardingAnswers({ skipped_onboarding: 'true' }, mobileId);
-            if (userResponse.data?.userId) {
-              userId = userResponse.data.userId;
-              await AsyncStorage.setItem('userId', userId);
-              analytics.identify(userId);
-            }
-          }
-
-          const { isSubscribed: sub } = await revenueCatService.getSubscriptionStatus();
-          const response = await apiService.importRecipeFromVideo(params.url!, sub, {
-            onProgress: (p, step) => {
-              setProgress(p);
-              if (step) setProgressStep(step);
-            },
-          });
-          if (response.error || !response.data?.recipe) {
-            setErrorMessage(response.error || t('shareIntent.genericError'));
-            setStatus('error');
-            return;
-          }
-
-          // Même règle que sur le premier essai.
-          await markOnboardingDoneIfEntitled();
-
-          setRecipe(response.data.recipe);
-          setProgress(100);
-          setIsDataReady(true);
-          recipeStorageService.saveGeneratedRecipe(response.data.recipe, []);
-          analytics.track('import_completed', {
-            source: importSource,
-            during_onboarding: isOnboarding,
-            is_retry: true,
-          });
-          analytics.markFeatureUsed('import');
-        analytics.trackFirstAction('import', { source: importSource });
-        } catch {
-          setErrorMessage(t('shareIntent.genericError'));
-          setStatus('error');
-        }
-      })();
-    }, 100);
+    if (params.url) setAttempt(value => value + 1);
   };
+
+  if (status === 'loading') return <ClassicLoadingView mode="request" messageKey={`shareIntent.progressStep.${progressStep}`} />;
 
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
-        {status === 'loading' && (
-          <>
-            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-              <Image
-                source={require('../assets/images/mascot.png')}
-                contentFit="contain"
-                style={styles.loadingMascot}
-              />
-            </Animated.View>
-
-            <View style={styles.percentContainer}>
-              <Text style={styles.percentText}>{Math.floor(displayProgress)}%</Text>
-            </View>
-
-            <View style={styles.loadingTextWrapper}>
-              <Text style={styles.loadingText}>
-                {t(`shareIntent.progressStep.${progressStep}`, { defaultValue: t('shareIntent.importingDescription') })}
-              </Text>
-            </View>
-
-            <View style={styles.loadingBarTrack}>
-              <Animated.View
-                style={[
-                  styles.loadingBarFill,
-                  {
-                    width: progressAnim.interpolate({
-                      inputRange: [0, 100],
-                      outputRange: ['0%', '100%'],
-                    }),
-                  },
-                ]}
-              />
-            </View>
-          </>
-        )}
-
         {status === 'success' && recipe && (
           <>
             <View style={styles.successIcon}>
@@ -455,46 +267,6 @@ const styles = StyleSheet.create({
     ...contentColumn(),
     alignItems: 'center',
     gap: 32,
-  },
-  loadingMascot: {
-    width: rw(0.5),
-    height: rw(0.5),
-    transform: [{ rotate: '20deg' }],
-  },
-  percentContainer: {
-    backgroundColor: 'rgba(254, 181, 10, 0.1)',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: AppRadii.pill,
-  },
-  percentText: {
-    fontSize: 24,
-    color: Colors.light.button,
-    fontFamily: 'Degular'
-  },
-  loadingTextWrapper: {
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    fontFamily: 'Degular',
-    fontSize: rw(0.06),
-    color: Colors.light.text,
-    textAlign: 'center',
-    lineHeight: rw(0.07),
-  },
-  loadingBarTrack: {
-    width: '100%',
-    height: 10,
-    backgroundColor: designTheme.soft,
-    borderRadius: AppRadii.small,
-    overflow: 'hidden',
-  },
-  loadingBarFill: {
-    height: '100%',
-    backgroundColor: Colors.light.button,
-    borderRadius: AppRadii.small,
   },
   title: {
     fontSize: 28,

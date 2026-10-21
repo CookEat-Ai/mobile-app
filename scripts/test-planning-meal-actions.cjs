@@ -27,6 +27,7 @@ function harness() {
     'react-i18next': { useTranslation: () => ({ t: key => key, i18n: { resolvedLanguage: 'fr' } }) },
     'expo-router': { router: { push: route => routes.push(route) } },
     '@react-native-async-storage/async-storage': { __esModule: true, default: { getItem: async () => 'owner' } },
+    '../../hooks/useResponsive': {useResponsive: () => ({isTablet:false})},
     '../../hooks/usePlanningClock': { usePlanningClock: () => ({ now: new Date() }) },
     '../../services/planningDisplay': { initialPlanDay: () => 2, isPastPlanDay: () => past, isPastPlan: () => past,
       selectedPlanDays: () => [{ dayIndex: 2, date: new Date('2026-10-14T12:00:00Z') }], mealsForDay: () => plan.meals, planningDaySlots: () => [{ slotId: meal.slotId, meal }] },

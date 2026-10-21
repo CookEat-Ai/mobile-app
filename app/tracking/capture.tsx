@@ -13,7 +13,7 @@ import { MealPhotoCapture } from '../../components/tracking/MealPhotoCapture';
 import { PhotoMealReveal } from '../../components/tracking/PhotoMealReveal';
 import { apiService } from '../../services/api';
 import { getAnonymousUserId } from '../../services/anonymousSession';
-import { mealNutrition, mealTypeAtLocalTime, loadFoodDefaults, applyFoodDefaults, foodNutrition, loadTrackedMeals, saveTrackedMeal, trackingDateKey, validTrackingDate, type FoodNutrition, type MealPhotoAnalysis, type PhotoFood, type TrackedMeal } from '../../services/mealTracking';
+import { mealNutrition, inferPhotoMealType, loadFoodDefaults, applyFoodDefaults, foodNutrition, loadTrackedMeals, saveTrackedMeal, trackingDateKey, validTrackingDate, type FoodNutrition, type MealPhotoAnalysis, type PhotoFood, type TrackedMeal } from '../../services/mealTracking';
 import { createPhotoMealSaver, type PhotoMealSaveInput } from '../../services/photoMealAutosave';
 import { persistTrackingPhoto } from '../../services/trackingPhotos';
 import { feedback } from '../../services/haptics';
@@ -50,6 +50,15 @@ export default function TrackingCaptureScreen() {
     const snapshot = useRef<PhotoMealSaveInput | null>(null), doneBusy = useRef(false);
     const [recognitionReady,setRecognitionReady]=useState(false);
     const [expanded,setExpanded]=useState(!!params.entryId);
+    const [visible, setVisible] = useState(true);
+    const closing = useRef(false), afterDismiss = useRef<(() => void) | null>(null);
+    const dismissCapture = useCallback((navigate: () => void) => {
+        if (closing.current) return;
+        closing.current = true;
+        afterDismiss.current = navigate;
+        setVisible(false);
+    }, []);
+    const finishDismiss = () => { const navigate = afterDismiss.current; afterDismiss.current = null; navigate?.(); };
     const [existing, setExisting] = useState<TrackedMeal | null>(null), [loadingEntry, setLoadingEntry] = useState(!!params.entryId);
     const capturedAt = useRef(new Date());
     const camera = useRef<CameraView>(null), version = useRef(0), controller = useRef<AbortController | null>(null), busyRef = useRef(false), active = useRef(true);
@@ -69,7 +78,7 @@ export default function TrackingCaptureScreen() {
             if (!valid)
                 return;
             if (!record.photoUri || !record.photoWidth || !record.photoHeight) {
-                router.replace({ pathname: '/tracking/manual', params: { entryId: record.id } });
+                dismissCapture(() => router.replace({ pathname: '/tracking/manual', params: { entryId: record.id } }));
                 return;
             }
             setNutritionOverride(record.nutritionOverride || null);
@@ -87,8 +96,8 @@ export default function TrackingCaptureScreen() {
             setError(t('tracking.loadError')); }).finally(() => { if (valid)
             setLoadingEntry(false); });
         return () => { valid = false; };
-    }, [params.entryId, t, saver]);
-    const close = () => { if (snapshot.current) void persistRef.current?.(); version.current++; controller.current?.abort(); router.back(); };
+    }, [params.entryId, t, saver, dismissCapture]);
+    const close = () => { if (closing.current) return; if (snapshot.current) void persistRef.current?.(); version.current++; controller.current?.abort(); dismissCapture(() => router.back()); };
     const analyze = async (image: {
         uri: string;
         width: number;
@@ -116,16 +125,19 @@ export default function TrackingCaptureScreen() {
         }
         const detected = result.data.analysis;
         try {
-            const defaults = await loadFoodDefaults(await getAnonymousUserId());
+            const userId = await getAnonymousUserId();
+            const [defaults, journal] = await Promise.all([loadFoodDefaults(userId), loadTrackedMeals(userId)]);
             if (!active.current || attempt !== version.current) return;
             detected.items = applyFoodDefaults(detected.items, defaults);
             detected.nutrition = foodNutrition(detected.items);
+            const date = params.date && validTrackingDate(params.date) && params.date <= trackingDateKey()
+                ? params.date : trackingDateKey(capturedAt.current);
+            detected.mealType = detected.kind === 'not_food' ? null : inferPhotoMealType(capturedAt.current, journal, date, detected.scanId);
         } catch {
             if (active.current && attempt === version.current) setError(t('tracking.loadError'));
             return;
         }
         trackStage('analysis_completed', { kind: detected.kind, item_count: detected.items.length });
-        detected.mealType = detected.kind === 'not_food' ? null : mealTypeAtLocalTime(capturedAt.current);
         setAnalysis(detected);
         setTitle(detected.title || t('tracking.untitledMeal'));
         setItems(detected.items);
@@ -235,13 +247,15 @@ export default function TrackingCaptureScreen() {
         doneBusy.current = false;
         if (!record || !active.current) return;
         void feedback.success();
-        if (isOnboarding) router.dismissTo({pathname: '/onboarding/photoTrackingDemo', params: {completedId: record.id}});
-        else router.dismissTo('/(tabs)/tracking');
+        dismissCapture(() => {
+            if (isOnboarding) router.dismissTo({pathname: '/onboarding/photoTrackingDemo', params: {completedId: record.id}});
+            else router.dismissTo('/(tabs)/tracking');
+        });
     };
     let content: React.ReactNode;
     if (loadingEntry) content = <View style={[appStyles.screen, {justifyContent:'center'}]}><ActivityIndicator color={theme.yellow}/></View>;
     else if (phase === 'result' && photo) content = <PhotoMealReveal photo={photo} analysis={analysis} title={title} items={items} onTitle={setTitle} onItems={changeItems} mealType={mealType} onMealType={setMealType} nutritionOverride={nutritionOverride} onNutritionOverride={setNutritionOverride} onSave={()=>{void done();}} saveActionLabel={t(error ? 'common.retry' : 'tracking.viewDay')} autoSaved={!!saved} onExpand={()=>setExpanded(true)} onComplete={()=>setRecognitionReady(true)} onBack={close} onRetry={()=>{void analyze(photo);}} onRetake={retake} saving={saving} error={error} editing={!!params.entryId} processing={!error}/>;
-    else content = <MealPhotoCapture cameraRef={camera} granted={!!permission?.granted} cameraError={cameraError} canAskAgain={permission?.canAskAgain !== false} active={foreground} ready={cameraReady} busy={busy} error={error} onClose={close} onAllow={() => { if (permission?.canAskAgain === false) void Linking.openSettings(); else void requestPermission(); }} onReady={() => setCameraReady(true)} onCameraError={() => setCameraError(true)} onTake={() => { void take(); }} onPick={() => { void pick(); }} onManual={isOnboarding ? undefined : () => router.replace({ pathname: '/tracking/manual', params: { date: params.date || trackingDateKey() } })}/>;
-    return <TrackingCaptureSurface expanded={expanded}><Stack.Screen options={{headerShown:false,gestureEnabled:false,statusBarStyle:expanded?'dark':'light',contentStyle:{backgroundColor:'transparent'}}}/>{content}</TrackingCaptureSurface>;
+    else content = <MealPhotoCapture cameraRef={camera} granted={!!permission?.granted} cameraError={cameraError} canAskAgain={permission?.canAskAgain !== false} active={foreground && visible} ready={cameraReady} busy={busy} error={error} onClose={close} onAllow={() => { if (permission?.canAskAgain === false) void Linking.openSettings(); else void requestPermission(); }} onReady={() => setCameraReady(true)} onCameraError={() => setCameraError(true)} onTake={() => { void take(); }} onPick={() => { void pick(); }} onManual={isOnboarding ? undefined : () => dismissCapture(() => router.replace({ pathname: '/tracking/manual', params: { date: params.date || trackingDateKey() } }))}/>;
+    return <TrackingCaptureSurface expanded={expanded} visible={visible} onRequestClose={close} onDismiss={finishDismiss}><Stack.Screen options={{headerShown:false,gestureEnabled:false,statusBarStyle:expanded?'dark':'light',contentStyle:{backgroundColor:'transparent'}}}/>{content}</TrackingCaptureSurface>;
 
 }

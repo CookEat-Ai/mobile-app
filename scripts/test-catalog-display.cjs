@@ -24,8 +24,8 @@ assert.equal(card.image, recipe.image);
 assert.equal(card.ingredients, recipe.ingredients);
 assert.equal(catalogMealCardData(recipe, 'breakfast').mealType, 'lunch');
 assert.equal(catalogMealCardData({ ...recipe, mealTypes: [] }).mealType, 'lunch');
-assert.equal(catalogMealCardData({ ...recipe, calories: '', proteins: 'n/a' }).calories, 0);
-assert.equal(catalogMealCardData({ ...recipe, proteins: 'n/a' }).proteins, 0);
+assert.equal(catalogMealCardData({ ...recipe, calories: '', proteins: 'n/a' }).calories, undefined, 'unknown calories must not appear as zero');
+assert.equal(catalogMealCardData({ ...recipe, proteins: 'n/a' }).proteins, undefined, 'unknown protein must not appear as zero');
 assert.equal(recipe.proteins, '38,5 g', 'display must not mutate the recipe');
 console.log('Catalogue cards passed: nutrition units, decimal values, meal filters and missing values.');
 

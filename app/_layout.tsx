@@ -1,4 +1,4 @@
-import { MODAL_ROUTE_ANIMATION } from '../constants/ModalPresentation';
+import { MODAL_ROUTE_ANIMATION, PHOTO_CAPTURE_ROUTE_OPTIONS } from '../constants/ModalPresentation';
 import { PresentationModeControl } from '../components/PresentationModeControl';
 import { MotionPreferencesProvider } from '../contexts/MotionPreferences';
 import * as SplashScreen from 'expo-splash-screen';
@@ -445,13 +445,14 @@ function RootLayout() {
               <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'none', statusBarStyle: 'dark', statusBarHidden: false }} />
               <Stack.Screen name="recipe-detail" options={{ headerShown: false }} />
               <Stack.Screen name="favorites-list" options={{ headerShown: false }} />
+              <Stack.Screen name="import-tutorial" options={{ headerShown: false, presentation: 'modal', animation: MODAL_ROUTE_ANIMATION, gestureEnabled: true }} />
               <Stack.Screen name="share-intent" options={{ headerShown: false, animation: 'fade' }} />
               <Stack.Screen name="recipe-loading" options={{ headerShown: false, animation: 'fade' }} />
               <Stack.Screen name="recipe-loading-modal" options={{ headerShown: false, presentation: 'modal', animation: MODAL_ROUTE_ANIMATION, gestureEnabled: false }} />
               <Stack.Screen name="planning/ingredients" options={{ presentation: 'modal', animation: MODAL_ROUTE_ANIMATION, gestureEnabled: true }} />
               <Stack.Screen name="planning/loading" options={{ animation: 'none', gestureEnabled: false }} />
               <Stack.Screen name="tracking/manual" options={{ headerShown: false, presentation: 'modal', animation: MODAL_ROUTE_ANIMATION }} />
-              <Stack.Screen name="tracking/capture" options={{ headerShown: false, presentation: 'transparentModal', animation: MODAL_ROUTE_ANIMATION, contentStyle: {backgroundColor:'transparent'}, gestureEnabled: false }} />
+              <Stack.Screen name="tracking/capture" options={PHOTO_CAPTURE_ROUTE_OPTIONS} />
               <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'modal', animation: MODAL_ROUTE_ANIMATION, gestureEnabled: false }} />
               {/* Tous les points d'entrée poussent cette route au-dessus d'un
                   écran valide, mais le contrat visuel reste plein écran : le

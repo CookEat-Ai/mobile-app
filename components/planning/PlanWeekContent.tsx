@@ -17,12 +17,13 @@ import { PlanMealCard } from './PlanMealCard';
 import { PlanningDayPicker } from './PlanningDayPicker';
 import { PlanningOverview } from './PlanningOverview';
 import { PlanningShoppingLink } from './PlanningShoppingLink';
+import { PlanningActions } from './PlanningActions';
 import { planningStyles } from './PlanningStyles';
 import { PlanningCalorieNotice } from './PlanningCalorieNotice';
 import { AnimatedPlanningMeals, usePlanningReveal } from './PlanningReveal';
 
 /** Shared by the current week and history so opening a recipe preserves its portions. */
-export function PlanWeekContent({ plan, onPlanChange, initialDay, onRevealStart }: { plan: MealPlan; onPlanChange: (plan: MealPlan) => void; initialDay?: number; onRevealStart?: (anchor: View) => void }) {
+export function PlanWeekContent({ plan, onPlanChange, initialDay, onRevealStart, onRegenerate, onDelete, deleting = false }: { plan: MealPlan; onPlanChange: (plan: MealPlan) => void; initialDay?: number; onRevealStart?: (anchor: View) => void; onRegenerate?: () => void; onDelete?: () => void; deleting?: boolean }) {
   const daysAnchor = useRef<View>(null);
   const alignmentFrame = useRef<number | null>(null);
   useEffect(() => () => { if (alignmentFrame.current !== null) cancelAnimationFrame(alignmentFrame.current); }, []);
@@ -159,16 +160,13 @@ export function PlanWeekContent({ plan, onPlanChange, initialDay, onRevealStart 
       <Ionicons name="add-circle-outline" size={24} color={theme.ink} /><View style={{ flex: 1 }}><Text style={appStyles.textAction}>{t(`search.categories.${{ breakfast: 'Breakfast', lunch: 'Lunch', snack: 'Snack', dinner: 'Dinner' }[slot.mealType]}`)}</Text><Text style={appStyles.subtitle}>{t(isPastPlanDay(plan.weekStart, day) ? 'planningSlots.past' : isElapsedPlanningMeal(plan.weekStart, day, slot.mealType, undefined, clock.now) ? 'planningSlots.elapsed' : 'planningSlots.add')}</Text></View>
     </TouchableOpacity>} />
     <PlanningShoppingLink onPress={() => router.push({ pathname: '/planning/[planId]/shopping', params: { planId: plan._id } })} />
-    {!isPastPlan(plan) && plan.meals.length > 0 && <TouchableOpacity accessibilityRole="button" style={styles.organize} disabled={!!opening}
-      onPress={() => router.push({ pathname: '/planning/organize', params: { planId: plan._id } })}>
-      <Ionicons name="pencil-outline" size={20} color={theme.ink} /><Text style={appStyles.textAction}>{t('planningOrganize.action')}</Text>
-    </TouchableOpacity>}
+    <PlanningActions disabled={!!opening} deleting={deleting} onDelete={onDelete} onRegenerate={onRegenerate}
+      onOrganize={!isPastPlan(plan) && plan.meals.length > 0 ? () => router.push({ pathname: '/planning/organize', params: { planId: plan._id } }) : undefined}/>
   </View>;
 }
 
 const styles = StyleSheet.create({
   emptySlot: { minHeight: 80, borderWidth: 1, borderStyle: 'dashed', borderColor: theme.line, borderRadius: AppRadii.control, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  organize: { marginTop: 16, minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
   shoppingText: { flex: 1, fontFamily: 'CronosProBold', fontSize: 17, color: theme.ink },
   empty: { paddingVertical: 28, gap: 12 },
   browse: { minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 12 },

@@ -1,22 +1,23 @@
 import { AppIconBadge } from './ui/AppIconBadge';
+import { AppSpinner } from './ui/AppSpinner';
 import { AppRadii, AppTheme as theme } from '../constants/AppTheme';
 import { feedback } from '../services/haptics';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export function SettingsRow({ icon, title, description, onPress, destructive = false }: {
+export function SettingsRow({ icon, title, description, onPress, destructive = false, disabled = false, loading = false }: {
   icon: React.ComponentProps<typeof Ionicons>['name']; title: string; description?: string;
-  onPress: () => void; destructive?: boolean;
+  onPress: () => void; destructive?: boolean; disabled?: boolean; loading?: boolean;
 }) {
   const color = destructive ? theme.danger : theme.ink;
-  return <TouchableOpacity accessibilityRole="button" onPress={() => { feedback.light(); onPress(); }} activeOpacity={0.75} style={styles.row}>
+  return <TouchableOpacity accessibilityRole="button" accessibilityState={{ disabled: disabled || loading, busy: loading }} disabled={disabled || loading} onPress={() => { if (disabled || loading) return; feedback.light(); onPress(); }} activeOpacity={0.75} style={[styles.row, disabled && !loading && { opacity: .45 }]}>
     <AppIconBadge name={icon} tone={destructive ? 'danger' : 'accent'} />
     <View style={styles.copy}>
       <Text style={[styles.title, { color }]}>{title}</Text>
       {description ? <Text style={styles.description}>{description}</Text> : null}
     </View>
-    <Ionicons name="chevron-forward" size={20} color={theme.muted} />
+    {loading ? <AppSpinner color={color} /> : <Ionicons name="chevron-forward" size={20} color={theme.muted} />}
   </TouchableOpacity>;
 }
 const styles = StyleSheet.create({

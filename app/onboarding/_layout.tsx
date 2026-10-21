@@ -1,4 +1,5 @@
 import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { MODAL_ROUTE_ANIMATION } from '../../constants/ModalPresentation';
 import 'react-native-reanimated';
 
 export default function OnboardingLayout() {
@@ -13,7 +14,7 @@ export default function OnboardingLayout() {
         <Stack.Screen name="personalizedRecipes" options={{ headerShown: false }} />
         <Stack.Screen name="videoDemo" options={{ headerShown: false }} />
         <Stack.Screen name="generationDemo" options={{ headerShown: false }} />
-        <Stack.Screen name="videoImportTutorial" options={{ headerShown: false }} />
+        <Stack.Screen name="videoImportTutorial" options={{ headerShown: false, presentation: 'modal', animation: MODAL_ROUTE_ANIMATION, gestureEnabled: true }} />
         <Stack.Screen name="weeklyPlanPreview" options={{ headerShown: false }} />
         <Stack.Screen name="photoTrackingDemo" options={{ headerShown: false }} />
         <Stack.Screen name="promoCode" options={{ headerShown: false }} />

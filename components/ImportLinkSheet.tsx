@@ -186,7 +186,6 @@ export function ImportLinkSheet({ visible, onClose, source, isOnboarding, onboar
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: theme.overlay,
   },
   centering: {
     flex: 1,

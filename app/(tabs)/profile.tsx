@@ -622,7 +622,7 @@ const styles = StyleSheet.create({
   planName: { fontFamily: 'Degular', fontSize: 21, lineHeight: 25, color: theme.ink },
   planExpiration: { fontFamily: 'CronosPro', fontSize: 14, lineHeight: 20, marginTop: 4, color: theme.muted },
   manageText: { ...appStyles.textAction, marginTop: 8 },
-  modalOverlay: { flex: 1, backgroundColor: theme.overlay, justifyContent: 'flex-end', alignItems: 'center' },
+  modalOverlay: { flex: 1, justifyContent: 'flex-end', alignItems: 'center' },
   modalOverlayInner: { flex: 1, width: '100%', justifyContent: 'flex-end', alignItems: 'center' },
   modalContent: { backgroundColor: theme.background, width: '100%', maxWidth: 560, alignSelf: 'center', borderTopLeftRadius: AppRadii.sheet, borderTopRightRadius: AppRadii.sheet, padding: 20, overflow: 'hidden' },
   modalCloseButton: {},

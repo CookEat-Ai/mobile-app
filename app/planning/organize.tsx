@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   body: { flex: 1, width: '100%' }, hint: { paddingHorizontal: 20 }, loader: { marginVertical: 40 },
   footer: { paddingTop: 12, borderTopWidth: 1, borderColor: theme.line }, disabled: { opacity: 0.6 },
   notice: { padding: 16, gap: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: theme.yellowSoft },
-  backdrop: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: 'rgba(8,26,16,0.35)' },
+  backdrop: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   dialog: { width: '100%', maxWidth: 480, backgroundColor: theme.background, borderRadius: theme.radius, padding: 24, gap: 18 },
   discard: { minHeight: 44, alignItems: 'center', justifyContent: 'center' },
 });

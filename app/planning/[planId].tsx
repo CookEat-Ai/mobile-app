@@ -65,11 +65,10 @@ export default function PlanDetailScreen() {
       {loading && <ActivityIndicator style={styles.loader} color={theme.ink} />}
       {error && <View><Text style={appStyles.error}>{error}</Text><TouchableOpacity style={appStyles.button} onPress={() => void loadPlan()}><Text style={appStyles.buttonText}>{t('mealLibrary.retry')}</Text></TouchableOpacity></View>}
       {plan && <><Text style={styles.week}>{formatPlanRange(plan, i18n.resolvedLanguage || 'fr')}</Text>
-        <PlanWeekContent key={plan._id} plan={plan} onPlanChange={setPlan} onRevealStart={alignPlanningDays} />
-        {!isPastPlan(plan, clock.today) && <TouchableOpacity accessibilityRole="button" style={styles.regenerate} onPress={() => {
+        <PlanWeekContent key={plan._id} plan={plan} onPlanChange={setPlan} onRevealStart={alignPlanningDays} onRegenerate={!isPastPlan(plan, clock.today) ? () => {
           if (isPastPlan(plan, clock.today)) return;
-          router.push({ pathname: '/planning/configure', params: { replace: 'true' } });
-        }}><Ionicons name="refresh-outline" size={20} color={theme.ink} /><Text style={appStyles.textAction}>{t('planningDetail.regenerate')}</Text></TouchableOpacity>}
+          router.push({ pathname: '/planning/configure', params: { replace: 'true', sourcePlanId: plan._id } });
+        } : undefined}/>
         {isPastPlan(plan, clock.today) && <TouchableOpacity accessibilityRole="button" style={styles.regenerate} onPress={() => router.push('/planning/configure')}><Ionicons name="add-circle-outline" size={20} color={theme.ink}/><Text style={appStyles.textAction}>{t('dailyApp.createWeek')}</Text></TouchableOpacity>}
       </>}
     </ScrollView>

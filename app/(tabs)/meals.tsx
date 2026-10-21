@@ -1,4 +1,5 @@
 import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
+import { AppRefreshControl } from '../../components/ui/AppRefreshControl';
 import { CONTENT_MAX_WIDTH } from '../../constants/Layout';
 import { AppModal as Modal } from '../../components/ui/AppModal';
 import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
@@ -12,9 +13,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { catalogMealCardData, type MealCardRecipe } from '../../services/catalogDisplay';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
 import { Ionicons } from '@expo/vector-icons';
-import { router, useFocusEffect } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../../constants/Colors';
@@ -23,25 +24,30 @@ import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { apiService, CatalogCuisine } from '../../services/api';
 import { catalogCuisineQuery, toggleCatalogCuisine } from '../../services/catalogCuisineFilters';
 import { calculateFitnessProjection, fitnessProfileToPlanningPreferences, loadFitnessProfile } from '../../services/fitnessProfile';
+import { loadImportedMeals } from '../../services/importedMeals';
+import { importedRecipeRoute } from '../../services/importedMealNavigation';
 
-type Filter = 'all' | 'favorites' | 'light' | 'protein' | 'express' | 'breakfast' | 'main';
-const FILTERS: Filter[] = ['all', 'breakfast', 'main', 'light', 'protein', 'express', 'favorites'];
+type Filter = 'all' | 'imported' | 'favorites' | 'light' | 'protein' | 'express' | 'breakfast' | 'main';
+const FILTERS: Filter[] = ['all', 'imported', 'breakfast', 'main', 'light', 'protein', 'express', 'favorites'];
 const INITIAL_MEAL_COUNT = 6;
 const recipeKey = (recipe: MealCardRecipe) => recipe.id;
 const MealSeparator = () => <View style={styles.separator} />;
 
 // Stable recipe props keep typing, modal updates and pagination from redrawing
 // every thumbnail. Only the first screen of results needs an entrance.
-const MealLibraryRow = React.memo(function MealLibraryRow({ recipe, index, type, disabled, tile }: {
-  recipe: MealCardRecipe; index: number; type: Filter; disabled: boolean; tile: boolean;
+const MealLibraryRow = React.memo(function MealLibraryRow({ recipe, index, type, disabled, tile, onDelete }: {
+  recipe: MealCardRecipe; index: number; type: Filter; disabled: boolean; tile: boolean; onDelete?: (recipe: MealCardRecipe) => void;
 }) {
+  const { t } = useTranslation();
   const meal = useMemo(() => catalogMealCardData(recipe,
     type === 'light' ? 'main' : type === 'breakfast' || type === 'main' ? type : undefined), [recipe, type]);
-  const onPress = useCallback(() => router.push({ pathname: '/recipe-detail', params: {
+  const onPress = useCallback(() => router.push(type === 'imported' ? importedRecipeRoute(recipe.id) : { pathname: '/recipe-detail', params: {
     recipeId: recipe.id, isHistory: 'true', source: type === 'favorites' ? 'favorites' : 'meal_library',
     ...(type === 'favorites' ? { showGenerateButton: 'false' } : {}),
   } }), [recipe.id, type]);
-  const card = <PlanMealCard tile={tile} meal={meal} disabled={disabled} imageTransition={0} onPress={onPress} />;
+  const card = <PlanMealCard tile={tile} meal={meal} disabled={disabled} imageTransition={0} onPress={onPress}
+    badgeLabel={type === 'imported' ? t('mealLibrary.types.imported') : undefined}
+    onLongPress={onDelete ? () => onDelete(recipe) : undefined} />;
   return index < INITIAL_MEAL_COUNT
     ? <EntranceView entranceIndex={Math.min(index, 2)}>{card}</EntranceView>
     : card;
@@ -57,6 +63,8 @@ function cuisineName(cuisine: CatalogCuisine, language: string) {
 
 export default function MealsScreen() {
   const { t, i18n } = useTranslation();
+  const params = useLocalSearchParams<{ filter?: string; selectionKey?: string }>();
+  const importedSelection = params.filter === 'imported' ? params.selectionKey : undefined;
   const insets = useSafeAreaInsets();
   const { gutter, width, columns } = useResponsive();
   const cardWidth = (Math.min(width, CONTENT_MAX_WIDTH) - 2 * gutter - (columns - 1) * 16) / columns;
@@ -68,7 +76,9 @@ export default function MealsScreen() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
-  const [type, setType] = useState<Filter>('all');
+  const [type, setType] = useState<Filter>(params.filter === 'imported' ? 'imported' : 'all');
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const [cuisineIds, setCuisineIds] = useState<string[]>([]);
   const [filtersVisible, setFiltersVisible] = useState(false);
   const requestIdRef = useRef(0);
@@ -76,8 +86,15 @@ export default function MealsScreen() {
   const pageRef = useRef(0);
   const exhaustedRef = useRef(false);
   const cuisinesLoadedRef = useRef(false);
+  const appliedSelectionRef = useRef<string | undefined>(undefined);
   const retryRef = useRef<(() => void) | null>(null);
   const shouldReplay = useEntranceReplay();
+  useEffect(() => {
+    if (params.filter !== 'imported') return;
+    pageRef.current = 0;
+    setType('imported'); setSearch(''); setQuery(''); setRecipes([]);
+    setCuisineIds(current => current.length ? [] : current);
+  }, [params.filter, params.selectionKey]);
   useEffect(() => {
     const timer = setTimeout(() => {
       if (query !== search.trim()) {
@@ -88,7 +105,7 @@ export default function MealsScreen() {
     return () => clearTimeout(timer);
   }, [search, query]);
 
-  const load = useCallback(async (page = 1, append = false, preserve = false): Promise<void> => {
+  const load = useCallback(async (page = 1, append = false, preserve = false, forceRefresh = false): Promise<void> => {
     if (append && (requestPendingRef.current || exhaustedRef.current)) return;
     const requestId = ++requestIdRef.current;
     requestPendingRef.current = true;
@@ -105,6 +122,15 @@ export default function MealsScreen() {
     setError(null);
     retryRef.current = null;
     try {
+      if (type === 'imported') {
+        const userId = await AsyncStorage.getItem('userId');
+        if (!userId) throw new Error(t('planning.errors.user'));
+        const result = await loadImportedMeals(userId, { page, preservePages: preserve ? Math.max(1, pageRef.current) : 0, query, forceRefresh, isCurrent: () => requestId === requestIdRef.current });
+        if (requestId !== requestIdRef.current) return;
+        setRecipes(current => append ? [...new Map([...current, ...result.recipes].map(recipe => [recipe.id, recipe])).values()] : result.recipes);
+        setTotal(result.total); pageRef.current = result.page; exhaustedRef.current = !result.hasMore;
+        return;
+      }
       if (type === 'favorites') {
         const userId = await AsyncStorage.getItem('userId');
         if (!userId) throw new Error(t('planning.errors.user'));
@@ -165,7 +191,7 @@ export default function MealsScreen() {
     } catch (loadError) {
       if (requestId !== requestIdRef.current) return;
       setError(loadError instanceof Error ? loadError.message : t('common.requestError'));
-      retryRef.current = () => { void load(page, append, preserve); };
+      retryRef.current = () => { void load(page, append, preserve, forceRefresh); };
       if (!append && !preserve) setRecipes([]);
     } finally {
       if (requestId === requestIdRef.current) {
@@ -178,14 +204,36 @@ export default function MealsScreen() {
 
   useFocusEffect(useCallback(() => {
     const replay = shouldReplay();
+    const newImportSelection = !!importedSelection && importedSelection !== appliedSelectionRef.current;
+    appliedSelectionRef.current = importedSelection;
     // Keep the list mounted, its scroll position and pagination when drilling back.
-    if (replay || pageRef.current === 0) void load(1, false, pageRef.current > 0);
-    else if (type === 'favorites') void load(1, false, true);
+    if (newImportSelection || replay || pageRef.current === 0) void load(1, false, pageRef.current > 0);
+    else if (type === 'favorites' || type === 'imported') void load(1, false, true);
     return () => {
       requestIdRef.current += 1;
       requestPendingRef.current = false;
     };
-  }, [load, shouldReplay, type]));
+  }, [load, shouldReplay, type, importedSelection]));
+
+  const deleteImported = useCallback((recipe: MealCardRecipe) => {
+    if (deleting) return;
+    Alert.alert(t('home.deleteRecipe.title'), t('home.deleteRecipe.message', { title: recipe.title }), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('common.delete'), style: 'destructive', onPress: async () => {
+        setDeleting(recipe.id);
+        try {
+          const userId = await AsyncStorage.getItem('userId');
+          if (!userId) throw new Error(t('planning.errors.user'));
+          const response = await apiService.deleteRecipe(recipe.id, userId);
+          if (!response.data?.success) throw new Error(response.error || t('common.requestError'));
+          setRecipes(current => current.filter(item => item.id !== recipe.id));
+          setTotal(current => Math.max(0, current - 1));
+          await load(1, false, true);
+        } catch (error) { Alert.alert(t('common.error'), error instanceof Error ? error.message : t('common.requestError')); }
+        finally { setDeleting(null); }
+      } },
+    ]);
+  }, [deleting, load, t]);
 
   const loadMore = useCallback(() => {
     if (query !== search.trim() || type === 'favorites' || loading || loadingMore || error || recipes.length >= total) return;
@@ -198,7 +246,7 @@ export default function MealsScreen() {
   ], [cuisines, i18n.resolvedLanguage, t]);
 
   const renderMeal = useCallback(({ item, index }: { item: MealCardRecipe; index: number }) =>
-    <View style={{ flex: 1, maxWidth: cardWidth }}><MealLibraryRow recipe={item} index={index} type={type} disabled={loading} tile={columns > 1} /></View>, [type, loading, columns, cardWidth]);
+    <View style={{ flex: 1, maxWidth: cardWidth }}><MealLibraryRow recipe={item} index={index} type={type} disabled={loading || deleting === item.id} tile={columns > 1} onDelete={type === 'imported' ? deleteImported : undefined} /></View>, [type, loading, deleting, deleteImported, columns, cardWidth]);
 
   const selectCuisine = useCallback((id: string) => {
     if (id === 'all' && cuisineIds.length === 0) return;
@@ -224,11 +272,14 @@ export default function MealsScreen() {
         maxToRenderPerBatch={4}
         windowSize={5}
         showsVerticalScrollIndicator={false}
+        refreshControl={type === 'imported' ? <AppRefreshControl refreshing={refreshing} onRefresh={() => {
+          setRefreshing(true); void load(1, false, true, true).finally(() => setRefreshing(false));
+        }} /> : undefined}
         contentContainerStyle={{ ...contentColumn(), paddingTop: insets.top + 8, paddingHorizontal: gutter, paddingBottom: theme.bottomSpace }}
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
         ListHeaderComponent={<>
-          <AppScreenHeading title={t('tabs.meals')} subtitle={t('dailyApp.recipeSubtitle')} action={<View style={{flexDirection:'row',gap:8,alignItems:'center'}}><MealImportButton/>{type !== 'favorites' &&
+          <AppScreenHeading title={t('tabs.meals')} subtitle={t('dailyApp.recipeSubtitle')} action={<View style={{flexDirection:'row',gap:8,alignItems:'center'}}><MealImportButton/>{type !== 'favorites' && type !== 'imported' &&
             <TouchableOpacity style={[appStyles.iconButton, hasCuisineFilters && { backgroundColor: theme.yellow }]} accessibilityRole="button" accessibilityLabel={t('dailyApp.filters')} accessibilityState={{ selected: hasCuisineFilters, busy: loading }} onPress={() => { feedback.light(); setFiltersVisible(true); }}>{loading ? <ActivityIndicator color={hasCuisineFilters ? theme.surface : theme.ink} /> : <Ionicons name="options-outline" size={24} color={hasCuisineFilters ? theme.surface : theme.ink} />}</TouchableOpacity>
           }</View>} />
           <View style={styles.search}>
@@ -240,10 +291,10 @@ export default function MealsScreen() {
               style={styles.clearSearch} onPress={() => setSearch('')}><Ionicons name="close-circle" size={22} color={theme.muted} /></TouchableOpacity>}
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
-            {FILTERS.map((item) => <TouchableOpacity key={item} accessibilityRole="button" accessibilityState={{ selected: item === type }} onPress={() => { if (item === type) return; feedback.selection(); pageRef.current = 0; setType(item); }} style={[styles.filter, item === type && styles.filterActive]}><Text style={[styles.filterText, item === type && styles.filterTextActive]}>{t(`mealLibrary.types.${item}`)}</Text></TouchableOpacity>)}
+            {FILTERS.map((item) => <TouchableOpacity key={item} accessibilityRole="button" accessibilityState={{ selected: item === type }} onPress={() => { if (item === type) return; feedback.selection(); pageRef.current = 0; if (item === 'imported' || type === 'imported') setRecipes([]); setType(item); }} style={[styles.filter, item === type && styles.filterActive]}><Text style={[styles.filterText, item === type && styles.filterTextActive]}>{t(`mealLibrary.types.${item}`)}</Text></TouchableOpacity>)}
           </ScrollView>
           {type === 'light' && <Text style={[styles.filterText, { marginBottom: 16 }]}>{t('mealLibrary.lightDescription')}</Text>}
-          {type !== 'favorites' && hasCuisineFilters && <View style={styles.appliedFilters}>{cuisineChoices.filter(item => cuisineIds.includes(item.id)).map(item =>
+          {type !== 'favorites' && type !== 'imported' && hasCuisineFilters && <View style={styles.appliedFilters}>{cuisineChoices.filter(item => cuisineIds.includes(item.id)).map(item =>
             <TouchableOpacity key={item.id} accessibilityRole="button" style={styles.appliedFilter} onPress={() => selectCuisine(item.id)} accessibilityLabel={`${t('dailyApp.clearFilters')}: ${item.label}`}><Text style={styles.filterText}>{item.label}</Text><Ionicons name="close" size={16} color={theme.ink} /></TouchableOpacity>
           )}</View>}
         </>}
@@ -251,7 +302,7 @@ export default function MealsScreen() {
           ? <ActivityIndicator style={styles.loader} size="large" color={Colors.light.button} />
           : error
             ? <View style={styles.state}><Ionicons name="cloud-offline-outline" size={34} color={theme.danger} /><Text style={styles.stateText}>{error}</Text><TouchableOpacity style={styles.retry} onPress={() => retryRef.current?.()}><Text style={styles.retryText}>{t('mealLibrary.retry')}</Text></TouchableOpacity></View>
-            : <View style={styles.state}><Ionicons name="restaurant-outline" size={36} color={Colors.light.button} /><Text style={styles.stateText}>{t(type === 'favorites' && !query ? 'favorites.noFavorites' : 'mealLibrary.empty')}</Text></View>}
+            : <View style={styles.state}><Ionicons name="restaurant-outline" size={36} color={Colors.light.button} /><Text style={styles.stateText}>{t(!query && type === 'imported' ? 'imported.noImported' : type === 'favorites' && !query ? 'favorites.noFavorites' : 'mealLibrary.empty')}</Text></View>}
         renderItem={renderMeal}
         ListFooterComponent={loadingMore || loading && recipes.length > 0
           ? <ActivityIndicator style={styles.footerLoader} color={Colors.light.button} />

@@ -191,3 +191,25 @@ export function mealTypeAtLocalTime(date: Date): TrackedMeal['mealType'] {
     const hour = date.getHours();
     return hour < 5 ? 'dinner' : hour < 11 ? 'breakfast' : hour < 15 ? 'lunch' : hour < 18 ? 'snack' : 'dinner';
 }
+
+/** Use the local capture time and meals already logged, never the foods in the photo. */
+export function inferPhotoMealType(at: Date, meals: Pick<TrackedMeal, 'id' | 'date' | 'createdAt' | 'mealType'>[], date = trackingDateKey(at), scanId?: string): TrackedMeal['mealType'] {
+    const byTime = mealTypeAtLocalTime(at);
+    const now = at.getTime();
+    const night = at.getHours() < 5;
+    const recent = meals.filter(meal => {
+        const elapsed = now - Date.parse(meal.createdAt);
+        return meal.id !== scanId && Number.isFinite(elapsed) && elapsed >= 0
+            && (meal.date === date || (night && elapsed <= 6 * 60 * 60 * 1000 && meal.date === shiftTrackingDate(date, -1)));
+    }).sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+    if (!recent.length) return byTime;
+    const sinceLast = now - Date.parse(recent[0].createdAt);
+    // A second photo after an already logged main meal is normally a snack.
+    if (byTime !== 'snack' && recent.some(meal => meal.mealType === byTime && now - Date.parse(meal.createdAt) <= 6 * 60 * 60 * 1000)) return 'snack';
+    if (byTime !== 'snack' && sinceLast < 90 * 60 * 1000 && recent[0].mealType !== 'snack') return 'snack';
+    // A missed lunch can be late; a recent snack should not immediately become another meal.
+    if (byTime === 'snack' && at.getHours() < 17 && sinceLast >= 90 * 60 * 1000
+        && recent.some(meal => meal.mealType === 'breakfast')
+        && !recent.some(meal => meal.mealType === 'lunch' || meal.mealType === 'dinner')) return 'lunch';
+    return byTime;
+}

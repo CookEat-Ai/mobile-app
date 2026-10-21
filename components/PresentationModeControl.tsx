@@ -61,4 +61,4 @@ export function PresentationModeControl() {
     </KeyboardAvoidingView>
   </Modal>;
 }
-const styles = StyleSheet.create({ overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'center', padding: 24 }, card: { padding: 24, gap: 16, backgroundColor: theme.background, borderRadius: AppRadii.card }, input: { minHeight: 52, padding: 12, borderWidth: 1, borderColor: theme.line, borderRadius: AppRadii.control, fontFamily: 'CronosPro', fontSize: 18, color: theme.ink }, cancel: { minHeight: 44, alignItems: 'center', justifyContent: 'center' } });
+const styles = StyleSheet.create({ overlay: { flex: 1, justifyContent: 'center', padding: 24 }, card: { padding: 24, gap: 16, backgroundColor: theme.background, borderRadius: AppRadii.card }, input: { minHeight: 52, padding: 12, borderWidth: 1, borderColor: theme.line, borderRadius: AppRadii.control, fontFamily: 'CronosPro', fontSize: 18, color: theme.ink }, cancel: { minHeight: 44, alignItems: 'center', justifyContent: 'center' } });
