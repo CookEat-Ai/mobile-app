@@ -1,4 +1,4 @@
-import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
+import { AppTheme as designTheme, AppRadii, appStyles } from '../../constants/AppTheme';
 import type { CookingLevel, MealBudget } from '../../services/cookingPreferences';
 import { PlanningFlowHeader } from '../../components/planning/PlanningFlowHeader';
 import { invalidatePlanning } from '../../services/planningUpdates';
@@ -128,6 +128,6 @@ const styles = StyleSheet.create({
   title: { marginTop: 20, fontFamily: 'Degular', fontSize: 30, lineHeight: 34, color: Colors.light.text, textAlign: 'center' },
   errorIcon: { width: 64, height: 64, borderRadius: AppRadii.card, backgroundColor: designTheme.dangerSoft, alignItems: 'center', justifyContent: 'center' },
   errorText: { marginTop: 8, fontFamily: 'CronosPro', fontSize: 15, lineHeight: 21, color: designTheme.danger, textAlign: 'center' },
-  button: { marginTop: 24, minHeight: 54, minWidth: 180, borderRadius: AppRadii.card, backgroundColor: Colors.light.button, alignItems: 'center', justifyContent: 'center' },
-  buttonText: { fontFamily: 'Degular', fontSize: 20, color: designTheme.onPrimary },
+  button: { ...appStyles.button, marginTop: 24, minHeight: 54, minWidth: 180, maxWidth: '100%', borderRadius: AppRadii.card },
+  buttonText: { ...appStyles.buttonText, textAlign: 'center', flexShrink: 1 },
 });
