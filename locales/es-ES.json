@@ -1948,8 +1948,8 @@
     "unableToOpenVideo": "No se ha podido abrir el vídeo",
     "imageUpdateError": "Error al actualizar la imagen",
     "imagePickError": "Error al elegir la imagen",
-    "chooseReplacement": "Choose from recipes",
-    "automaticReplacement": "Choose automatically",
+    "chooseReplacement": "Elegir entre recetas",
+    "automaticReplacement": "Elegir automáticamente",
     "chooseThisMeal": "Elegir esta comida",
     "choosingMeal": "Guardando…"
   },

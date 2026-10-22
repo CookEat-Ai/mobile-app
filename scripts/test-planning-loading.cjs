@@ -116,6 +116,10 @@ const tick = async target => {
   }, meals: [{ ...meal, calories: 600 }] };
   assert(isCompleteWeeklyPlan(evening), 'a planned dinner is a complete partial first day');
   assert(!isCompleteWeeklyPlan({ ...evening, meals: [{ ...meal, calories: 2000 }] }), 'missing meals cannot be squeezed into the dinner');
+  const fullWeekSlots = Array.from({ length: 7 }, (_, dayIndex) => ['breakfast','lunch','snack','dinner'].map(mealType => ({ ...meal, dayIndex, mealType, calories: 500 }))).flat();
+  const fullWeek = { ...plan, nutritionTargets: { dailyCalories: 2000 }, preferences: { cookingDays: [0,1,2,3,4,5,6], includeSnack: true }, meals: fullWeekSlots };
+  assert(isCompleteWeeklyPlan(fullWeek));
+  for (let missing = 1; missing <= 6; missing++) assert(!isCompleteWeeklyPlan({ ...fullWeek, meals: fullWeekSlots.slice(missing), generation: { mode: 'partial' } }), 'A generated week must be complete, including below the former 20% boundary');
   assert(!isCompleteWeeklyPlan(null));
   assert(!isCompleteWeeklyPlan({ ...plan, meals: [] }));
   assert(!isCompleteWeeklyPlan({ ...plan, meals: [meal, meal] }));
