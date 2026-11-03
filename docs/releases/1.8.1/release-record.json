@@ -20,8 +20,8 @@
   },
   "storeReleaseMode": "MANUAL; Google managed publishing retained",
   "storeState": {
-    "ios": "1.8.1 build 27 VALID and attached; App Review submission awaiting user decision on unrun native QA",
-    "android": "Build 14 queued at EAS"
+    "ios": "WAITING_FOR_REVIEW",
+    "android": "Production release 4 saved in Google Play Console with build 14 (1.8.1); review send not yet confirmed; browser control failure on publication page"
   },
   "binarySourceCommit": "c364a74c01f56df0fe73b204427aa626804a724f",
   "gitRemoteVerified": true,
@@ -59,7 +59,8 @@
         "output: sentry-cli - > Uploaded 2 missing debug information files",
         "output: sentry-cli - > File upload complete:"
       ]
-    }
+    },
+    "android": "Gradle: Uploaded files to Sentry; File upload complete; Source Map Upload Report"
   },
   "reviewAccess": {
     "appleCredentialExpiry": "2026-11-20T23:59:00Z",
@@ -79,5 +80,38 @@
     "warnings": 7,
     "infos": 2,
     "blocking": 0
-  }
+  },
+  "approval": {
+    "date": "2026-11-04",
+    "userDecision": "Soumettre avec ces limites",
+    "scope": "App Review and Google Play review; manual publication after approval"
+  },
+  "appleReview": {
+    "submissionId": "7a9bc086-955c-4901-97ea-3fbbff302cae",
+    "submissionState": "WAITING_FOR_REVIEW",
+    "versionState": "WAITING_FOR_REVIEW",
+    "releaseType": "MANUAL",
+    "userApproval": "2026-11-04: submit with accepted native QA limitations"
+  },
+  "androidArtifact": {
+    "sha256": "54fc9493f869fa0199db84f3c669a43e9e0b4d3dd2f8f74db58f5c9d4f2c67d0",
+    "bytes": 144106064,
+    "runtimeVersion": "7b4664edade84e63d2fc41129e5244eb0a987d5b",
+    "runtimeVerified": true
+  },
+  "androidStoreChecks": {
+    "newBundle": "14 (1.8.1)",
+    "minApi": 24,
+    "targetApi": 36,
+    "phoneCompatibilityLost": 0,
+    "tabletCompatibilityLost": 0,
+    "countries": "All existing targeted countries",
+    "managedPublishing": true,
+    "warning": "No R8/ProGuard deobfuscation mapping file; non-blocking; native symbols attached",
+    "signature": "jarsigner: jar verified (standard self-signed Android upload certificate)",
+    "releaseSaved": true,
+    "reviewSubmitted": false
+  },
+  "nextAction": "Resume Google Play publication overview after browser control is restored and send release 1.8.1 (14) for review. User approval already granted; keep managed publishing enabled.",
+  "verifiedDate": "2026-11-04"
 }
