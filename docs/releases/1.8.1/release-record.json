@@ -21,7 +21,7 @@
   "storeReleaseMode": "MANUAL; Google managed publishing retained",
   "storeState": {
     "ios": "WAITING_FOR_REVIEW",
-    "android": "Production release 4 saved in Google Play Console with build 14 (1.8.1); review send not yet confirmed; browser control failure on publication page"
+    "android": "Review send confirmed in Play Console; preliminary automated checks running, then automatic review; managed publishing enabled"
   },
   "binarySourceCommit": "c364a74c01f56df0fe73b204427aa626804a724f",
   "gitRemoteVerified": true,
@@ -110,8 +110,22 @@
     "warning": "No R8/ProGuard deobfuscation mapping file; non-blocking; native symbols attached",
     "signature": "jarsigner: jar verified (standard self-signed Android upload certificate)",
     "releaseSaved": true,
-    "reviewSubmitted": false
+    "reviewSubmitted": true
   },
-  "nextAction": "Resume Google Play publication overview after browser control is restored and send release 1.8.1 (14) for review. User approval already granted; keep managed publishing enabled.",
-  "verifiedDate": "2026-11-04"
+  "nextAction": "Await Apple and Google review decisions. Public release remains manual and requires a separate user request.",
+  "verifiedDate": "2026-11-04",
+  "googleReview": {
+    "version": "1.8.1",
+    "versionCode": 14,
+    "releaseId": "4",
+    "track": "Production",
+    "targetCountries": 177,
+    "submittedChanges": 33,
+    "sendConfirmed": true,
+    "consoleSection": "Modifications en cours d\u2019examen",
+    "state": "PRELIMINARY_CHECKS_THEN_AUTOMATIC_REVIEW",
+    "managedPublishing": true,
+    "publicRolloutStarted": false,
+    "verifiedAt": "2026-11-03T23:28:31.424244+00:00"
+  }
 }
