@@ -15,8 +15,69 @@
     "iosMetroExport": "PASS with EAS production environment",
     "androidMetroExport": "PASS with EAS production environment",
     "secretScan": "PASS",
-    "deviceQA": "pending"
+    "deviceQA": "pending",
+    "waterTrackingSmoke": "PASS: concurrent writes, zero floor, persistence, user isolation"
   },
   "storeReleaseMode": "MANUAL; Google managed publishing retained",
-  "storeState": "Builds not yet requested"
+  "storeState": {
+    "ios": "1.8.1 build 27 VALID and attached; App Review submission awaiting user decision on unrun native QA",
+    "android": "Build 14 queued at EAS"
+  },
+  "binarySourceCommit": "c364a74c01f56df0fe73b204427aa626804a724f",
+  "gitRemoteVerified": true,
+  "gitRemote": "git@github.com:CookEat-Ai/mobile-app.git",
+  "gitBranch": "main",
+  "iosArtifact": {
+    "CFBundleIdentifier": "com.gokugen.cookeat",
+    "CFBundleShortVersionString": "1.8.1",
+    "CFBundleVersion": "27",
+    "MinimumOSVersion": "16.4",
+    "DTXcode": "2660",
+    "DTSDKName": "iphoneos26.5",
+    "runtimeVersion": "0c61fc073cac72bcc143ed5ca2bf05d24d06ba8b",
+    "sha256": "05badb83294a5a161841f0b2e1d66614f262d2fbd1807eb3f705e6edc1e962f2",
+    "bytes": 75959612
+  },
+  "iosBuildId": "8550aac0-60b3-41ed-860b-0d1d5ddb551f",
+  "androidBuildId": "c10ae577-a420-4af9-aa7f-2fb04b1d0bcc",
+  "iosUpload": "COMPLETE, build VALID, attached to 1.8.1",
+  "sourceMaps": {
+    "ios": "Xcode logs confirm artifact bundle and Source Map Upload Report; native symbols uploaded",
+    "productionEvent": "not emitted",
+    "iosEvidence": {
+      "logBytes": 27904043,
+      "sentryScriptPresent": true,
+      "uploadSuccess": true,
+      "sentryErrors": false,
+      "evidence": [
+        "output: sentry-cli - > Uploaded files to Sentry",
+        "output: sentry-cli - > File upload complete (processing pending on server)",
+        "output: sentry-cli - > Upload type: artifact bundle",
+        "output: sentry-cli - Source Map Upload Report",
+        "output: sentry-cli - > Found 7 debug information files",
+        "output: sentry-cli - > Prepared debug information files for upload",
+        "output: sentry-cli - > Uploaded 2 missing debug information files",
+        "output: sentry-cli - > File upload complete:"
+      ]
+    }
+  },
+  "reviewAccess": {
+    "appleCredentialExpiry": "2026-11-20T23:59:00Z",
+    "notesUpdatedAndReadBack": true,
+    "freshBinaryPath": "not verified; Device Hub UI input unavailable"
+  },
+  "qaLimitations": [
+    "Native full journey not completed on fresh 1.8.1; Device Hub input failed",
+    "Real Store purchases/restores not retested",
+    "No fresh production-like Sentry test event"
+  ],
+  "publicUrls": "support/privacy/terms, fr and en: HTTPS 200",
+  "appleStoreVersionId": "1be33f57-8006-4900-8a14-657030d988e3",
+  "appleBuildId": "7bc91c7a-9672-4f0a-a9c6-1aa909dce2c3",
+  "appleValidation": {
+    "errors": 0,
+    "warnings": 7,
+    "infos": 2,
+    "blocking": 0
+  }
 }
