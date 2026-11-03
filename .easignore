@@ -9,8 +9,6 @@ web-build/
 .env.*
 !.env.example
 docs/audits/
-/docs/releases/
-/docs/design/
 metadata/
 *.p8
 *.p12

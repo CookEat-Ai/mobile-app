@@ -29,10 +29,10 @@ function TypingDots() {
   const {t} = useTranslation();
   return <View accessible accessibilityLabel={t('recipeChat.thinking')} accessibilityLiveRegion="polite" style={styles.typing}>{dots.map((dot,i)=><Animated.View key={i} style={[styles.dot,{opacity:motion?dot.interpolate({inputRange:[0,1],outputRange:[.35,1]}):.7,transform:[{translateY:motion?dot.interpolate({inputRange:[0,1],outputRange:[0,-4]}):0}]}]}/>)}</View>;
 }
-export function ChatSheet({visible,onClose,title,subtitle,messages,draft,onDraft,onSend,onRetry,sending,ready=true,error,suggestions=[],welcome}: {
+export function ChatSheet({visible,onClose,title,subtitle,messages,draft,onDraft,onSend,onRetry,sending,ready=true,error,suggestions=[],welcome,placeholder}: {
   visible:boolean; onClose:()=>void; title:string; subtitle:string; messages:RecipeChatMessage[];
   draft:string; onDraft:(s:string)=>void; onSend:()=>void; onRetry?:()=>void;
-  sending:boolean; ready?:boolean; error?:string; suggestions?:string[]; welcome?:string;
+  sending:boolean; ready?:boolean; error?:string; suggestions?:string[]; welcome?:string; placeholder?:string;
 }) {
   const {t}=useTranslation(), insets=useSafeAreaInsets(), window=useWindowDimensions();
   const viewport=useRef<View>(null), list=useRef<ScrollView>(null), top=useRef<number|null>(null);
@@ -64,7 +64,7 @@ export function ChatSheet({visible,onClose,title,subtitle,messages,draft,onDraft
           {!!error&&<View style={styles.failure}><Text accessibilityRole="alert" style={styles.error}>{error}</Text>{onRetry&&<TouchableOpacity accessibilityRole="button" onPress={onRetry} style={styles.retry}><Text style={styles.retryText}>{t('recipeChat.retry')}</Text><Ionicons name="refresh" size={18} color={theme.ink}/></TouchableOpacity>}</View>}
         </ScrollView>
         <View style={[styles.composer,{paddingBottom:keyboardOpen?12:Math.max(12,insets.bottom)}]}>
-          <TextInput accessibilityLabel={t('recipeChat.placeholder')} placeholder={t('recipeChat.placeholder')} placeholderTextColor={theme.muted} value={draft} onChangeText={onDraft} multiline maxLength={1200} editable={ready} onFocus={fit} style={styles.input}/>
+          <TextInput accessibilityLabel={placeholder||t('recipeChat.placeholder')} placeholder={placeholder||t('recipeChat.placeholder')} placeholderTextColor={theme.muted} value={draft} onChangeText={onDraft} multiline maxLength={1200} editable={ready} onFocus={fit} style={styles.input}/>
           <TouchableOpacity accessibilityRole="button" accessibilityLabel={t('recipeChat.send')} disabled={!draft.trim()||sending||!ready} onPress={onSend} style={[styles.send,(!draft.trim()||sending||!ready)&&{opacity:.4}]}><Ionicons name="arrow-up" size={24} color={theme.onPrimary}/></TouchableOpacity>
         </View>
       </View>

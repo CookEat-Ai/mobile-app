@@ -1,5 +1,6 @@
 import apiService from './api';
 import { enablePresentationModeByDefault } from './presentationMode';
+
 async function applyPresentationDefault(active: boolean): Promise<boolean> {
   if (active) await enablePresentationModeByDefault().catch(() => undefined);
   return active;

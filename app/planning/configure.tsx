@@ -95,7 +95,7 @@ export default function ConfigurePlanningScreen() {
     })();
     void Promise.all([loadPlanningGenerationSettings(), loadFitnessProfile(), isPresentationModeEnabled(), loadSavedPantryIngredientNames(), sourcePlan]).then(([settings, profile, demo, storedPantry, plan]) => {
       if (!active) return;
-      const draft = planningChoiceDraft(plan ? planningSettingsFromPlan(plan) : settings, demo && !plan);
+      const draft = planningChoiceDraft(plan ? planningSettingsFromPlan(plan) : settings, demo && !plan, !plan);
       setWeeklyBudget(draft.weeklyBudget);
       setBudgetRegion(draft.country && draft.currency ? { country: draft.country, currency: draft.currency } : null);
       setSelectedDays(draft.cookingDays); setDuration(draft.duration); setServings(draft.servings);

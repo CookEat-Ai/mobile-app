@@ -3,6 +3,8 @@ import { markPlanningReveal } from './planningReveal';
 import { getAnonymousSessionToken, invalidateAnonymousSession } from './anonymousSession';
 import * as Localization from 'expo-localization';
 import { File } from 'expo-file-system';
+import { fetch as expoFetch } from 'expo/fetch';
+import { createMealPhotoStream } from './mealPhotoStream';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EventSource from 'react-native-sse';
 import { API_BASE_URL, WS_URL } from '../config/api';
@@ -75,6 +77,8 @@ function isCanceledFetchError(error: unknown) {
     || /FetchRequestCanceledException|fetch request has been cancel(?:ed|led)|operation (?:was )?aborted/i.test(message);
 }
 
+export type MealReminderTimes = { breakfast: number; lunch: number; dinner: number };
+
 export type RecipeFeasibilityResponse = {
   canGenerate: boolean;
   status: 'possible' | 'confirmed_impossible' | 'unchecked';
@@ -133,7 +137,7 @@ export type MealPlanMeal = {
   proteins?: number;
   carbs?: number;
   fats?: number;
-  ingredients?: { name: string; quantity: string; icon?: string; tags?: string[] }[];
+  ingredients?: { name: string; quantity: string; icon?: string; tags?: string[]; indivisible?: boolean }[];
   steps?: { title: string; description: string }[];
   servings: number;
   locked: boolean;
@@ -147,8 +151,10 @@ export type CatalogCuisine = {
 };
 
 export type CatalogImageAttribution = {
-  provider: 'themealdb' | 'wikimedia-commons' | 'owned';
+  /** `video` : miniature de la vidéo importée (TikTok, Instagram…), nommée par `platform`. */
+  provider: 'themealdb' | 'wikimedia-commons' | 'owned' | 'video';
   sourceUrl: string;
+  platform?: string;
   creator?: string;
   license?: string;
   licenseUrl?: string;
@@ -172,7 +178,7 @@ export type CatalogRecipe = {
   carbs: string;
   chef_tip?: string;
   servings: number;
-  ingredients: Array<{ name: string; quantity: string; icon?: string; tags?: string[] }>;
+  ingredients: Array<{ name: string; quantity: string; icon?: string; tags?: string[]; indivisible?: boolean }>;
   steps: Array<{ title: string; description: string }>;
   mainIngredients: string[];
   language: string;
@@ -661,10 +667,50 @@ class ApiService {
     });
   }
 
-  async analyzeTrackedMeal(uri:string,signal?:AbortSignal) {
-    const form=new FormData();form.append('image',new File(uri));form.append('language',this.getCurrentLanguage());
-    return this.request<{analysis:import('./mealTracking').MealPhotoAnalysis}>('/recipe/tracking/analyze',{method:'POST',body:form,signal},90000);
+  async analyzeTrackedMeal(uri: string, signal?: AbortSignal, onFood?: (item: import('./mealTracking').PhotoFood) => void): Promise<ApiResponse<{analysis: import('./mealTracking').MealPhotoAnalysis}>> {
+    const controller = new AbortController(), abort = () => controller.abort();
+    const deadline = setTimeout(abort, 90000);
+    if (signal?.aborted) abort();
+    signal?.addEventListener('abort', abort, {once: true});
+    let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+    try {
+      const token = await new Promise<string>((resolve, reject) => {
+        const interrupted = () => { cleanup(); reject(new Error('photo_analysis_aborted')); };
+        const cleanup = () => controller.signal.removeEventListener('abort', interrupted);
+        if (controller.signal.aborted) { interrupted(); return; }
+        controller.signal.addEventListener('abort', interrupted, {once: true});
+        getAnonymousSessionToken().then(value => {cleanup(); resolve(value);}, error => {cleanup(); reject(error);});
+      });
+      if (controller.signal.aborted) return {error: i18n.t('tracking.analysisError')};
+      const form = new FormData(); form.append('image', new File(uri)); form.append('language', this.getCurrentLanguage());
+      const response = await expoFetch(`${API_BASE_URL}/recipe/tracking/analyze`, {
+        method: 'POST', body: form, signal: controller.signal,
+        headers: {Authorization: 'Bearer ' + token, Accept: 'text/event-stream'},
+      });
+      if (!response.ok) {
+        if (response.status === 401) { invalidateAnonymousSession(); this.invalidateReadCache(); }
+        return {error: i18n.t('tracking.analysisError'), status: response.status};
+      }
+      // Keep compatibility while API and mobile versions roll out independently.
+      if (!response.headers.get('content-type')?.includes('text/event-stream')) return {data: await response.json()};
+      if (!response.body) throw new Error('missing_photo_stream');
+      reader = response.body.getReader();
+      const decoder = new TextDecoder(), stream = createMealPhotoStream(item => { if (!controller.signal.aborted) onFood?.(item); });
+      while (!stream.done) {
+        const {done, value} = await reader.read();
+        if (controller.signal.aborted) throw new Error('photo_stream_aborted');
+        if (done) { stream.push(decoder.decode()); break; }
+        stream.push(decoder.decode(value, {stream: true}));
+      }
+      return {data: {analysis: stream.finish()}};
+    } catch { return {error: i18n.t('tracking.analysisError')}; }
+    finally {
+      clearTimeout(deadline); signal?.removeEventListener('abort', abort);
+      if (reader) { try { await reader.cancel(); } catch { /* Already aborted. */ } }
+      controller.abort();
+    }
   }
+
   async confirmTrackedMeal(scanId:string,meal:{title:string;items:import('./mealTracking').PhotoFood[];mealType:string;nutritionOverride?:import('./mealTracking').FoodNutrition|null;shareWithCatalog?:boolean},photoUri?:string) {
     const payload={...meal,language:this.getCurrentLanguage(),...(meal.shareWithCatalog?{referenceConsentVersion:'tracking-confirmation-v1'}:{})};
     let body:FormData|string=JSON.stringify(payload);
@@ -791,7 +837,7 @@ class ApiService {
   }
 
   async chatAboutTrackedMeal(input: { title: string; items: import('./mealTracking').PhotoFood[]; message: string; history: import('./personalRecipe').RecipeChatMessage[] }) {
-    return this.request<{ action: 'answer' | 'modify' | 'refuse'; reply: string; meal: {title: string; items: import('./mealTracking').PhotoFood[]; nutrition: import('./mealTracking').FoodNutrition | null} | null }>('/recipe/tracking/chat', {
+    return this.request<{ action: 'answer' | 'modify' | 'refuse'; reply: string; meal: {title: string; items: import('./mealTracking').PhotoFood[]; nutrition: import('./mealTracking').FoodNutrition | null; mealType?: import('./mealTracking').TrackedMeal['mealType'] | null} | null }>('/recipe/tracking/chat', {
       method: 'POST', body: JSON.stringify({...input, language:this.getCurrentLanguage()}),
     }, 90000);
   }
@@ -1113,6 +1159,18 @@ class ApiService {
   }
 
   // Notifications
+  /** Pre-meal photo reminder times, in minutes after local midnight. */
+  async getMealReminders() {
+    return this.request<{ success: boolean; times: MealReminderTimes; defaults: MealReminderTimes; ranges: Record<keyof MealReminderTimes, [number, number]> }>('/user/meal-reminders', { method: 'GET' }, 12000);
+  }
+
+  async updateMealReminders(times: MealReminderTimes) {
+    return this.request<{ success: boolean; times: MealReminderTimes }>('/user/meal-reminders', {
+      method: 'POST',
+      body: JSON.stringify({ times }),
+    }, 12000);
+  }
+
   async updateNotificationToken(mobileId: string, notificationToken: string, timezone?: string) {
     const country = Localization.getLocales()?.[0]?.regionCode || undefined;
     return this.request<{ success: boolean; message: string }>('/user/notification-token', {

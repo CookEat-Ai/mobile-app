@@ -48,6 +48,7 @@ type Props = {
   baseOffering?: PurchasesOffering | null;
   onPurchase: (pack: PurchasesPackage) => void;
   onRestore: () => void;
+  onTestimonialPress?: () => void;
   onClose?: () => void;
   closeDelayMs?: number;
   isPurchasing?: boolean;
@@ -102,6 +103,7 @@ export function ExitOfferPaywallView({
   baseOffering,
   onPurchase,
   onRestore,
+  onTestimonialPress,
   onClose,
   closeDelayMs = 0,
   isPurchasing,
@@ -343,7 +345,11 @@ export function ExitOfferPaywallView({
           </Text>
         ) : null}
 
-        <PaywallTestimonial testimonialKey={testimonialKey} style={styles.testimonial} />
+        <PaywallTestimonial
+          testimonialKey={testimonialKey}
+          style={styles.testimonial}
+          onPress={__DEV__ ? onTestimonialPress : undefined}
+        />
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) + 8 }]}>
@@ -461,7 +467,7 @@ export function ExitOfferPaywallView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: designTheme.background,
+    backgroundColor: designTheme.cream,
   },
   scroll: {
     flex: 1,

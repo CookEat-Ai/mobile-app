@@ -3,6 +3,7 @@ import { useResponsive } from '../../hooks/useResponsive';
 import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/Colors';
 import { FORM_CONTENT_MAX_WIDTH, ONBOARDING_CTA_BOTTOM_GAP } from '../../constants/Layout';
@@ -13,6 +14,7 @@ type Props = {
   disabled?: boolean;
   loading?: boolean;
   backgroundColor?: string;
+  icon?: keyof typeof Ionicons.glyphMap;
 };
 
 /**
@@ -25,6 +27,7 @@ export function OnboardingFooter({
   disabled = false,
   loading = false,
   backgroundColor = designTheme.background,
+  icon,
 }: Props) {
   const insets = useSafeAreaInsets();
   const { gutter } = useResponsive();
@@ -38,7 +41,12 @@ export function OnboardingFooter({
         onPress={onPress}
         style={[styles.button, (disabled || loading) && styles.disabled]}
       >
-        {loading ? <ActivityIndicator color={designTheme.onPrimary} /> : <Text style={styles.label}>{label}</Text>}
+        {loading ? <ActivityIndicator color={designTheme.onPrimary} /> : (
+          <View style={styles.content}>
+            {icon && <Ionicons name={icon} size={22} color={designTheme.onPrimary} />}
+            <Text style={styles.label}>{label}</Text>
+          </View>
+        )}
       </TouchableOpacity>
     </View>
   );
@@ -69,5 +77,6 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   disabled: { opacity: 0.58 },
+  content: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   label: { color: designTheme.onPrimary, fontFamily: 'Degular', fontSize: 20 },
 });

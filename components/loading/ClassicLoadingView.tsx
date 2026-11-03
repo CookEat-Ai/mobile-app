@@ -1,4 +1,5 @@
 import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
+import { AppBackground } from '../ui/AppBackground';
 import { Image } from 'expo-image';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
@@ -11,12 +12,19 @@ import { rw } from '../../constants/Layout';
 type ClassicLoadingViewProps = {
   messageKey: string;
   durationMs?: number;
-  mode?: 'timed' | 'indeterminate' | 'request';
+  /** `progress` affiche l'avancement réel transmis par le serveur (`value`). */
+  mode?: 'timed' | 'indeterminate' | 'request' | 'progress';
   ready?: boolean;
   onComplete?: () => void;
+  /** Mode `progress` : pourcentage atteint, palier de l'étape suivante, durée estimée de l'étape. */
+  value?: number;
+  nextValue?: number;
+  stepDurationMs?: number;
+  /** Petite phrase fixe sous la barre (ex. durée d'attente attendue). */
+  hint?: string;
 };
 
-export function ClassicLoadingView({ messageKey, durationMs = 7000, mode = 'indeterminate', ready = false, onComplete }: ClassicLoadingViewProps) {
+export function ClassicLoadingView({ messageKey, durationMs = 7000, mode = 'indeterminate', ready = false, onComplete, value = 0, nextValue, stepDurationMs = 15000, hint }: ClassicLoadingViewProps) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const [messageIndex, setMessageIndex] = useState(0);
@@ -28,6 +36,30 @@ export function ClassicLoadingView({ messageKey, durationMs = 7000, mode = 'inde
   const travel = useRef(new Animated.Value(0)).current;
   const completion = useRef(new Animated.Value(0)).current;
   const reduceMotion = useReducedMotion();
+  const reached = useRef(0);
+  useEffect(() => {
+    if (mode !== 'progress') return;
+    // Jamais de recul : une étape sautée (sous-titres trouvés) ou un message en
+    // retard ne doit pas faire reculer la barre.
+    const from = reached.current;
+    const target = Math.max(from, Math.min(1, value / 100));
+    const animation = ready
+      ? Animated.timing(progress, { toValue: 1, duration: reduceMotion ? 0 : 500, easing: Easing.out(Easing.quad), useNativeDriver: false })
+      : Animated.sequence([
+        Animated.timing(progress, { toValue: target, duration: reduceMotion ? 0 : 400, easing: Easing.out(Easing.quad), useNativeDriver: false }),
+        // Pendant les longues étapes (résolution du lien, génération de la recette),
+        // la barre continue d'avancer vers le palier suivant sans jamais l'atteindre :
+        // seul le serveur fait franchir un palier.
+        Animated.timing(progress, {
+          toValue: Math.max(target, ((nextValue ?? value) - 1) / 100),
+          duration: stepDurationMs,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: false,
+        }),
+      ]);
+    animation.start(({ finished }) => { if (ready && finished) onComplete?.(); });
+    return () => animation.stop();
+  }, [mode, nextValue, onComplete, progress, ready, reduceMotion, stepDurationMs, value]);
   useEffect(() => {
     if (mode !== 'request') return;
     completion.setValue(0);
@@ -46,10 +78,12 @@ export function ClassicLoadingView({ messageKey, durationMs = 7000, mode = 'inde
   useEffect(() => {
     setMessageIndex(0);
     messageOpacity.setValue(1);
-    progress.setValue(0);
-    const listenerId = progress.addListener(({ value }) => {
-      const maximum = mode === 'timed' ? 100 : 99;
-      setPercent(Math.min(maximum, Math.floor(value * 100)));
+    // En mode `progress`, changer d'étape change les messages : la barre doit rester où elle est.
+    if (mode !== 'progress') progress.setValue(0);
+    const listenerId = progress.addListener(({ value: current }) => {
+      reached.current = current;
+      const maximum = mode === 'timed' || mode === 'progress' ? 100 : 99;
+      setPercent(Math.min(maximum, Math.floor(current * 100)));
     });
 
     if (mode === 'timed') {
@@ -80,7 +114,7 @@ export function ClassicLoadingView({ messageKey, durationMs = 7000, mode = 'inde
     }, Math.max(900, durationMs / transitionCount)) : undefined;
 
     return () => {
-      progress.stopAnimation();
+      if (mode !== 'progress') progress.stopAnimation();
       progress.removeListener(listenerId);
       messageOpacity.stopAnimation();
       pulseAnimation.stop();
@@ -90,6 +124,7 @@ export function ClassicLoadingView({ messageKey, durationMs = 7000, mode = 'inde
 
   return (
     <View style={[styles.root, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+      <AppBackground />
       <View style={styles.content}>
         <Animated.View style={{ transform: [{ scale: mascotScale }] }}>
           <Image source={require('../../assets/images/mascot.png')} contentFit="contain" style={styles.mascot} />
@@ -110,12 +145,13 @@ export function ClassicLoadingView({ messageKey, durationMs = 7000, mode = 'inde
           <Animated.Text style={[styles.message, styles.messageVisible, { opacity: messageOpacity }]}>{messages[messageIndex]}</Animated.Text>
         </View>
         <View style={styles.progressTrack} accessibilityRole="progressbar" accessibilityLabel={messages[messageIndex]}
-          accessibilityState={{ busy: mode === 'request' && !ready }}
+          accessibilityState={{ busy: (mode === 'request' || mode === 'progress') && !ready }}
           accessibilityValue={mode === 'request' ? (ready ? { min: 0, max: 100, now: 100 } : undefined) : { min: 0, max: 100, now: percent }}>
           {mode === 'request' && !ready
             ? <Animated.View style={[styles.progressFill, { width: '35%', left: reduceMotion ? '32.5%' : travel.interpolate({ inputRange: [0, 1], outputRange: ['-35%', '100%'] }) }]} />
             : <Animated.View style={[styles.progressFill, { width: (mode === 'request' ? completion : progress).interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] }) }]} />}
         </View>
+        {hint ? <Text style={styles.hint}>{hint}</Text> : null}
       </View>
     </View>
   );
@@ -132,5 +168,6 @@ const styles = StyleSheet.create({
   messageMeasurement: { position: 'absolute', opacity: 0, pointerEvents: 'none' },
   messageVisible: { position: 'absolute' },
   progressTrack: { width: '100%', height: 10, borderRadius: AppRadii.small, backgroundColor: designTheme.soft, overflow: 'hidden' },
+  hint: { marginTop: -16, fontFamily: 'CronosPro', fontSize: 16, lineHeight: 21, color: designTheme.muted, textAlign: 'center' },
   progressFill: { height: '100%', borderRadius: AppRadii.small, backgroundColor: Colors.light.button },
 });

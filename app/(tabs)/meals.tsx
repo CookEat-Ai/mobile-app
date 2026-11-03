@@ -1,4 +1,5 @@
 import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
+import { AppBackground } from '../../components/ui/AppBackground';
 import { AppRefreshControl } from '../../components/ui/AppRefreshControl';
 import { CONTENT_MAX_WIDTH } from '../../constants/Layout';
 import { AppModal as Modal } from '../../components/ui/AppModal';
@@ -257,7 +258,7 @@ export default function MealsScreen() {
   const hasCuisineFilters = cuisineIds.length > 0;
 
   return (
-    <View style={appStyles.screen}>
+    <View style={appStyles.screen}><AppBackground />
       <FlatList
         key={`meals-${columns}`}
         numColumns={columns}

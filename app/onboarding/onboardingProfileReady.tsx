@@ -108,7 +108,7 @@ export default function OnboardingProfileReadyScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: designTheme.background },
+  container: { flex: 1, backgroundColor: designTheme.cream },
   progressHeader: { paddingHorizontal: 20, marginTop: 20, height: 40, justifyContent: 'center' },
   progressTrack: { width: '100%', height: 12, borderRadius: AppRadii.pill, backgroundColor: designTheme.soft, overflow: 'hidden' },
   progressFill: { width: '100%', height: '100%', borderRadius: AppRadii.pill, backgroundColor: Colors.light.button },

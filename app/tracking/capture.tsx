@@ -49,6 +49,8 @@ export default function TrackingCaptureScreen() {
     const persistRef = useRef<(() => Promise<TrackedMeal | null>) | null>(null);
     const snapshot = useRef<PhotoMealSaveInput | null>(null), doneBusy = useRef(false);
     const [recognitionReady,setRecognitionReady]=useState(false);
+    const [scanAttempt, setScanAttempt] = useState(0);
+    const [progressItems, setProgressItems] = useState<PhotoFood[]>([]);
     const [expanded,setExpanded]=useState(!!params.entryId);
     const [visible, setVisible] = useState(true);
     const closing = useRef(false), afterDismiss = useRef<(() => void) | null>(null);
@@ -104,7 +106,11 @@ export default function TrackingCaptureScreen() {
         height: number;
     }) => {
         const attempt = ++version.current;
+        const startedAt = Date.now();
+        let firstFoodAt: number | null = null;
         trackStage('analysis_started');
+        setProgressItems([]);
+        setScanAttempt(attempt);
         controller.current?.abort();
         const abort = new AbortController();
         controller.current = abort;
@@ -114,7 +120,11 @@ export default function TrackingCaptureScreen() {
         setRecognitionReady(false);
         setPhase('result');
         setPhoto(image);
-        const result = await apiService.analyzeTrackedMeal(image.uri, abort.signal)
+        const result = await apiService.analyzeTrackedMeal(image.uri, abort.signal, item => {
+            if (!active.current || attempt !== version.current || abort.signal.aborted) return;
+            if (firstFoodAt === null) { firstFoodAt = Date.now(); trackStage('first_food', {duration_ms: firstFoodAt - startedAt}); }
+            setProgressItems(previous => previous.some(food => food.id === item.id) ? previous.map(food => food.id === item.id ? item : food) : [...previous, item]);
+        })
             .catch(() => ({ data: undefined, error: t('tracking.analysisError') }));
         if (!active.current || attempt !== version.current)
             return;
@@ -137,7 +147,7 @@ export default function TrackingCaptureScreen() {
             if (active.current && attempt === version.current) setError(t('tracking.loadError'));
             return;
         }
-        trackStage('analysis_completed', { kind: detected.kind, item_count: detected.items.length });
+        trackStage('analysis_completed', { kind: detected.kind, item_count: detected.items.length, duration_ms: Date.now() - startedAt, first_food_ms: firstFoodAt === null ? -1 : firstFoodAt - startedAt });
         setAnalysis(detected);
         setTitle(detected.title || t('tracking.untitledMeal'));
         setItems(detected.items);
@@ -152,11 +162,11 @@ export default function TrackingCaptureScreen() {
         capturedAt.current = new Date();
         setSaved(null);
         setMealType(null);
-        setRecognitionReady(false);setExpanded(false);setAnalysis(null);setItems([]);setTitle('');setPhoto(asset);setPhase('result');
+        setRecognitionReady(false);setExpanded(false);setAnalysis(null);setProgressItems([]);setItems([]);setTitle('');setPhoto(asset);setPhase('result');
         setBusy(true);
         setError('');
         try {
-            const processed = await ImageManipulator.manipulateAsync(asset.uri, [{ resize: asset.width >= asset.height ? { width: 1600 } : { height: 1600 } }], { compress: .78, format: ImageManipulator.SaveFormat.JPEG });
+            const processed = await ImageManipulator.manipulateAsync(asset.uri, Math.max(asset.width, asset.height) > 1280 ? [{ resize: asset.width >= asset.height ? { width: 1280 } : { height: 1280 } }] : [], { compress: .78, format: ImageManipulator.SaveFormat.JPEG });
             if (!active.current || attempt !== version.current)
                 return;
             await analyze(processed);
@@ -213,7 +223,7 @@ export default function TrackingCaptureScreen() {
             }
         }
     };
-    const retake = () => { setExpanded(false);setRecognitionReady(false);version.current++; controller.current?.abort(); setAnalysis(null); setPhoto(null); setError(''); setPhase('capture'); setCameraReady(false); busyRef.current = false; setBusy(false); };
+    const retake = () => { setExpanded(false);setRecognitionReady(false);version.current++; controller.current?.abort(); setAnalysis(null); setPhoto(null); setProgressItems([]); setError(''); setPhase('capture'); setCameraReady(false); busyRef.current = false; setBusy(false); };
     const persist = useCallback(async () => {
         const current = snapshot.current;
         if (!current) return null;
@@ -254,7 +264,7 @@ export default function TrackingCaptureScreen() {
     };
     let content: React.ReactNode;
     if (loadingEntry) content = <View style={[appStyles.screen, {justifyContent:'center'}]}><ActivityIndicator color={theme.yellow}/></View>;
-    else if (phase === 'result' && photo) content = <PhotoMealReveal photo={photo} analysis={analysis} title={title} items={items} onTitle={setTitle} onItems={changeItems} mealType={mealType} onMealType={setMealType} nutritionOverride={nutritionOverride} onNutritionOverride={setNutritionOverride} onSave={()=>{void done();}} saveActionLabel={t(error ? 'common.retry' : 'tracking.viewDay')} autoSaved={!!saved} onExpand={()=>setExpanded(true)} onComplete={()=>setRecognitionReady(true)} onBack={close} onRetry={()=>{void analyze(photo);}} onRetake={retake} saving={saving} error={error} editing={!!params.entryId} processing={!error}/>;
+    else if (phase === 'result' && photo) content = <PhotoMealReveal key={`${photo.uri}:${scanAttempt}`} photo={photo} analysis={analysis} progressItems={progressItems} title={title} items={items} onTitle={setTitle} onItems={changeItems} mealType={mealType} onMealType={setMealType} nutritionOverride={nutritionOverride} onNutritionOverride={setNutritionOverride} onSave={()=>{void done();}} saveActionLabel={t(error ? 'common.retry' : 'tracking.viewDay')} autoSaved={!!saved} onExpand={()=>setExpanded(true)} onComplete={()=>setRecognitionReady(true)} onBack={close} onRetry={()=>{void analyze(photo);}} onRetake={retake} saving={saving} error={error} editing={!!params.entryId} processing={!error}/>;
     else content = <MealPhotoCapture cameraRef={camera} granted={!!permission?.granted} cameraError={cameraError} canAskAgain={permission?.canAskAgain !== false} active={foreground && visible} ready={cameraReady} busy={busy} error={error} onClose={close} onAllow={() => { if (permission?.canAskAgain === false) void Linking.openSettings(); else void requestPermission(); }} onReady={() => setCameraReady(true)} onCameraError={() => setCameraError(true)} onTake={() => { void take(); }} onPick={() => { void pick(); }} onManual={isOnboarding ? undefined : () => dismissCapture(() => router.replace({ pathname: '/tracking/manual', params: { date: params.date || trackingDateKey() } }))}/>;
     return <TrackingCaptureSurface expanded={expanded} visible={visible} onRequestClose={close} onDismiss={finishDismiss}><Stack.Screen options={{headerShown:false,gestureEnabled:false,statusBarStyle:expanded?'dark':'light',contentStyle:{backgroundColor:'transparent'}}}/>{content}</TrackingCaptureSurface>;
 

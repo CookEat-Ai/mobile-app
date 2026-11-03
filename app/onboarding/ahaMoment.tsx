@@ -110,7 +110,7 @@ export default function AhaMomentScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: designTheme.background,
+    backgroundColor: designTheme.cream,
   },
   progressHeader: {
     flexDirection: 'row',

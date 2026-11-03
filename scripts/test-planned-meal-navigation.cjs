@@ -90,11 +90,29 @@ vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.resolve(__dirname, '.
 const library = { servings: 1, ingredients: [{quantity:'1/2 kg'}, {quantity:'1,5 c. à soupe'}], steps: [{description:'Cuire 1/2 kg pendant 10 minutes à 180 degrés.'}] };
 const temporary = servingsExports.recipeForServings(library, 3);
 assert.equal(temporary.ingredients[0].quantity, '1.5 kg');
-assert.equal(temporary.ingredients[1].quantity, '4,5 c. à soupe');
+assert.equal(temporary.ingredients[1].quantity, '4 ½ c. à soupe', 'spoons read as fractions a cook can measure');
+const cookies = { servings: 12, ingredients: [{name:'Beurre', quantity:'100 g'}, {name:'Œuf', quantity:'1'}, {name:'Vanille', quantity:'1 c. à café'}, {name:'Sel', quantity:'1 pincée'}, {name:'Chocolat', quantity:'200 g (7 oz)'}], steps: [{description:'Mélangez 100 g de beurre.'}] };
+const single = servingsExports.recipeForServings(cookies, 1);
+assert.deepEqual(single.ingredients.map(item => item.quantity), ['8 g', '½', '¼ c. à café', '1 pincée', '15 g (0.5 oz)'], 'one serving never asks for 8.333333 g or 0.083333 egg');
+const yolks = servingsExports.recipeForServings({ servings: 4, ingredients: [{ name: "Jaunes d'œufs", quantity: '2', indivisible: true }, { name: 'Tomates', quantity: '1 boîte (400 g)', indivisible: true }, { name: 'Oignon', quantity: '1', indivisible: false }] }, 1);
+assert.deepEqual(yolks.ingredients.map(item => item.quantity), ['½', '½ boîte (200 g)', '¼'], 'eggs, yolks and cans are counted by halves, never weighed; a cuttable onion keeps quarters');
+assert.equal(single.steps[0].description, 'Mélangez 8 g de beurre.');
+assert.equal(servingsExports.recipeForServings(cookies, 18).ingredients[1].quantity, '1 ½', 'whole eggs scale by halves');
+assert.equal(servingsExports.minimumServings(cookies), 6, 'a one-egg batch for 12 cannot be made below 6 servings (half an egg)');
+assert.equal(servingsExports.minimumServings({ servings: 4, ingredients: [{ name: 'Eggs', quantity: '3 eggs' }] }), 1, 'an omelette still scales down to one');
+assert.equal(servingsExports.minimumServings({ servings: 8, ingredients: [{ name: "Blanc d'œuf", quantity: '50 g' }, { name: 'Farine', quantity: '200 g' }] }), 1, 'weighed egg and egg-free recipes have no floor');
+assert.deepEqual({ ...servingsExports.servingsFloor({ servings: 8, ingredients: [{ name: 'Œuf', quantity: '2', indivisible: true }, { name: 'Pâte feuilletée', quantity: '1', indivisible: true }, { name: 'Oignon', quantity: '1', indivisible: false }] }) }, { minimum: 4, ingredient: 'Pâte feuilletée' }, 'the scarcest indivisible ingredient sets and names the floor; a cuttable onion does not');
+assert.equal(servingsExports.minimumServings({ servings: 4, ingredients: [{ name: 'Tomates pelées', quantity: '1 boîte (400 g)', indivisible: true }] }), 2, 'counted units are read before their weight');
+assert.equal(servingsExports.minimumServings({ servings: 4, ingredients: [{ name: 'Crème', quantity: '20 cl', indivisible: true }] }), 1, 'a measured amount is never a unit floor');
 assert(temporary.steps[0].description.includes('10 minutes à 180 degrés'));
 assert.equal(library.ingredients[0].quantity, '1/2 kg', 'library source is never changed');
 assert.equal(servingsExports.recipeForServings(library, 1).servings, 1, 'reopening defaults to one');
-console.log('Temporary library servings preserve source recipes, fractions and cooking times.');
+const cookingTimeExports = {};
+vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.resolve(__dirname, '../services/cookingTime.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, {exports: cookingTimeExports});
+assert.equal(cookingTimeExports.compactCookingTime('Environ 35 minutes, plus 1 heure de réfrigération'), '1 h 35 min', 'a sentence becomes a duration that fits the card');
+assert.equal(cookingTimeExports.compactCookingTime('20-25 min'), '20-25 min', 'short values are kept as written');
+assert.equal(cookingTimeExports.compactCookingTime('Cuisson lente toute la nuit'), 'Cuisson lente toute la nuit', 'text without a duration is kept');
+console.log('Temporary library servings preserve source recipes, fractions and cooking times, with kitchen-measurable amounts.');
 
 // Exercise the real chooser handler and Expo's installed stack reducer.
 // This catches returns to Planning, duplicate detail screens and stale recipe params.

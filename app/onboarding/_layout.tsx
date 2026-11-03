@@ -1,8 +1,17 @@
-import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { DefaultTheme, Stack, ThemeProvider, usePathname } from 'expo-router';
+import { useEffect } from 'react';
+import analytics from '../../services/analytics';
 import { MODAL_ROUTE_ANIMATION } from '../../constants/ModalPresentation';
 import 'react-native-reanimated';
 
 export default function OnboardingLayout() {
+  const pathname = usePathname();
+  useEffect(() => {
+    if (!pathname.startsWith('/onboarding/')) return;
+    void analytics.track('onboarding_screen_viewed', {
+      screen_id: pathname.slice('/onboarding/'.length),
+    });
+  }, [pathname]);
   return (
     <ThemeProvider value={DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>

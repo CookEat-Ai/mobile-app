@@ -14,7 +14,7 @@ export const WEEKLY_MEAL_COUNT_KEY = 'weeklyMealCount';
 export const PLANNING_GENERATION_SETTINGS_KEY = '@cookeat_planning_generation_settings_v1';
 export const DEFAULT_WEEKLY_MEAL_COUNT = 21;
 export const WEEKLY_PLANNING_HORIZON_DAYS = 7;
-export const DEFAULT_COOKING_DAYS = [0, 1, 2, 3, 4] as const;
+export const DEFAULT_COOKING_DAYS = [0, 1, 2, 3, 4, 5, 6] as const;
 export const PLANNING_MINIMUM_LOADING_MS = 3000;
 
 /** Complète uniquement le temps restant avant de révéler un planning créé. */

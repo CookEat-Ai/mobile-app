@@ -78,6 +78,8 @@ export const toRevenueCatAttributionAttributes = (
 class AppsFlyerService {
   private isInitialized = false;
   private initPromise: Promise<void> | null = null;
+  private customerUserId: string | null = null;
+  private customerIdentityPromise: Promise<void> = Promise.resolve();
   private conversionListenerUnsubscribe: (() => void) | null = null;
   private deepLinkListenerUnsubscribe: (() => void) | null = null;
   private attributionListeners = new Set<AttributionListener>();
@@ -90,10 +92,10 @@ class AppsFlyerService {
     // AppsFlyer recommande de poser le CUID interne avant le démarrage du SDK
     // afin qu'il soit également présent sur les données brutes d'installation.
     if (customerUserId) {
-      this.setCustomerUserId(customerUserId);
+      void this.setCustomerUserId(customerUserId);
     }
 
-    if (this.isInitialized) return Promise.resolve();
+    if (this.isInitialized) return this.waitForCustomerIdentity();
     if (this.initPromise) return this.initPromise;
 
     // AppsFlyer exige que le listener de conversion soit posé avant initSdk.
@@ -112,7 +114,7 @@ class AppsFlyerService {
       options.appId = AF_APP_ID;
     }
 
-    this.initPromise = new Promise((resolve) => {
+    this.initPromise = this.waitForCustomerIdentity().then(() => new Promise<void>((resolve) => {
       appsFlyer.initSdk(
         options,
         (result: unknown) => {
@@ -128,9 +130,20 @@ class AppsFlyerService {
           resolve();
         }
       );
+    })).finally(() => {
+      // Un échec réseau/SDK doit autoriser une nouvelle tentative.
+      if (!this.isInitialized) this.initPromise = null;
     });
 
     return this.initPromise;
+  }
+
+  private async waitForCustomerIdentity(): Promise<void> {
+    let pending: Promise<void>;
+    do {
+      pending = this.customerIdentityPromise;
+      await pending;
+    } while (pending !== this.customerIdentityPromise);
   }
 
   onFirstTouchAttribution(listener: AttributionListener): () => void {
@@ -242,17 +255,18 @@ class AppsFlyerService {
       return;
     }
 
-    this.sendEvent(eventName, eventValues);
+    void this.sendEvent(eventName, eventValues);
   }
 
   private flushPendingEvents() {
     const pending = this.pendingEvents.splice(0);
     for (const event of pending) {
-      this.sendEvent(event.eventName, event.eventValues);
+      void this.sendEvent(event.eventName, event.eventValues);
     }
   }
 
-  private sendEvent(eventName: string, eventValues: Record<string, any>) {
+  private async sendEvent(eventName: string, eventValues: Record<string, any>): Promise<void> {
+    await this.waitForCustomerIdentity();
     appsFlyer.logEvent(
       eventName,
       eventValues,
@@ -265,10 +279,19 @@ class AppsFlyerService {
     );
   }
 
-  setCustomerUserId(userId: string) {
-    appsFlyer.setCustomerUserId(userId, (res: unknown) => {
-      console.log('✅ AppsFlyer Customer User ID défini');
+  setCustomerUserId(userId: string): Promise<void> {
+    const id = userId.trim();
+    if (!id || id === this.customerUserId) return this.customerIdentityPromise;
+    this.customerUserId = id;
+    // Les callbacks natifs peuvent finir après un changement d'identité.
+    // Sérialiser garantit que le dernier CUID demandé est aussi le dernier posé.
+    this.customerIdentityPromise = this.customerIdentityPromise.then(() => new Promise<void>((resolve) => {
+      appsFlyer.setCustomerUserId(id, () => resolve());
+    })).catch(error => {
+      if (this.customerUserId === id) this.customerUserId = null;
+      console.warn('AppsFlyer CUID non synchronisé:', error);
     });
+    return this.customerIdentityPromise;
   }
 
   async resetCustomerIdentity(userId: string, clearAttribution = false): Promise<void> {
@@ -277,7 +300,7 @@ class AppsFlyerService {
       this.firstTouchLoadPromise = null;
       await AsyncStorage.removeItem(FIRST_TOUCH_ATTRIBUTION_KEY);
     }
-    this.setCustomerUserId(userId);
+    await this.setCustomerUserId(userId);
   }
 
   async getAppsFlyerUID(): Promise<string | null> {

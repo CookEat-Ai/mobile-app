@@ -5,7 +5,7 @@ const ts = require('typescript');
 
 function harness(platform, motion = true, file = 'components/ui/AppModal.tsx') {
   const slots = [], effects = [], tasks = [], animations = [];
-  let cursor = 0, height = 844;
+  let cursor = 0, height = 844, backHandler;
   class Value {
     constructor(value) { this.value = value; }
     setValue(value) { this.value = value; }
@@ -31,6 +31,7 @@ function harness(platform, motion = true, file = 'components/ui/AppModal.tsx') {
     if (name === 'react') return react;
     if (name === 'react-native') return {
       Modal: 'NativeModal', Platform: { OS: platform },
+      BackHandler: { addEventListener(event, callback) { backHandler = callback; return { remove() { if (backHandler === callback) backHandler = undefined; } }; } },
       View: 'View', StyleSheet: { create: styles => styles }, useWindowDimensions: () => ({ height }),
       Easing: { out: value => value, inOut: value => value, cubic: 'cubic' },
       Animated: { Value, View: 'AnimatedView', timing(value, options) {
@@ -58,6 +59,7 @@ function harness(platform, motion = true, file = 'components/ui/AppModal.tsx') {
     finishAnimation() { for (const animation of animations.splice(0)) if (!animation.finished) { animation.finished = true; animation.value.setValue(animation.options.toValue); animation.callback({ finished: true }); } },
     resize(nextHeight) { height = nextHeight; },
     setMotion(value) { motion = value; },
+    pressBack() { return backHandler?.(); },
   };
 }
 
@@ -148,12 +150,63 @@ const photoSurface = harness('android', true, 'components/tracking/TrackingCaptu
 const capture = photoSurface.render({ expanded: false, visible: true, children: 'camera', onRequestClose() {}, onDismiss() {} });
 assert.equal(capture.type, 'AppModal');
 const photoModal = harness('android').render(capture.props);
-assert.equal(photoModal.props.animationType, 'none');
-const fixed = photoModal.props.children[0];
+assert.equal(capture.props.host, 'route');
+assert.equal(photoModal.type, 'View', 'the existing transparent route owns presentation; no second native Modal');
+const fixed = photoModal;
 assert.equal(fixed.props.style.transform, undefined);
 const layers = fixed.props.children[0].props.children;
-assert.equal(layers[0], capture.props.backdrop, 'the actual photo scrim is a sibling of the sliding panel');
-assert.equal(layers[0].props.style[1].transform, undefined, 'the dimming layer can darken without being translated');
+const scrim = layers[0];
+assert.equal(scrim.props.children[0], capture.props.backdrop, 'the actual photo scrim remains outside the sliding panel');
+assert.equal(scrim.props.style[1].transform, undefined, 'the dimming layer can darken without being translated');
 assert.equal(layers[1].type, 'AnimatedView');
 assert.equal(layers[1].props.children[0], capture.props.children, 'only the capture surface moves');
-console.log('Photo modal: stationary route and real capture scrim outside the moving panel passed.');
+const modalTransition = scrim.props.style[1].opacity;
+assert.equal(modalTransition, layers[1].props.style[1].transform[0].translateY.value, 'scrim opacity shares the panel transition, with no independent timing');
+assert.equal(modalTransition.value, 0, 'even an opaque expanded review cannot black out the journal before opening');
+// Reopen an already analysed meal: its expanded scrim is fully black, so the
+// host must hide it before entrance and clear it before the dismissal handoff.
+const expandedCapture = photoSurface.render({ expanded: true, visible: true, children: 'review', onRequestClose() {}, onDismiss() {} });
+const reviewModal = harness('ios');
+let reviewTree = reviewModal.render(expandedCapture.props);
+const reviewLayers = reviewTree.props.children[0].props.children;
+const opacity = reviewLayers[0].props.style[1].opacity;
+assert.equal(opacity.value, 0);
+reviewTree.props.onLayout({}); reviewModal.finishAnimation();
+assert.equal(opacity.value, 1, 'expanded review keeps its intended backdrop once open');
+reviewTree = reviewModal.render({ ...expandedCapture.props, visible: false });
+assert.equal(reviewTree.type, 'View', 'keep the route panel during its exit');
+reviewModal.finishAnimation();
+assert.equal(opacity.value, 0, 'the journal is visible again when the panel leaves the screen');
+reviewTree = reviewModal.render({ ...expandedCapture.props, visible: false });
+assert.equal(reviewTree, null, 'remove the route panel after its exit');
+console.log('Photo modal: stationary route, synchronized scrim entrance/exit and expanded review without black flashes passed.');
+
+for (const platform of ['ios', 'android']) {
+  let handedOff = 0;
+  const route = harness(platform);
+  const routeProps = { ...expandedCapture.props, onDismiss() { handedOff++; } };
+  let surface = route.render(routeProps);
+  const entrance = surface.props.children[0].props.children[1].props.style[1].transform[0].translateY.value;
+  assert.equal(entrance.value, 0);
+  surface.props.onLayout({}); route.finishAnimation();
+  assert.equal(entrance.value, 1, platform + ' starts from layout without any native onShow');
+  route.render({ ...routeProps, visible: false });
+  route.finishNativeWork(); assert.equal(handedOff, 0);
+  route.finishAnimation(); assert.equal(route.render({ ...routeProps, visible: false }), null);
+  route.finishNativeWork(); assert.equal(handedOff, 1, platform + ' route hands off exactly once after exit');
+  route.render({ ...routeProps, visible: false }); route.finishNativeWork(); assert.equal(handedOff, 1);
+  surface = route.render(routeProps); surface.props.onLayout({}); route.finishAnimation();
+  route.render({ ...routeProps, visible: false }); route.render(routeProps); route.finishAnimation();
+  route.finishNativeWork(); assert.equal(handedOff, 1, 'rapid reopen cancels route dismissal');
+  const reducedRoute = harness(platform, false);
+  reducedRoute.render(routeProps);
+  reducedRoute.render({ ...routeProps, visible: false });
+  assert.equal(reducedRoute.render({ ...routeProps, visible: false }), null);
+  reducedRoute.finishNativeWork(); assert.equal(handedOff, 2, 'reduced motion preserves route handoff');
+}
+let backRequested = 0;
+const androidSurface = harness('android', true, 'components/tracking/TrackingCaptureSurface.tsx');
+androidSurface.render({ expanded: true, visible: true, children: 'review', onRequestClose() { backRequested++; }, onDismiss() {} });
+assert.equal(androidSurface.pressBack(), true, 'Android back is consumed until the route sheet finishes closing');
+assert.equal(backRequested, 1, 'Android back uses the existing save-and-close action');
+console.log('Photo route: first-layout entrance without a second native modal, iOS/Android exit handoff, rapid reopen, reduced motion and Android back passed.');

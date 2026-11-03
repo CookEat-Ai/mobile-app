@@ -211,7 +211,7 @@ function VideoImportTutorialContent() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: designTheme.background,
+    backgroundColor: designTheme.cream,
   },
   topSection: {
     flex: 1,

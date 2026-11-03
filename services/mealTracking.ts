@@ -23,6 +23,10 @@ export type PhotoFood = {
     sourceId: string | null;
     nutritionEstimated?: boolean;
     nutritionEdited?: boolean;
+    locationPending?: boolean;
+    /** Approximate recognition region; never an approved photo thumbnail. */
+    detectionRegion?: PhotoFood['box'];
+    visualLabel?: string;
 };
 export type MealPhotoAnalysis = {
     scanId: string;
@@ -141,6 +145,39 @@ export function visiblePhotoBox(box: NonNullable<PhotoFood['box']>, frame: {left
   const left=Math.max(0,frame.left+box.x*frame.width),top=Math.max(0,frame.top+box.y*frame.height);
   const right=Math.min(viewport.width,frame.left+(box.x+box.width)*frame.width),bottom=Math.min(viewport.height,frame.top+(box.y+box.height)*frame.height);
   return right>left&&bottom>top?{left,top,width:right-left,height:bottom-top}:null;
+}
+
+/** One unchanged sample center drives the ring, thumbnail and flight origin. */
+export function photoSampleGeometry(box: NonNullable<PhotoFood['box']>, frame: {left:number;top:number;width:number;height:number}, viewport: {width:number;height:number}) {
+    if (![box.x, box.y, box.width, box.height, frame.left, frame.top, frame.width, frame.height, viewport.width, viewport.height].every(Number.isFinite) || box.width <= 0 || box.height <= 0 || frame.width <= 0 || frame.height <= 0) return null;
+    const centerX = frame.left + (box.x + box.width / 2) * frame.width;
+    const centerY = frame.top + (box.y + box.height / 2) * frame.height;
+    // Clipping a rectangle and re-centering it moves the target onto another food.
+    if (centerX <= 3 || centerX >= viewport.width - 3 || centerY <= 3 || centerY >= viewport.height - 3) return null;
+    const width = box.width * frame.width, height = box.height * frame.height;
+    const halfWidth = Math.min(Math.max(width / 2 + 8, 24), centerX - 3, viewport.width - 3 - centerX);
+    const halfHeight = Math.min(Math.max(height / 2 + 8, 24), centerY - 3, viewport.height - 3 - centerY);
+    const scale = 90 / Math.max(width, height);
+    return {
+        bounds: { left: centerX - width / 2, top: centerY - height / 2, width, height },
+        focus: { left: centerX - halfWidth, top: centerY - halfHeight, right: centerX + halfWidth, bottom: centerY + halfHeight },
+        crop: { scale, left: 45 - (box.x + box.width / 2) * frame.width * scale, top: 45 - (box.y + box.height / 2) * frame.height * scale },
+    };
+}
+
+/** A broad scan zone is allowed to be approximate; photo crops are not. */
+export function photoDetectionFocus(food: PhotoFood, frame: {left:number;top:number;width:number;height:number}, viewport: {width:number;height:number}) {
+    const exact = food.visible && !food.locationPending && food.box ? photoSampleGeometry(food.box,frame,viewport) : null;
+    if (exact) return exact.focus;
+    const region = food.visible ? food.detectionRegion : null;
+    const visible = region && [region.x,region.y,region.width,region.height].every(Number.isFinite) ? visiblePhotoBox(region,frame,viewport) : null;
+    if (visible) {
+        const padding=18;
+        return {left:Math.max(8,visible.left-padding),top:Math.max(8,visible.top-padding),right:Math.min(viewport.width-8,visible.left+visible.width+padding),bottom:Math.min(viewport.height-8,visible.top+visible.height+padding)};
+    }
+    // Hidden ingredients and off-screen/unknown locations belong to the meal
+    // as a whole. Never invent a precise center on another visible food.
+    return {left:16,top:Math.min(80,viewport.height*.25),right:Math.max(17,viewport.width-16),bottom:Math.max(81,viewport.height-20)};
 }
 
 export type SavedFoodDefault = {

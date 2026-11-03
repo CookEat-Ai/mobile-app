@@ -80,13 +80,14 @@ export default function WeeklyPlanPreviewScreen() {
       const settings = await loadPlanningGenerationSettings();
       const profilePreferences = fitnessProfileToPlanningPreferences(profile);
       const preferences = { ...profilePreferences, pantryIngredients: [], pantryMode: 'priority' as const, servings: settings.servings || 1, cookingDays: selectedCookingDays, includeSnack: true };
-      const response = await apiService.createMealPlan({
-        userId,
-        weekStart,
-        preferences,
-        preview: true,
-        replaceExisting: Boolean(existingPlan),
-      });
+      const request = { userId, weekStart, preferences, preview: true, replaceExisting: Boolean(existingPlan) };
+      let response = await apiService.createMealPlan(request);
+      // The server always builds a demo week; one silent retry absorbs a dropped
+      // connection or a transient server error (a saved week is restored at once).
+      if (!isCompleteWeeklyPlan(response.data?.plan) && (response.status === undefined || response.status >= 500)) {
+        analytics.track('onboarding_weekly_plan_generation_retried', { status: response.status ?? null });
+        response = await apiService.createMealPlan(request);
+      }
       if (!isCompleteWeeklyPlan(response.data?.plan)) {
         setNetworkError(Boolean(response.error) && response.status === undefined);
         throw new Error(response.error || t('planning.errors.create'));
@@ -190,7 +191,7 @@ export default function WeeklyPlanPreviewScreen() {
     }
   };
 
-  if (loading) return <View style={{ flex: 1 }}><PlanningLoadingView ready={loadingReady} onComplete={completeLoadingBar} /></View>;
+  if (loading) return <View style={{ flex: 1 }}><PlanningLoadingView ready={loadingReady} onComplete={completeLoadingBar} durationHint={false} /></View>;
   if (error) return (
     <View style={styles.state}>
       <View style={styles.sparkle}><Ionicons name="alert-circle-outline" size={48} color={Colors.light.button} /></View>
@@ -238,7 +239,7 @@ export default function WeeklyPlanPreviewScreen() {
 
 const styles = StyleSheet.create({
   ...planningStyles,
-  root: { flex: 1, backgroundColor: designTheme.background }, content: { width: '100%', maxWidth: CONTENT_MAX_WIDTH, alignSelf: 'center', paddingHorizontal: 20 }, state: { flex: 1, backgroundColor: designTheme.background, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30 }, sparkle: { width: 92, height: 92, borderRadius: AppRadii.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: designTheme.yellowSoft }, stateTitle: { marginTop: 20, fontFamily: 'Degular', fontSize: 29, color: Colors.light.text, textAlign: 'center' }, stateSubtitle: { marginTop: 10, fontFamily: 'CronosPro', fontSize: 17, lineHeight: 23, color: Colors.light.textSecondary, textAlign: 'center' }, retry: { width: '100%', maxWidth: 320, minHeight: 56, alignItems: 'center', justifyContent: 'center', marginTop: 22, borderRadius: AppRadii.pill, backgroundColor: Colors.light.button, paddingHorizontal: 24, paddingVertical: 14 }, retryText: { color: designTheme.onPrimary, fontFamily: 'Degular', fontSize: 17, textAlign: 'center' },
+  root: { flex: 1, backgroundColor: designTheme.cream }, content: { width: '100%', maxWidth: CONTENT_MAX_WIDTH, alignSelf: 'center', paddingHorizontal: 20 }, state: { flex: 1, backgroundColor: designTheme.cream, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30 }, sparkle: { width: 92, height: 92, borderRadius: AppRadii.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: designTheme.yellowSoft }, stateTitle: { marginTop: 20, fontFamily: 'Degular', fontSize: 29, color: Colors.light.text, textAlign: 'center' }, stateSubtitle: { marginTop: 10, fontFamily: 'CronosPro', fontSize: 17, lineHeight: 23, color: Colors.light.textSecondary, textAlign: 'center' }, retry: { width: '100%', maxWidth: 320, minHeight: 56, alignItems: 'center', justifyContent: 'center', marginTop: 22, borderRadius: AppRadii.pill, backgroundColor: Colors.light.button, paddingHorizontal: 24, paddingVertical: 14 }, retryText: { color: designTheme.onPrimary, fontFamily: 'Degular', fontSize: 17, textAlign: 'center' },
   configurationContent: { width: '100%', maxWidth: CONTENT_MAX_WIDTH, alignSelf: 'center', paddingHorizontal: 24, paddingTop: 42 },
   configurationIcon: { width: 66, height: 66, borderRadius: AppRadii.card, backgroundColor: '#FFF1C5', alignItems: 'center', justifyContent: 'center' },
   configurationTitle: { marginTop: 22, fontFamily: 'Degular', fontSize: 34, lineHeight: 37, color: Colors.light.text },

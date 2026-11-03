@@ -5,12 +5,15 @@ import { MODAL_ANIMATION } from '../../constants/ModalPresentation';
 import { AppTheme } from '../../constants/AppTheme';
 
 type Props = Omit<ModalProps, 'animationType'> & {
-  /** Optional dimming layer, kept outside the moving panel. */
+  /** Optional dimming layer, kept stationary and faded with the panel transition. */
   backdrop?: React.ReactNode;
+  /** A transparent modal route already supplies the native presentation host. */
+  host?: 'native' | 'route';
 };
 
 /** Transparent sheets move above a fixed backdrop; full pages retain native presentation. */
-export function AppModal({ visible = true, transparent = false, backdrop, onDismiss, onShow, children, statusBarTranslucent = true, ...props }: Props) {
+export function AppModal({ visible = true, transparent = false, backdrop, host = 'native', onDismiss, onShow, children, statusBarTranslucent = true, ...props }: Props) {
+  const routeHost = transparent && host === 'route';
   const motion = useMotionAllowed();
   const { height } = useWindowDimensions();
   const [presented, setPresented] = useState(visible);
@@ -48,20 +51,38 @@ export function AppModal({ visible = true, transparent = false, backdrop, onDism
     return () => animation.current?.stop();
   }, [visible, transparent, presented, motion, move, progress]);
 
-  // React Native only emits onDismiss on iOS. On Android, the native host is
-  // removed in the close commit; defer follow-up UI until that work finishes.
+  // Route-hosted panels and Android have no native onDismiss event. Wait for
+  // the close commit before handing navigation back to the caller.
   useEffect(() => {
     const closed = wasVisible.current && !nativeVisible;
     wasVisible.current = nativeVisible;
     if (!nativeVisible) shown.current = false;
-    if (Platform.OS === 'ios' || !closed) return;
+    if ((!routeHost && Platform.OS === 'ios') || !closed) return;
     const task = InteractionManager.runAfterInteractions(() => dismiss.current?.());
     return () => task.cancel();
-  }, [nativeVisible]);
+  }, [nativeVisible, routeHost]);
 
   const panel = <Animated.View pointerEvents={visible ? 'auto' : 'none'} style={[styles.content, {
     transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [height, 0] }) }],
   }]}>{children}</Animated.View>;
+
+  const surface = <View style={backdrop ? styles.customBackdrop : styles.backdrop}
+    onLayout={routeHost ? () => {
+      if (shown.current || !requestedVisible.current) return;
+      shown.current = true;
+      move(1);
+    } : undefined}>
+    {backdrop ? <>
+      <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, { opacity: progress }]}>
+        {backdrop}
+      </Animated.View>
+      {panel}
+    </> : panel}
+  </View>;
+
+  // Start at the route's first layout instead of presenting a second native
+  // modal and waiting for its onShow round trip before any movement.
+  if (routeHost) return nativeVisible ? surface : null;
 
   return <Modal {...props} visible={nativeVisible} transparent={transparent}
     animationType={!transparent && motion ? MODAL_ANIMATION : 'none'}
@@ -72,9 +93,7 @@ export function AppModal({ visible = true, transparent = false, backdrop, onDism
       onShow?.(event);
     }}
     onDismiss={Platform.OS === 'ios' ? () => { shown.current = false; dismiss.current?.(); } : undefined}>
-    {transparent ? <View style={backdrop ? styles.customBackdrop : styles.backdrop}>
-      {backdrop ? <>{backdrop}{panel}</> : panel}
-    </View> : children}
+    {transparent ? surface : children}
   </Modal>;
 }
 

@@ -13,7 +13,7 @@ const rice = { id: 'rice', name: 'Riz cuit', foodKey: 'cookedRice', grams: 200, 
 function harness(file, exportName, dependencies = {}) {
   const slots = [], effects = [], cleanups = new Map(); let cursor = 0;
   const React = {
-    createElement: (type, props, ...children) => ({ type, props: { ...props, children } }),
+    createElement: (type, props, ...children) => typeof type === 'function' ? type({ ...props, children }) : ({ type, props: { ...props, children } }),
     useState(initial) { const i = cursor++; if (!(i in slots)) slots[i] = typeof initial === 'function' ? initial() : initial; return [slots[i], next => { slots[i] = typeof next === 'function' ? next(slots[i]) : next; }]; },
     useRef(initial) { const i = cursor++; return slots[i] || (slots[i] = { current: initial }); },
     useCallback: callback => callback,
@@ -21,6 +21,20 @@ function harness(file, exportName, dependencies = {}) {
   }; React.default = React;
   const exports = {};
   vm.runInNewContext(compile(file), { exports, Date, Set, Map, Number, Promise, setTimeout, clearTimeout, require: name => {
+    if (name === './FoodDetail' || name === './FoodSearch') {
+      const child = {}; vm.runInNewContext(compile('components/tracking/' + name.slice(2) + '.tsx'), { exports: child, require: childDependency => {
+        if (childDependency === 'react') return React;
+        if (childDependency === 'react-native') return { View: 'View', Text: 'Text', TextInput: 'TextInput', TouchableOpacity: 'Button', ScrollView: 'ScrollView', StyleSheet: {create:x=>x}, Platform: {OS:'ios'} };
+        if (childDependency === 'react-i18next') return {useTranslation:()=>({t})};
+        if (childDependency.includes('AppTheme')) return require('./helpers/ui-theme.cjs');
+        if (childDependency.includes('mealTracking')) return service;
+        if (childDependency.includes('vector-icons')) return {Ionicons:'Icon'};
+        if (childDependency.includes('FoodPhotoThumbnail')) return {FoodPhotoThumbnail:'Thumbnail'};
+        if (childDependency.includes('haptics')) return {feedback:{selection(){},light(){}}};
+        if (childDependency.includes('AppSpinner')) return {AppSpinner:'Spinner'};
+        throw Error(childDependency);
+      }}); return child;
+    }
     if (name in dependencies) return dependencies[name];
     if (name === 'react') return React;
     if (name === 'react-native') return { View: 'View', Text: 'Text', TextInput: 'TextInput', TouchableOpacity: 'Button', ScrollView: 'ScrollView', KeyboardAvoidingView: 'KeyboardAvoidingView', ActivityIndicator: 'Spinner', StyleSheet: { create: x => x }, Platform: { OS: 'ios' }, Keyboard: { addListener: () => ({ remove() {} }) } };
@@ -106,6 +120,8 @@ const button = (tree, label) => all(tree, 'Button').find(node => text(node) === 
   tree = ui.render(props); assert.equal(props.items[0].name, 'Yaourt maison'); assert.equal(props.items[0].nutritionEdited, true);
   assert.equal(service.foodNutrition(props.items).calories, 125); assert.equal(service.foodNutrition(props.items).proteins, 8.5);
   assert.equal(service.foodNutrition([{...props.items[0], grams: 300}]).calories, 250, 'user composition scales with weight');
+  // A food row opens one sheet holding its quantity, reference, values and removal.
+  all(tree, 'Button').find(node => node.props.accessibilityLabel === 'tracking.changeFood').props.onPress(); tree = ui.render(props);
   all(tree, 'Button').find(node => node.props.accessibilityLabel === 'tracking.editFoodNutrition').props.onPress();
   tree = ui.render(props); await all(tree, 'Editor')[0].props.onApply({calories: 140, proteins: 12, carbs: 8, fats: 6}, {name: 'Yaourt maison corrigé', grams: 150});
   assert.equal(props.items.length, 1); assert.equal(service.foodNutrition(props.items).calories, 140);
@@ -114,6 +130,7 @@ const button = (tree, label) => all(tree, 'Button').find(node => text(node) === 
   const customItems = props.items;
   const unresolved = {...rice, id: 'unresolved', foodKey: null, per100g: null, name: 'Sauce perso'};
   props.onItems([unresolved]); tree = ui.render(props);
+  all(tree,'Button').find(node=>node.props.accessibilityLabel==='tracking.changeFood').props.onPress(); tree=ui.render(props);
   all(tree,'Button').find(node=>node.props.accessibilityLabel==='tracking.editFoodNutrition').props.onPress();
   await all(ui.render(props),'Editor')[0].props.onApply({calories:30,proteins:1,carbs:2,fats:2},{name:'Sauce perso',grams:20});
   assert(props.items[0].foodKey.startsWith('custom-'),'an unreferenced detected food receives a reusable custom identity');
@@ -156,9 +173,9 @@ const button = (tree, label) => all(tree, 'Button').find(node => text(node) === 
   assert(!button(progressTree,'tracking.skip'),'skip is removed');
   const summary = harness('components/tracking/MealNutritionSummary.tsx', 'MealNutritionSummary', {'react-native-svg': {__esModule:true, default:'Svg', Circle:'Circle'}});
   const running = summary.render({nutrition:{calories:411,proteins:15,carbs:80,fats:2},partial:true,recognizing:true,compact:true});
-  assert(all(running,'Text').some(node=>text(node)==='411'),'recognized calories remain visible while the next ingredient is circled');
+  assert(all(running,'Text').some(node=>text(node)==='411 kcal'),'recognized calories remain visible while the next ingredient is circled');
   const cumulative = summary.render({nutrition:{calories:625,proteins:55,carbs:80,fats:7},partial:true,recognizing:true,compact:true});
-  assert(all(cumulative,'Text').some(node=>text(node)==='625'),'recognized calories accumulate during analysis');
+  assert(all(cumulative,'Text').some(node=>text(node)==='625 kcal'),'recognized calories accumulate during analysis');
   assert(!text(cumulative).includes('+ ?'),'no unknown-calorie placeholder');
   const recap = harness('components/tracking/PhotoMealReview.tsx', 'PhotoMealReview', {'../../services/api':{apiService:{}}});
   const recapProps = {...props, manual:false, mealType:'dinner', items:[rice], photo:{uri:'meal-photo',width:1000,height:800}, analysis:{kind:'meal',mealType:'dinner',items:[rice]}, onMealType:value=>{recapProps.mealType=value;}};

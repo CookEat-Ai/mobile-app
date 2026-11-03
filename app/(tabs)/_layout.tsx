@@ -7,6 +7,7 @@ import { Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { HapticTab } from '../../components/HapticTab';
+import { AppBackground } from '../../components/ui/AppBackground';
 
 import { getTabBarHeight } from '../../constants/Layout';
 import { useResponsive } from '../../hooks/useResponsive';
@@ -20,7 +21,7 @@ export default function TabLayout() {
   const iconSize = isTablet ? 30 : isShortScreen ? 23 : 25;
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.background }}>
+    <View style={{ flex: 1, backgroundColor: theme.surface }}>
       <Tabs
         initialRouteName="tracking"
         screenListeners={({ route }) => ({
@@ -56,7 +57,7 @@ export default function TabLayout() {
         <Tabs.Screen name="shopping" options={{ href: null }} />
         <Tabs.Screen name="imported" options={{ href: null }} />
       </Tabs>
-      <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: insets.top, backgroundColor: theme.background, zIndex: 10, elevation: 10 }} />
+      <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: insets.top, overflow: 'hidden', zIndex: 10, elevation: 10 }}><AppBackground height={height - tabBarContentHeight - insets.bottom} /></View>
     </View>
   );
 }

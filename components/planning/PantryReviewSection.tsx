@@ -19,25 +19,38 @@ export function PantryReviewSection({ ingredients, onChange, recognized = false,
   return <View style={styles.root}>
     <View style={styles.heading}>
       <Text accessibilityRole="header" style={appStyles.title}>{t(recognized ? 'pantryReview.foundTitle' : 'pantryScan.ingredients')}</Text>
-      <Text accessibilityLiveRegion="polite" style={appStyles.subtitle}>{t('pantryReview.count', { count: ingredients.length })}</Text>
+      <Text style={appStyles.subtitle}>{t('pantryReview.help')}</Text>
     </View>
-    {!!ingredients.length && <View style={styles.list}>{ingredients.map((name, index) => <View key={pantryIngredientKey(name)} style={[styles.row, index > 0 && styles.separator]}>
-      <Text accessible={false} style={styles.emoji}>{getIngredientIcon(name, icons.get(pantryIngredientKey(name)))}</Text><Text style={styles.name}>{name}</Text>
-      <Pressable accessibilityRole="button" accessibilityLabel={t('pantryReview.removeName', { name })} accessibilityState={{ disabled }} disabled={disabled} style={styles.remove} onPress={() => {
+    {!!ingredients.length && <View style={styles.chips}>{ingredients.map(name => <View key={pantryIngredientKey(name)} style={styles.chip}>
+      <View style={styles.emojiCircle}><Text accessible={false} style={styles.emoji}>{getIngredientIcon(name, icons.get(pantryIngredientKey(name)))}</Text></View>
+      <Text style={styles.name} numberOfLines={1}>{name}</Text>
+      <Pressable accessibilityRole="button" accessibilityLabel={t('pantryReview.removeName', { name })} accessibilityState={{ disabled }} disabled={disabled} hitSlop={8} style={styles.remove} onPress={() => {
         onChange(ingredients.filter(item => pantryIngredientKey(item) !== pantryIngredientKey(name))); void feedback.selection();
-      }}><Ionicons name="close" size={20} color={theme.ink} /></Pressable>
+      }}><Ionicons name="close" size={16} color={theme.muted} /></Pressable>
     </View>)}</View>}
-    {!ingredients.length && <Text style={appStyles.subtitle}>{t(recognized ? 'pantryReview.emptyScan' : 'pantryReview.emptyManual')}</Text>}
+    {!ingredients.length && <View style={styles.empty}>
+      <Text accessible={false} style={styles.emptyEmoji}>🧺</Text>
+      <Text style={[appStyles.subtitle, styles.emptyText]}>{t(recognized ? 'pantryReview.emptyScan' : 'pantryReview.emptyManual')}</Text>
+    </View>}
     <Pressable accessibilityRole="button" accessibilityState={{ disabled }} disabled={disabled} style={[styles.add, disabled && styles.disabled]} onPress={() => setAdding(true)}>
-      <Ionicons name="add" size={22} color={theme.ink} /><Text style={appStyles.textAction}>{t('recipeSummary.add')}</Text>
+      <View style={styles.addIcon}><Ionicons name="add" size={22} color={theme.onPrimary} /></View>
+      <Text style={[appStyles.textAction, styles.addText]}>{t('pantryReview.addTitle')}</Text>
+      <Text accessibilityLiveRegion="polite" style={styles.count}>{t('pantryReview.count', { count: ingredients.length })}</Text>
     </Pressable>
     <PantryIngredientSearchModal visible={adding} ingredients={ingredients} onChange={onChange} onClose={() => setAdding(false)} />
   </View>;
 }
+const shadow = { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 2 };
 const styles = StyleSheet.create({
-  root: { gap: 16 }, heading: { gap: 8 }, list: { paddingHorizontal: 14, borderWidth: 1, borderColor: theme.line, borderRadius: AppRadii.card, backgroundColor: theme.surface },
-  row: { minHeight: 62, paddingVertical: 9, flexDirection: 'row', alignItems: 'center', gap: 12 }, separator: { borderTopWidth: 1, borderTopColor: theme.line },
-  emoji: { fontSize: 28, width: 32, textAlign: 'center' }, name: { flex: 1, fontFamily: 'CronosProBold', fontSize: 18, color: theme.ink },
-  remove: { minWidth: 44, minHeight: 44, borderRadius: AppRadii.card, backgroundColor: theme.yellowSoft, alignItems: 'center', justifyContent: 'center' },
-  add: { minHeight: 48, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: AppRadii.control, borderWidth: 1, borderColor: theme.yellow, backgroundColor: theme.yellowSoft }, disabled: { opacity: 0.45 },
+  root: { gap: 20 }, heading: { gap: 8 },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  chip: { maxWidth: '100%', minHeight: 52, flexDirection: 'row', alignItems: 'center', gap: 10, paddingLeft: 7, paddingRight: 6, borderRadius: AppRadii.pill, backgroundColor: theme.surface, ...shadow },
+  emojiCircle: { width: 38, height: 38, borderRadius: AppRadii.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.yellowSoft },
+  emoji: { fontSize: 22 }, name: { flexShrink: 1, fontFamily: 'CronosProBold', fontSize: 17, color: theme.ink },
+  remove: { width: 30, height: 30, borderRadius: AppRadii.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.cream },
+  empty: { alignItems: 'center', gap: 10, paddingVertical: 28, paddingHorizontal: 20, borderRadius: AppRadii.card, backgroundColor: theme.surface, ...shadow },
+  emptyEmoji: { fontSize: 40 }, emptyText: { textAlign: 'center' },
+  add: { minHeight: 64, flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, borderRadius: AppRadii.pill, backgroundColor: theme.surface, ...shadow },
+  addIcon: { width: 34, height: 34, borderRadius: AppRadii.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.yellow },
+  addText: { flex: 1 }, count: { fontFamily: 'CronosPro', fontSize: 14, color: theme.muted }, disabled: { opacity: 0.45 },
 });

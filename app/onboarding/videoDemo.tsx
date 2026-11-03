@@ -114,7 +114,7 @@ export default function AppDemoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: designTheme.background, // Ton jaune clair CookEat
+    backgroundColor: designTheme.cream, // Ton jaune clair CookEat
   },
   progressHeader: {
     flexDirection: 'row',

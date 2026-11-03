@@ -212,7 +212,7 @@ export default function ReminderScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: designTheme.background,
+    backgroundColor: designTheme.cream,
   },
   content: {
     flex: 1,
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 4,
-    borderColor: designTheme.background,
+    borderColor: designTheme.cream,
   },
   notificationBadgeText: {
     color: designTheme.onPrimary,

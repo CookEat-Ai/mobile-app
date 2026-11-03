@@ -212,7 +212,7 @@ export default function WelcomeScreen() {
           position: 'absolute',
           left: curveLeft,
           bottom: curveBottom,
-          backgroundColor: designTheme.background,
+          backgroundColor: designTheme.cream,
           width: curveWidth,
           height: curveHeight,
           borderRadius: curveHeight,

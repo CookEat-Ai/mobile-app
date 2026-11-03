@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { calculateFitnessProjection, FitnessProfile, loadFitnessProfile } from './fitnessProfile';
+import { NUTRITION_MODEL_VERSION } from './nutritionModel';
 
 export const WEIGHT_LOGS_KEY = '@cookeat_weight_logs_v1';
 export const WEIGHT_REVIEW_KEY = '@cookeat_weight_review_v1';
@@ -36,7 +37,7 @@ export function weightReviewContext(profile: FitnessProfile): string {
   // Latest weigh-in is deliberately excluded. A changed goal/activity/model
   // starts a fresh observation period so previous advice cannot be reused.
   const target = calculateFitnessProjection(profile).targetWeightKg;
-  return JSON.stringify(['nutrition-v2', profile.goal, profile.sex, profile.age, profile.heightCm,
+  return JSON.stringify([NUTRITION_MODEL_VERSION, profile.goal, profile.sex, profile.age, profile.heightCm,
     ['maintain', 'balanced'].includes(profile.goal) ? null : target, profile.activityLevel, profile.trainingDays,
     profile.trainingDurationMinutes ?? 45, profile.nutritionWeightKg ?? profile.currentWeightKg, profile.dailyCalorieAdjustment ?? 0]);
 }

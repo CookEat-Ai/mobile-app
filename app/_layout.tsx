@@ -332,15 +332,11 @@ function RootLayout() {
       const canonicalUserId = await analytics.init();
       analytics.track('app_opened');
 
-      // Utiliser dès le premier lancement l'identité d'installation commune,
-      // puis la fusionner avec l'identité serveur stable lorsqu'elle existe.
-      const storedUserId = await AsyncStorage.getItem('userId');
-      if (storedUserId) {
-        await revenueCatService.initialize(storedUserId);
-        analytics.identify(storedUserId);
-      } else {
-        await revenueCatService.initialize(canonicalUserId || undefined);
-      }
+      // RevenueCat reste anonyme tant que le serveur n'a pas fourni d'identité.
+      // Relire la valeur courante : l'onboarding peut l'avoir créée entre-temps.
+      const storedUserId = analytics.getCanonicalUserId() || canonicalUserId;
+      await revenueCatService.initialize(storedUserId || undefined);
+      if (storedUserId) await analytics.identify(storedUserId);
       setRevenueCatReady(true);
 
       // Récupérer le pays de l'utilisateur
@@ -361,13 +357,10 @@ function RootLayout() {
           // choix que l'utilisateur a déjà modifiés sur cet appareil.
           await hydrateRecipePreferencesFromServer(response.data);
 
-          // Toujours aligner RevenueCat sur l'identité serveur stable.
-          await revenueCatService.syncAppUserId(serverUserId);
-
           if (storedUserId !== serverUserId) {
             console.log('[Sync] userId corrigé:', storedUserId, '→', serverUserId);
             await AsyncStorage.setItem('userId', serverUserId);
-            analytics.identify(serverUserId);
+            await analytics.identify(serverUserId);
 
             try {
               if (storedUserId) await revenueCatService.restorePurchases();

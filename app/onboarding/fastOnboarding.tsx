@@ -651,7 +651,7 @@ export default function FastOnboardingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: designTheme.background,
+    backgroundColor: designTheme.cream,
   },
   header: {
     // Barre de progression : pleine largeur, comme sur téléphone.

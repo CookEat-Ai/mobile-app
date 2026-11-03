@@ -210,7 +210,7 @@ export default function WelcomeVideoScreen() {
             position: 'absolute',
             left: curveLeft,
             top: -width * 0.11,
-            backgroundColor: designTheme.background,
+            backgroundColor: designTheme.cream,
             width: curveWidth,
             height: curveHeight,
             borderRadius: curveHeight,
@@ -333,14 +333,14 @@ const styles = StyleSheet.create({
   },
   bottomSection: {
     flexShrink: 0,
-    backgroundColor: designTheme.background,
+    backgroundColor: designTheme.cream,
   },
   copy: {
     ...contentColumn(),
     paddingHorizontal: 24,
   },
   footer: {
-    backgroundColor: designTheme.background,
+    backgroundColor: designTheme.cream,
     paddingTop: 8,
   },
   bottomAction: {

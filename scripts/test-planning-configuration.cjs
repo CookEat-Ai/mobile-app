@@ -70,16 +70,25 @@ assert.equal(readPantryScanHandoff('{"ingredients":["Riz"],"generate":true}').ge
 const untouched = JSON.stringify(settings);
 const demo = planningChoiceDraft(settings, true);
 assert.equal(JSON.stringify(settings), untouched, 'demo must not erase saved preferences');
-for (const field of ['duration', 'diet', 'cuisineIds', 'servings', 'cookingLevel', 'mealBudget', 'equipments']) assert.equal(demo[field], null);
-for (const field of ['cookingDays', 'excludedIngredients', 'pantryIngredients']) assert.equal(demo[field].length, 0);
+for (const field of ['duration', 'diet', 'cuisineIds', 'cookingLevel', 'mealBudget', 'equipments']) assert.equal(demo[field], null);
+assert.equal(demo.servings, 1, 'a presentation starts at one person, not an empty count');
+for (const field of ['excludedIngredients', 'pantryIngredients']) assert.equal(demo[field].length, 0);
+assert.equal(demo.cookingDays.join(','), '0,1,2,3,4,5,6', 'new plans preselect the whole week');
+const fresh = planningChoiceDraft({ ...settings, weeklyBudget: 40 }, false);
+assert.equal(fresh.cookingDays.join(','), '0,1,2,3,4,5,6', 'new plans preselect the whole week');
+assert.equal(fresh.weeklyBudget, undefined, 'a budget sized for other days must be chosen again');
+const edited = planningChoiceDraft({ ...settings, weeklyBudget: 40 }, false, false);
+assert.equal(edited.cookingDays.join(','), '1,3', 'editing a plan keeps its days');
+assert.equal(edited.weeklyBudget, 40);
 assert.equal(Object.keys(demo.mealsByDay).length, 0);
-const draft = { ...demo, goal: null };
+const draft = { ...demo, cookingDays: [], goal: null, servings: null };
 for (const step of ['goal', 'days', 'duration', 'cuisines', 'diet', 'servings', 'cookingLevel', 'mealBudget', 'equipments']) assert.equal(planningStepCanContinue(step, draft), false, `${step} requires a choice`);
 assert.equal(planningStepCanContinue('ingredients', draft), true, 'pantry remains optional');
 assert.equal(planningStepCanContinue('exclusions', draft), true, 'exclusions remain optional');
 const answered = { ...draft, cookingLevel: 'beginner', mealBudget: 'budget_small', weeklyBudget:30, equipments: ['standard-kitchen'], goal: 'balanced', cookingDays: [2], duration: 'all', diet: 'none', cuisineIds: [], servings: 1 };
 for (const step of ['goal', 'days', 'duration', 'cuisines', 'diet', 'servings', 'cookingLevel', 'mealBudget', 'equipments']) assert.equal(planningStepCanContinue(step, answered), true, `${step} accepts an explicit answer`);
-assert.equal(JSON.stringify(planningChoiceDraft(settings, false)), untouched, 'normal mode keeps saved choices');
+assert.equal(JSON.stringify(planningChoiceDraft(settings, false, false)), untouched, 'editing a plan keeps saved choices');
+assert.equal(JSON.stringify(planningChoiceDraft(settings, false)), JSON.stringify({ ...settings, cookingDays: [0, 1, 2, 3, 4, 5, 6] }), 'a new plan keeps saved choices except its days');
 const values = new Map([
   ['meal_plan_cache_v1:owner:2026-10-12:fr', 'cache'], ['meal_plan_cache_v1:owner:2026-10-05:fr', 'history'],
   ['meal_plan_cache_v1:foreign:2026-10-12:fr', 'foreign'], ['onboarding_id', 'target'], ['free_swap_id', 'other'],

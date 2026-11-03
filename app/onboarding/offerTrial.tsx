@@ -218,7 +218,7 @@ export default function OfferTrialScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: designTheme.background,
+    backgroundColor: designTheme.cream,
   },
   scroll: { flex: 1 },
   content: {
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    backgroundColor: designTheme.background,
+    backgroundColor: designTheme.cream,
   },
   bottomSection: {
     ...contentColumn(),

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Animated, BackHandler, Easing, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppTheme as theme, AppRadii } from '../../constants/AppTheme';
 import { useMotionAllowed } from '../../contexts/MotionPreferences';
@@ -10,11 +10,17 @@ export function TrackingCaptureSurface({expanded,visible,onRequestClose,onDismis
   const insets=useSafeAreaInsets(), window=useWindowDimensions(), motion=useMotionAllowed();
   const progress=useRef(new Animated.Value(expanded?1:0)).current;
   useEffect(()=>{
+    // The route owns presentation, so preserve the native Modal's Android
+    // back behavior: flush edits and animate out before popping the route.
+    const subscription=BackHandler.addEventListener('hardwareBackPress',()=>{onRequestClose();return true;});
+    return()=>subscription.remove();
+  },[onRequestClose]);
+  useEffect(()=>{
     if(!motion){progress.stopAnimation();progress.setValue(expanded?1:0);return;}
     const animation=Animated.timing(progress,{toValue:expanded?1:0,duration:480,easing:Easing.inOut(Easing.cubic),useNativeDriver:false});
     animation.start();return()=>animation.stop();
   },[expanded,motion,progress]);
-  return <AppModal transparent visible={visible} onRequestClose={onRequestClose} onDismiss={onDismiss}
+  return <AppModal host="route" transparent visible={visible} onRequestClose={onRequestClose} onDismiss={onDismiss}
     backdrop={<Animated.View pointerEvents="none" style={[styles.scrim,{opacity:progress.interpolate({inputRange:[0,1],outputRange:[.34,1]})}]}/>}
   ><View style={styles.root}>
     <Animated.View style={[styles.surface,{top:progress.interpolate({inputRange:[0,1],outputRange:[Math.max(insets.top+12,window.height*.08),Math.max(insets.top+12,window.height*.04)]}),borderTopLeftRadius:AppRadii.sheet,borderTopRightRadius:AppRadii.sheet}]}>

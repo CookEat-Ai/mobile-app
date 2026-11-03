@@ -1,13 +1,16 @@
 import { StyleSheet } from 'react-native';
 
-/** Everyday surfaces inherit the onboarding's cream, ink and yellow. */
+/** Everyday surfaces sit on a warm white; the onboarding's cream stays as an accent. */
 export const AppTheme = {
-  background: '#FDF9E2',
+  background: '#FFFDF8',
+  cream: '#FDF9E2',
+  /** Main screens fade from cream in the top-right corner to white (see AppBackground). */
+  backgroundGradient: ['#FCF3D4', '#FFFCF3', '#FFFFFF'],
   surface: '#FFFFFF',
   onPrimary: '#FFFFFF',
   ink: '#081A10',
   muted: '#687076',
-  line: '#EFE8CF',
+  line: '#ECE9E1',
   yellow: '#FEB50A',
   yellowSoft: '#FFF4CF',
   soft: '#F3F4F3',

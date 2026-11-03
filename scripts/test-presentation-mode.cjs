@@ -4,7 +4,7 @@ const vm = require('node:vm');
 const ts = require('typescript');
 function load(file, dependencies = {}) {
   const exports = {};
-  vm.runInNewContext(ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, esModuleInterop: false } }).outputText, { exports, require: name => dependencies[name] || require(name) });
+  vm.runInNewContext(ts.transpileModule(fs.readFileSync(file, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, esModuleInterop: false } }).outputText, { exports, __DEV__: false, require: name => dependencies[name] || require(name) });
   return exports;
 }
 const { createShakeDetector } = load('services/shakeGesture.ts');

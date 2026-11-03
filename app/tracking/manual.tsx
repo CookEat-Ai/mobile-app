@@ -42,13 +42,14 @@ export default function ManualTrackingScreen() {
   }, [params.entryId, t]);
   const save = async () => {
     const nutrition = mealNutrition(items, nutritionOverride);
-    if (saveBusy.current || !nutrition || !mealType || !title.trim() || (params.entryId && !existing)) return;
+    if (saveBusy.current || !nutrition || !mealType || (params.entryId && !existing)) return;
+    const mealTitle = title.trim() || t(`tracking.${mealType}`);
     saveBusy.current = true; setSaving(true); setError('');
     try {
       const user = await getAnonymousUserId();
       await saveTrackedMeal(user, {
         id: existing?.id || id.current, createdAt: existing?.createdAt || createdAt.current,
-        date, title: title.trim(), mealType, items, nutrition, nutritionOverride, estimated: true, source: 'manual',
+        date, title: mealTitle, mealType, items, nutrition, nutritionOverride, estimated: true, source: 'manual',
       });
       void analytics.track('meal_tracking_saved', { source: 'manual', editing: !!existing, item_count: items.length }).catch(() => undefined);
       void feedback.success();

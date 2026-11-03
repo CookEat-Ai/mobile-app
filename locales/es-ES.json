@@ -166,8 +166,9 @@
       }
     },
     "activity": {
-      "title": "Fuera del deporte, ¿cuánto te mueves?",
-      "subtitle": "Piensa en tus desplazamientos y tu actividad en el trabajo."
+      "title": "Sin contar tus entrenamientos, ¿cuánto te mueves?",
+      "subtitle": "Piensa en lo que caminas, en tu trabajo y en las tareas del día a día, sin contar el deporte.",
+      "subtitleWithTraining": "No cuentes los entrenamientos que acabas de indicar. Piensa en lo que caminas, en tu trabajo y en las tareas del día a día."
     },
     "training": {
       "title": "¿Cuántos días a la semana haces deporte?",
@@ -253,11 +254,11 @@
         "unspecified": "Prefiero no responder"
       },
       "activity": {
-        "sedentary": "Poco activo",
-        "light": "Ligeramente activo",
-        "moderate": "Moderadamente activo",
-        "active": "Muy activo",
-        "very_active": "Extremadamente activo"
+        "sedentary": "La mayor parte del día en una silla",
+        "light": "Caminatas cortas",
+        "moderate": "Caminatas frecuentes",
+        "active": "Gran parte del día en movimiento",
+        "very_active": "Trabajo físico exigente"
       },
       "training": {
         "0": "Ninguno",
@@ -815,7 +816,8 @@
     "stepsShort": "pasos",
     "stepShort": "paso",
     "or": "O",
-    "retry": "Reintentar"
+    "retry": "Reintentar",
+    "clear": "Borrar"
   },
   "promoCode": {
     "activated": "¡Código promocional activado correctamente!",
@@ -1739,13 +1741,23 @@
     "welcomeSocialProof": "Más de {{total}} comidas creadas para comer mejor",
     "photoTracking": {
       "title": "Una foto, tu balance.",
-      "subtitle": "Tu semana está lista. ¿Quieres probar también el seguimiento de tus comidas?",
+      "subtitle": "Haz una foto de tu plato: CookEat reconoce cada alimento y calcula tus calorías y macros.",
       "cardTitle": "Fotografía tu comida",
       "correct": "Los alimentos aparecen uno a uno. Ajusta las cantidades antes de guardar.",
       "try": "Analizar mi comida",
       "later": "Más tarde",
       "savedTitle": "¡Tu primera comida registrada!",
-      "savedBody": "Está guardada en tu diario. Puedes continuar con la configuración."
+      "savedBody": "Está guardada en tu diario. Puedes continuar con la configuración.",
+      "demo": {
+        "example": "Ejemplo",
+        "chicken": "Pollo",
+        "quinoa": "Quinoa",
+        "avocado": "Aguacate",
+        "tomatoes": "Tomates",
+        "photo": "Foto",
+        "analysis": "Análisis",
+        "summary": "Tu balance"
+      }
     }
   },
   "weeklyOnboarding": {
@@ -1814,7 +1826,7 @@
     "add": "Añadir",
     "noIngredients": "No se han añadido ingredientes",
     "allowOtherIngredients": "Permitir otros ingredientes",
-    "allowOtherIngredientsDescription": "Permite que la IA sugiera ingredientes adicionales para enriquecer la receta",
+    "allowOtherIngredientsDescription": "Permite que CookEat sugiera ingredientes adicionales para enriquecer la receta",
     "generating": "Generando...",
     "generate": "Generar mi receta",
     "soup": "Sopas",
@@ -1911,6 +1923,7 @@
     "nutritionalInfoTitle": "Información nutricional",
     "nutritionalInfoContent": "Estos valores son estimaciones basadas en los ingredientes y las raciones indicados.",
     "illustration": "Ilustración",
+    "minimumServingsNote": "Prepara esta receta para {{count}} raciones como mínimo: con menos haría falta menos de la mitad de un ingrediente que no se puede dividir ({{ingredient}}). Guarda las raciones que sobren para más tarde.",
     "reloadImage": "Buscar otra imagen",
     "imageSearchNoResult": "No se ha encontrado ninguna otra imagen relevante.",
     "cookingTime": "Tiempo de cocción",
@@ -1986,6 +1999,7 @@
   },
   "planningLoading": {
     "title": "Preparando tu plan",
+    "durationHint": "Puede tardar hasta 30 segundos.",
     "subtitle": "Estamos creando cada receta de tu semana.",
     "error": "La generación ha fallado",
     "messages": [
@@ -2089,7 +2103,7 @@
     "onboarding": {
       "video": {
         "title": "Graba tus ingredientes",
-        "message": "Graba tu nevera, despensa o encimera. La IA identificará todos los ingredientes visibles para sugerirte recetas a medida.",
+        "message": "Graba tu nevera, despensa o encimera. CookEat identificará todos los ingredientes visibles para sugerirte recetas a medida.",
         "button": "¡Entendido!"
       },
       "photo": {
@@ -2115,9 +2129,13 @@
     "importingDescription": "Estamos analizando el vídeo y creando tu receta. Puede tardar unos segundos.",
     "progressStep": {
       "init": "Preparando...",
-      "extracting_transcript": "Extrayendo la transcripción...",
+      "fetching_video": "Obteniendo el vídeo…",
+      "extracting_transcript": "Leyendo los subtítulos…",
+      "downloading_audio": "Escuchando el vídeo…",
+      "transcribing": "Transcribiendo las explicaciones…",
       "creating_recipe": "Creando la receta...",
-      "saving": "Guardando..."
+      "saving": "Guardando...",
+      "done": "¡Receta lista!"
     },
     "success": "¡Receta importada!",
     "errorTitle": "Error al importar",
@@ -2138,7 +2156,7 @@
     "step": "Paso {{current}} de {{total}}",
     "secondaryStepLink": "Pega el enlace del vídeo",
     "secondaryStepRecipe": "CookEat crea la receta",
-    "description": "Comparte el vídeo con CookEat y la IA se encarga de todo: ingredientes, pasos e información nutricional.",
+    "description": "Comparte el vídeo con CookEat y nos encargamos de todo: ingredientes, pasos e información nutricional.",
     "howItWorks": "¿Cómo funciona?",
     "step1": "1. Abre TikTok o Instagram",
     "step2": "2. Pulsa «Compartir»",
@@ -2201,11 +2219,11 @@
       "75": "Más de una hora"
     },
     "activityDescriptions": {
-      "sedentary": "Pasas el día sentado y caminas poco.",
-      "light": "Caminas un poco cada día.",
-      "moderate": "Sueles estar de pie y caminas con frecuencia.",
-      "active": "Caminas mucho o tienes un trabajo físico.",
-      "very_active": "Haces esfuerzos físicos intensos todo el día."
+      "sedentary": "Pasas casi todo el día en una silla y caminas poco.",
+      "light": "Pasas la mayor parte del día en una silla, con algunos trayectos cortos a pie.",
+      "moderate": "A lo largo del día alternas entre sentarte, estar de pie y caminar.",
+      "active": "Pasas gran parte del día caminando o haciendo tareas físicas.",
+      "very_active": "Sueles llevar cargas pesadas o hacer trabajos manuales exigentes."
     },
     "caloriesPerDay": "kcal al día",
     "toward": "Para avanzar hacia {{weight}} kg",
@@ -2459,7 +2477,8 @@
     "emptyScan": "No se han reconocido ingredientes. Añade alguno o haz otra foto.",
     "emptyManual": "Añade los ingredientes que quieras usar esta semana.",
     "limit": "Puedes añadir hasta 100 ingredientes.",
-    "analyzePhotos": "Analizar fotos"
+    "analyzePhotos": "Analizar fotos",
+    "help": "CookEat los usará primero en tus comidas de la semana."
   },
   "cookingPreferences": {
     "levelTitle": "¿Qué nivel tienes en la cocina?",
@@ -2489,6 +2508,16 @@
     "adaptedNote": "Adaptación personal con IA. Cantidades, nutrición y precios estimados; revisa las etiquetas.",
     "retry": "Reintentar"
   },
+  "water": {
+    "title": "Hidratación",
+    "reached": "¡Objetivo cumplido, bien hecho!",
+    "remaining": "Te quedan {{liters}} L por beber hoy",
+    "progressLabel": "{{current}} litros bebidos de {{goal}} litros",
+    "bottleHint": "{{count}} botellas de {{ml}} ml, según tu peso y actividad",
+    "remove": "Quitar un vaso",
+    "addGlass": "Vaso {{ml}} ml",
+    "addBottle": "Botella {{ml}} ml"
+  },
   "tracking": {
     "mealPhoto": "Foto de la comida",
     "createFood": "Crear un alimento",
@@ -2502,12 +2531,23 @@
     "portionNutritionNote": "Indica las calorías y los macros para la cantidad consumida, no por 100 g.",
     "mealNutritionNote": "Indica las calorías y los macros de toda la comida. También puedes registrarla sin detallar los alimentos.",
     "manualTotalNote": "Total introducido a mano. Cambiar los alimentos recalculará el total.",
-    "nutritionInputHelp": "Rellena los cuatro valores. Puedes usar decimales e introducir 0.",
+    "nutritionInputHelp": "Rellena las calorías y las proteínas. Los carbohidratos y las grasas son opcionales. Puedes usar decimales e introducir 0.",
+    "optional": "opcional",
     "applyNutrition": "Aplicar",
     "addManually": "Añadir sin foto",
+    "addManuallyHint": "Descríbenosla o introduce sus valores",
     "manualTitle": "Comida sin foto",
     "withoutPhoto": "Sin foto",
-    "manualBody": "¿Olvidaste hacer una foto? Añade los alimentos y sus cantidades para completar tu registro.",
+    "manualBody": "¿Sin foto? Descríbenos tu comida, introduce directamente sus calorías y macros o añade los alimentos uno a uno.",
+    "describeTitle": "Descríbenos tu comida",
+    "describePlaceholder": "Ej.: una hamburguesa, patatas fritas y una cola",
+    "describeSubtitle": "Dinos lo que has comido y lo rellenamos todo",
+    "describeWelcome": "¿Qué has comido? Describe tu comida, aunque sea aproximadamente, y añado los alimentos, las cantidades y los valores nutricionales.",
+    "describeExample": "A mediodía: una hamburguesa, patatas fritas y una cola",
+    "describeBreakfastExample": "Desayuno: 2 tostadas con mantequilla y mermelada y un café con leche",
+    "enterMealNutrition": "Introducir calorías y macros",
+    "enterMealNutritionHint": "¿Ya conoces los valores? Introdúcelos directamente.",
+    "emptyMealHint": "Ponle un nombre y descríbela o añade sus alimentos.",
     "mealCategory": "Tipo de comida",
     "title": "Mi seguimiento",
     "dailyJournal": "CADA COMIDA CUENTA",
@@ -2550,7 +2590,7 @@
     "viewDay": "Ver mi día",
     "catalogueCandidate": "Este plato espera una foto nueva y una revisión antes de incorporarse a las recetas de CookEat.",
     "analyzing": "Leyendo tu plato…",
-    "analyzingNote": "La IA identifica alimentos y estima las cantidades.",
+    "analyzingNote": "Identificamos los alimentos y estimamos las cantidades.",
     "revealing": "Tu plato cobra vida",
     "skip": "Omitir",
     "yourMeal": "TU COMIDA",
@@ -2562,6 +2602,8 @@
     "foods": "Los alimentos",
     "correctNote": "Cambia un alimento o su cantidad: las calorías y los macros se recalculan.",
     "foodGrams": "Cantidad de {{name}} en gramos",
+    "lessGrams": "Quitar {{step}} g",
+    "moreGrams": "Añadir {{step}} g",
     "hiddenEstimate": "Ingrediente no visible, estimado",
     "noReference": "Hace falta una referencia alimentaria",
     "chooseReference": "Elegir un alimento",
@@ -2591,6 +2633,7 @@
     "mealEnergy": "ENERGÍA DE LA COMIDA",
     "kcalInMeal": "kcal en esta comida",
     "macroDistribution": "Distribución de proteínas, carbohidratos y grasas",
+    "energyShare": "{{percent}} % de las kcal",
     "nutritionEstimateNote": "Estimación del plato, incluidas las salsas · puedes editar alimentos y cantidades.",
     "estimatedFood": "Composición estimada · cambia si hace falta",
     "mealRecap": "Mi comida",
@@ -2600,12 +2643,13 @@
     "shareReferenceNote": "Con mi permiso, mi foto será una referencia privada durante un máximo de 30 días para crear otra imagen. Mi foto nunca se publicará.",
     "buildupNote": "El resumen se actualiza con cada alimento.",
     "recognitionCount": "{{count}} / {{total}} alimentos reconocidos",
+    "recognitionSoFar": "{{count}} alimento(s) encontrado(s) · analizando…",
     "recognitionWaiting": "Los alimentos aparecerán aquí.",
     "buildingSummary": "Calculando el resumen…",
     "backToCamera": "Volver a la cámara",
     "captureHelp": "Cómo fotografiar tu comida",
     "captureHelpBody": "Encuadra todo el plato con buena luz, desde arriba o ligeramente de lado. Evita que las manos o los envases oculten alimentos. Después, revisa los alimentos y las cantidades. También puedes elegir una foto de tu galería.",
-    "chatTitle": "Ajustar mi balance con IA",
+    "chatTitle": "Ajustar mi balance",
     "chatSubtitle": "¿Un alimento o una cantidad incorrectos?",
     "chatQuantityExample": "¿Cómo corrijo una cantidad estimada?",
     "chatQuestionExample": "¿Qué alimentos aportan más proteína en este plato?",
@@ -2643,5 +2687,21 @@
     "description": "Origen y licencias de las recetas adaptadas del catálogo CookEat.",
     "empty": "No se encontraron recetas.",
     "adaptations": "Traducción, cantidades y estimaciones nutricionales adaptadas por CookEat. Los textos adaptados conservan la licencia indicada."
+  },
+  "mealReminders": {
+    "title": "Recordatorios de comidas",
+    "rowDescription": "Antes de cada comida, para acordarte de la foto",
+    "subtitle": "Te avisamos justo antes de cada comida para que no olvides hacerle una foto a tu plato.",
+    "breakfast": "Desayuno",
+    "lunch": "Comida",
+    "dinner": "Cena",
+    "earlier": "Adelantar el recordatorio de {{meal}}",
+    "later": "Retrasar el recordatorio de {{meal}}",
+    "timeLabel": "{{meal}}: recordatorio a las {{time}}",
+    "save": "Guardar",
+    "reset": "Restablecer los horarios predeterminados",
+    "enableNotifications": "Las notificaciones están desactivadas. Toca aquí para activarlas.",
+    "loadError": "No se han podido cargar tus recordatorios. Inténtalo de nuevo.",
+    "saveError": "No se han podido guardar tus horarios. Inténtalo de nuevo."
   }
 }

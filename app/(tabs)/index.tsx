@@ -1,4 +1,5 @@
 import { AppRefreshControl as RefreshControl } from '../../components/ui/AppRefreshControl';
+import { AppBackground } from '../../components/ui/AppBackground';
 import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { AppModal as Modal } from '../../components/ui/AppModal';
 import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
@@ -128,7 +129,7 @@ export default function PlanningScreen() {
     ]);
   };
 
-  return <View style={appStyles.screen}>
+  return <View style={appStyles.screen}><AppBackground />
     <View style={{ paddingLeft: gutter + insets.left, paddingRight: gutter + insets.right, paddingTop: insets.top + 8 }}><AppScreenHeading title="CookEat" showAppLogo action={
         <TouchableOpacity style={appStyles.iconButton} accessibilityRole="button" accessibilityLabel={t('dailyApp.history')} disabled={deleting} onPress={() => setHistory(true)}><Ionicons name="time-outline" size={24} color={theme.ink} /></TouchableOpacity>
       } />

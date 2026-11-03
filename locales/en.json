@@ -166,8 +166,9 @@
       }
     },
     "activity": {
-      "title": "Outside exercise, how active are you?",
-      "subtitle": "Think about your daily travel and activity at work."
+      "title": "How active are you outside your workouts?",
+      "subtitle": "Think about walking, work and everyday tasks. Leave out exercise.",
+      "subtitleWithTraining": "Leave out the workouts you just entered. Think about walking, work and everyday tasks."
     },
     "training": {
       "title": "How many days a week do you exercise?",
@@ -253,11 +254,11 @@
         "unspecified": "Prefer not to say"
       },
       "activity": {
-        "sedentary": "Not very active",
-        "light": "Lightly active",
-        "moderate": "Moderately active",
-        "active": "Very active",
-        "very_active": "Extremely active"
+        "sedentary": "Mostly seated day",
+        "light": "A little walking",
+        "moderate": "Regular walking",
+        "active": "On the move most of the day",
+        "very_active": "Heavy physical work"
       },
       "training": {
         "0": "None",
@@ -815,7 +816,8 @@
     "stepsShort": "steps",
     "stepShort": "step",
     "or": "OR",
-    "retry": "Try again"
+    "retry": "Try again",
+    "clear": "Clear"
   },
   "promoCode": {
     "activated": "Promo code successfully activated!",
@@ -1739,13 +1741,23 @@
     "welcomeSocialProof": "Over {{total}} meals already created to eat better",
     "photoTracking": {
       "title": "One photo, your nutrition.",
-      "subtitle": "Your week is ready. Want to try tracking what’s on your plate too?",
+      "subtitle": "Snap your plate: CookEat recognizes each food and works out your calories and macros.",
       "cardTitle": "Take a photo of your meal",
       "correct": "Foods appear one by one. Adjust the amounts before saving.",
       "try": "Analyse my meal",
       "later": "Later",
       "savedTitle": "Your first meal is tracked!",
-      "savedBody": "It’s saved in your journal. Let’s finish setting up."
+      "savedBody": "It’s saved in your journal. Let’s finish setting up.",
+      "demo": {
+        "example": "Example",
+        "chicken": "Chicken",
+        "quinoa": "Quinoa",
+        "avocado": "Avocado",
+        "tomatoes": "Tomatoes",
+        "photo": "Photo",
+        "analysis": "Analysis",
+        "summary": "Your summary"
+      }
     }
   },
   "weeklyOnboarding": {
@@ -1812,7 +1824,7 @@
     "add": "Add",
     "noIngredients": "No ingredients added",
     "allowOtherIngredients": "Allow other ingredients",
-    "allowOtherIngredientsDescription": "Allow the AI to suggest additional ingredients to enrich the recipe",
+    "allowOtherIngredientsDescription": "Allow CookEat to suggest additional ingredients to enrich the recipe",
     "generating": "Generating...",
     "generate": "Generate my recipe",
     "soup": "Soups",
@@ -1909,6 +1921,7 @@
     "nutritionalInfoTitle": "Nutritional Information",
     "nutritionalInfoContent": "These values are estimates based on the provided ingredients and servings.",
     "illustration": "Illustration",
+    "minimumServingsNote": "Make this recipe for at least {{count}} servings: any less would need under half of an ingredient that can't be split ({{ingredient}}). Keep the extra portions for later.",
     "reloadImage": "Search for another image",
     "imageSearchNoResult": "No other relevant image was found.",
     "cookingTime": "Cooking time",
@@ -1984,6 +1997,7 @@
   },
   "planningLoading": {
     "title": "Building your meal plan",
+    "durationHint": "This can take up to 30 seconds.",
     "subtitle": "We are creating every recipe for your week.",
     "error": "Generation failed",
     "messages": [
@@ -2087,7 +2101,7 @@
     "onboarding": {
       "video": {
         "title": "Film your ingredients",
-        "message": "Film your fridge, pantry or countertop. The AI will identify all visible ingredients to suggest tailor-made recipes.",
+        "message": "Film your fridge, pantry or countertop. CookEat will identify all visible ingredients to suggest tailor-made recipes.",
         "button": "Got it!"
       },
       "photo": {
@@ -2113,9 +2127,13 @@
     "importingDescription": "We're analyzing the video and creating your recipe. This may take a few seconds.",
     "progressStep": {
       "init": "Preparing...",
-      "extracting_transcript": "Extracting transcript...",
+      "fetching_video": "Fetching the video…",
+      "extracting_transcript": "Reading the subtitles…",
+      "downloading_audio": "Listening to the video…",
+      "transcribing": "Transcribing the instructions…",
       "creating_recipe": "Creating recipe...",
-      "saving": "Saving..."
+      "saving": "Saving...",
+      "done": "Recipe ready!"
     },
     "success": "Recipe imported!",
     "errorTitle": "Import failed",
@@ -2136,7 +2154,7 @@
     "step": "Step {{current}} of {{total}}",
     "secondaryStepLink": "Paste the video link",
     "secondaryStepRecipe": "CookEat creates the recipe",
-    "description": "Share the video to CookEat and the AI handles everything: ingredients, steps and nutrition facts.",
+    "description": "Share the video to CookEat and we handle everything: ingredients, steps and nutrition facts.",
     "howItWorks": "How does it work?",
     "step1": "1. Open TikTok or Instagram",
     "step2": "2. Tap \"Share\"",
@@ -2199,11 +2217,11 @@
       "75": "Over an hour"
     },
     "activityDescriptions": {
-      "sedentary": "Mostly sitting, little walking.",
-      "light": "Some walking each day.",
-      "moderate": "Often standing and walking regularly.",
-      "active": "Lots of walking or a physical job.",
-      "very_active": "Sustained physical effort throughout the day."
+      "sedentary": "You spend most of your day sitting and do little walking.",
+      "light": "Your day is mostly seated, with a few short walks.",
+      "moderate": "You alternate between sitting, standing and walking during the day.",
+      "active": "You spend much of the day walking or doing physical tasks.",
+      "very_active": "You often carry heavy loads or do demanding manual work."
     },
     "caloriesPerDay": "kcal per day",
     "toward": "Working toward {{weight}} kg",
@@ -2457,7 +2475,8 @@
     "emptyScan": "No ingredients found. Add some or take another photo.",
     "emptyManual": "Add the ingredients you want to use this week.",
     "limit": "You can add up to 100 ingredients.",
-    "analyzePhotos": "Analyse photos"
+    "analyzePhotos": "Analyse photos",
+    "help": "CookEat will use them first in your meals this week."
   },
   "cookingPreferences": {
     "levelTitle": "How comfortable are you cooking?",
@@ -2487,6 +2506,16 @@
     "adaptedNote": "Personal AI adaptation. Quantities, nutrition and prices are estimates; check product labels.",
     "retry": "Try again"
   },
+  "water": {
+    "title": "Hydration",
+    "reached": "Goal reached, well done!",
+    "remaining": "{{liters}} L left to drink today",
+    "progressLabel": "{{current}} liters drunk out of {{goal}} liters",
+    "bottleHint": "{{count}} bottles of {{ml}} ml, based on your weight and activity",
+    "remove": "Remove a glass",
+    "addGlass": "Glass {{ml}} ml",
+    "addBottle": "Bottle {{ml}} ml"
+  },
   "tracking": {
     "mealPhoto": "Meal photo",
     "createFood": "Create a food",
@@ -2500,12 +2529,23 @@
     "portionNutritionNote": "Enter calories and macros for the amount eaten, not per 100 g.",
     "mealNutritionNote": "Enter calories and macros for the whole meal. You can also log a meal without listing its foods.",
     "manualTotalNote": "Manually entered totals. Changing foods will recalculate these totals.",
-    "nutritionInputHelp": "Fill in all four values. Decimals and 0 are allowed.",
+    "nutritionInputHelp": "Fill in calories and protein. Carbs and fat are optional. Decimals and 0 are allowed.",
+    "optional": "optional",
     "applyNutrition": "Apply",
     "addManually": "Add without a photo",
+    "addManuallyHint": "Describe it to us or enter its values",
     "manualTitle": "Meal without a photo",
     "withoutPhoto": "No photo",
-    "manualBody": "Forgot to take a photo? Add your foods and quantities to complete your log.",
+    "manualBody": "No photo? Describe your meal to us, enter its calories and macros directly, or add foods one by one.",
+    "describeTitle": "Describe your meal to us",
+    "describePlaceholder": "E.g. a burger, fries and a coke",
+    "describeSubtitle": "Tell us what you ate, we fill in everything",
+    "describeWelcome": "What did you eat? Describe your meal, even roughly, and I’ll add the foods, quantities and nutrition.",
+    "describeExample": "Lunch: a burger, fries and a coke",
+    "describeBreakfastExample": "Breakfast: 2 slices of toast with butter and jam and a latte",
+    "enterMealNutrition": "Enter calories and macros",
+    "enterMealNutritionHint": "Already know the numbers? Enter them directly.",
+    "emptyMealHint": "Give it a name, then describe it or add its foods.",
     "mealCategory": "Meal type",
     "title": "My tracking",
     "dailyJournal": "EVERY MEAL COUNTS",
@@ -2548,7 +2588,7 @@
     "viewDay": "See my day",
     "catalogueCandidate": "This meal is waiting for a new photo and review before joining CookEat recipes.",
     "analyzing": "Reading your plate…",
-    "analyzingNote": "AI is identifying the foods and estimating quantities.",
+    "analyzingNote": "We're identifying the foods and estimating quantities.",
     "revealing": "Your plate comes to life",
     "skip": "Skip",
     "yourMeal": "YOUR MEAL",
@@ -2560,6 +2600,8 @@
     "foods": "The foods",
     "correctNote": "Edit a food or its quantity: calories and macros update instantly.",
     "foodGrams": "{{name}} quantity in grams",
+    "lessGrams": "Remove {{step}} g",
+    "moreGrams": "Add {{step}} g",
     "hiddenEstimate": "Non-visible ingredient, estimated",
     "noReference": "Food reference needed",
     "chooseReference": "Choose a food",
@@ -2589,6 +2631,7 @@
     "mealEnergy": "MEAL ENERGY",
     "kcalInMeal": "kcal in this meal",
     "macroDistribution": "Protein, carb and fat distribution",
+    "energyShare": "{{percent}}% of kcal",
     "nutritionEstimateNote": "Meal estimate, including sauces · foods and quantities are editable.",
     "estimatedFood": "Estimated composition · edit if needed",
     "mealRecap": "My meal",
@@ -2598,12 +2641,13 @@
     "shareReferenceNote": "With my permission, my photo stays a private reference for up to 30 days to create a new image. My photo will never be published.",
     "buildupNote": "The summary updates with each food.",
     "recognitionCount": "{{count}} / {{total}} foods recognised",
+    "recognitionSoFar": "{{count}} food(s) found · still analyzing…",
     "recognitionWaiting": "Foods will appear here.",
     "buildingSummary": "Building your summary…",
     "backToCamera": "Back to camera",
     "captureHelp": "How to photograph your meal",
     "captureHelpBody": "Frame the whole plate in good light, from above or slightly to the side. Keep hands and packaging away from the food. After analysis, check the foods and quantities. You can also choose a photo from your gallery.",
-    "chatTitle": "Adjust my nutrition with AI",
+    "chatTitle": "Adjust my nutrition",
     "chatSubtitle": "Wrong food or quantity? Correct it here.",
     "chatQuantityExample": "How can I correct an estimated quantity?",
     "chatQuestionExample": "Which foods provide the most protein in this meal?",
@@ -2641,5 +2685,21 @@
     "description": "Sources and licenses for adapted recipes in the CookEat catalogue.",
     "empty": "No recipes found.",
     "adaptations": "Translation, quantities and nutrition estimates adapted by CookEat. Adapted texts retain the stated license."
+  },
+  "mealReminders": {
+    "title": "Meal reminders",
+    "rowDescription": "Before each meal, so you remember the photo",
+    "subtitle": "We’ll nudge you right before each meal so you don’t forget to take a photo of your plate.",
+    "breakfast": "Breakfast",
+    "lunch": "Lunch",
+    "dinner": "Dinner",
+    "earlier": "Move the {{meal}} reminder earlier",
+    "later": "Move the {{meal}} reminder later",
+    "timeLabel": "{{meal}}: reminder at {{time}}",
+    "save": "Save",
+    "reset": "Restore default times",
+    "enableNotifications": "Notifications are turned off. Tap here to turn them on.",
+    "loadError": "Couldn’t load your reminders. Try again.",
+    "saveError": "Couldn’t save your times. Try again."
   }
 }

@@ -66,9 +66,9 @@ export default function FitnessOnboardingScreen() {
     ...(requiresWeightTarget(answers.fitnessGoal) ? [
       { id: 'targetChangeKg', kind: 'number' as const, title: t(changeTitleKey), subtitle: t('fitnessOnboarding.change.subtitle'), unit: 'kg', min: 1, max: 100 },
     ] : []),
-    { id: 'activityLevel', kind: 'single', title: t('fitnessOnboarding.activity.title'), subtitle: t('fitnessOnboarding.activity.subtitle'), options: [option('activity', 'sedentary', '🪑'), option('activity', 'light', '🚶'), option('activity', 'moderate', '🏃'), option('activity', 'active', '🏋️'), option('activity', 'very_active', '⚡️')] },
     { id: 'trainingDays', kind: 'single', title: t('fitnessOnboarding.training.title'), subtitle: t('fitnessOnboarding.training.subtitle'), options: Array.from({ length: 8 }, (_, day) => option('training', String(day), day === 0 ? '😌' : '🔥')) },
     ...(Number(answers.trainingDays) > 0 ? [{ id: 'trainingDurationMinutes', kind: 'single' as const, title: t('nutritionEstimate.durationTitle'), subtitle: t('nutritionEstimate.durationSubtitle'), options: [20, 45, 75].map(minutes => ({ value: String(minutes), emoji: '⏱️', label: t(`nutritionEstimate.durations.${minutes}`) })) }] : []),
+    { id: 'activityLevel', kind: 'single', title: t('fitnessOnboarding.activity.title'), subtitle: t(Number(answers.trainingDays) > 0 ? 'fitnessOnboarding.activity.subtitleWithTraining' : 'fitnessOnboarding.activity.subtitle'), options: [option('activity', 'sedentary', '🪑'), option('activity', 'light', '🚶'), option('activity', 'moderate', '👣'), option('activity', 'active', '📦'), option('activity', 'very_active', '🧱')] },
     { id: 'profileReflection', kind: 'interstitial', hideProgress: true, title: t('fitnessOnboarding.interstitials.profile.title'), subtitle: t('fitnessOnboarding.interstitials.profile.subtitle') },
     { id: 'cookingLevel', kind: 'single', title: t('cookingPreferences.levelTitle'), options: COOKING_LEVELS.map(value => ({ value, emoji: { beginner: '🍳', medium: '🥘', advanced: '👨‍🍳' }[value], label: t(`onboarding.formQuestions.${value}`) })) },
     { id: 'mealBudget', kind: 'single', title: t('cookingPreferences.budgetTitle'), subtitle: t('cookingPreferences.budgetSubtitle'), options: MEAL_BUDGETS.map(value => ({ value, emoji: { budget_small: '🪙', budget_medium: '🛒', budget_large: '✨' }[value], label: t(`onboarding.formQuestions.${value}`) })) },
@@ -84,6 +84,12 @@ export default function FitnessOnboardingScreen() {
 
   const step = steps[index] || steps[steps.length - 1];
   const value = answers[step.id];
+  const stepIndex = steps.findIndex(item => item.id === step.id);
+  useEffect(() => {
+    void analytics.track('fitness_onboarding_step_viewed', {
+      step_id: step.id, step_index: stepIndex,
+    });
+  }, [step.id, stepIndex]);
   const profile = useMemo<FitnessProfile>(() => {
     const base: FitnessProfile = {
       goal: normalizeFitnessGoal(answers.fitnessGoal),
@@ -147,7 +153,10 @@ export default function FitnessOnboardingScreen() {
       const mobileId = await getUniqueDeviceId();
       const timezone = Localization.getCalendars()[0]?.timeZone || undefined;
       const response = await apiService.saveOnboardingAnswers(serialized, mobileId, timezone);
-      if (response.data?.userId) await AsyncStorage.setItem('userId', response.data.userId);
+      if (response.data?.userId) {
+        await AsyncStorage.setItem('userId', response.data.userId);
+        await analytics.identify(response.data.userId);
+      }
     } catch { /* La copie locale permet de reprendre le parcours hors ligne. */ }
   };
 
@@ -219,7 +228,8 @@ export default function FitnessOnboardingScreen() {
           {step.kind === 'ready' && <ReadyContent title={step.title} subtitle={step.subtitle} t={t} windowWidth={windowWidth} />}
           {(step.kind === 'single' || step.kind === 'multi' || step.kind === 'number') && (
             <>
-              <Text style={styles.title}>{step.title}</Text>
+              {/* The subtitle carries the gap before the choices; a lone title needs the same. */}
+              <Text style={[styles.title, !step.subtitle && styles.titleWithoutSubtitle]}>{step.title}</Text>
               {!!step.subtitle && <Text style={styles.subtitle}>{step.subtitle}</Text>}
               {step.kind === 'number' && (
                 <View style={styles.numberRow}>
@@ -320,7 +330,7 @@ function ReadyContent({ title, subtitle, t, windowWidth }: { title: string; subt
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: designTheme.background },
+  root: { flex: 1, backgroundColor: designTheme.cream },
   progressHeader: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingBottom: 5, gap: 14 },
   backButton: { width: 36, height: 36, borderRadius: AppRadii.control, backgroundColor: '#F1F2F5', justifyContent: 'center', alignItems: 'center' },
   progressTrackContainer: { flex: 1, height: 36, justifyContent: 'center' },
@@ -328,6 +338,7 @@ const styles = StyleSheet.create({
   progressMascot: { width: rw(0.25), height: rw(0.25), alignSelf: 'center', transform: [{ rotate: '20deg' }] },
   content: { flex: 1 },
   title: { textAlign: 'center', fontSize: rw(0.08), lineHeight: rw(0.1), fontFamily: 'Degular', color: Colors.light.text },
+  titleWithoutSubtitle: { marginBottom: 32 },
   subtitle: { marginTop: 12, marginBottom: 32, paddingHorizontal: 12, textAlign: 'center', fontSize: 16, lineHeight: 22, fontFamily: 'CronosPro', color: Colors.light.textSecondary },
   cardsContainer: { width: '100%', gap: 16, paddingHorizontal: Platform.OS === 'android' ? 4 : 0, paddingBottom: 12 },
   card: { minHeight: 68, backgroundColor: designTheme.surface, borderRadius: AppRadii.pill, paddingHorizontal: 20, paddingVertical: 16, borderWidth: 2, borderColor: 'transparent', flexDirection: 'row', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 3 },

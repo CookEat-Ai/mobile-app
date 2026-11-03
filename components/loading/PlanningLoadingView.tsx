@@ -1,11 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { waitForPlanningMinimumDuration } from '../../services/weeklyPlanning';
+import { useTranslation } from 'react-i18next';
 import { ClassicLoadingView } from './ClassicLoadingView';
 
 // No measured percentage is available from the API. Animate a travelling bar
 // while waiting, then fill it only when the validated plan is really ready.
-export function PlanningLoadingView({ ready = false, onComplete }: { ready?: boolean; onComplete?: () => void }) {
-  return <ClassicLoadingView messageKey="planningLoading.title" mode="request" ready={ready} onComplete={onComplete} />;
+// A full search can take up to ~30 s; the onboarding demo is bounded to 5 s and hides the hint.
+export function PlanningLoadingView({ ready = false, onComplete, durationHint = true }: { ready?: boolean; onComplete?: () => void; durationHint?: boolean }) {
+  const { t } = useTranslation();
+  return <ClassicLoadingView messageKey="planningLoading.title" mode="request" ready={ready} onComplete={onComplete} hint={durationHint ? t('planningLoading.durationHint') : undefined} />;
 }
 
 export function usePlanningLoading() {

@@ -9,7 +9,7 @@ let pendingReview: ReturnType<typeof setTimeout> | null = null;
 export function schedulePlanningReview(planId: string, duringOnboarding = false) {
   if (pendingReview) clearTimeout(pendingReview);
   pendingReview = null;
-  if (duringOnboarding) return;
+  if (__DEV__ || duringOnboarding) return;
 
   pendingReview = setTimeout(async () => {
     pendingReview = null;

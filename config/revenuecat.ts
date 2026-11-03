@@ -56,7 +56,8 @@ class RevenueCatService {
   async initialize(appUserID?: string) {
     if (!this.isInitialized && !this.initializationPromise) {
       this.initializationPromise = (async () => {
-        const initialUserId = appUserID || await AsyncStorage.getItem('userId');
+        const storedUserId = appUserID || await AsyncStorage.getItem('userId');
+        const initialUserId = analytics.getCanonicalUserId() || storedUserId;
         await Purchases.configure({
           apiKey: Platform.OS === 'ios' ? REVENUECAT_API_KEY.ios : REVENUECAT_API_KEY.android,
           appUserID: initialUserId || undefined,
@@ -82,22 +83,19 @@ class RevenueCatService {
     // Le paywall peut avoir déclenché l'initialisation anonyme avant que le
     // layout ait fini de lire l'identité stable. Dans ce cas on fusionne dès
     // qu'elle arrive, sans reconfigurer deux fois le SDK natif.
-    if (appUserID) await this.syncAppUserId(appUserID);
+    const latestUserId = analytics.getCanonicalUserId() || appUserID;
+    if (latestUserId) await this.syncAppUserId(latestUserId);
   }
 
   async syncAppUserId(appUserID?: string | null): Promise<void> {
     try {
-      const targetUserId = String(appUserID || '').trim();
-      if (!targetUserId) return;
       if (!this.isInitialized) await this.initialize();
+      const targetUserId = analytics.getCanonicalUserId() || String(appUserID || '').trim();
+      if (!targetUserId) return;
 
-      const currentAppUserId = await this.getSafeAppUserId();
-      if (currentAppUserId === targetUserId) return;
-
-      // logIn fusionne l'utilisateur anonyme local avec l'identité stable serveur.
-      await Purchases.logIn(targetUserId);
-      await this.syncAttributionIdentifiers(targetUserId);
-      console.log(`🔐 RevenueCat logIn appliqué (${currentAppUserId || 'anonymous'} -> ${targetUserId})`);
+      // Un seul propriétaire pour logIn/logOut et les attributs associés :
+      // AnalyticsService sérialise ces mutations avec les changements de compte.
+      await analytics.identify(targetUserId);
     } catch (error) {
       console.error('❌ Erreur sync RevenueCat appUserID:', error);
     }
@@ -110,7 +108,8 @@ class RevenueCatService {
         ...(await appsFlyerService.getRevenueCatAttributionAttributes()),
       };
 
-      if (appUserID) attributes.$posthogUserId = appUserID;
+      const posthogId = analytics.getPostHogDistinctId() || appUserID;
+      if (posthogId) attributes.$posthogUserId = posthogId;
       if (appsFlyerUID) attributes.$appsflyerId = appsFlyerUID;
 
       if (Object.keys(attributes).length > 0) {

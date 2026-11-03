@@ -70,7 +70,7 @@ function PantrySearchContent({ visible, ingredients, onChange, onClose }: Props)
   const close = () => { Keyboard.dismiss(); onClose(); };
   return <KeyboardAvoidingView style={appStyles.screen} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
     <View style={[styles.header, { paddingTop: insets.top + 12, paddingLeft: gutter + insets.left, paddingRight: gutter + insets.right }]}>
-      <Text accessibilityRole="header" style={[appStyles.section, styles.flex]}>{t('pantryReview.addTitle')}</Text>
+      <Text accessibilityRole="header" style={[styles.title, styles.flex]}>{t('pantryReview.addTitle')}</Text>
       <NavigationIconButton kind="close" onPress={close} />
     </View>
     <View style={[styles.search, { marginLeft: gutter + insets.left, marginRight: gutter + insets.right }]}>
@@ -92,43 +92,52 @@ function PantrySearchContent({ visible, ingredients, onChange, onClose }: Props)
               else setExpandedGroups(current => current.includes(group.id) ? current.filter(id => id !== group.id) : [...current, group.id]);
               void feedback.selection();
             }} style={[styles.category, expanded && styles.categoryExpanded]}>
-            <Text accessible={false} style={styles.emoji}>{group.icon}</Text><Text style={[styles.categoryName, styles.flex]}>{group.title}</Text>
+            <View style={styles.emojiCircle}><Text accessible={false} style={styles.emoji}>{group.icon}</Text></View><Text style={[styles.categoryName, styles.flex]}>{group.title}</Text>
             {!!count && <View style={styles.countBadge}><Text style={styles.categoryCount}>{count}</Text></View>}
-            <Ionicons name={expanded ? 'chevron-up' : 'chevron-down'} size={22} color={theme.ink} />
+            <Ionicons name={expanded ? 'chevron-up' : 'chevron-down'} size={20} color={theme.muted} />
           </Pressable>;
         }
         const { item } = row;
         const selected = ingredients.some(name => pantryIngredientKey(name) === pantryIngredientKey(item.name));
         const disabled = !selected && ingredients.length >= 100;
-        return <Pressable accessibilityRole="checkbox" accessibilityLabel={item.name} accessibilityState={{ checked: selected, disabled }} disabled={disabled} onPress={() => toggle(item.name)} style={[styles.row, styles.groupIngredient, disabled && styles.disabled]}>
-          <Text accessible={false} style={styles.emoji}>{item.icon}</Text><Text style={[styles.name, styles.flex]}>{item.name}</Text>
-          <View style={[styles.indicator, selected && styles.selected]}><Ionicons name={selected ? 'checkmark' : 'add'} size={22} color={theme.onPrimary} /></View>
+        return <Pressable accessibilityRole="checkbox" accessibilityLabel={item.name} accessibilityState={{ checked: selected, disabled }} disabled={disabled} onPress={() => toggle(item.name)} style={[styles.row, selected && styles.rowSelected, disabled && styles.disabled]}>
+          <Text accessible={false} style={styles.rowEmoji}>{item.icon}</Text><Text style={[styles.name, styles.flex]}>{item.name}</Text>
+          <View style={[styles.indicator, selected && styles.selected]}><Ionicons name={selected ? 'checkmark' : 'add'} size={20} color={selected ? theme.onPrimary : theme.ink} /></View>
         </Pressable>;
       }}
       ListEmptyComponent={<View style={styles.empty}>
         <Text style={appStyles.subtitle}>{t('pantryReview.noResults')}</Text>
-        {!!query.trim() && <Pressable accessibilityRole="button" style={styles.manual} onPress={addManual}><Ionicons name="add" size={22} color={theme.ink} /><Text style={[appStyles.textAction, styles.flex]}>{t('pantryReview.addName', { name: query.trim() })}</Text></Pressable>}
+        {!!query.trim() && <Pressable accessibilityRole="button" style={styles.manual} onPress={addManual}><View style={styles.manualIcon}><Ionicons name="add" size={22} color={theme.onPrimary} /></View><Text style={[appStyles.textAction, styles.flex]}>{t('pantryReview.addName', { name: query.trim() })}</Text></Pressable>}
       </View>} />
     <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 24), paddingLeft: gutter + insets.left, paddingRight: gutter + insets.right }]}>
-      {!!message && <Text accessibilityLiveRegion="polite" style={styles.message}>{message}</Text>}
-      <Text style={styles.count}>{t('pantryReview.selectedCount', { count: ingredients.length })}</Text>
+      <View style={styles.status}>
+        <Text style={styles.count}>{t('pantryReview.selectedCount', { count: ingredients.length })}</Text>
+        {!!message && <Text accessibilityLiveRegion="polite" style={styles.message} numberOfLines={1}>{message}</Text>}
+      </View>
       <Pressable accessibilityRole="button" style={[appStyles.button, styles.button]} onPress={close}><Text style={appStyles.buttonText}>{t('pantryReview.done')}</Text></Pressable>
     </View>
   </KeyboardAvoidingView>;
 }
 
+const shadow = { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 2 };
 const styles = StyleSheet.create({
   flex: { flex: 1 }, header: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingBottom: 18 },
-  search: { minHeight: 54, flexDirection: 'row', alignItems: 'center', gap: 10, paddingLeft: 14, borderWidth: 1, borderColor: theme.line, borderRadius: AppRadii.control, backgroundColor: theme.surface },
-  input: { flex: 1, fontFamily: 'CronosPro', fontSize: 18, color: theme.ink, paddingVertical: 14 }, clear: { minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' },
-  label: { fontFamily: 'CronosProBold', fontSize: 16, color: theme.muted, paddingVertical: 16 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 68, padding: 12, marginBottom: 8, borderRadius: AppRadii.control, backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.line },
-  groupIngredient: { marginLeft: 12 },
-  category: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 68, padding: 14, marginBottom: 8, borderRadius: AppRadii.control, backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.line },
-  categoryExpanded: { backgroundColor: theme.yellowSoft }, categoryName: { fontFamily: 'Degular', fontSize: 20, color: theme.ink },
-  countBadge: { minWidth: 28, height: 28, borderRadius: AppRadii.control, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.yellow }, categoryCount: { fontFamily: 'CronosProBold', fontSize: 15, color: theme.onPrimary },
-  emoji: { fontSize: 28, width: 36, textAlign: 'center' }, name: { fontFamily: 'CronosProBold', fontSize: 18, color: theme.ink },
-  indicator: { width: 36, height: 36, borderRadius: AppRadii.control, backgroundColor: theme.yellowSoft, alignItems: 'center', justifyContent: 'center' }, selected: { backgroundColor: theme.yellow },
-  empty: { gap: 16 }, manual: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 56, padding: 14, borderRadius: AppRadii.control, backgroundColor: theme.yellowSoft },
-  button: { width: '100%', maxWidth: FORM_CONTENT_MAX_WIDTH, alignSelf: 'center' }, footer: { paddingTop: 12, gap: 10 }, count: { fontFamily: 'CronosPro', fontSize: 15, color: theme.muted }, message: { fontFamily: 'CronosProBold', fontSize: 16, color: theme.ink }, disabled: { opacity: 0.45 },
+  title: { fontFamily: 'Degular', fontSize: 28, lineHeight: 32, color: theme.ink },
+  search: { minHeight: 56, flexDirection: 'row', alignItems: 'center', gap: 10, paddingLeft: 18, borderRadius: AppRadii.pill, backgroundColor: theme.surface, ...shadow },
+  input: { flex: 1, fontFamily: 'CronosPro', fontSize: 17, color: theme.ink, paddingVertical: 14 }, clear: { minWidth: 48, minHeight: 48, justifyContent: 'center', alignItems: 'center' },
+  label: { fontFamily: 'Degular', fontSize: 17, color: theme.muted, paddingTop: 22, paddingBottom: 12 },
+  category: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 64, paddingLeft: 10, paddingRight: 16, marginBottom: 10, borderRadius: AppRadii.pill, backgroundColor: theme.surface, ...shadow },
+  categoryExpanded: { backgroundColor: theme.yellowSoft }, categoryName: { fontFamily: 'Degular', fontSize: 19, color: theme.ink },
+  emojiCircle: { width: 44, height: 44, borderRadius: AppRadii.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.cream },
+  emoji: { fontSize: 24 },
+  countBadge: { minWidth: 26, height: 26, paddingHorizontal: 7, borderRadius: AppRadii.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.yellow }, categoryCount: { fontFamily: 'CronosProBold', fontSize: 14, color: theme.onPrimary },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 54, paddingLeft: 16, paddingRight: 8, marginLeft: 18, marginBottom: 8, borderRadius: AppRadii.pill, backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.line },
+  rowSelected: { borderColor: theme.yellow, backgroundColor: theme.yellowSoft },
+  rowEmoji: { fontSize: 22, width: 28, textAlign: 'center' }, name: { fontFamily: 'CronosProBold', fontSize: 17, color: theme.ink },
+  indicator: { width: 38, height: 38, borderRadius: AppRadii.pill, backgroundColor: theme.cream, alignItems: 'center', justifyContent: 'center' }, selected: { backgroundColor: theme.yellow },
+  empty: { gap: 16 }, manual: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 64, paddingHorizontal: 14, borderRadius: AppRadii.pill, backgroundColor: theme.surface, ...shadow },
+  manualIcon: { width: 34, height: 34, borderRadius: AppRadii.pill, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.yellow },
+  button: { width: '100%', maxWidth: FORM_CONTENT_MAX_WIDTH, alignSelf: 'center' }, footer: { paddingTop: 12, gap: 10 },
+  status: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
+  count: { fontFamily: 'CronosPro', fontSize: 15, color: theme.muted }, message: { flexShrink: 1, fontFamily: 'CronosProBold', fontSize: 15, color: theme.ink }, disabled: { opacity: 0.45 },
 });

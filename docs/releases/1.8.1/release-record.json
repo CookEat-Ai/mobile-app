@@ -1,0 +1,22 @@
+{
+  "version": "1.8.1",
+  "date": "2026-11-03",
+  "sourceBranch": "release/mobile-1.8.1-20261103",
+  "baseCommit": "68439ee29aeee1814f2a647d2824c255ba1253fa",
+  "apiMutationAuthorized": false,
+  "apiDeployment": "unchanged by explicit user instruction",
+  "productionApiUrl": "https://cookeat.info/api",
+  "runtimePolicy": "fingerprint",
+  "checks": {
+    "typescript": "PASS",
+    "lint": "0 errors; 57 warnings",
+    "expoDoctor": "21/21 PASS",
+    "tests": "61 PASS",
+    "iosMetroExport": "PASS with EAS production environment",
+    "androidMetroExport": "PASS with EAS production environment",
+    "secretScan": "PASS",
+    "deviceQA": "pending"
+  },
+  "storeReleaseMode": "MANUAL; Google managed publishing retained",
+  "storeState": "Builds not yet requested"
+}

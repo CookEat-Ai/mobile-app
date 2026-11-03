@@ -1067,6 +1067,7 @@ export default function PaywallScreen() {
               onClose={handleDismiss}
               closeDelayMs={3000}
               testimonialKey={paywallCopy.testimonialKey}
+              onTestimonialPress={__DEV__ ? () => openSecretCodeEntry('testimonial_press') : undefined}
               isPurchasing={isPurchasing}
               isRestoring={isRestoring}
             />
@@ -1075,6 +1076,7 @@ export default function PaywallScreen() {
               key={offering.identifier || 'default'}
               offering={offering}
               copy={paywallCopy}
+              onTestimonialPress={__DEV__ ? () => openSecretCodeEntry('testimonial_press') : undefined}
               onPurchase={handlePurchasePackage}
               onRestore={handleRestorePress}
               onClose={handleDismiss}
@@ -1105,7 +1107,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
   },
   codeCard: {
-    backgroundColor: designTheme.background,
+    backgroundColor: designTheme.cream,
     borderRadius: AppRadii.card,
     padding: 24,
     gap: 14,
@@ -1181,7 +1183,7 @@ const styles = StyleSheet.create({
   wheelContainer: {
     paddingTop: 70,
     alignItems: 'center',
-    backgroundColor: designTheme.background,
+    backgroundColor: designTheme.cream,
   },
   wheelHeader: {
     paddingHorizontal: 30,

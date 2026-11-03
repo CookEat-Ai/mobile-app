@@ -107,7 +107,7 @@ export default function TrajectoryScreen() {
   </View>;
 }
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: designTheme.background },
+  root: { flex: 1, backgroundColor: designTheme.cream },
   content: { width: '100%', maxWidth: FORM_CONTENT_MAX_WIDTH, alignSelf: 'center', paddingHorizontal: 24, paddingTop: 16 },
   title: { marginTop: 16, textAlign: 'center', fontFamily: 'Degular', fontSize: 30, lineHeight: 36, color: Colors.light.text },
   subtitle: { marginTop: 12, textAlign: 'center', fontFamily: 'CronosPro', fontSize: 18, lineHeight: 24, color: Colors.light.textSecondary },

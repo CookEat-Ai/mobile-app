@@ -1,4 +1,5 @@
 import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
+import { AppBackground } from '../components/ui/AppBackground';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Animated,
@@ -23,6 +24,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUniqueDeviceId } from '../services/deviceStorage';
 import { savePendingOnboardingPlanImport } from '../services/weeklyPlanning';
 
+/**
+ * Palier de l'étape suivante (miroir de VIDEO_IMPORT_STEP_PROGRESS côté API) et durée
+ * typique de l'étape : la barre avance d'elle-même pendant l'attente, sans dépasser le
+ * palier tant que le serveur ne l'a pas atteint.
+ */
+const IMPORT_STEP_PACING: Record<string, { next: number; durationMs: number }> = {
+  init: { next: 5, durationMs: 2000 },
+  fetching_video: { next: 30, durationMs: 25000 },
+  extracting_transcript: { next: 55, durationMs: 15000 },
+  downloading_audio: { next: 42, durationMs: 10000 },
+  transcribing: { next: 55, durationMs: 8000 },
+  creating_recipe: { next: 92, durationMs: 25000 },
+  saving: { next: 100, durationMs: 3000 },
+};
 
 export default function ShareIntentScreen() {
   const { t } = useTranslation();
@@ -78,6 +93,10 @@ export default function ShareIntentScreen() {
   const [isQuotaError, setIsQuotaError] = useState(false);
   const [recipe, setRecipe] = useState<any>(null);
   const [progressStep, setProgressStep] = useState<string>('init');
+  const [progressValue, setProgressValue] = useState(0);
+  // La recette ne s'ouvre qu'une fois la barre arrivée à 100 %.
+  const [progressComplete, setProgressComplete] = useState(false);
+  const handleProgressComplete = useCallback(() => setProgressComplete(true), []);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const [attempt, setAttempt] = useState(0);
@@ -91,7 +110,7 @@ export default function ShareIntentScreen() {
   }, [fadeAnim]);
 
   useEffect(() => {
-    if (status !== 'success' || !recipe) return;
+    if (status !== 'success' || !recipe || !progressComplete) return;
 
     // Pendant l'onboarding, la recette importée *est* l'aha moment : on va
     // directement sur la fiche, qui affiche son propre bouton de continuation et
@@ -109,7 +128,7 @@ export default function ShareIntentScreen() {
             ...(params.isPlanImport === 'true' ? { isPlanImport: 'true' } : {}),
           },
         });
-      }, 1500);
+      }, 400);
       return () => clearTimeout(timer);
     }
 
@@ -118,15 +137,15 @@ export default function ShareIntentScreen() {
       setTimeout(() => {
         router.push(importedRecipeRoute(recipe.id));
       }, 100);
-    }, 1500);
+    }, 400);
     return () => clearTimeout(timer);
-  }, [status, recipe, router, isOnboarding, params.onboardingNext, params.isPlanImport]);
+  }, [status, recipe, progressComplete, router, isOnboarding, params.onboardingNext, params.isPlanImport]);
 
   useEffect(() => {
     let active = true;
     const abort = new AbortController();
     setStatus('loading'); setRecipe(null); setIsQuotaError(false);
-    setErrorMessage(''); setProgressStep('init');
+    setErrorMessage(''); setProgressStep('init'); setProgressValue(0); setProgressComplete(false);
     const fail = (message: string, quota = false) => {
       if (!active) return;
       setIsQuotaError(quota); setErrorMessage(message); setStatus('error');
@@ -159,8 +178,9 @@ export default function ShareIntentScreen() {
           if (!active) return;
           const response = await apiService.importRecipeFromVideo(params.url, isSubscribed, {
             signal: abort.signal,
-            onProgress: (_value, step) => {
+            onProgress: (value, step) => {
               if (!active) return;
+              setProgressValue(value);
               if (step) setProgressStep(step);
             },
           });
@@ -203,21 +223,25 @@ export default function ShareIntentScreen() {
     if (params.url) setAttempt(value => value + 1);
   };
 
-  if (status === 'loading') return <ClassicLoadingView mode="request" messageKey={`shareIntent.progressStep.${progressStep}`} />;
+  if (status !== 'error') {
+    const step = IMPORT_STEP_PACING[progressStep] ?? IMPORT_STEP_PACING.init;
+    return (
+      <ClassicLoadingView
+        mode="progress"
+        value={progressValue}
+        nextValue={step.next}
+        stepDurationMs={step.durationMs}
+        ready={status === 'success'}
+        onComplete={handleProgressComplete}
+        messageKey={`shareIntent.progressStep.${status === 'success' ? 'done' : progressStep}`}
+      />
+    );
+  }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
+      <AppBackground />
       <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
-        {status === 'success' && recipe && (
-          <>
-            <View style={styles.successIcon}>
-              <Ionicons name="checkmark-circle" size={80} color={Colors.light.button} />
-            </View>
-            <Text style={styles.title}>{t('shareIntent.success')}</Text>
-            <Text style={styles.recipeTitle}>{recipe.title}</Text>
-          </>
-        )}
-
         {status === 'error' && (
           <>
             <View style={styles.errorIcon}>
@@ -280,15 +304,6 @@ const styles = StyleSheet.create({
     color: designTheme.muted,
     textAlign: 'center',
     paddingHorizontal: 20,
-  },
-  recipeTitle: {
-    fontFamily: 'CronosProBold',
-    fontSize: 18,
-    color: Colors.light.button,
-    textAlign: 'center'
-  },
-  successIcon: {
-    marginBottom: 8,
   },
   errorIcon: {
     marginBottom: 8,

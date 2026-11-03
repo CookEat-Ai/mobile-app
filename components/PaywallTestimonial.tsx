@@ -1,6 +1,6 @@
 import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import React from 'react';
-import { StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { Colors } from '../constants/Colors';
@@ -9,17 +9,24 @@ import { font } from '../constants/Layout';
 type Props = {
   testimonialKey: string;
   style?: StyleProp<ViewStyle>;
+  onPress?: () => void;
 };
 
 /** Témoignages fournis par le propriétaire ; provenance dans docs/testimonials.md. */
-export function PaywallTestimonial({ testimonialKey, style }: Props) {
+export function PaywallTestimonial({ testimonialKey, style, onPress }: Props) {
   const { t } = useTranslation();
   const authorKey = testimonialKey.endsWith('.text')
     ? testimonialKey.replace(/\.text$/, '.author')
     : `${testimonialKey}Author`;
 
   return (
-    <View style={[styles.card, style]}>
+    <Pressable
+      style={[styles.card, style]}
+      onPress={onPress}
+      disabled={!onPress}
+      accessibilityRole={onPress ? 'button' : undefined}
+      accessibilityLabel={onPress ? t('paywall.reviewerAccessTitle') : undefined}
+    >
       <View style={styles.header}>
         <Text style={styles.author}>{t(authorKey)}</Text>
         <View style={styles.stars} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
@@ -29,7 +36,7 @@ export function PaywallTestimonial({ testimonialKey, style }: Props) {
         </View>
       </View>
       <Text style={styles.quote}>“{t(testimonialKey)}”</Text>
-    </View>
+    </Pressable>
   );
 }
 

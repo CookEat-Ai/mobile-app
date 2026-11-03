@@ -10,7 +10,7 @@ import { MealCostEstimate } from '../../components/planning/MealCostEstimate';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Image } from 'expo-image';
 import { feedback } from '../../services/haptics';
-import { LinearGradient } from 'expo-linear-gradient';
+import { AppBackground } from '../../components/ui/AppBackground';
 import { router, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -368,7 +368,8 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
   }
 
   return (
-    <LinearGradient colors={[designTheme.background, '#FFFFFF']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0, 0.7]} style={styles.fill}>
+    <View style={styles.fill}>
+      <AppBackground />
       <ScrollView
         contentContainerStyle={{ paddingTop: insets.top, paddingHorizontal: gutter, paddingBottom: tabBottomPadding }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => void loadPlan(true)} tintColor={Colors.light.button} />}
@@ -548,7 +549,8 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
       </ScrollView>
 
       <Modal visible={settingsVisible} presentationStyle="pageSheet" onRequestClose={() => setSettingsVisible(false)}>
-        <LinearGradient colors={[designTheme.background, '#FFFFFF']} style={styles.settingsFill}>
+        <View style={styles.settingsFill}>
+          <AppBackground />
           <ScrollView contentContainerStyle={[styles.settingsContent, { paddingTop: Math.max(insets.top, 24), paddingBottom: insets.bottom + 32 }]} showsVerticalScrollIndicator={false}>
             <View style={styles.settingsHeader}>
               <View>
@@ -593,9 +595,9 @@ export function WeeklyPlanner({ initialView = 'meals' }: { initialView?: Plannin
               <Text style={styles.primaryButtonText}>{t('planning.settings.save')}</Text>
             </TouchableOpacity>
           </ScrollView>
-        </LinearGradient>
+        </View>
       </Modal>
-    </LinearGradient>
+    </View>
   );
 }
 

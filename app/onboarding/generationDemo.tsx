@@ -129,7 +129,7 @@ export default function GenerationDemoScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: designTheme.background, paddingHorizontal: 22 },
+  container: { flex: 1, backgroundColor: designTheme.cream, paddingHorizontal: 22 },
   content: { flex: 1, ...contentColumn(), justifyContent: 'space-between' },
   header: { alignItems: 'center' },
   badge: {

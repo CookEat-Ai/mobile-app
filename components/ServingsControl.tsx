@@ -4,10 +4,11 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 
-export function ServingsControl({ value, onChange, disabled = false, compact = false }: { value: number | null; onChange: (value: number) => void; disabled?: boolean; compact?: boolean }) {
+export function ServingsControl({ value, onChange, disabled = false, compact = false, min = 1 }: { value: number | null; onChange: (value: number) => void; disabled?: boolean; compact?: boolean; min?: number }) {
   const { t } = useTranslation();
+  const atMinimum = value === null || value <= min;
   return <View style={[styles.row, compact && { gap: 0 }]}>
-    <Pressable accessibilityRole="button" accessibilityLabel={t('planningConfig.fewerPeople')} disabled={disabled || value === null || value <= 1} style={[styles.button, compact && { minWidth: 32 }, (disabled || value === null || value <= 1) && styles.disabled]} onPress={() => { if (value !== null) onChange(value - 1); }}><Ionicons name="remove" size={20} color={theme.ink} /></Pressable>
+    <Pressable accessibilityRole="button" accessibilityLabel={t('planningConfig.fewerPeople')} disabled={disabled || atMinimum} style={[styles.button, compact && { minWidth: 32 }, (disabled || atMinimum) && styles.disabled]} onPress={() => { if (value !== null) onChange(value - 1); }}><Ionicons name="remove" size={20} color={theme.ink} /></Pressable>
     <Text accessibilityLiveRegion="polite" style={[styles.value, compact && { minWidth: 22 }]}>{value ?? '—'}</Text>
     <Pressable accessibilityRole="button" accessibilityLabel={t('planningConfig.morePeople')} disabled={disabled || (value !== null && value >= 20)} style={[styles.button, compact && { minWidth: 32 }, (disabled || (value !== null && value >= 20)) && styles.disabled]} onPress={() => onChange((value ?? 0) + 1)}><Ionicons name="add" size={20} color={theme.ink} /></Pressable>
   </View>;

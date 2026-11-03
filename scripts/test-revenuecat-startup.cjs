@@ -52,7 +52,11 @@ function loadService({ failConfigure = false, failInvalidate = false } = {}) {
         setItem: async () => {},
       };
       if (id === '../services/api') return { apiService: { getAppConfig: async () => ({ data: {} }) } };
-      if (id === '../services/analytics') return { setUserProperties() {} };
+      if (id === '../services/analytics') return {
+        setUserProperties() {}, getCanonicalUserId: () => null,
+        getPostHogDistinctId: () => 'posthog-linked-user',
+        identify: async id => { if (currentId !== id) await purchases.logIn(id); },
+      };
       if (id === '../services/appsflyer') return {
         getAppsFlyerUID: async () => null, getRevenueCatAttributionAttributes: async () => ({}),
       };

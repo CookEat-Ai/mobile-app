@@ -79,7 +79,7 @@ export default function CommitmentScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: designTheme.background },
+  root: { flex: 1, backgroundColor: designTheme.cream },
   backButton: { position: 'absolute', zIndex: 2, left: 20, width: 36, height: 36, borderRadius: AppRadii.control, backgroundColor: '#F1F2F5', alignItems: 'center', justifyContent: 'center' },
   content: { flexGrow: 1, width: '100%', maxWidth: FORM_CONTENT_MAX_WIDTH, alignSelf: 'center', justifyContent: 'center', paddingHorizontal: 24, paddingTop: 76 },
   icon: { alignSelf: 'center', width: 68, height: 68, borderRadius: AppRadii.card, backgroundColor: '#FFF1C5', alignItems: 'center', justifyContent: 'center' },

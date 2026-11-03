@@ -32,10 +32,24 @@ const base = {
   diet: 'none', avoidIngredients: [], cookingTime: 'less_than_30_minutes', favoriteCuisineStyle: [],
 };
 const initial = mobile.calculateFitnessProjection(base);
-assert.equal(initial.dailyCalories, 2500);
+assert.equal(initial.dailyCalories, 2300);
 assert.equal(initial.dailyProteinGrams, 96);
 assert.equal(initial.durationWeeks, 0);
-assert.equal(mobile.calculateFitnessProjection({ ...base, trainingDays: 4 }).dailyCalories, 2650);
+assert.equal(mobile.calculateFitnessProjection({ ...base, trainingDays: 4 }).dailyCalories, 2400);
+
+// Reported female profile: independent rounded Mifflin + PAL + net workout
+// reference, not just agreement between two copies of the same calculator.
+const reportedWoman = { ...base, sex: 'female', age: 23, heightCm: 165,
+  activityLevel: 'moderate', trainingDays: 3, trainingDurationMinutes: 45 };
+const womanTargets = mobile.calculateFitnessProjection(reportedWoman);
+assert.equal(womanTargets.estimatedMaintenanceCalories, 2178);
+assert.equal(womanTargets.dailyCalories, 2300);
+assert.equal(womanTargets.dailyProteinGrams, 96);
+assert.equal(mobile.calculateFitnessProjection({ ...reportedWoman, activityLevel: 'sedentary' }).dailyCalories, 2050);
+assert.equal(mobile.calculateFitnessProjection({ ...reportedWoman, activityLevel: 'light' }).dailyCalories, 2150);
+assert.equal(mobile.calculateFitnessProjection({ ...reportedWoman, goal: 'maintain' }).dailyCalories, 2200);
+assert.equal(mobile.calculateFitnessProjection({ ...reportedWoman, goal: 'lose_weight' }).dailyCalories, 1850);
+assert.equal(mobile.calculateFitnessProjection({ ...reportedWoman, targetChangeKg: 0 }).dailyCalories, 2200);
 
 let checked = 0;
 for (const goal of ['gain_muscle', 'lose_weight', 'maintain', 'balanced']) {

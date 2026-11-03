@@ -30,6 +30,8 @@ function harness(storage = new Map([['userId', 'alice']]), base = 'https://examp
     './planningReveal': { markPlanningReveal() {} },
     './personalRecipe': { personalMealPlan: async plan=>plan, writePersonalShoppingState: async()=>{} },
     'expo-localization': { getLocales: () => [] },
+    'expo/fetch': { fetch: (...args) => context.fetch(...args) },
+    './mealPhotoStream': { createMealPhotoStream() { throw Error('Unexpected photo stream in cache test'); } },
     'expo-file-system': { File: class {} },
     'react-native-sse': { __esModule: true, default: class {
       constructor() { this.listeners = {}; sources.push(this); }

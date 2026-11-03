@@ -1,4 +1,5 @@
 import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
+import { AppBackground } from '../../components/ui/AppBackground';
 import { AppModal as Modal } from '../../components/ui/AppModal';
 import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { EntranceView } from '../../components/motion/Entrance';
@@ -82,7 +83,7 @@ export default function GoalScreen({ onBack }: { onBack?: () => void } = {}) {
     {error ? <View style={appStyles.card}><Text style={styles.error}>{t(error)}</Text><TouchableOpacity accessibilityRole="button" style={styles.logButton} onPress={() => void load()}><Text style={styles.logButtonText}>{t('weightTracking.retry')}</Text></TouchableOpacity></View> : <ActivityIndicator color={theme.yellow} />}
   </View>;
   const hasTarget = ['gain_muscle', 'lose_weight'].includes(profile.goal);
-  return <View style={appStyles.screen}>
+  return <View style={appStyles.screen}><AppBackground />
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ ...contentColumn(), paddingTop: insets.top + 8, paddingHorizontal: gutter, paddingBottom: theme.bottomSpace }}>
       {heading}
       {!!error && <Text accessibilityRole="alert" style={styles.error}>{t(error)}</Text>}

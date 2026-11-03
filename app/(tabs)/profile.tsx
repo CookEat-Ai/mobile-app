@@ -1,4 +1,5 @@
 import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
+import { AppBackground } from '../../components/ui/AppBackground';
 import { AppModal as Modal } from '../../components/ui/AppModal';
 import { AppRadii, AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { clearTrackingPhotos } from '../../services/trackingPhotos';
@@ -7,6 +8,7 @@ import { feedback } from '../../services/haptics';
 import { EntranceView } from '../../components/motion/Entrance';
 import { AppScreenHeading } from '../../components/AppScreenHeading';
 import { SettingsRow } from '../../components/SettingsRow';
+import { MealRemindersModal } from '../../components/MealRemindersModal';
 import { Ionicons } from '@expo/vector-icons';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
 import React, { useCallback, useEffect, useState, useRef } from 'react';
@@ -46,6 +48,7 @@ export default function ProfileScreen() {
   const [isLanguageModalVisible, setIsLanguageModalVisible] = useState(false);
   const [isSubscriptionModalVisible, setIsSubscriptionModalVisible] = useState(false);
   const [isPromoModalVisible, setIsPromoModalVisible] = useState(false);
+  const [isMealRemindersVisible, setIsMealRemindersVisible] = useState(false);
   const [promoCode, setPromoCode] = useState('');
   const [promoLoading, setPromoLoading] = useState(false);
   const [promoError, setPromoError] = useState('');
@@ -355,12 +358,14 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={appStyles.screen}>
+    <View style={appStyles.screen}><AppBackground />
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ ...contentColumn(), paddingTop: insets.top + 8, paddingHorizontal: gutter, paddingBottom: theme.bottomSpace }} showsVerticalScrollIndicator={false}>
         <AppScreenHeading title={t('tabs.profile')} />
         <Text style={styles.sectionTitle}>{t('profile.generalSettings')}</Text>
         <EntranceView entranceIndex={0} style={styles.card}>
           <SettingsRow icon="notifications-outline" title={t('profile.notifications')} onPress={handleNotificationsPress} />
+          <View style={styles.separator} />
+          <SettingsRow icon="alarm-outline" title={t('mealReminders.title')} description={t('mealReminders.rowDescription')} onPress={() => setIsMealRemindersVisible(true)} />
           <View style={styles.separator} />
           <SettingsRow icon="language-outline" title={t('profile.language')} description={getLanguageText()} onPress={() => setIsLanguageModalVisible(true)} />
           <View style={styles.separator} />
@@ -482,6 +487,7 @@ export default function ProfileScreen() {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+      <MealRemindersModal visible={isMealRemindersVisible} onClose={() => setIsMealRemindersVisible(false)} />
       {/* Sélecteur de langue */}
       <Modal
         visible={isLanguageModalVisible}

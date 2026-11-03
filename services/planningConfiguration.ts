@@ -1,6 +1,9 @@
 import type { PlanningGenerationSettings } from './weeklyPlanning';
 import { normalizePantryIngredients } from './planningPantry';
 
+// Same days as DEFAULT_COOKING_DAYS, kept here so this module stays free of storage imports.
+const WHOLE_WEEK = [0, 1, 2, 3, 4, 5, 6];
+
 export const PLANNING_STEPS = ['goal', 'servings', 'days', 'mealBudget', 'ingredients', 'duration', 'cookingLevel', 'equipments', 'cuisines', 'diet', 'exclusions'] as const;
 export const PRESENTATION_PLANNING_STEPS = [...PLANNING_STEPS] as const;
 export type PlanningStep = typeof PLANNING_STEPS[number] | 'goal';
@@ -21,13 +24,17 @@ export type PlanningChoiceDraft = Omit<PlanningGenerationSettings, 'duration' | 
   servings: number | null;
 };
 
-/** Every new presentation starts with unanswered choices, without erasing saved preferences. */
-export function planningChoiceDraft(settings: PlanningGenerationSettings, presentation: boolean): PlanningChoiceDraft {
+/** Every new presentation starts with unanswered choices (one person by default), without erasing saved preferences.
+ * New plans preselect the whole week; editing an existing plan keeps its days. */
+export function planningChoiceDraft(settings: PlanningGenerationSettings, presentation: boolean, newPlan = true): PlanningChoiceDraft {
+  const cookingDays = newPlan ? [...WHOLE_WEEK] : settings.cookingDays;
+  // A weekly budget is sized for its number of days, like a manual day change.
+  const weeklyBudget = cookingDays.length === settings.cookingDays.length ? settings.weeklyBudget : undefined;
   return presentation ? {
-    ...settings, cookingDays: [], mealsByDay: {}, duration: null, diet: null, cuisineIds: null, servings: null,
+    ...settings, cookingDays: [...WHOLE_WEEK], mealsByDay: {}, duration: null, diet: null, cuisineIds: null, servings: 1,
     cookingLevel: null, equipments: null, mealBudget: null, weeklyBudget: undefined,
     excludedIngredients: [], pantryIngredients: [], pantryMode: 'priority',
-  } : { ...settings, servings: settings.servings || 1, cookingLevel: settings.cookingLevel || 'beginner',
+  } : { ...settings, cookingDays, weeklyBudget, servings: settings.servings || 1, cookingLevel: settings.cookingLevel || 'beginner',
     mealBudget: settings.mealBudget || 'budget_medium', equipments: settings.equipments || ['standard-kitchen'] };
 }
 

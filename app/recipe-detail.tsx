@@ -1,4 +1,5 @@
 import { importedMealsRoute } from '../services/importedMealNavigation';
+import { AppBackground } from '../components/ui/AppBackground';
 import { AppSpinner as ActivityIndicator } from '../components/ui/AppSpinner';
 import { RecipeMetricCard } from '../components/RecipeMetricCard';
 import { AppModal as Modal } from '../components/ui/AppModal';
@@ -8,7 +9,7 @@ import { ServingsControl } from '../components/ServingsControl';
 import { MealCostEstimate } from '../components/planning/MealCostEstimate';
 import { RecipeChat } from '../components/RecipeChat';
 import { MealArtwork } from '../components/planning/MealArtwork';
-import { recipeForServings } from '../services/recipeServings';
+import { recipeForServings, servingsFloor } from '../services/recipeServings';
 import { isPastPlanDay } from '../services/planningDisplay';
 import { invalidatePlanning } from '../services/planningUpdates';
 import { feedback } from '../services/haptics';
@@ -47,6 +48,8 @@ import { completeGenerationLoading } from '../services/generationLoadingCoordina
 import { font } from '../constants/Layout';
 import { GENERIC_RECIPE_IMAGE, getRecipeImageSource, isGenericRecipeImage } from '../constants/RecipeImages';
 import { contentColumn, useResponsive } from '../hooks/useResponsive';
+import { resolveSupportedLanguage } from '../i18n';
+import { compactCookingTime } from '../services/cookingTime';
 
 const IMAGE_HISTORY_LOOKBACK = 30;
 
@@ -957,8 +960,12 @@ export default function RecipeDetailScreen() {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
 
+  // A batch recipe (cake, cookies…) cannot be prepared below half an egg, pastry sheet, can…
+  const { minimum: minServings, ingredient: limitingIngredient } = servingsFloor(servingsBaseRef.current || recipe);
+
   const handleServingsChange = async (servings: number) => {
     if (isMealSelectionPreview || servingsBusyRef.current || loadingRecipe || (isPlannedMeal && !plannedDayEditable)) return;
+    if (servings < minServings) return;
     const base = servingsBaseRef.current || recipe;
     if (recipe._localPersonal) { setRecipe(recipeForServings(recipe, servings)); return; }
     if (!isPlannedMeal) { setRecipe(recipeForServings(base, servings)); return; }
@@ -1286,6 +1293,7 @@ export default function RecipeDetailScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <AppBackground />
       <Stack.Screen options={{ statusBarStyle: imageViewerVisible ? 'light' : statusBarStyle, ...(isMealSelectionPreview ? { gestureEnabled: !isChoosingMeal } : {}) }} />
       <Modal visible={imageViewerVisible} presentationStyle="fullScreen" onRequestClose={() => setImageViewerVisible(false)}>
         <View style={{ flex: 1, backgroundColor: '#000' }}>
@@ -1356,7 +1364,9 @@ export default function RecipeDetailScreen() {
                   ? 'Photo · Wikimedia Commons'
                   : recipe.imageAttribution?.provider === 'owned'
                     ? 'Photo · CookEat'
-                    : t('recipeDetail.illustration')}
+                    : recipe.imageAttribution?.provider === 'video' && recipe.imageAttribution.platform
+                      ? `Photo · ${recipe.imageAttribution.platform}`
+                      : t('recipeDetail.illustration')}
             </Text>
           </View>
 
@@ -1431,12 +1441,20 @@ export default function RecipeDetailScreen() {
           {/* <Text style={styles.recipeDescription}>{recipe.description}</Text> */}
 
           <View style={styles.metricsContainer}>
-            <RecipeMetricCard icon="time-outline" label={t('recipeDetail.cookingTime')} value={recipe.cooking_time || '—'} />
+            <RecipeMetricCard icon="time-outline" label={t('recipeDetail.cookingTime')} value={recipe.cooking_time ? compactCookingTime(recipe.cooking_time) : '—'} />
             <RecipeMetricCard icon="star-outline" label={t('recipeDetail.difficulty')} value={recipe.difficulty ? translateDifficulty(recipe.difficulty) : '—'} index={1}/>
             <RecipeMetricCard icon="people-outline" label={t('recipeDetail.servings')} index={2}>
-              <ServingsControl compact value={recipe.servings || null} onChange={handleServingsChange} disabled={isMealSelectionPreview || loadingRecipe || savingServings || (isPlannedMeal && !plannedDayEditable)}/>
+              <ServingsControl compact value={recipe.servings || null} min={minServings} onChange={handleServingsChange} disabled={isMealSelectionPreview || loadingRecipe || savingServings || (isPlannedMeal && !plannedDayEditable)}/>
             </RecipeMetricCard>
           </View>
+          {minServings > 1 && (recipe.servings || 0) <= minServings && (
+            <Text style={styles.minimumServingsNote}>{t('recipeDetail.minimumServingsNote', {
+              count: minServings,
+              ingredient: limitingIngredient,
+              // The ingredient name is in the recipe's language: the sentence must match it.
+              ...(recipe.language ? { lng: resolveSupportedLanguage(recipe.language) } : {}),
+            })}</Text>
+          )}
           <MealCostEstimate cost={recipe.estimatedCost} />
 
           <View style={styles.metricsContainer}>
@@ -1791,6 +1809,14 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     gap: 8,
     marginBottom: 10,
+  },
+  minimumServingsNote: {
+    fontFamily: 'CronosPro',
+    fontSize: font(14),
+    lineHeight: font(19),
+    color: designTheme.muted,
+    textAlign: 'center',
+    marginBottom: 12,
   },
   ingredientsSection: {
     marginTop: 16,

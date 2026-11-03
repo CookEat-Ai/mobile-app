@@ -46,6 +46,7 @@ type Props = {
   copy: PaywallCopy;
   onPurchase: (pack: PurchasesPackage) => void;
   onRestore: () => void;
+  onTestimonialPress?: () => void;
   /** Absent = paywall non fermable (hard). Présent = croix affichée. */
   onClose?: () => void;
   /** Délai avant l'apparition de la croix, en ms. 0 = immédiate. */
@@ -104,6 +105,7 @@ export function PaywallView({
   copy,
   onPurchase,
   onRestore,
+  onTestimonialPress,
   onClose,
   closeDelayMs = 0,
   isPurchasing,
@@ -425,7 +427,10 @@ export function PaywallView({
         </Text>
         <Text style={styles.subheadline}>{copy.subheadline}</Text>
 
-        <PaywallTestimonial testimonialKey={copy.testimonialKey} />
+        <PaywallTestimonial
+          testimonialKey={copy.testimonialKey}
+          onPress={__DEV__ ? onTestimonialPress : undefined}
+        />
 
         <View style={styles.plans}>{packages.map(renderPackage)}</View>
         {hasHiddenPlans ? (
@@ -498,7 +503,7 @@ export function PaywallView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: designTheme.background,
+    backgroundColor: designTheme.cream,
   },
   header: {
     alignSelf: 'flex-start',
@@ -714,7 +719,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: designTheme.background,
+    backgroundColor: designTheme.cream,
   },
   footer: {
     ...contentColumn(FORM_CONTENT_MAX_WIDTH),
