@@ -1,0 +1,162 @@
+[
+  {
+    "file": "01-home-open.png",
+    "size": [
+      2853,
+      2007
+    ],
+    "pngChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "pixelsUnchanged": true,
+    "remainingFilesystemAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "02-days-open.png",
+    "size": [
+      2853,
+      2007
+    ],
+    "pngChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "pixelsUnchanged": true,
+    "remainingFilesystemAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "03-days-closed.png",
+    "size": [
+      1398,
+      2034
+    ],
+    "pngChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "pixelsUnchanged": true,
+    "remainingFilesystemAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "04-duration-half-open.png",
+    "size": [
+      2853,
+      2007
+    ],
+    "pngChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "pixelsUnchanged": true,
+    "remainingFilesystemAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "05-device-half-open.png",
+    "size": [
+      2424,
+      1824
+    ],
+    "pngChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "pixelsUnchanged": true,
+    "remainingFilesystemAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "06-review-closed.png",
+    "size": [
+      1398,
+      2034
+    ],
+    "pngChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "pixelsUnchanged": true,
+    "remainingFilesystemAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "07-review-open.png",
+    "size": [
+      2853,
+      2007
+    ],
+    "pngChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "pixelsUnchanged": true,
+    "remainingFilesystemAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "08-history-open.png",
+    "size": [
+      2853,
+      2007
+    ],
+    "pngChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "pixelsUnchanged": true,
+    "remainingFilesystemAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "09-recipe-open.png",
+    "size": [
+      2853,
+      2007
+    ],
+    "pngChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "pixelsUnchanged": true,
+    "remainingFilesystemAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "10-keyboard-closed.png",
+    "size": [
+      1398,
+      2034
+    ],
+    "pngChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "pixelsUnchanged": true,
+    "remainingFilesystemAttributes": [
+      "com.apple.provenance"
+    ]
+  }
+]

@@ -1,0 +1,53 @@
+[
+  {
+    "file": "06-cuisine-photos-closed.png",
+    "dimensions": [
+      1398,
+      2034
+    ],
+    "compressedPixelsUnchanged": true,
+    "idatSha256": "3c373b7f3289dd3080f3ec8e5feef2eb5650d9a337895aece402d169767b42f3",
+    "retainedChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "remainingProtectedAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "07-cuisine-photos-open.png",
+    "dimensions": [
+      2853,
+      2007
+    ],
+    "compressedPixelsUnchanged": true,
+    "idatSha256": "e462dee168f54416f58468d573705231d093cfe4abf61fda5a5c212245425105",
+    "retainedChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "remainingProtectedAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "08-cuisine-photos-long-label.png",
+    "dimensions": [
+      1398,
+      2034
+    ],
+    "compressedPixelsUnchanged": true,
+    "idatSha256": "35333db596e3e3b5f0d6ee09855230c4657658d83475382ff03703f7fddf4cce",
+    "retainedChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "remainingProtectedAttributes": [
+      "com.apple.provenance"
+    ]
+  }
+]

@@ -1,0 +1,108 @@
+[
+  {
+    "_id": "6ad6ab2ac5fd03f28e2d59d9",
+    "scanId": "6f12cfd4-22e5-4595-9ea3-aeed58822f22",
+    "analysis": {
+      "mealType": "dinner"
+    },
+    "confirmed": {
+      "title": "Penne crémeuses au poulet et aux champignons",
+      "items": [
+        {
+          "id": "food-0",
+          "name": "Pâtes penne cuites",
+          "foodKey": "cookedPasta",
+          "grams": 260,
+          "confidence": 0.98,
+          "visible": true,
+          "box": {
+            "x": 0.397,
+            "y": 0.355,
+            "width": 0.134,
+            "height": 0.174
+          },
+          "icon": "🍝",
+          "per100g": {
+            "calories": 158,
+            "proteins": 5.8,
+            "fats": 0.93,
+            "carbs": 30.86
+          },
+          "sourceId": "169737"
+        },
+        {
+          "id": "food-1",
+          "name": "Poulet cuit",
+          "foodKey": "cookedChicken",
+          "grams": 150,
+          "confidence": 0.96,
+          "visible": true,
+          "box": {
+            "x": 0.307,
+            "y": 0.346,
+            "width": 0.152,
+            "height": 0.121
+          },
+          "icon": "🍗",
+          "per100g": {
+            "calories": 165,
+            "proteins": 31.02,
+            "fats": 3.57,
+            "carbs": 0
+          },
+          "sourceId": "171477"
+        },
+        {
+          "id": "food-2",
+          "name": "Champignons cuits",
+          "foodKey": "cookedMushroom",
+          "grams": 100,
+          "confidence": 0.95,
+          "visible": true,
+          "box": {
+            "x": 0.201,
+            "y": 0.202,
+            "width": 0.151,
+            "height": 0.181
+          },
+          "icon": "🍄",
+          "per100g": {
+            "calories": 28,
+            "proteins": 2.17,
+            "fats": 0.47,
+            "carbs": 5.29
+          },
+          "sourceId": "169252"
+        },
+        {
+          "id": "food-3",
+          "name": "crème légère",
+          "foodKey": "lightCream",
+          "grams": 40,
+          "confidence": 0.62,
+          "visible": true,
+          "box": {
+            "x": 0.554,
+            "y": 0.391,
+            "width": 0.142,
+            "height": 0.103
+          },
+          "icon": "🥣",
+          "per100g": {
+            "calories": 195,
+            "proteins": 2.96,
+            "fats": 19.1,
+            "carbs": 3.66
+          },
+          "sourceId": "170857"
+        }
+      ],
+      "nutrition": {
+        "calories": 764.3,
+        "proteins": 65,
+        "carbs": 87,
+        "fats": 15.9
+      }
+    }
+  }
+]

@@ -1,0 +1,3686 @@
+{
+  "executedOn": "2026-10-20",
+  "localOnly": true,
+  "afterMicrowaveFilterFix": true,
+  "total": 72,
+  "generatedWeeks": 61,
+  "controlledRefusals": 11,
+  "cases": [
+    {
+      "id": "01",
+      "name": "vide",
+      "goal": "maintain",
+      "budget": 30,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 26.07,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 1,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 2,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2108,
+          "proteins": 93
+        },
+        {
+          "day": 4,
+          "calories": 2202,
+          "proteins": 91
+        },
+        {
+          "day": 5,
+          "calories": 2160,
+          "proteins": 92.7
+        },
+        {
+          "day": 6,
+          "calories": 2187,
+          "proteins": 90.4
+        }
+      ]
+    },
+    {
+      "id": "02",
+      "name": "priorité-courte",
+      "goal": "maintain",
+      "budget": 30,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 27.27,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2200,
+          "proteins": 90.5
+        },
+        {
+          "day": 1,
+          "calories": 2206,
+          "proteins": 98.7
+        },
+        {
+          "day": 2,
+          "calories": 2197,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2200,
+          "proteins": 92
+        },
+        {
+          "day": 4,
+          "calories": 2130,
+          "proteins": 91.4
+        },
+        {
+          "day": 5,
+          "calories": 2186,
+          "proteins": 91
+        },
+        {
+          "day": 6,
+          "calories": 2183,
+          "proteins": 91.7
+        }
+      ]
+    },
+    {
+      "id": "03",
+      "name": "strict-rempli",
+      "goal": "maintain",
+      "budget": 30,
+      "pantry": [
+        "Œufs",
+        "Riz",
+        "Pâtes",
+        "Pommes de terre",
+        "Pain",
+        "Flocons d’avoine",
+        "Lait",
+        "Yaourt grec",
+        "Poulet",
+        "Thon",
+        "Tomates",
+        "Carottes",
+        "Oignons",
+        "Champignons",
+        "Cheddar",
+        "Farine",
+        "Beurre",
+        "Bananes",
+        "Pommes",
+        "Lentilles",
+        "Pois cassés",
+        "Ail"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 24.23,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2185,
+          "proteins": 92.5
+        },
+        {
+          "day": 1,
+          "calories": 2185,
+          "proteins": 92.5
+        },
+        {
+          "day": 2,
+          "calories": 2204,
+          "proteins": 90.9
+        },
+        {
+          "day": 3,
+          "calories": 2193,
+          "proteins": 91.2
+        },
+        {
+          "day": 4,
+          "calories": 2186,
+          "proteins": 91.7
+        },
+        {
+          "day": 5,
+          "calories": 2112,
+          "proteins": 91.6
+        },
+        {
+          "day": 6,
+          "calories": 2198,
+          "proteins": 90.4
+        }
+      ]
+    },
+    {
+      "id": "04",
+      "name": "vide",
+      "goal": "maintain",
+      "budget": 45,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 26.39,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 1,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 2,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2108,
+          "proteins": 93
+        },
+        {
+          "day": 4,
+          "calories": 2202,
+          "proteins": 91
+        },
+        {
+          "day": 5,
+          "calories": 2186,
+          "proteins": 91.9
+        },
+        {
+          "day": 6,
+          "calories": 2244,
+          "proteins": 91.6
+        }
+      ]
+    },
+    {
+      "id": "05",
+      "name": "priorité-courte",
+      "goal": "maintain",
+      "budget": 45,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 27.27,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2200,
+          "proteins": 90.5
+        },
+        {
+          "day": 1,
+          "calories": 2206,
+          "proteins": 98.7
+        },
+        {
+          "day": 2,
+          "calories": 2197,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2200,
+          "proteins": 92
+        },
+        {
+          "day": 4,
+          "calories": 2130,
+          "proteins": 91.4
+        },
+        {
+          "day": 5,
+          "calories": 2186,
+          "proteins": 91
+        },
+        {
+          "day": 6,
+          "calories": 2183,
+          "proteins": 91.7
+        }
+      ]
+    },
+    {
+      "id": "06",
+      "name": "strict-rempli",
+      "goal": "maintain",
+      "budget": 45,
+      "pantry": [
+        "Œufs",
+        "Riz",
+        "Pâtes",
+        "Pommes de terre",
+        "Pain",
+        "Flocons d’avoine",
+        "Lait",
+        "Yaourt grec",
+        "Poulet",
+        "Thon",
+        "Tomates",
+        "Carottes",
+        "Oignons",
+        "Champignons",
+        "Cheddar",
+        "Farine",
+        "Beurre",
+        "Bananes",
+        "Pommes",
+        "Lentilles",
+        "Pois cassés",
+        "Ail"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 23.65,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2185,
+          "proteins": 92.5
+        },
+        {
+          "day": 1,
+          "calories": 2185,
+          "proteins": 92.5
+        },
+        {
+          "day": 2,
+          "calories": 2204,
+          "proteins": 90.9
+        },
+        {
+          "day": 3,
+          "calories": 2193,
+          "proteins": 91.2
+        },
+        {
+          "day": 4,
+          "calories": 2186,
+          "proteins": 91.7
+        },
+        {
+          "day": 5,
+          "calories": 2198,
+          "proteins": 91.1
+        },
+        {
+          "day": 6,
+          "calories": 2198,
+          "proteins": 90.4
+        }
+      ]
+    },
+    {
+      "id": "07",
+      "name": "vide",
+      "goal": "maintain",
+      "budget": 75,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 28.4,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2097,
+          "proteins": 94.6
+        },
+        {
+          "day": 1,
+          "calories": 2210,
+          "proteins": 90.8
+        },
+        {
+          "day": 2,
+          "calories": 2130,
+          "proteins": 90.5
+        },
+        {
+          "day": 3,
+          "calories": 2210,
+          "proteins": 98.4
+        },
+        {
+          "day": 4,
+          "calories": 2214,
+          "proteins": 91.2
+        },
+        {
+          "day": 5,
+          "calories": 2185,
+          "proteins": 90.8
+        },
+        {
+          "day": 6,
+          "calories": 2159,
+          "proteins": 91.1
+        }
+      ]
+    },
+    {
+      "id": "08",
+      "name": "priorité-courte",
+      "goal": "maintain",
+      "budget": 75,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 27.75,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2200,
+          "proteins": 90.5
+        },
+        {
+          "day": 1,
+          "calories": 2193,
+          "proteins": 91.2
+        },
+        {
+          "day": 2,
+          "calories": 2203,
+          "proteins": 91.6
+        },
+        {
+          "day": 3,
+          "calories": 2226,
+          "proteins": 87.9
+        },
+        {
+          "day": 4,
+          "calories": 2160,
+          "proteins": 90.4
+        },
+        {
+          "day": 5,
+          "calories": 2199,
+          "proteins": 90.2
+        },
+        {
+          "day": 6,
+          "calories": 2195,
+          "proteins": 90.2
+        }
+      ]
+    },
+    {
+      "id": "09",
+      "name": "strict-rempli",
+      "goal": "maintain",
+      "budget": 75,
+      "pantry": [
+        "Œufs",
+        "Riz",
+        "Pâtes",
+        "Pommes de terre",
+        "Pain",
+        "Flocons d’avoine",
+        "Lait",
+        "Yaourt grec",
+        "Poulet",
+        "Thon",
+        "Tomates",
+        "Carottes",
+        "Oignons",
+        "Champignons",
+        "Cheddar",
+        "Farine",
+        "Beurre",
+        "Bananes",
+        "Pommes",
+        "Lentilles",
+        "Pois cassés",
+        "Ail"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 26.23,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2201,
+          "proteins": 93.6
+        },
+        {
+          "day": 1,
+          "calories": 2186,
+          "proteins": 89.1
+        },
+        {
+          "day": 2,
+          "calories": 2221,
+          "proteins": 99.2
+        },
+        {
+          "day": 3,
+          "calories": 2186,
+          "proteins": 89.1
+        },
+        {
+          "day": 4,
+          "calories": 2186,
+          "proteins": 89.1
+        },
+        {
+          "day": 5,
+          "calories": 2225,
+          "proteins": 90.3
+        },
+        {
+          "day": 6,
+          "calories": 2164,
+          "proteins": 98
+        }
+      ]
+    },
+    {
+      "id": "10",
+      "name": "vide",
+      "goal": "maintain",
+      "budget": 150,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 28.51,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2130,
+          "proteins": 91
+        },
+        {
+          "day": 1,
+          "calories": 2159,
+          "proteins": 92.7
+        },
+        {
+          "day": 2,
+          "calories": 2186,
+          "proteins": 91.2
+        },
+        {
+          "day": 3,
+          "calories": 2202,
+          "proteins": 96.2
+        },
+        {
+          "day": 4,
+          "calories": 2199,
+          "proteins": 95.9
+        },
+        {
+          "day": 5,
+          "calories": 2186,
+          "proteins": 90.4
+        },
+        {
+          "day": 6,
+          "calories": 2155,
+          "proteins": 93.5
+        }
+      ]
+    },
+    {
+      "id": "11",
+      "name": "priorité-courte",
+      "goal": "maintain",
+      "budget": 150,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 29.48,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2200,
+          "proteins": 90.5
+        },
+        {
+          "day": 1,
+          "calories": 2193,
+          "proteins": 91.2
+        },
+        {
+          "day": 2,
+          "calories": 2203,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2213,
+          "proteins": 93
+        },
+        {
+          "day": 4,
+          "calories": 2265,
+          "proteins": 91.8
+        },
+        {
+          "day": 5,
+          "calories": 2154,
+          "proteins": 91.3
+        },
+        {
+          "day": 6,
+          "calories": 2228,
+          "proteins": 98.8
+        }
+      ]
+    },
+    {
+      "id": "12",
+      "name": "strict-rempli",
+      "goal": "maintain",
+      "budget": 150,
+      "pantry": [
+        "Œufs",
+        "Riz",
+        "Pâtes",
+        "Pommes de terre",
+        "Pain",
+        "Flocons d’avoine",
+        "Lait",
+        "Yaourt grec",
+        "Poulet",
+        "Thon",
+        "Tomates",
+        "Carottes",
+        "Oignons",
+        "Champignons",
+        "Cheddar",
+        "Farine",
+        "Beurre",
+        "Bananes",
+        "Pommes",
+        "Lentilles",
+        "Pois cassés",
+        "Ail"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 24.88,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2134,
+          "proteins": 94.6
+        },
+        {
+          "day": 1,
+          "calories": 2194,
+          "proteins": 91.1
+        },
+        {
+          "day": 2,
+          "calories": 2193,
+          "proteins": 91.2
+        },
+        {
+          "day": 3,
+          "calories": 2201,
+          "proteins": 90.8
+        },
+        {
+          "day": 4,
+          "calories": 2111,
+          "proteins": 91.6
+        },
+        {
+          "day": 5,
+          "calories": 2225,
+          "proteins": 90.3
+        },
+        {
+          "day": 6,
+          "calories": 2164,
+          "proteins": 98
+        }
+      ]
+    },
+    {
+      "id": "13",
+      "name": "vide",
+      "goal": "lose_weight",
+      "budget": 30,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 25.2,
+      "days": [
+        {
+          "day": 0,
+          "calories": 1702,
+          "proteins": 120.2
+        },
+        {
+          "day": 1,
+          "calories": 1699,
+          "proteins": 120
+        },
+        {
+          "day": 2,
+          "calories": 1702,
+          "proteins": 120.2
+        },
+        {
+          "day": 3,
+          "calories": 1733,
+          "proteins": 120
+        },
+        {
+          "day": 4,
+          "calories": 1702,
+          "proteins": 120.2
+        },
+        {
+          "day": 5,
+          "calories": 1702,
+          "proteins": 120.2
+        },
+        {
+          "day": 6,
+          "calories": 1702,
+          "proteins": 120.2
+        }
+      ]
+    },
+    {
+      "id": "14",
+      "name": "priorité-courte",
+      "goal": "lose_weight",
+      "budget": 30,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 24.14,
+      "days": [
+        {
+          "day": 0,
+          "calories": 1698,
+          "proteins": 119.7
+        },
+        {
+          "day": 1,
+          "calories": 1702,
+          "proteins": 120.2
+        },
+        {
+          "day": 2,
+          "calories": 1698,
+          "proteins": 119.7
+        },
+        {
+          "day": 3,
+          "calories": 1700,
+          "proteins": 120.3
+        },
+        {
+          "day": 4,
+          "calories": 1701,
+          "proteins": 120.2
+        },
+        {
+          "day": 5,
+          "calories": 1702,
+          "proteins": 120.2
+        },
+        {
+          "day": 6,
+          "calories": 1702,
+          "proteins": 120.2
+        }
+      ]
+    },
+    {
+      "id": "15",
+      "name": "strict-rempli",
+      "goal": "lose_weight",
+      "budget": 30,
+      "pantry": [
+        "Œufs",
+        "Riz",
+        "Pâtes",
+        "Pommes de terre",
+        "Pain",
+        "Flocons d’avoine",
+        "Lait",
+        "Yaourt grec",
+        "Poulet",
+        "Thon",
+        "Tomates",
+        "Carottes",
+        "Oignons",
+        "Champignons",
+        "Cheddar",
+        "Farine",
+        "Beurre",
+        "Bananes",
+        "Pommes",
+        "Lentilles",
+        "Pois cassés",
+        "Ail"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 29.07,
+      "days": [
+        {
+          "day": 0,
+          "calories": 1695,
+          "proteins": 120
+        },
+        {
+          "day": 1,
+          "calories": 1691,
+          "proteins": 120.2
+        },
+        {
+          "day": 2,
+          "calories": 1695,
+          "proteins": 120
+        },
+        {
+          "day": 3,
+          "calories": 1696,
+          "proteins": 120.2
+        },
+        {
+          "day": 4,
+          "calories": 1691,
+          "proteins": 120.2
+        },
+        {
+          "day": 5,
+          "calories": 1752,
+          "proteins": 115.9
+        },
+        {
+          "day": 6,
+          "calories": 1704,
+          "proteins": 110.9
+        }
+      ]
+    },
+    {
+      "id": "16",
+      "name": "vide",
+      "goal": "lose_weight",
+      "budget": 45,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 36.85,
+      "days": [
+        {
+          "day": 0,
+          "calories": 1735,
+          "proteins": 125.8
+        },
+        {
+          "day": 1,
+          "calories": 1637,
+          "proteins": 111.4
+        },
+        {
+          "day": 2,
+          "calories": 1624,
+          "proteins": 120.2
+        },
+        {
+          "day": 3,
+          "calories": 1733,
+          "proteins": 120
+        },
+        {
+          "day": 4,
+          "calories": 1685,
+          "proteins": 116.2
+        },
+        {
+          "day": 5,
+          "calories": 1706,
+          "proteins": 129
+        },
+        {
+          "day": 6,
+          "calories": 1712,
+          "proteins": 126.3
+        }
+      ]
+    },
+    {
+      "id": "17",
+      "name": "priorité-courte",
+      "goal": "lose_weight",
+      "budget": 45,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 35.26,
+      "days": [
+        {
+          "day": 0,
+          "calories": 1624,
+          "proteins": 120.2
+        },
+        {
+          "day": 1,
+          "calories": 1710,
+          "proteins": 126.5
+        },
+        {
+          "day": 2,
+          "calories": 1653,
+          "proteins": 114.5
+        },
+        {
+          "day": 3,
+          "calories": 1716,
+          "proteins": 122.1
+        },
+        {
+          "day": 4,
+          "calories": 1701,
+          "proteins": 120.7
+        },
+        {
+          "day": 5,
+          "calories": 1636,
+          "proteins": 119.9
+        },
+        {
+          "day": 6,
+          "calories": 1649,
+          "proteins": 114.4
+        }
+      ]
+    },
+    {
+      "id": "18",
+      "name": "strict-rempli",
+      "goal": "lose_weight",
+      "budget": 45,
+      "pantry": [
+        "Œufs",
+        "Riz",
+        "Pâtes",
+        "Pommes de terre",
+        "Pain",
+        "Flocons d’avoine",
+        "Lait",
+        "Yaourt grec",
+        "Poulet",
+        "Thon",
+        "Tomates",
+        "Carottes",
+        "Oignons",
+        "Champignons",
+        "Cheddar",
+        "Farine",
+        "Beurre",
+        "Bananes",
+        "Pommes",
+        "Lentilles",
+        "Pois cassés",
+        "Ail"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 32.08,
+      "days": [
+        {
+          "day": 0,
+          "calories": 1622,
+          "proteins": 116.6
+        },
+        {
+          "day": 1,
+          "calories": 1735,
+          "proteins": 119.5
+        },
+        {
+          "day": 2,
+          "calories": 1624,
+          "proteins": 120.2
+        },
+        {
+          "day": 3,
+          "calories": 1720,
+          "proteins": 119.2
+        },
+        {
+          "day": 4,
+          "calories": 1690,
+          "proteins": 115.2
+        },
+        {
+          "day": 5,
+          "calories": 1709,
+          "proteins": 115
+        },
+        {
+          "day": 6,
+          "calories": 1735,
+          "proteins": 112.2
+        }
+      ]
+    },
+    {
+      "id": "19",
+      "name": "vide",
+      "goal": "lose_weight",
+      "budget": 75,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 43.95,
+      "days": [
+        {
+          "day": 0,
+          "calories": 1622,
+          "proteins": 116.6
+        },
+        {
+          "day": 1,
+          "calories": 1617,
+          "proteins": 127.3
+        },
+        {
+          "day": 2,
+          "calories": 1697,
+          "proteins": 120.5
+        },
+        {
+          "day": 3,
+          "calories": 1627,
+          "proteins": 114.8
+        },
+        {
+          "day": 4,
+          "calories": 1721,
+          "proteins": 120.5
+        },
+        {
+          "day": 5,
+          "calories": 1708,
+          "proteins": 119.8
+        },
+        {
+          "day": 6,
+          "calories": 1715,
+          "proteins": 129.6
+        }
+      ]
+    },
+    {
+      "id": "20",
+      "name": "priorité-courte",
+      "goal": "lose_weight",
+      "budget": 75,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 37.42,
+      "days": [
+        {
+          "day": 0,
+          "calories": 1693,
+          "proteins": 127.4
+        },
+        {
+          "day": 1,
+          "calories": 1703,
+          "proteins": 121.8
+        },
+        {
+          "day": 2,
+          "calories": 1712,
+          "proteins": 119.6
+        },
+        {
+          "day": 3,
+          "calories": 1628,
+          "proteins": 114.8
+        },
+        {
+          "day": 4,
+          "calories": 1717,
+          "proteins": 128.6
+        },
+        {
+          "day": 5,
+          "calories": 1729,
+          "proteins": 118.7
+        },
+        {
+          "day": 6,
+          "calories": 1703,
+          "proteins": 120.9
+        }
+      ]
+    },
+    {
+      "id": "21",
+      "name": "strict-rempli",
+      "goal": "lose_weight",
+      "budget": 75,
+      "pantry": [
+        "Œufs",
+        "Riz",
+        "Pâtes",
+        "Pommes de terre",
+        "Pain",
+        "Flocons d’avoine",
+        "Lait",
+        "Yaourt grec",
+        "Poulet",
+        "Thon",
+        "Tomates",
+        "Carottes",
+        "Oignons",
+        "Champignons",
+        "Cheddar",
+        "Farine",
+        "Beurre",
+        "Bananes",
+        "Pommes",
+        "Lentilles",
+        "Pois cassés",
+        "Ail"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 31.47,
+      "days": [
+        {
+          "day": 0,
+          "calories": 1622,
+          "proteins": 116.6
+        },
+        {
+          "day": 1,
+          "calories": 1748,
+          "proteins": 113
+        },
+        {
+          "day": 2,
+          "calories": 1687,
+          "proteins": 121.7
+        },
+        {
+          "day": 3,
+          "calories": 1680,
+          "proteins": 114.5
+        },
+        {
+          "day": 4,
+          "calories": 1763,
+          "proteins": 109.4
+        },
+        {
+          "day": 5,
+          "calories": 1738,
+          "proteins": 110
+        },
+        {
+          "day": 6,
+          "calories": 1742,
+          "proteins": 121.6
+        }
+      ]
+    },
+    {
+      "id": "22",
+      "name": "vide",
+      "goal": "lose_weight",
+      "budget": 150,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 44.01,
+      "days": [
+        {
+          "day": 0,
+          "calories": 1654,
+          "proteins": 123
+        },
+        {
+          "day": 1,
+          "calories": 1723,
+          "proteins": 123.2
+        },
+        {
+          "day": 2,
+          "calories": 1637,
+          "proteins": 111.4
+        },
+        {
+          "day": 3,
+          "calories": 1703,
+          "proteins": 124.7
+        },
+        {
+          "day": 4,
+          "calories": 1723,
+          "proteins": 121.5
+        },
+        {
+          "day": 5,
+          "calories": 1721,
+          "proteins": 129.5
+        },
+        {
+          "day": 6,
+          "calories": 1720,
+          "proteins": 127.5
+        }
+      ]
+    },
+    {
+      "id": "23",
+      "name": "priorité-courte",
+      "goal": "lose_weight",
+      "budget": 150,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 42.25,
+      "days": [
+        {
+          "day": 0,
+          "calories": 1693,
+          "proteins": 127.4
+        },
+        {
+          "day": 1,
+          "calories": 1703,
+          "proteins": 121.8
+        },
+        {
+          "day": 2,
+          "calories": 1712,
+          "proteins": 119.6
+        },
+        {
+          "day": 3,
+          "calories": 1726,
+          "proteins": 129.7
+        },
+        {
+          "day": 4,
+          "calories": 1701,
+          "proteins": 119.3
+        },
+        {
+          "day": 5,
+          "calories": 1717,
+          "proteins": 118.2
+        },
+        {
+          "day": 6,
+          "calories": 1661,
+          "proteins": 118
+        }
+      ]
+    },
+    {
+      "id": "24",
+      "name": "strict-rempli",
+      "goal": "lose_weight",
+      "budget": 150,
+      "pantry": [
+        "Œufs",
+        "Riz",
+        "Pâtes",
+        "Pommes de terre",
+        "Pain",
+        "Flocons d’avoine",
+        "Lait",
+        "Yaourt grec",
+        "Poulet",
+        "Thon",
+        "Tomates",
+        "Carottes",
+        "Oignons",
+        "Champignons",
+        "Cheddar",
+        "Farine",
+        "Beurre",
+        "Bananes",
+        "Pommes",
+        "Lentilles",
+        "Pois cassés",
+        "Ail"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 32.17,
+      "days": [
+        {
+          "day": 0,
+          "calories": 1664,
+          "proteins": 119.7
+        },
+        {
+          "day": 1,
+          "calories": 1705,
+          "proteins": 110
+        },
+        {
+          "day": 2,
+          "calories": 1687,
+          "proteins": 121.7
+        },
+        {
+          "day": 3,
+          "calories": 1680,
+          "proteins": 114.5
+        },
+        {
+          "day": 4,
+          "calories": 1735,
+          "proteins": 112.2
+        },
+        {
+          "day": 5,
+          "calories": 1698,
+          "proteins": 119.3
+        },
+        {
+          "day": 6,
+          "calories": 1731,
+          "proteins": 116.6
+        }
+      ]
+    },
+    {
+      "id": "25",
+      "name": "vide",
+      "goal": "gain_muscle",
+      "budget": 30,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 21.58,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2602,
+          "proteins": 130.3
+        },
+        {
+          "day": 1,
+          "calories": 2602,
+          "proteins": 129.8
+        },
+        {
+          "day": 2,
+          "calories": 2602,
+          "proteins": 130.3
+        },
+        {
+          "day": 3,
+          "calories": 2602,
+          "proteins": 129.8
+        },
+        {
+          "day": 4,
+          "calories": 2602,
+          "proteins": 130.3
+        },
+        {
+          "day": 5,
+          "calories": 2602,
+          "proteins": 129.8
+        },
+        {
+          "day": 6,
+          "calories": 2603,
+          "proteins": 130.1
+        }
+      ]
+    },
+    {
+      "id": "26",
+      "name": "priorité-courte",
+      "goal": "gain_muscle",
+      "budget": 30,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 21.23,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2602,
+          "proteins": 130.3
+        },
+        {
+          "day": 1,
+          "calories": 2602,
+          "proteins": 130.3
+        },
+        {
+          "day": 2,
+          "calories": 2602,
+          "proteins": 130.3
+        },
+        {
+          "day": 3,
+          "calories": 2602,
+          "proteins": 129.8
+        },
+        {
+          "day": 4,
+          "calories": 2602,
+          "proteins": 129.8
+        },
+        {
+          "day": 5,
+          "calories": 2601,
+          "proteins": 130
+        },
+        {
+          "day": 6,
+          "calories": 2605,
+          "proteins": 129.8
+        }
+      ]
+    },
+    {
+      "id": "27",
+      "name": "strict-rempli",
+      "goal": "gain_muscle",
+      "budget": 30,
+      "pantry": [
+        "Œufs",
+        "Riz",
+        "Pâtes",
+        "Pommes de terre",
+        "Pain",
+        "Flocons d’avoine",
+        "Lait",
+        "Yaourt grec",
+        "Poulet",
+        "Thon",
+        "Tomates",
+        "Carottes",
+        "Oignons",
+        "Champignons",
+        "Cheddar",
+        "Farine",
+        "Beurre",
+        "Bananes",
+        "Pommes",
+        "Lentilles",
+        "Pois cassés",
+        "Ail"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 23.48,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2600,
+          "proteins": 130
+        },
+        {
+          "day": 1,
+          "calories": 2600,
+          "proteins": 130
+        },
+        {
+          "day": 2,
+          "calories": 2600,
+          "proteins": 130
+        },
+        {
+          "day": 3,
+          "calories": 2600,
+          "proteins": 130
+        },
+        {
+          "day": 4,
+          "calories": 2600,
+          "proteins": 130
+        },
+        {
+          "day": 5,
+          "calories": 2546,
+          "proteins": 129.1
+        },
+        {
+          "day": 6,
+          "calories": 2600,
+          "proteins": 130
+        }
+      ]
+    },
+    {
+      "id": "28",
+      "name": "vide",
+      "goal": "gain_muscle",
+      "budget": 45,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 40.04,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2583,
+          "proteins": 128.1
+        },
+        {
+          "day": 1,
+          "calories": 2532,
+          "proteins": 129.6
+        },
+        {
+          "day": 2,
+          "calories": 2537,
+          "proteins": 130.2
+        },
+        {
+          "day": 3,
+          "calories": 2729,
+          "proteins": 136.4
+        },
+        {
+          "day": 4,
+          "calories": 2579,
+          "proteins": 132.5
+        },
+        {
+          "day": 5,
+          "calories": 2673,
+          "proteins": 140.4
+        },
+        {
+          "day": 6,
+          "calories": 2567,
+          "proteins": 136.1
+        }
+      ]
+    },
+    {
+      "id": "29",
+      "name": "priorité-courte",
+      "goal": "gain_muscle",
+      "budget": 45,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 38.61,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2593,
+          "proteins": 134.8
+        },
+        {
+          "day": 1,
+          "calories": 2593,
+          "proteins": 134.8
+        },
+        {
+          "day": 2,
+          "calories": 2471,
+          "proteins": 140.7
+        },
+        {
+          "day": 3,
+          "calories": 2582,
+          "proteins": 132.7
+        },
+        {
+          "day": 4,
+          "calories": 2706,
+          "proteins": 138.1
+        },
+        {
+          "day": 5,
+          "calories": 2632,
+          "proteins": 133.7
+        },
+        {
+          "day": 6,
+          "calories": 2713,
+          "proteins": 133
+        }
+      ]
+    },
+    {
+      "id": "30",
+      "name": "strict-rempli",
+      "goal": "gain_muscle",
+      "budget": 45,
+      "pantry": [
+        "Œufs",
+        "Riz",
+        "Pâtes",
+        "Pommes de terre",
+        "Pain",
+        "Flocons d’avoine",
+        "Lait",
+        "Yaourt grec",
+        "Poulet",
+        "Thon",
+        "Tomates",
+        "Carottes",
+        "Oignons",
+        "Champignons",
+        "Cheddar",
+        "Farine",
+        "Beurre",
+        "Bananes",
+        "Pommes",
+        "Lentilles",
+        "Pois cassés",
+        "Ail"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 33.13,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2651,
+          "proteins": 131.5
+        },
+        {
+          "day": 1,
+          "calories": 2613,
+          "proteins": 130
+        },
+        {
+          "day": 2,
+          "calories": 2651,
+          "proteins": 131.5
+        },
+        {
+          "day": 3,
+          "calories": 2601,
+          "proteins": 130.7
+        },
+        {
+          "day": 4,
+          "calories": 2533,
+          "proteins": 130.7
+        },
+        {
+          "day": 5,
+          "calories": 2546,
+          "proteins": 129.1
+        },
+        {
+          "day": 6,
+          "calories": 2575,
+          "proteins": 134.5
+        }
+      ]
+    },
+    {
+      "id": "31",
+      "name": "vide",
+      "goal": "gain_muscle",
+      "budget": 75,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 43.15,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2605,
+          "proteins": 138.5
+        },
+        {
+          "day": 1,
+          "calories": 2578,
+          "proteins": 134
+        },
+        {
+          "day": 2,
+          "calories": 2604,
+          "proteins": 128
+        },
+        {
+          "day": 3,
+          "calories": 2652,
+          "proteins": 133.4
+        },
+        {
+          "day": 4,
+          "calories": 2595,
+          "proteins": 129.9
+        },
+        {
+          "day": 5,
+          "calories": 2608,
+          "proteins": 135.2
+        },
+        {
+          "day": 6,
+          "calories": 2602,
+          "proteins": 129.4
+        }
+      ]
+    },
+    {
+      "id": "32",
+      "name": "priorité-courte",
+      "goal": "gain_muscle",
+      "budget": 75,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 46.93,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2612,
+          "proteins": 142.5
+        },
+        {
+          "day": 1,
+          "calories": 2600,
+          "proteins": 130.4
+        },
+        {
+          "day": 2,
+          "calories": 2590,
+          "proteins": 132
+        },
+        {
+          "day": 3,
+          "calories": 2521,
+          "proteins": 127
+        },
+        {
+          "day": 4,
+          "calories": 2650,
+          "proteins": 142.6
+        },
+        {
+          "day": 5,
+          "calories": 2568,
+          "proteins": 132.5
+        },
+        {
+          "day": 6,
+          "calories": 2637,
+          "proteins": 130
+        }
+      ]
+    },
+    {
+      "id": "33",
+      "name": "strict-rempli",
+      "goal": "gain_muscle",
+      "budget": 75,
+      "pantry": [
+        "Œufs",
+        "Riz",
+        "Pâtes",
+        "Pommes de terre",
+        "Pain",
+        "Flocons d’avoine",
+        "Lait",
+        "Yaourt grec",
+        "Poulet",
+        "Thon",
+        "Tomates",
+        "Carottes",
+        "Oignons",
+        "Champignons",
+        "Cheddar",
+        "Farine",
+        "Beurre",
+        "Bananes",
+        "Pommes",
+        "Lentilles",
+        "Pois cassés",
+        "Ail"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 33.85,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2532,
+          "proteins": 129.6
+        },
+        {
+          "day": 1,
+          "calories": 2594,
+          "proteins": 127.4
+        },
+        {
+          "day": 2,
+          "calories": 2690,
+          "proteins": 136.5
+        },
+        {
+          "day": 3,
+          "calories": 2613,
+          "proteins": 130
+        },
+        {
+          "day": 4,
+          "calories": 2546,
+          "proteins": 129.1
+        },
+        {
+          "day": 5,
+          "calories": 2561,
+          "proteins": 129.5
+        },
+        {
+          "day": 6,
+          "calories": 2598,
+          "proteins": 117.5
+        }
+      ]
+    },
+    {
+      "id": "34",
+      "name": "vide",
+      "goal": "gain_muscle",
+      "budget": 150,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 45.65,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2553,
+          "proteins": 138.2
+        },
+        {
+          "day": 1,
+          "calories": 2532,
+          "proteins": 129.6
+        },
+        {
+          "day": 2,
+          "calories": 2506,
+          "proteins": 131.1
+        },
+        {
+          "day": 3,
+          "calories": 2637,
+          "proteins": 130
+        },
+        {
+          "day": 4,
+          "calories": 2639,
+          "proteins": 130
+        },
+        {
+          "day": 5,
+          "calories": 2575,
+          "proteins": 129.3
+        },
+        {
+          "day": 6,
+          "calories": 2585,
+          "proteins": 129.8
+        }
+      ]
+    },
+    {
+      "id": "35",
+      "name": "priorité-courte",
+      "goal": "gain_muscle",
+      "budget": 150,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 50.6,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2612,
+          "proteins": 142.5
+        },
+        {
+          "day": 1,
+          "calories": 2600,
+          "proteins": 129.6
+        },
+        {
+          "day": 2,
+          "calories": 2709,
+          "proteins": 138.9
+        },
+        {
+          "day": 3,
+          "calories": 2628,
+          "proteins": 132.4
+        },
+        {
+          "day": 4,
+          "calories": 2560,
+          "proteins": 127.9
+        },
+        {
+          "day": 5,
+          "calories": 2497,
+          "proteins": 142.8
+        },
+        {
+          "day": 6,
+          "calories": 2507,
+          "proteins": 138.4
+        }
+      ]
+    },
+    {
+      "id": "36",
+      "name": "strict-rempli",
+      "goal": "gain_muscle",
+      "budget": 150,
+      "pantry": [
+        "Œufs",
+        "Riz",
+        "Pâtes",
+        "Pommes de terre",
+        "Pain",
+        "Flocons d’avoine",
+        "Lait",
+        "Yaourt grec",
+        "Poulet",
+        "Thon",
+        "Tomates",
+        "Carottes",
+        "Oignons",
+        "Champignons",
+        "Cheddar",
+        "Farine",
+        "Beurre",
+        "Bananes",
+        "Pommes",
+        "Lentilles",
+        "Pois cassés",
+        "Ail"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 34.36,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2532,
+          "proteins": 129.6
+        },
+        {
+          "day": 1,
+          "calories": 2614,
+          "proteins": 130.2
+        },
+        {
+          "day": 2,
+          "calories": 2690,
+          "proteins": 136.5
+        },
+        {
+          "day": 3,
+          "calories": 2600,
+          "proteins": 135.7
+        },
+        {
+          "day": 4,
+          "calories": 2546,
+          "proteins": 129.1
+        },
+        {
+          "day": 5,
+          "calories": 2561,
+          "proteins": 129.5
+        },
+        {
+          "day": 6,
+          "calories": 2598,
+          "proteins": 117.5
+        }
+      ]
+    },
+    {
+      "id": "37",
+      "name": "strict-six",
+      "goal": "maintain",
+      "budget": 30,
+      "pantry": [
+        "Œufs",
+        "Pain",
+        "Lait",
+        "Flocons d’avoine",
+        "Pommes de terre",
+        "Épinards"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "no_plan"
+    },
+    {
+      "id": "38",
+      "name": "strict-six",
+      "goal": "maintain",
+      "budget": 150,
+      "pantry": [
+        "Œufs",
+        "Pain",
+        "Lait",
+        "Flocons d’avoine",
+        "Pommes de terre",
+        "Épinards"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "no_plan"
+    },
+    {
+      "id": "39",
+      "name": "strict-six",
+      "goal": "lose_weight",
+      "budget": 30,
+      "pantry": [
+        "Œufs",
+        "Pain",
+        "Lait",
+        "Flocons d’avoine",
+        "Pommes de terre",
+        "Épinards"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "no_plan"
+    },
+    {
+      "id": "40",
+      "name": "strict-six",
+      "goal": "lose_weight",
+      "budget": 150,
+      "pantry": [
+        "Œufs",
+        "Pain",
+        "Lait",
+        "Flocons d’avoine",
+        "Pommes de terre",
+        "Épinards"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "no_plan"
+    },
+    {
+      "id": "41",
+      "name": "strict-six",
+      "goal": "gain_muscle",
+      "budget": 30,
+      "pantry": [
+        "Œufs",
+        "Pain",
+        "Lait",
+        "Flocons d’avoine",
+        "Pommes de terre",
+        "Épinards"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "no_plan"
+    },
+    {
+      "id": "42",
+      "name": "strict-six",
+      "goal": "gain_muscle",
+      "budget": 150,
+      "pantry": [
+        "Œufs",
+        "Pain",
+        "Lait",
+        "Flocons d’avoine",
+        "Pommes de terre",
+        "Épinards"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "no_plan"
+    },
+    {
+      "id": "43",
+      "name": "strict-sept",
+      "goal": "maintain",
+      "budget": 30,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "no_plan"
+    },
+    {
+      "id": "44",
+      "name": "strict-sept",
+      "goal": "maintain",
+      "budget": 150,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 33.39,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2208,
+          "proteins": 90.8
+        },
+        {
+          "day": 1,
+          "calories": 2208,
+          "proteins": 90.8
+        },
+        {
+          "day": 2,
+          "calories": 2208,
+          "proteins": 90.8
+        },
+        {
+          "day": 3,
+          "calories": 2208,
+          "proteins": 90.8
+        },
+        {
+          "day": 4,
+          "calories": 2208,
+          "proteins": 90.8
+        },
+        {
+          "day": 5,
+          "calories": 2208,
+          "proteins": 90.8
+        },
+        {
+          "day": 6,
+          "calories": 2208,
+          "proteins": 90.8
+        }
+      ]
+    },
+    {
+      "id": "45",
+      "name": "strict-sept",
+      "goal": "lose_weight",
+      "budget": 30,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "no_plan"
+    },
+    {
+      "id": "46",
+      "name": "strict-sept",
+      "goal": "lose_weight",
+      "budget": 150,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 44.73,
+      "days": [
+        {
+          "day": 0,
+          "calories": 1699,
+          "proteins": 120.7
+        },
+        {
+          "day": 1,
+          "calories": 1699,
+          "proteins": 120.7
+        },
+        {
+          "day": 2,
+          "calories": 1699,
+          "proteins": 120.7
+        },
+        {
+          "day": 3,
+          "calories": 1699,
+          "proteins": 120.7
+        },
+        {
+          "day": 4,
+          "calories": 1699,
+          "proteins": 120.7
+        },
+        {
+          "day": 5,
+          "calories": 1699,
+          "proteins": 120.7
+        },
+        {
+          "day": 6,
+          "calories": 1699,
+          "proteins": 120.7
+        }
+      ]
+    },
+    {
+      "id": "47",
+      "name": "strict-sept",
+      "goal": "gain_muscle",
+      "budget": 30,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "no_plan"
+    },
+    {
+      "id": "48",
+      "name": "strict-sept",
+      "goal": "gain_muscle",
+      "budget": 150,
+      "pantry": [
+        "Poulet",
+        "Riz",
+        "Carottes",
+        "Oignons",
+        "Bananes",
+        "Yaourt grec",
+        "Flocons d’avoine"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 47.11,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2604,
+          "proteins": 129.5
+        },
+        {
+          "day": 1,
+          "calories": 2604,
+          "proteins": 129.5
+        },
+        {
+          "day": 2,
+          "calories": 2604,
+          "proteins": 129.5
+        },
+        {
+          "day": 3,
+          "calories": 2604,
+          "proteins": 129.5
+        },
+        {
+          "day": 4,
+          "calories": 2604,
+          "proteins": 129.5
+        },
+        {
+          "day": 5,
+          "calories": 2604,
+          "proteins": 129.5
+        },
+        {
+          "day": 6,
+          "calories": 2604,
+          "proteins": 129.5
+        }
+      ]
+    },
+    {
+      "id": "49",
+      "name": "foyer",
+      "goal": "maintain",
+      "budget": 60,
+      "pantry": [],
+      "mode": "priority",
+      "people": 2,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 52.16,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 1,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 2,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2108,
+          "proteins": 93
+        },
+        {
+          "day": 4,
+          "calories": 2202,
+          "proteins": 91
+        },
+        {
+          "day": 5,
+          "calories": 2160,
+          "proteins": 92.7
+        },
+        {
+          "day": 6,
+          "calories": 2187,
+          "proteins": 90.4
+        }
+      ]
+    },
+    {
+      "id": "50",
+      "name": "foyer",
+      "goal": "maintain",
+      "budget": 60,
+      "pantry": [
+        "Œufs",
+        "Pain",
+        "Lait",
+        "Flocons d’avoine",
+        "Pommes de terre",
+        "Épinards"
+      ],
+      "mode": "priority",
+      "people": 2,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 49.26,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2162,
+          "proteins": 96.6
+        },
+        {
+          "day": 1,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 2,
+          "calories": 2157,
+          "proteins": 92.1
+        },
+        {
+          "day": 3,
+          "calories": 2108,
+          "proteins": 93
+        },
+        {
+          "day": 4,
+          "calories": 2200,
+          "proteins": 91.1
+        },
+        {
+          "day": 5,
+          "calories": 2198,
+          "proteins": 91.1
+        },
+        {
+          "day": 6,
+          "calories": 2202,
+          "proteins": 90.9
+        }
+      ]
+    },
+    {
+      "id": "51",
+      "name": "foyer",
+      "goal": "maintain",
+      "budget": 300,
+      "pantry": [],
+      "mode": "priority",
+      "people": 2,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 57.39,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2130,
+          "proteins": 91
+        },
+        {
+          "day": 1,
+          "calories": 2159,
+          "proteins": 92.7
+        },
+        {
+          "day": 2,
+          "calories": 2186,
+          "proteins": 91.2
+        },
+        {
+          "day": 3,
+          "calories": 2202,
+          "proteins": 96.2
+        },
+        {
+          "day": 4,
+          "calories": 2187,
+          "proteins": 91.5
+        },
+        {
+          "day": 5,
+          "calories": 2179,
+          "proteins": 90.9
+        },
+        {
+          "day": 6,
+          "calories": 2092,
+          "proteins": 91.2
+        }
+      ]
+    },
+    {
+      "id": "52",
+      "name": "foyer",
+      "goal": "maintain",
+      "budget": 300,
+      "pantry": [
+        "Œufs",
+        "Pain",
+        "Lait",
+        "Flocons d’avoine",
+        "Pommes de terre",
+        "Épinards"
+      ],
+      "mode": "priority",
+      "people": 2,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 68.66,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2151,
+          "proteins": 96.6
+        },
+        {
+          "day": 1,
+          "calories": 2093,
+          "proteins": 97.3
+        },
+        {
+          "day": 2,
+          "calories": 2183,
+          "proteins": 95.9
+        },
+        {
+          "day": 3,
+          "calories": 2194,
+          "proteins": 91.3
+        },
+        {
+          "day": 4,
+          "calories": 2185,
+          "proteins": 91
+        },
+        {
+          "day": 5,
+          "calories": 2206,
+          "proteins": 84.8
+        },
+        {
+          "day": 6,
+          "calories": 2091,
+          "proteins": 93.1
+        }
+      ]
+    },
+    {
+      "id": "53",
+      "name": "foyer",
+      "goal": "maintain",
+      "budget": 120,
+      "pantry": [],
+      "mode": "priority",
+      "people": 4,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 105.64,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 1,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 2,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2108,
+          "proteins": 93
+        },
+        {
+          "day": 4,
+          "calories": 2202,
+          "proteins": 91
+        },
+        {
+          "day": 5,
+          "calories": 2186,
+          "proteins": 91.9
+        },
+        {
+          "day": 6,
+          "calories": 2244,
+          "proteins": 91.6
+        }
+      ]
+    },
+    {
+      "id": "54",
+      "name": "foyer",
+      "goal": "maintain",
+      "budget": 120,
+      "pantry": [
+        "Œufs",
+        "Pain",
+        "Lait",
+        "Flocons d’avoine",
+        "Pommes de terre",
+        "Épinards"
+      ],
+      "mode": "priority",
+      "people": 4,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 94.88,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2162,
+          "proteins": 96.6
+        },
+        {
+          "day": 1,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 2,
+          "calories": 2157,
+          "proteins": 92.1
+        },
+        {
+          "day": 3,
+          "calories": 2108,
+          "proteins": 93
+        },
+        {
+          "day": 4,
+          "calories": 2200,
+          "proteins": 91.1
+        },
+        {
+          "day": 5,
+          "calories": 2199,
+          "proteins": 91.1
+        },
+        {
+          "day": 6,
+          "calories": 2202,
+          "proteins": 90.9
+        }
+      ]
+    },
+    {
+      "id": "55",
+      "name": "foyer",
+      "goal": "maintain",
+      "budget": 600,
+      "pantry": [],
+      "mode": "priority",
+      "people": 4,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 117.52,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2130,
+          "proteins": 91
+        },
+        {
+          "day": 1,
+          "calories": 2159,
+          "proteins": 92.7
+        },
+        {
+          "day": 2,
+          "calories": 2186,
+          "proteins": 91.2
+        },
+        {
+          "day": 3,
+          "calories": 2202,
+          "proteins": 96.2
+        },
+        {
+          "day": 4,
+          "calories": 2198,
+          "proteins": 91.7
+        },
+        {
+          "day": 5,
+          "calories": 2090,
+          "proteins": 91.1
+        },
+        {
+          "day": 6,
+          "calories": 2136,
+          "proteins": 93.5
+        }
+      ]
+    },
+    {
+      "id": "56",
+      "name": "foyer",
+      "goal": "maintain",
+      "budget": 600,
+      "pantry": [
+        "Œufs",
+        "Pain",
+        "Lait",
+        "Flocons d’avoine",
+        "Pommes de terre",
+        "Épinards"
+      ],
+      "mode": "priority",
+      "people": 4,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 136.97,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2151,
+          "proteins": 96.6
+        },
+        {
+          "day": 1,
+          "calories": 2093,
+          "proteins": 97.3
+        },
+        {
+          "day": 2,
+          "calories": 2183,
+          "proteins": 95.9
+        },
+        {
+          "day": 3,
+          "calories": 2213,
+          "proteins": 91.7
+        },
+        {
+          "day": 4,
+          "calories": 2218,
+          "proteins": 87
+        },
+        {
+          "day": 5,
+          "calories": 2212,
+          "proteins": 95.4
+        },
+        {
+          "day": 6,
+          "calories": 2091,
+          "proteins": 93.1
+        }
+      ]
+    },
+    {
+      "id": "57",
+      "name": "pays-minimum",
+      "goal": "maintain",
+      "budget": 36,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "US",
+      "currency": "USD",
+      "status": "passed",
+      "estimate": 28.73,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 1,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 2,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2108,
+          "proteins": 93
+        },
+        {
+          "day": 4,
+          "calories": 2202,
+          "proteins": 91
+        },
+        {
+          "day": 5,
+          "calories": 2214,
+          "proteins": 95.8
+        },
+        {
+          "day": 6,
+          "calories": 2194,
+          "proteins": 93.4
+        }
+      ]
+    },
+    {
+      "id": "58",
+      "name": "pays-maximum",
+      "goal": "maintain",
+      "budget": 180,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "US",
+      "currency": "USD",
+      "status": "passed",
+      "estimate": 30.96,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2130,
+          "proteins": 91
+        },
+        {
+          "day": 1,
+          "calories": 2159,
+          "proteins": 92.7
+        },
+        {
+          "day": 2,
+          "calories": 2131,
+          "proteins": 92.9
+        },
+        {
+          "day": 3,
+          "calories": 2196,
+          "proteins": 95.8
+        },
+        {
+          "day": 4,
+          "calories": 2264,
+          "proteins": 90.5
+        },
+        {
+          "day": 5,
+          "calories": 2200,
+          "proteins": 91
+        },
+        {
+          "day": 6,
+          "calories": 2186,
+          "proteins": 91.5
+        }
+      ]
+    },
+    {
+      "id": "59",
+      "name": "pays-minimum",
+      "goal": "maintain",
+      "budget": 30,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "GB",
+      "currency": "GBP",
+      "status": "passed",
+      "estimate": 26.79,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 1,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 2,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2108,
+          "proteins": 93
+        },
+        {
+          "day": 4,
+          "calories": 2202,
+          "proteins": 91
+        },
+        {
+          "day": 5,
+          "calories": 2214,
+          "proteins": 95.8
+        },
+        {
+          "day": 6,
+          "calories": 2194,
+          "proteins": 93.4
+        }
+      ]
+    },
+    {
+      "id": "60",
+      "name": "pays-maximum",
+      "goal": "maintain",
+      "budget": 150,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "GB",
+      "currency": "GBP",
+      "status": "passed",
+      "estimate": 27.42,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2130,
+          "proteins": 91
+        },
+        {
+          "day": 1,
+          "calories": 2159,
+          "proteins": 92.7
+        },
+        {
+          "day": 2,
+          "calories": 2186,
+          "proteins": 91.2
+        },
+        {
+          "day": 3,
+          "calories": 2202,
+          "proteins": 96.2
+        },
+        {
+          "day": 4,
+          "calories": 2158,
+          "proteins": 91.6
+        },
+        {
+          "day": 5,
+          "calories": 2214,
+          "proteins": 91.1
+        },
+        {
+          "day": 6,
+          "calories": 2264,
+          "proteins": 92.6
+        }
+      ]
+    },
+    {
+      "id": "61",
+      "name": "pays-minimum",
+      "goal": "maintain",
+      "budget": 30,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "DE",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 25.11,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 1,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 2,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2108,
+          "proteins": 93
+        },
+        {
+          "day": 4,
+          "calories": 2202,
+          "proteins": 91
+        },
+        {
+          "day": 5,
+          "calories": 2186,
+          "proteins": 91.9
+        },
+        {
+          "day": 6,
+          "calories": 2244,
+          "proteins": 91.6
+        }
+      ]
+    },
+    {
+      "id": "62",
+      "name": "pays-maximum",
+      "goal": "maintain",
+      "budget": 150,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "DE",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 28.02,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2161,
+          "proteins": 94.9
+        },
+        {
+          "day": 1,
+          "calories": 2200,
+          "proteins": 92
+        },
+        {
+          "day": 2,
+          "calories": 2131,
+          "proteins": 92.9
+        },
+        {
+          "day": 3,
+          "calories": 2196,
+          "proteins": 95.8
+        },
+        {
+          "day": 4,
+          "calories": 2158,
+          "proteins": 91.6
+        },
+        {
+          "day": 5,
+          "calories": 2106,
+          "proteins": 89.4
+        },
+        {
+          "day": 6,
+          "calories": 2186,
+          "proteins": 91.5
+        }
+      ]
+    },
+    {
+      "id": "63",
+      "name": "pays-minimum",
+      "goal": "maintain",
+      "budget": 63,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "CA",
+      "currency": "CAD",
+      "status": "passed",
+      "estimate": 49.17,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 1,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 2,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2108,
+          "proteins": 93
+        },
+        {
+          "day": 4,
+          "calories": 2202,
+          "proteins": 91
+        },
+        {
+          "day": 5,
+          "calories": 2186,
+          "proteins": 91.9
+        },
+        {
+          "day": 6,
+          "calories": 2244,
+          "proteins": 91.6
+        }
+      ]
+    },
+    {
+      "id": "64",
+      "name": "pays-maximum",
+      "goal": "maintain",
+      "budget": 315,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "CA",
+      "currency": "CAD",
+      "status": "passed",
+      "estimate": 53.83,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2130,
+          "proteins": 91
+        },
+        {
+          "day": 1,
+          "calories": 2159,
+          "proteins": 92.7
+        },
+        {
+          "day": 2,
+          "calories": 2186,
+          "proteins": 91.2
+        },
+        {
+          "day": 3,
+          "calories": 2202,
+          "proteins": 96.2
+        },
+        {
+          "day": 4,
+          "calories": 2200,
+          "proteins": 91.2
+        },
+        {
+          "day": 5,
+          "calories": 2187,
+          "proteins": 92.5
+        },
+        {
+          "day": 6,
+          "calories": 2268,
+          "proteins": 91.6
+        }
+      ]
+    },
+    {
+      "id": "65",
+      "name": "vegetarian",
+      "goal": "maintain",
+      "budget": 30,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 29.26,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 1,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 2,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2108,
+          "proteins": 93
+        },
+        {
+          "day": 4,
+          "calories": 2202,
+          "proteins": 91
+        },
+        {
+          "day": 5,
+          "calories": 2186,
+          "proteins": 91.5
+        },
+        {
+          "day": 6,
+          "calories": 2187,
+          "proteins": 92.6
+        }
+      ]
+    },
+    {
+      "id": "66",
+      "name": "vegetarian",
+      "goal": "maintain",
+      "budget": 150,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 32.79,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2130,
+          "proteins": 91
+        },
+        {
+          "day": 1,
+          "calories": 2132,
+          "proteins": 91.1
+        },
+        {
+          "day": 2,
+          "calories": 2189,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2137,
+          "proteins": 90.4
+        },
+        {
+          "day": 4,
+          "calories": 2215,
+          "proteins": 91.7
+        },
+        {
+          "day": 5,
+          "calories": 2190,
+          "proteins": 90.7
+        },
+        {
+          "day": 6,
+          "calories": 2222,
+          "proteins": 98.4
+        }
+      ]
+    },
+    {
+      "id": "67",
+      "name": "vegan",
+      "goal": "maintain",
+      "budget": 30,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 25.01,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2208,
+          "proteins": 90.9
+        },
+        {
+          "day": 1,
+          "calories": 2208,
+          "proteins": 90.9
+        },
+        {
+          "day": 2,
+          "calories": 2208,
+          "proteins": 90.9
+        },
+        {
+          "day": 3,
+          "calories": 2224,
+          "proteins": 90.8
+        },
+        {
+          "day": 4,
+          "calories": 2228,
+          "proteins": 97.3
+        },
+        {
+          "day": 5,
+          "calories": 2228,
+          "proteins": 97.3
+        },
+        {
+          "day": 6,
+          "calories": 2220,
+          "proteins": 96.1
+        }
+      ]
+    },
+    {
+      "id": "68",
+      "name": "vegan",
+      "goal": "maintain",
+      "budget": 150,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 31.48,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2208,
+          "proteins": 90.9
+        },
+        {
+          "day": 1,
+          "calories": 2226,
+          "proteins": 98.4
+        },
+        {
+          "day": 2,
+          "calories": 2184,
+          "proteins": 88.1
+        },
+        {
+          "day": 3,
+          "calories": 2201,
+          "proteins": 91.2
+        },
+        {
+          "day": 4,
+          "calories": 2207,
+          "proteins": 86.1
+        },
+        {
+          "day": 5,
+          "calories": 2221,
+          "proteins": 96
+        },
+        {
+          "day": 6,
+          "calories": 2200,
+          "proteins": 90.8
+        }
+      ]
+    },
+    {
+      "id": "69",
+      "name": "cuisine-de-base-et-micro-ondes",
+      "goal": "maintain",
+      "budget": 30,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 25.44,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2215,
+          "proteins": 92.7
+        },
+        {
+          "day": 1,
+          "calories": 2193,
+          "proteins": 91
+        },
+        {
+          "day": 2,
+          "calories": 2193,
+          "proteins": 91
+        },
+        {
+          "day": 3,
+          "calories": 2198,
+          "proteins": 91.1
+        },
+        {
+          "day": 4,
+          "calories": 2198,
+          "proteins": 91.1
+        },
+        {
+          "day": 5,
+          "calories": 2199,
+          "proteins": 91
+        },
+        {
+          "day": 6,
+          "calories": 2214,
+          "proteins": 90.9
+        }
+      ]
+    },
+    {
+      "id": "70",
+      "name": "cuisine-de-base-et-micro-ondes",
+      "goal": "maintain",
+      "budget": 150,
+      "pantry": [],
+      "mode": "priority",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "passed",
+      "estimate": 30.62,
+      "days": [
+        {
+          "day": 0,
+          "calories": 2111,
+          "proteins": 91.1
+        },
+        {
+          "day": 1,
+          "calories": 2196,
+          "proteins": 90.9
+        },
+        {
+          "day": 2,
+          "calories": 2124,
+          "proteins": 91.1
+        },
+        {
+          "day": 3,
+          "calories": 2204,
+          "proteins": 91.1
+        },
+        {
+          "day": 4,
+          "calories": 2198,
+          "proteins": 91.6
+        },
+        {
+          "day": 5,
+          "calories": 2106,
+          "proteins": 93.8
+        },
+        {
+          "day": 6,
+          "calories": 2219,
+          "proteins": 98.5
+        }
+      ]
+    },
+    {
+      "id": "71",
+      "name": "strict-un-ingrédient",
+      "goal": "maintain",
+      "budget": 30,
+      "pantry": [
+        "Riz"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "no_plan"
+    },
+    {
+      "id": "72",
+      "name": "strict-un-ingrédient",
+      "goal": "maintain",
+      "budget": 150,
+      "pantry": [
+        "Riz"
+      ],
+      "mode": "strict",
+      "people": 1,
+      "country": "FR",
+      "currency": "EUR",
+      "status": "no_plan"
+    }
+  ]
+}

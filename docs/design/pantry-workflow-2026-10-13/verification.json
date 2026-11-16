@@ -1,0 +1,36 @@
+[
+  {
+    "file": "01-scan-et-analyse.png",
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "pixelsPreserved": true,
+    "chunks": [
+      "IHDR",
+      "IDAT",
+      "IEND"
+    ],
+    "remainingFilesystemAttributes": [
+      "com.apple.provenance"
+    ],
+    "embeddedMetadataRemoved": true
+  },
+  {
+    "file": "02-recapitulatif-ajout-courses.png",
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "pixelsPreserved": true,
+    "chunks": [
+      "IHDR",
+      "IDAT",
+      "IEND"
+    ],
+    "remainingFilesystemAttributes": [
+      "com.apple.provenance"
+    ],
+    "embeddedMetadataRemoved": true
+  }
+]

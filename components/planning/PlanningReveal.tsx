@@ -1,3 +1,4 @@
+import { AppRadii, AppTheme as theme } from '../../constants/AppTheme';
 import { useMotionAllowed } from '../../contexts/MotionPreferences';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from 'expo-router';
@@ -5,7 +6,7 @@ import React, { useCallback, useLayoutEffect, useRef, useState, type ReactNode }
 import { StyleSheet, Text, TouchableOpacity, View, type LayoutRectangle } from 'react-native';
 import Animated, { cancelAnimation, Easing, ReduceMotion, useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
-import { AppTheme as theme } from '../../constants/AppTheme';
+
 import { consumePlanningReveal } from '../../services/planningReveal';
 import { planningStyles } from './PlanningStyles';
 
@@ -16,70 +17,60 @@ export function usePlanningReveal(hasMeals: boolean, dayIndices: number[], selec
   const allowed = useMotionAllowed();
   const [entrance, setEntrance] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [waiting, setWaiting] = useState(false);
   const [step, setStep] = useState(0);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const revealStartRef = useRef(onRevealStart);
   revealStartRef.current = onRevealStart;
   const selectRef = useRef(selectDay);
   selectRef.current = selectDay;
-  const playedRequest = useRef(0);
+  const firstDay = dayIndices[0];
   const daysKey = dayIndices.join(',');
   const stop = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
     timer.current = null;
     setPlaying(false);
-    setWaiting(false);
   }, []);
-  const scheduleReplay = useCallback(() => {
+  const finish = useCallback(() => {
+    if (firstDay !== undefined) selectRef.current(firstDay);
     stop();
-    revealStartRef.current?.();
-    setWaiting(true);
-    timer.current = setTimeout(() => {
-      timer.current = null;
-      setWaiting(false);
-      setEntrance(value => value + 1);
-    }, 5000);
-  }, [stop]);
+  }, [firstDay, stop]);
   useFocusEffect(useCallback(() => {
     setFocused(true);
     return () => { setFocused(false); stop(); };
   }, [stop]));
   useLayoutEffect(() => {
     if (!focused || !hasMeals || !daysKey || !planId) { stop(); return; }
-    const generated = consumePlanningReveal(planId);
-    const replay = __DEV__ && entrance > playedRequest.current;
-    playedRequest.current = entrance;
-    if (!allowed || (!generated && !replay)) { stop(); return; }
+    if (!consumePlanningReveal(planId)) { stop(); return; }
     const days = daysKey.split(',').map(Number);
+    selectRef.current(days[0]);
+    if (!allowed) { stop(); return; }
     let index = 0;
-    // Reset the parent viewport only for a real reveal, including manual replay.
+    // Reset the viewport only when a newly generated plan is revealed.
     revealStartRef.current?.();
+    setEntrance(value => value + 1);
     setPlaying(true);
     setStep(0);
-    selectRef.current(days[0]);
     const advance = () => {
       index += 1;
-      if (index >= days.length) { stop(); return; }
+      if (index >= days.length) { finish(); return; }
       setStep(index);
       selectRef.current(days[index]);
       timer.current = setTimeout(advance, index === days.length - 1 ? 500 : 360);
     };
     timer.current = setTimeout(advance, days.length === 1 ? 500 : 360);
     return stop;
-  }, [allowed, daysKey, entrance, focused, hasMeals, planId, stop]);
+  }, [allowed, daysKey, finish, focused, hasMeals, planId, stop]);
   return {
     visibleDayCount: playing ? step + 1 : dayIndices.length,
     dayAnimationKey: playing ? `${planId}:${entrance}` : undefined,
     animationKey: focused && allowed && hasMeals && playing ? entrance * 10 + step : null,
     stopReveal: stop,
-    replayButton: focused && allowed && hasMeals && (playing || __DEV__) ? <View style={styles.controls}>
-      <TouchableOpacity accessibilityRole="button" onPress={playing || waiting ? stop : scheduleReplay} style={styles.replay}>
-        <Ionicons name={waiting ? 'time-outline' : playing ? 'pause-outline' : 'play-outline'} size={18} color={theme.ink} />
-        <Text style={styles.replayText}>{t(waiting ? 'common.cancel' : playing ? 'planningReveal.skip' : 'planningReveal.replay')}</Text>
+    revealControls: focused && allowed && hasMeals && playing ? <View style={styles.controls}>
+      <TouchableOpacity accessibilityRole="button" onPress={finish} style={styles.replay}>
+        <Ionicons name="pause-outline" size={18} color={theme.ink} />
+        <Text style={styles.replayText}>{t('planningReveal.skip')}</Text>
       </TouchableOpacity>
-      {waiting && <Text style={styles.progress}>5 s</Text>}
-      {playing && <Text style={styles.progress}>{step + 1} / {dayIndices.length}</Text>}
+      <Text style={styles.progress}>{step + 1} / {dayIndices.length}</Text>
     </View> : null,
   };
 }
@@ -168,6 +159,6 @@ const styles = StyleSheet.create({
   measuring: { opacity: 0 },
   controls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 },
   progress: { fontFamily: 'CronosProBold', fontSize: 14, color: theme.muted },
-  replay: { alignSelf: 'center', minHeight: 44, paddingHorizontal: 14, borderRadius: 16, backgroundColor: theme.yellowSoft, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  replay: { alignSelf: 'center', minHeight: 44, paddingHorizontal: 14, borderRadius: AppRadii.control, backgroundColor: theme.yellowSoft, flexDirection: 'row', alignItems: 'center', gap: 8 },
   replayText: { fontFamily: 'CronosProBold', fontSize: 14, color: theme.ink },
 });

@@ -1,0 +1,882 @@
+[
+  {
+    "region": "Afrique du Sud",
+    "price": 749.99,
+    "currency": "ZAR"
+  },
+  {
+    "region": "Algérie",
+    "price": 5375,
+    "currency": "DZD"
+  },
+  {
+    "region": "Allemagne",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Arabie saoudite",
+    "price": 174.99,
+    "currency": "SAR"
+  },
+  {
+    "region": "Argentine",
+    "price": 61000,
+    "currency": "ARS"
+  },
+  {
+    "region": "Australie",
+    "price": 62.99,
+    "currency": "AUD"
+  },
+  {
+    "region": "Autriche",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Azerbaïdjan",
+    "price": 69.99,
+    "currency": "AZN"
+  },
+  {
+    "region": "Bahreïn",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Bangladesh",
+    "price": 5700,
+    "currency": "BDT"
+  },
+  {
+    "region": "Belgique",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Bermudes",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Bolivie",
+    "price": 469.99,
+    "currency": "BOB"
+  },
+  {
+    "region": "Brésil",
+    "price": 199.99,
+    "currency": "BRL"
+  },
+  {
+    "region": "Bulgarie",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Cambodge",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Cameroun",
+    "price": 27800,
+    "currency": "XAF"
+  },
+  {
+    "region": "Canada",
+    "price": 55.99,
+    "currency": "CAD"
+  },
+  {
+    "region": "Chili",
+    "price": 46400,
+    "currency": "CLP"
+  },
+  {
+    "region": "Chypre",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Colombie",
+    "price": 127000,
+    "currency": "COP"
+  },
+  {
+    "region": "Corée du Sud",
+    "price": 59000,
+    "currency": "KRW"
+  },
+  {
+    "region": "Costa Rica",
+    "price": 18100,
+    "currency": "CRC"
+  },
+  {
+    "region": "Croatie",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Côte d’Ivoire",
+    "price": 27500,
+    "currency": "XOF"
+  },
+  {
+    "region": "Danemark",
+    "price": 335,
+    "currency": "DKK"
+  },
+  {
+    "region": "Espagne",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Estonie",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Finlande",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "France",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Ghana",
+    "price": 560,
+    "currency": "GHS"
+  },
+  {
+    "region": "Gibraltar",
+    "price": 29.99,
+    "currency": "GBP"
+  },
+  {
+    "region": "Grèce",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Géorgie",
+    "price": 124,
+    "currency": "GEL"
+  },
+  {
+    "region": "Hong Kong",
+    "price": 318,
+    "currency": "HKD"
+  },
+  {
+    "region": "Hongrie",
+    "price": 16499,
+    "currency": "HUF"
+  },
+  {
+    "region": "Inde",
+    "price": 4500,
+    "currency": "INR"
+  },
+  {
+    "region": "Indonésie",
+    "price": 690000,
+    "currency": "IDR"
+  },
+  {
+    "region": "Irak",
+    "price": 60400,
+    "currency": "IQD"
+  },
+  {
+    "region": "Irlande",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Israël",
+    "price": 125,
+    "currency": "ILS"
+  },
+  {
+    "region": "Italie",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Japon",
+    "price": 7000,
+    "currency": "JPY"
+  },
+  {
+    "region": "Jordanie",
+    "price": 28.35,
+    "currency": "JOD"
+  },
+  {
+    "region": "Kazakhstan",
+    "price": 20990,
+    "currency": "KZT"
+  },
+  {
+    "region": "Kenya",
+    "price": 6000,
+    "currency": "KES"
+  },
+  {
+    "region": "Koweït",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Lettonie",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Liechtenstein",
+    "price": 36,
+    "currency": "CHF"
+  },
+  {
+    "region": "Lituanie",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Luxembourg",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Macao",
+    "price": 319,
+    "currency": "MOP"
+  },
+  {
+    "region": "Malaisie",
+    "price": 174.99,
+    "currency": "MYR"
+  },
+  {
+    "region": "Maroc",
+    "price": 469.99,
+    "currency": "MAD"
+  },
+  {
+    "region": "Mexique",
+    "price": 849,
+    "currency": "MXN"
+  },
+  {
+    "region": "Micronésie",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Monaco",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Mongolie",
+    "price": 143700,
+    "currency": "MNT"
+  },
+  {
+    "region": "Myanmar (Birmanie)",
+    "price": 84000,
+    "currency": "MMK"
+  },
+  {
+    "region": "Nigeria",
+    "price": 57500,
+    "currency": "NGN"
+  },
+  {
+    "region": "Norvège",
+    "price": 469,
+    "currency": "NOK"
+  },
+  {
+    "region": "Nouvelle-Zélande",
+    "price": 79.99,
+    "currency": "NZD"
+  },
+  {
+    "region": "Oman",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Ouzbékistan",
+    "price": 538000,
+    "currency": "UZS"
+  },
+  {
+    "region": "Pakistan",
+    "price": 11100,
+    "currency": "PKR"
+  },
+  {
+    "region": "Panama",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Paraguay",
+    "price": 225000,
+    "currency": "PYG"
+  },
+  {
+    "region": "Pays-Bas",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Philippines",
+    "price": 2850,
+    "currency": "PHP"
+  },
+  {
+    "region": "Pologne",
+    "price": 189.99,
+    "currency": "PLN"
+  },
+  {
+    "region": "Portugal",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Pérou",
+    "price": 134.99,
+    "currency": "PEN"
+  },
+  {
+    "region": "Qatar",
+    "price": 145,
+    "currency": "QAR"
+  },
+  {
+    "region": "Roumanie",
+    "price": 229.99,
+    "currency": "RON"
+  },
+  {
+    "region": "Royaume-Uni",
+    "price": 35.99,
+    "currency": "GBP"
+  },
+  {
+    "region": "Russie",
+    "price": 3290,
+    "currency": "RUB"
+  },
+  {
+    "region": "Saint-Marin",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Salvador",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Serbie",
+    "price": 4999,
+    "currency": "RSD"
+  },
+  {
+    "region": "Singapour",
+    "price": 55.98,
+    "currency": "SGD"
+  },
+  {
+    "region": "Slovaquie",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Slovénie",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Sri Lanka",
+    "price": 13250,
+    "currency": "LKR"
+  },
+  {
+    "region": "Suisse",
+    "price": 33,
+    "currency": "CHF"
+  },
+  {
+    "region": "Suède",
+    "price": 495,
+    "currency": "SEK"
+  },
+  {
+    "region": "Sénégal",
+    "price": 27500,
+    "currency": "XOF"
+  },
+  {
+    "region": "Tanzanie",
+    "price": 105000,
+    "currency": "TZS"
+  },
+  {
+    "region": "Taïwan",
+    "price": 1370,
+    "currency": "TWD"
+  },
+  {
+    "region": "Tchéquie",
+    "price": 999.99,
+    "currency": "CZK"
+  },
+  {
+    "region": "Thaïlande",
+    "price": 1450,
+    "currency": "THB"
+  },
+  {
+    "region": "Turquie",
+    "price": 2379.99,
+    "currency": "TRY"
+  },
+  {
+    "region": "Ukraine",
+    "price": 2149.99,
+    "currency": "UAH"
+  },
+  {
+    "region": "Viêt Nam",
+    "price": 1050000,
+    "currency": "VND"
+  },
+  {
+    "region": "Égypte",
+    "price": 2499.99,
+    "currency": "EGP"
+  },
+  {
+    "region": "Émirats arabes unis",
+    "price": 154.99,
+    "currency": "AED"
+  },
+  {
+    "region": "Équateur",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "État de la Cité du Vatican",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "États-Unis",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Éthiopie",
+    "price": 6400,
+    "currency": "ETB"
+  },
+  {
+    "region": "Îles Caïmans",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Îles Turques-et-Caïques",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Îles Vierges britanniques",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Nouveaux pays/régions (USD)",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Albanie",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Angola",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Antigua-et-Barbuda",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Arménie",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Aruba",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Bahamas",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Belize",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Biélorussie",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Bosnie-Herzégovine",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Botswana",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Cap-Vert",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Comores",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Congo-Brazzaville",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Congo-Kinshasa",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Djibouti",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Dominique",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Fidji",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Gambie",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Grenade",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Guatemala",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Guinée",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Haïti",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Honduras",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Jamaïque",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Kirghizstan",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Laos",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Liban",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Liberia",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Libye",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Macédoine du Nord",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Maldives",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Maurice",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Moldavie",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Mozambique",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Namibie",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Nicaragua",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Népal",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Ouganda",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Papouasie-Nouvelle-Guinée",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Rwanda",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "République dominicaine",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Saint-Christophe-et-Niévès",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Sainte-Lucie",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Samoa",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Seychelles",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Sierra Leone",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Somalie",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Suriname",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Tadjikistan",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Tchad",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Tonga",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Trinité-et-Tobago",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Tunisie",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Turkménistan",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Uruguay",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Vanuatu",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Venezuela",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Yémen",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Zambie",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Zimbabwe",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Érythrée",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Îles Salomon",
+    "price": 39.99,
+    "currency": "USD"
+  },
+  {
+    "region": "Nouveaux pays/régions (EUR)",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Burkina Faso",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Bénin",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Gabon",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Guinée-Bissau",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Islande",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Mali",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Malte",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Niger",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "République centrafricaine",
+    "price": 39.99,
+    "currency": "EUR"
+  },
+  {
+    "region": "Togo",
+    "price": 39.99,
+    "currency": "EUR"
+  }
+]

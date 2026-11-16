@@ -6,12 +6,12 @@ class FavoritesStorageService {
     return await AsyncStorage.getItem('userId');
   }
 
-  async getFavorites(): Promise<any[]> {
+  async getFavorites(forceRefresh = false): Promise<any[]> {
     try {
       const userId = await this.getUserId();
       if (!userId) return [];
 
-      const response = await apiService.getFavorites(userId);
+      const response = await apiService.getFavorites(userId, { forceRefresh });
       return response.data?.recipes || [];
     } catch (error) {
       console.error('Error fetching favorites:', error);

@@ -1,0 +1,37 @@
+Attributes: Application, 0x11256da40, pid: 27659, label: 'CookEat'
+Element subtree:
+ →Application, 0x11256da40, pid: 27659, label: 'CookEat'
+    Window (Main), 0x11256d7c0, {{0.0, 0.0}, {466.0, 678.0}}
+      Other, 0x11256d900, {{0.0, 0.0}, {466.0, 678.0}}
+        Other, 0x11256f200, {{0.0, 0.0}, {466.0, 678.0}}
+      Other, 0x11256ee40, {{0.0, 0.0}, {466.0, 678.0}}
+        Other, 0x11256ef80, {{0.0, 0.0}, {466.0, 678.0}}
+          Other, 0x11256e080, {{0.0, 0.0}, {466.0, 678.0}}
+            Other, 0x11256e440, {{0.0, 0.0}, {466.0, 678.0}}
+              Other, 0x11256c3c0, {{0.0, 0.0}, {466.0, 678.0}}
+              Other, 0x11256de00, {{0.0, 0.0}, {466.0, 678.0}}
+              Other, 0x11256c140, {{0.0, 0.0}, {466.0, 678.0}}
+                Button, 0x11256c280, {{20.0, 24.0}, {44.0, 44.0}}, label: 'Fermer'
+                Other, 0x11256c500, {{76.0, 20.0}, {308.0, 52.0}}
+                  Other, 0x11256e800, {{238.3, 12.7}, {66.6, 66.6}}
+                    Image, 0x11256f0c0, {{238.3, 12.7}, {66.6, 66.6}}
+                  StaticText, 0x11256c640, {{162.3, 31.3}, {79.3, 29.3}}, label: 'CookEat'
+                    StaticText, 0x11256ea80, {{162.3, 31.3}, {79.3, 29.3}}, label: 'CookEat'
+                Other, 0x11256ebc0, {{396.0, 21.0}, {50.0, 50.0}}, label: 'Point d’interrogation dans un cercle'
+                Other, 0x11256ed00, {{190.7, 470.0}, {85.0, 85.0}}
+                  Other, 0x11256d400, {{190.7, 470.0}, {85.0, 85.0}}
+                Other, 0x11256e300, {{150.7, 575.0}, {165.0, 44.0}}, label: 'Passer cette étape'
+          Other, 0x11256dcc0, {{0.0, 0.0}, {466.0, 678.0}}
+            Other, 0x11256df40, {{0.0, 0.0}, {466.0, 678.0}}
+              Other, 0x11256d680, {{0.0, 0.0}, {466.0, 678.0}}
+          Other, 0x11256d540, {{10.0, 590.7}, {446.0, 67.3}}
+            Other, 0x11256e580, {{10.0, 590.7}, {372.0, 48.3}}
+              Other, 0x11256c000, {{10.0, 591.3}, {372.0, 48.0}}
+                Other, 0x11256d180, {{10.0, 591.7}, {372.0, 48.0}}, label: '!, Open debugger to view warnings.'
+Path to element:
+ →Application, 0x11256da40, pid: 27659, label: 'CookEat'
+Query chain:
+ →Find: Application 'com.gokugen.cookeat'
+  Output: {
+    Application, 0x11256fd40, pid: 27659, label: 'CookEat'
+  }

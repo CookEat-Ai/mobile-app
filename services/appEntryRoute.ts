@@ -5,6 +5,7 @@ const QUESTIONS_ANSWERED_KEY = 'questions_answered';
 
 export type AppEntryRoute =
   | '/(tabs)'
+  | '/(tabs)/tracking'
   | '/onboarding/videoDemo'
   | '/onboarding/ingredientSelection'
   | '/onboarding/loading'
@@ -31,7 +32,7 @@ export async function resolveAppEntryRoute(): Promise<AppEntryRoute> {
     await AsyncStorage.setItem(QUESTIONS_ANSWERED_KEY, questionsAnswered);
   }
 
-  if (completed === 'true') return '/(tabs)';
+  if (completed === 'true') return '/(tabs)/tracking';
 
   if (questionsAnswered === 'true') {
     return '/onboarding/loading';

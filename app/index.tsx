@@ -1,7 +1,8 @@
+import { AppSpinner as ActivityIndicator } from '../components/ui/AppSpinner';
 import { Redirect } from 'expo-router';
 import * as QuickActions from 'expo-quick-actions';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import 'react-native-reanimated';
 import { Colors } from '../constants/Colors';
 import { resetVoiceCompletely } from '../hooks/useVoice';

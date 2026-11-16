@@ -1,0 +1,899 @@
+{
+  "product": "annual_discount",
+  "observedAt": "2026-10-14T08:27:44.074Z",
+  "exact127Verified": true,
+  "allSavedPricesPersisted": true,
+  "france": "29,99 EUR",
+  "prices": [
+    [
+      "Afrique du Sud",
+      "669,99 ZAR",
+      "15 %"
+    ],
+    [
+      "Algérie",
+      "4 025,00 DZD",
+      "Pas de TVA"
+    ],
+    [
+      "Allemagne",
+      "29,99 EUR",
+      "19 %"
+    ],
+    [
+      "Arabie saoudite",
+      "133,99 SAR",
+      "15 %"
+    ],
+    [
+      "Argentine",
+      "45 400,00 ARS",
+      "Pas de TVA"
+    ],
+    [
+      "Australie",
+      "46,49 AUD",
+      "10 %"
+    ],
+    [
+      "Autriche",
+      "29,99 EUR",
+      "20 %"
+    ],
+    [
+      "Azerbaïdjan",
+      "54,99 AZN",
+      "Pas de TVA"
+    ],
+    [
+      "Bahreïn",
+      "33,49 USD",
+      "10 %"
+    ],
+    [
+      "Bangladesh",
+      "3 400,00 BDT",
+      "15 %"
+    ],
+    [
+      "Belgique",
+      "29,99 EUR",
+      "21 %"
+    ],
+    [
+      "Bermudes",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Bolivie",
+      "349,99 BOB",
+      "Pas de TVA"
+    ],
+    [
+      "Brésil",
+      "200,00 BRL",
+      "Pas de TVA"
+    ],
+    [
+      "Bulgarie",
+      "29,99 EUR",
+      "20 %"
+    ],
+    [
+      "Cambodge",
+      "33,49 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Cameroun",
+      "19 600 XAF",
+      "19,25 %"
+    ],
+    [
+      "Canada",
+      "40,00 CAD",
+      "Pas de TVA"
+    ],
+    [
+      "Chili",
+      "33 490 CLP",
+      "19 %"
+    ],
+    [
+      "Chypre",
+      "29,99 EUR",
+      "19 %"
+    ],
+    [
+      "Colombie",
+      "133 900 COP",
+      "Pas de TVA"
+    ],
+    [
+      "Corée du Sud",
+      "51 500 KRW",
+      "10 %"
+    ],
+    [
+      "Costa Rica",
+      "13 600,00 CRC",
+      "Pas de TVA"
+    ],
+    [
+      "Croatie",
+      "29,99 EUR",
+      "25 %"
+    ],
+    [
+      "Côte d’Ivoire",
+      "19 600 XOF",
+      "18 %"
+    ],
+    [
+      "Danemark",
+      "265,00 DKK",
+      "25 % avec 2 régimes territoriaux Passez la souris pour voir tous les taux"
+    ],
+    [
+      "Espagne",
+      "29,99 EUR",
+      "21 % avec 4 régimes territoriaux Passez la souris pour voir tous les taux"
+    ],
+    [
+      "Estonie",
+      "29,99 EUR",
+      "24 %"
+    ],
+    [
+      "Finlande",
+      "29,99 EUR",
+      "25,5 % avec un régime territorial Passez la souris pour voir tous les taux"
+    ],
+    [
+      "France",
+      "29,99 EUR",
+      "20 % avec 11 régimes territoriaux Passez la souris pour voir tous les taux"
+    ],
+    [
+      "Ghana",
+      "390,00 GHS",
+      "20 %"
+    ],
+    [
+      "Gibraltar",
+      "17,99 GBP",
+      "Pas de TVA"
+    ],
+    [
+      "Grèce",
+      "29,99 EUR",
+      "24 %"
+    ],
+    [
+      "Géorgie",
+      "89,00 GEL",
+      "18 %"
+    ],
+    [
+      "Hong Kong",
+      "243,00 HKD",
+      "Pas de TVA"
+    ],
+    [
+      "Hongrie",
+      "13 390 HUF",
+      "27 %"
+    ],
+    [
+      "Inde",
+      "3 349,00 INR",
+      "18 %"
+    ],
+    [
+      "Indonésie",
+      "535 000 IDR",
+      "Pas de TVA"
+    ],
+    [
+      "Irak",
+      "45 300 IQD",
+      "Pas de TVA"
+    ],
+    [
+      "Irlande",
+      "29,99 EUR",
+      "23 %"
+    ],
+    [
+      "Israël",
+      "100,00 ILS",
+      "Pas de TVA"
+    ],
+    [
+      "Italie",
+      "29,99 EUR",
+      "22 %"
+    ],
+    [
+      "Japon",
+      "4 690 JPY",
+      "10 %"
+    ],
+    [
+      "Jordanie",
+      "21,250 JOD",
+      "Pas de TVA"
+    ],
+    [
+      "Kazakhstan",
+      "16 690,00 KZT",
+      "16 %"
+    ],
+    [
+      "Kenya",
+      "4 300,00 KES",
+      "16 %"
+    ],
+    [
+      "Koweït",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Lettonie",
+      "29,99 EUR",
+      "21 %"
+    ],
+    [
+      "Liechtenstein",
+      "20,00 CHF",
+      "8,1 %"
+    ],
+    [
+      "Lituanie",
+      "29,99 EUR",
+      "21 %"
+    ],
+    [
+      "Luxembourg",
+      "29,99 EUR",
+      "17 %"
+    ],
+    [
+      "Macao",
+      "239,00 MOP",
+      "Pas de TVA"
+    ],
+    [
+      "Malaisie",
+      "133,90 MYR",
+      "8 %"
+    ],
+    [
+      "Maroc",
+      "294,99 MAD",
+      "20 %"
+    ],
+    [
+      "Mexique",
+      "669,00 MXN",
+      "16 %"
+    ],
+    [
+      "Micronésie",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Monaco",
+      "24,99 EUR",
+      "20 %"
+    ],
+    [
+      "Mongolie",
+      "107 800,00 MNT",
+      "Pas de TVA"
+    ],
+    [
+      "Myanmar (Birmanie)",
+      "63 000 MMK",
+      "Pas de TVA"
+    ],
+    [
+      "Nigeria",
+      "46 500,00 NGN",
+      "7,5 %"
+    ],
+    [
+      "Norvège",
+      "400,00 NOK",
+      "25 % avec un régime territorial Passez la souris pour voir tous les taux"
+    ],
+    [
+      "Nouvelle-Zélande",
+      "53,00 NZD",
+      "15 %"
+    ],
+    [
+      "Oman",
+      "30,00 USD",
+      "5 %"
+    ],
+    [
+      "Ouzbékistan",
+      "398 900,00 UZS",
+      "12 %"
+    ],
+    [
+      "Pakistan",
+      "7 900,00 PKR",
+      "Pas de TVA"
+    ],
+    [
+      "Panama",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Paraguay",
+      "175 000 PYG",
+      "Pas de TVA"
+    ],
+    [
+      "Pays-Bas",
+      "29,99 EUR",
+      "21 %"
+    ],
+    [
+      "Philippines",
+      "2 000,00 PHP",
+      "12 %"
+    ],
+    [
+      "Pologne",
+      "133,99 PLN",
+      "23 %"
+    ],
+    [
+      "Portugal",
+      "29,99 EUR",
+      "23 %"
+    ],
+    [
+      "Pérou",
+      "133,90 PEN",
+      "Pas de TVA"
+    ],
+    [
+      "Qatar",
+      "100,00 QAR",
+      "Pas de TVA"
+    ],
+    [
+      "Roumanie",
+      "166,99 RON",
+      "21 %"
+    ],
+    [
+      "Royaume-Uni",
+      "30,00 GBP",
+      "20 %"
+    ],
+    [
+      "Russie",
+      "2 650,00 RUB",
+      "Pas de TVA"
+    ],
+    [
+      "Saint-Marin",
+      "20,99 EUR",
+      "Pas de TVA"
+    ],
+    [
+      "Salvador",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Serbie",
+      "3 499 RSD",
+      "20 %"
+    ],
+    [
+      "Singapour",
+      "40,00 SGD",
+      "9 %"
+    ],
+    [
+      "Slovaquie",
+      "29,99 EUR",
+      "23 %"
+    ],
+    [
+      "Slovénie",
+      "29,99 EUR",
+      "22 %"
+    ],
+    [
+      "Sri Lanka",
+      "9 900,00 LKR",
+      "Pas de TVA"
+    ],
+    [
+      "Suisse",
+      "26,50 CHF",
+      "Pas de TVA"
+    ],
+    [
+      "Suède",
+      "400,00 SEK",
+      "25 %"
+    ],
+    [
+      "Sénégal",
+      "19 600 XOF",
+      "18 %"
+    ],
+    [
+      "Tanzanie",
+      "86 900,00 TZS",
+      "Pas de TVA"
+    ],
+    [
+      "Taïwan",
+      "990,00 TWD",
+      "5 %"
+    ],
+    [
+      "Tchéquie",
+      "790,00 CZK",
+      "21 %"
+    ],
+    [
+      "Thaïlande",
+      "990,00 THB",
+      "7 %"
+    ],
+    [
+      "Turquie",
+      "1 669,99 TRY",
+      "20 %"
+    ],
+    [
+      "Ukraine",
+      "1 499,99 UAH",
+      "20 %"
+    ],
+    [
+      "Viêt Nam",
+      "870 000 VND",
+      "Pas de TVA"
+    ],
+    [
+      "Égypte",
+      "1 669,99 EGP",
+      "14 %"
+    ],
+    [
+      "Émirats arabes unis",
+      "119,99 AED",
+      "5 %"
+    ],
+    [
+      "Équateur",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "État de la Cité du Vatican",
+      "20,99 EUR",
+      "Pas de TVA"
+    ],
+    [
+      "États-Unis",
+      "29,99 USD",
+      "Pas de TVA avec 7 régimes territoriaux Passez la souris pour voir tous les taux"
+    ],
+    [
+      "Éthiopie",
+      "3 809,86 ETB",
+      "Pas de TVA"
+    ],
+    [
+      "Îles Caïmans",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Îles Turques-et-Caïques",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Îles Vierges britanniques",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Autres pays/régions (USD)",
+      "",
+      ""
+    ],
+    [
+      "Nouveaux pays/régions (USD)",
+      "24,04 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Albanie",
+      "33,49 USD",
+      "20 %"
+    ],
+    [
+      "Angola",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Antigua-et-Barbuda",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Arménie",
+      "33,49 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Aruba",
+      "24,04 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Bahamas",
+      "33,49 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Belize",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Biélorussie",
+      "33,49 USD",
+      "20 %"
+    ],
+    [
+      "Bosnie-Herzégovine",
+      "33,62 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Botswana",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Cap-Vert",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Comores",
+      "24,04 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Congo-Brazzaville",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Congo-Kinshasa",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Djibouti",
+      "24,04 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Dominique",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Fidji",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Gambie",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Grenade",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Guatemala",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Guinée",
+      "23,99 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Haïti",
+      "24,04 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Honduras",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Jamaïque",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Kirghizstan",
+      "33,49 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Laos",
+      "33,49 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Liban",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Liberia",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Libye",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Macédoine du Nord",
+      "30,00 USD",
+      "18 %"
+    ],
+    [
+      "Maldives",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Maurice",
+      "33,49 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Moldavie",
+      "33,49 USD",
+      "20 %"
+    ],
+    [
+      "Mozambique",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Namibie",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Nicaragua",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Népal",
+      "33,49 USD",
+      "13 %"
+    ],
+    [
+      "Ouganda",
+      "33,49 USD",
+      "18 %"
+    ],
+    [
+      "Papouasie-Nouvelle-Guinée",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Rwanda",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "République dominicaine",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Saint-Christophe-et-Niévès",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Sainte-Lucie",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Samoa",
+      "24,04 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Seychelles",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Sierra Leone",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Somalie",
+      "24,04 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Suriname",
+      "33,49 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Tadjikistan",
+      "33,49 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Tchad",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Tonga",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Trinité-et-Tobago",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Tunisie",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Turkménistan",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Uruguay",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Vanuatu",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Venezuela",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Yémen",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Zambie",
+      "33,49 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Zimbabwe",
+      "33,49 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Érythrée",
+      "24,04 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Îles Salomon",
+      "30,00 USD",
+      "Pas de TVA"
+    ],
+    [
+      "Autres pays/régions (EUR)",
+      "",
+      ""
+    ],
+    [
+      "Nouveaux pays/régions (EUR)",
+      "20,83 EUR",
+      "Pas de TVA"
+    ],
+    [
+      "Burkina Faso",
+      "26,76 EUR",
+      "Pas de TVA"
+    ],
+    [
+      "Bénin",
+      "29,88 EUR",
+      "Pas de TVA"
+    ],
+    [
+      "Gabon",
+      "26,76 EUR",
+      "Pas de TVA"
+    ],
+    [
+      "Guinée-Bissau",
+      "26,76 EUR",
+      "Pas de TVA"
+    ],
+    [
+      "Islande",
+      "29,88 EUR",
+      "24 %"
+    ],
+    [
+      "Mali",
+      "26,76 EUR",
+      "Pas de TVA"
+    ],
+    [
+      "Malte",
+      "29,99 EUR",
+      "18 %"
+    ],
+    [
+      "Niger",
+      "26,76 EUR",
+      "Pas de TVA"
+    ],
+    [
+      "République centrafricaine",
+      "20,83 EUR",
+      "Pas de TVA"
+    ],
+    [
+      "Togo",
+      "20,83 EUR",
+      "Pas de TVA"
+    ]
+  ]
+}

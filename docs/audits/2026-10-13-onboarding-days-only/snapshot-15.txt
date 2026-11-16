@@ -1,0 +1,79 @@
+Attributes: Application, 0x1106a5040, pid: 69308, label: 'CookEat'
+Element subtree:
+ →Application, 0x1106a5040, pid: 69308, label: 'CookEat'
+    Window (Main), 0x1106a4f00, {{0.0, 0.0}, {466.0, 678.0}}
+      Other, 0x1106a4dc0, {{0.0, 0.0}, {466.0, 678.0}}
+        Other, 0x1106a4c80, {{0.0, 0.0}, {466.0, 678.0}}
+          Other, 0x1106a6e40, {{0.0, 0.0}, {466.0, 678.0}}
+            Other, 0x1106a4b40, {{0.0, 0.0}, {466.0, 678.0}}
+              Other, 0x1106a4780, {{0.0, 0.0}, {466.0, 678.0}}
+                Other, 0x1106a4500, {{0.0, 0.0}, {466.0, 678.0}}
+                  Other, 0x1106a7e80, {{0.0, 0.0}, {466.0, 678.0}}
+                    Other, 0x1106a7ac0, {{0.0, 0.0}, {466.0, 678.0}}
+                      Other, 0x1106a4140, {{0.0, -30.0}, {466.0, 30.0}}
+                        StaticText, 0x1106a43c0, {{112.3, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'
+                          StaticText, 0x1106a4280, {{112.3, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'
+                      Other, 0x1106a7340, {{0.0, 0.0}, {466.0, 678.0}}
+                        Other, 0x1106a70c0, {{0.0, 0.0}, {466.0, 678.0}}
+                          Other, 0x1106a7480, {{0.0, 0.0}, {466.0, 678.0}}
+                            Other, 0x1106a7840, {{0.0, 0.0}, {466.0, 678.0}}
+                              Other, 0x1106a7200, {{0.0, 0.0}, {466.0, 678.0}}
+                                Other, 0x1106a5680, {{0.0, 0.0}, {466.0, 678.0}}
+                                  Other, 0x1106a5540, {{0.0, 0.0}, {466.0, 678.0}}
+                                    Other, 0x1106a6800, {{0.0, 0.0}, {466.0, 96.0}}
+                                    Other, 0x1106a6940, {{0.0, 0.0}, {466.0, 678.0}}
+                                    Other, 0x1106a5cc0, {{189.3, 0.7}, {66.6, 66.6}}
+                                      Image, 0x1106a6f80, {{189.3, 0.7}, {66.6, 66.6}}
+                                    Button, 0x1106a4640, {{20.0, 12.0}, {44.0, 44.0}}, label: 'Retour'
+                                    StaticText, 0x1106a6bc0, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'
+                                      StaticText, 0x1106a5900, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'
+                                    StaticText, 0x1106a5a40, {{338.3, 27.3}, {23.7, 13.0}}, label: '2 / 8'
+                                      StaticText, 0x1106a6080, {{338.3, 27.3}, {23.7, 13.0}}, label: '2 / 8'
+                                    Other, 0x1106a6a80, {{20.0, 70.0}, {342.0, 12.0}}, value: 25 %
+                                      Other, 0x1106a66c0, {{20.0, 70.0}, {85.7, 12.0}}
+                                    StaticText, 0x1106a61c0, {{0.0, 96.0}, {466.0, 34.3}}, label: '💪 Objectif : Prendre du muscle'
+                                      StaticText, 0x1106a6300, {{0.0, 96.0}, {466.0, 34.3}}, label: '💪 Objectif : Prendre du muscle'
+                                    Other, 0x1106a6440, {{0.0, 130.3}, {382.0, 445.7}}
+                                      ScrollView, 0x1106a5e00, {{0.0, 130.3}, {382.0, 445.7}}
+                                        Other, 0x1106a5f40, {{0.0, 130.3}, {382.0, 382.0}}
+                                          Other, 0x1106a57c0, {{0.0, 130.3}, {382.0, 382.0}}
+                                            StaticText, 0x1106a7d40, {{86.0, 144.3}, {276.0, 68.0}}, label: 'Quels jours on prépare ?'
+                                              StaticText, 0x1106a7c00, {{86.0, 144.3}, {276.0, 68.0}}, label: 'Quels jours on prépare ?'
+                                            StaticText, 0x1106a7980, {{20.0, 154.3}, {52.0, 48.0}}, label: '📅'
+                                            Other, 0x1106a4a00, {{32.3, 236.3}, {72.0, 100.0}}, label: 'lundi 12', value: checkbox, checked
+                                            Other, 0x1106a5180, {{114.3, 236.3}, {71.7, 100.0}}, label: 'mardi 13', value: checkbox, unchecked
+                                            Other, 0x1106a5400, {{196.0, 236.3}, {71.7, 100.0}}, label: 'mercredi 14', value: checkbox, checked
+                                            Other, 0x1106a52c0, {{277.7, 236.3}, {72.0, 100.0}}, label: 'jeudi 15', value: checkbox, unchecked
+                                            Other, 0x1106a6580, {{73.3, 346.3}, {71.7, 100.0}}, label: 'vendredi 16', value: checkbox, unchecked
+                                            Other, 0x110714640, {{155.0, 346.3}, {72.0, 100.0}}, label: 'samedi 17', value: checkbox, unchecked
+                                            Other, 0x110714140, {{237.0, 346.3}, {71.7, 100.0}}, label: 'dimanche 18', value: checkbox, unchecked
+                                            StaticText, 0x110714b40, {{20.0, 468.3}, {342.0, 16.0}}, label: '2 jours · 8 repas'
+                                              StaticText, 0x1107143c0, {{20.0, 468.3}, {342.0, 16.0}}, label: '2 jours · 8 repas'
+                                        Other, 0x110714500, {{0.0, 543.0}, {382.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                          Other, 0x110714780, {{11.0, 570.0}, {368.0, 3.0}}
+                                        Other, 0x110714280, {{0.0, 543.0}, {382.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                          Other, 0x1107148c0, {{11.0, 570.0}, {368.0, 3.0}}
+                                    Other, 0x110714a00, {{0.0, 576.0}, {466.0, 102.0}}
+                                    Button, 0x110716940, {{20.0, 588.0}, {426.0, 56.0}}, label: 'Continuer, '
+                          Toolbar, 0x110714dc0, {{0.0, 0.0}, {466.0, 678.0}}, identifier: 'Toolbar', label: 'Barre d’outils'
+                            Other, 0x110714c80, {{0.0, 0.0}, {466.0, 678.0}}
+                Other, 0x110715540, {{0.0, 0.0}, {466.0, 678.0}}
+                  Other, 0x110715400, {{0.0, 0.0}, {466.0, 678.0}}
+                    Other, 0x110715900, {{0.0, 0.0}, {466.0, 678.0}}
+                Other, 0x110715680, {{10.0, 537.0}, {446.0, 121.0}}
+                  Other, 0x110716300, {{10.0, 537.0}, {372.0, 48.7}}
+                    Other, 0x110716580, {{10.0, 537.7}, {372.0, 48.0}}
+                      Other, 0x1107157c0, {{10.0, 538.0}, {372.0, 48.0}}, label: '!, Open debugger to view warnings.'
+                  Other, 0x110716440, {{10.0, 590.7}, {372.0, 48.3}}
+                    Other, 0x1107152c0, {{10.0, 591.3}, {372.0, 48.0}}
+                      Other, 0x110715a40, {{10.0, 591.7}, {372.0, 48.0}}, label: '!, [RevenueCat] 😿‼️ Error installing font with url: 'https://fonts.pawwalls.com/1250603_6acdb684_e5ea2729be6939f1f8d1.otf': Font registration error: Échec d’enregistrement de la police.'
+    Window, 0x110715b80, {{0.0, 0.0}, {466.0, 678.0}}
+      Other, 0x110d70f00, {{0.0, 0.0}, {466.0, 678.0}}
+        Other, 0x110d71040, {{0.0, 0.0}, {466.0, 678.0}}
+Path to element:
+ →Application, 0x1106a5040, pid: 69308, label: 'CookEat'
+Query chain:
+ →Find: Application 'com.gokugen.cookeat'
+  Output: {
+    Application, 0x110d70b40, pid: 69308, label: 'CookEat'
+  }

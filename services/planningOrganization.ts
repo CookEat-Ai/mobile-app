@@ -1,4 +1,4 @@
-import type { MealPlanMeal } from './api';
+import type { MealPlan, MealPlanMeal } from './api';
 import { isPastPlanDay } from './planningDisplay';
 
 export const ORGANIZE_MEAL_TYPES = ['breakfast', 'lunch', 'snack', 'dinner'] as const;
@@ -7,12 +7,20 @@ export const locationKey = (location: MealLocation) => `${location.dayIndex}:${l
 export const compatiblePlanningTypes = (source: MealPlanMeal['mealType'], target: MealPlanMeal['mealType']) =>
   (['breakfast', 'snack'].includes(source || '')) === (['breakfast', 'snack'].includes(target || ''));
 
+/** Saved choices remain authoritative even after deleting a day's last meal. */
+export function planningEditableDays(plan: Pick<MealPlan, 'preferences' | 'meals'>): number[] {
+  const saved = plan.preferences?.cookingDays;
+  const days = Array.isArray(saved) ? saved : plan.meals.map(meal => meal.dayIndex ?? 0);
+  return [...new Set(days.filter((day): day is number => typeof day === 'number' && Number.isInteger(day) && day >= 0 && day <= 6))];
+}
+
 /** Recipes keep their identity, portions and ingredients; only their schedule moves. */
-export function movePlanningMeal(meals: MealPlanMeal[], slotId: string, target: MealLocation, weekStart: string): MealPlanMeal[] {
+export function movePlanningMeal(meals: MealPlanMeal[], slotId: string, target: MealLocation, weekStart: string, editableDays?: number[]): MealPlanMeal[] {
   const source = meals.find(meal => meal.slotId === slotId);
   if (!source || source.status === 'generating' || source.dayIndex === undefined || !source.mealType
     || !Number.isInteger(target.dayIndex) || target.dayIndex < 0 || target.dayIndex > 6
     || !ORGANIZE_MEAL_TYPES.includes(target.mealType)) return meals;
+  if (editableDays && (!editableDays.includes(source.dayIndex) || !editableDays.includes(target.dayIndex))) return meals;
   if (source.dayIndex === target.dayIndex && source.mealType === target.mealType) return meals;
   if (isPastPlanDay(weekStart, source.dayIndex) || isPastPlanDay(weekStart, target.dayIndex)) return meals;
   if (!compatiblePlanningTypes(source.mealType, target.mealType)) return meals;

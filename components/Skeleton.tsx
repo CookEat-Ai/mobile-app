@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, useWindowDimensions, View } from 'react-native';
 import type { DimensionValue, ViewStyle } from 'react-native';
@@ -143,7 +144,7 @@ export function RecipeStepsSkeleton({ count = 3 }: { count?: number }) {
 
 const styles = StyleSheet.create({
   skeleton: {
-    backgroundColor: '#E0E0E0',
+    backgroundColor: designTheme.line,
   },
   imageSkeleton: {
     flex: 1,
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F0F0F0',
+    backgroundColor: designTheme.soft,
   },
   metricsRow: {
     flexDirection: 'row',
@@ -161,8 +162,8 @@ const styles = StyleSheet.create({
   ingredientRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
-    borderRadius: 12,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.chip,
     padding: 16,
     marginBottom: 12,
     shadowColor: '#000',
@@ -172,8 +173,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   stepCard: {
-    backgroundColor: 'white',
-    borderRadius: 12,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.chip,
     padding: 18,
     marginBottom: 12,
     shadowColor: '#000',

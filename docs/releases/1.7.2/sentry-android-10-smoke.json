@@ -1,0 +1,19 @@
+{
+  "eventId": "7d7f35b98dbf428794d78e0131a2ca78",
+  "platform": "android",
+  "build": "10",
+  "debugId": "88d556c9-b56d-44f7-a3a7-ceed46e62639",
+  "kind": "controlled informational envelope event, not a real device crash",
+  "ingested": true,
+  "symbolicated": true,
+  "frames": [
+    {
+      "filename": "/node_modules/react-native/Libraries/WebSocket/WebSocket.js",
+      "function": "<global>",
+      "lineNo": 325,
+      "colNo": 1,
+      "absPath": "app:///node_modules/react-native/Libraries/WebSocket/WebSocket.js"
+    }
+  ],
+  "processingErrors": []
+}

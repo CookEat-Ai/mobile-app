@@ -1,4 +1,54 @@
 {
+  "mealCost": {
+    "recipeSource": "Recette d’origine",
+    "adaptedRecipe": "Quantités et rédaction adaptées par CookEat",
+    "authors": "Contributeurs et historique",
+    "proxy": "Précision réduite : ajustement par le niveau général des prix du pays (Banque mondiale), faute d’indice alimentaire local.",
+    "total": "Budget estimé du planning : {{amount}}",
+    "portion": "≈ {{amount}} / personne",
+    "range": "Fourchette : {{low}}–{{high}} au total",
+    "note": "Coût estimé des ingrédients utilisés, hors achat des paquets entiers, énergie et livraison.",
+    "partial": "Estimation partielle : au moins {{amount}}",
+    "unavailable": "Estimation du prix indisponible pour ce pays ou ces ingrédients",
+    "missing": "Non chiffrés : {{ingredients}}",
+    "household": "Total pour {{count}} personnes : {{amount}}",
+    "weekTitle": "Le budget de ta semaine",
+    "dishTitle": "Le coût de ce plat",
+    "estimateLabel": "Estimation des ingrédients utilisés",
+    "details": "Comprendre cette estimation",
+    "forWeek": "pour tout le planning",
+    "perPerson": "par personne",
+    "incompleteLabel": "estimation partielle",
+    "budgetLabel": "Ton budget",
+    "remaining": "{{amount}} de marge estimée",
+    "noTarget": "Budget cible non défini"
+  },
+  "planningFlow": {
+    "startsTomorrow": "Il est tard : ton planning commence demain.",
+    "remainingToday": "Aujourd’hui, seuls les repas à venir sont prévus.",
+    "step": "{{current}} / {{total}}",
+    "goal": "Objectif : {{goal}}",
+    "daysTitle": "Quels jours on prépare ?",
+    "ingredientsTitle": "Tu as déjà des ingrédients ?",
+    "durationTitle": "Combien de temps en cuisine ?",
+    "meals": "{{days}} jours · {{meals}} repas",
+    "useIngredients": "Utiliser ces ingrédients",
+    "deleteTitle": "Supprimer ce planning ?",
+    "deleteBody": "Ce planning et sa liste de courses seront supprimés. Ton profil, tes préférences et les autres semaines seront conservés. Tu pourras repartir de « Créer ma semaine ».",
+    "deleteError": "Impossible de supprimer le planning. Réessaie.",
+    "deleteAction": "Supprimer mon planning",
+    "cuisinesTitle": "Quelles cuisines te font envie ?",
+    "dietTitle": "Quelle alimentation te correspond ?",
+    "exclusionsTitle": "Des ingrédients à éviter ?",
+    "servingsTitle": "On cuisine pour combien ?",
+    "cuisinesError": "Impossible de charger les cuisines. Réessaie.",
+    "goalTitle": "C’est quoi ton objectif ?",
+    "scanFridge": "Scanner mon frigo",
+    "skip": "Passer",
+    "cookingLevelTitle": "Quel est ton niveau en cuisine ?",
+    "equipmentsTitle": "Quel matériel as-tu ?",
+    "mealBudgetTitle": "Quel budget pour tes repas ?"
+  },
   "planningReveal": {
     "replay": "Revoir la semaine",
     "skip": "Passer l’animation"
@@ -23,8 +73,8 @@
       },
       "profile": {
         "title": "Une première estimation pour toi",
-        "subtitle": "Ton âge, ta taille, ton poids et ton activité donnent ces premiers repères pour ton objectif.",
-        "proof": "Les portions partiront de ces repères. Ils pourront évoluer avec ton poids et ton activité.",
+        "subtitle": "Ton âge, ta taille, ton poids et ton activité nous aident à estimer tes besoins.",
+        "proof": "Ces estimations serviront à ajuster tes portions. Elles pourront évoluer avec ton poids et ton activité.",
         "activity": "Au quotidien : {{activity}}",
         "training": "Entraînements : {{days}} j/semaine · {{minutes}} min",
         "noTraining": "Sans entraînement prévu"
@@ -32,7 +82,7 @@
       "meals": {
         "title": "Des recettes selon tes préférences",
         "subtitle": "Le choix des recettes tiendra compte de ton temps en cuisine, de tes goûts et des aliments à éviter.",
-        "proof": "Les quantités seront adaptées à ton objectif. La liste de courses suivra les repas que tu choisiras de planifier.",
+        "proof": "Les portions seront adaptées à ton objectif. La liste de courses regroupera les ingrédients des repas que tu choisiras.",
         "cooking": "Temps en cuisine",
         "diet": "Alimentation",
         "cuisines": "Cuisines choisies",
@@ -78,7 +128,7 @@
       "subtitle": "Tu pourras le modifier plus tard."
     },
     "change": {
-      "title": "Combien de kilos souhaites-tu changer ?",
+      "title": "Quel changement de poids souhaites-tu ?",
       "loseTitle": "Combien de kilos veux-tu perdre ?",
       "gainTitle": "Combien de kilos veux-tu prendre ?",
       "muscleTitle": "Combien de kilos veux-tu prendre ?",
@@ -116,8 +166,9 @@
       }
     },
     "activity": {
-      "title": "En dehors du sport, tu bouges beaucoup ?",
-      "subtitle": "Pense à tes déplacements et à ton activité au travail."
+      "title": "Sans compter tes séances de sport, tu bouges beaucoup ?",
+      "subtitle": "Pense à la marche, au travail et aux tâches du quotidien, sans compter le sport.",
+      "subtitleWithTraining": "Ne compte pas les séances que tu viens d’indiquer. Pense à la marche, au travail et aux tâches du quotidien."
     },
     "training": {
       "title": "Combien de jours par semaine fais-tu du sport ?",
@@ -129,7 +180,7 @@
     },
     "cookingTime": {
       "title": "Combien de temps veux-tu cuisiner ?",
-      "subtitle": "Nous garderons chaque repas compatible avec ton quotidien."
+      "subtitle": "Les recettes seront adaptées au temps que tu as pour cuisiner."
     },
     "diet": {
       "title": "Suis-tu un régime alimentaire ?",
@@ -140,7 +191,7 @@
       "subtitle": "Optionnel. Sélectionne uniquement ce que tu ne veux jamais retrouver dans tes repas."
     },
     "cuisine": {
-      "title": "Quelles cuisines te motivent ?",
+      "title": "Quelles cuisines te font envie ?",
       "subtitle": "Optionnel. Choisis-en plusieurs pour une semaine variée."
     },
     "social": {
@@ -167,24 +218,24 @@
     },
     "ready": {
       "title": "Tes réponses vont guider tes repas",
-      "fullDay": "Toute la journée planifiée, pendant 7 jours",
+      "fullDay": "Tous tes repas planifiés pour 7 jours",
       "macros": "Calories et macronutriments adaptés à ton objectif",
       "shopping": "Liste de courses automatique, à cocher en magasin",
       "cta": "Voir mes repères",
-      "subtitle": "Retrouve maintenant tes repères quotidiens et la façon de suivre ton objectif."
+      "subtitle": "Retrouve tes repères quotidiens et suis tes repas avec une simple photo."
     },
     "preview": {
       "generating": "Nous générons 7 journées complètes, variées et adaptées à ton objectif. Cela peut prendre quelques instants.",
       "title": "Ta semaine de repas, enfin planifiée 😋",
       "shoppingTitle": "Ta liste de courses aussi",
-      "shopping": "Tous ces repas, une liste organisée automatiquement, à cocher en magasin.",
+      "shopping": "Les ingrédients de tous tes repas réunis dans une liste à cocher en magasin.",
       "disclaimer": "Les apports sont des estimations et ne remplacent pas l'avis d'un professionnel de santé."
     },
     "targets": {
       "title": "Tes repères quotidiens",
       "subtitle": "Le récapitulatif pour préparer tes repas.",
       "daily": "Objectif quotidien estimé",
-      "maintenance": "Maintenance estimée : {{calories}} kcal",
+      "maintenance": "Besoins estimés pour maintenir ton poids : {{calories}} kcal",
       "goal": "Pour avancer vers {{weight}} kg",
       "goalSubtitle": "Rythme indicatif : {{pace}} kg par semaine",
       "cta": "Comprendre le suivi",
@@ -203,11 +254,11 @@
         "unspecified": "Je préfère ne pas répondre"
       },
       "activity": {
-        "sedentary": "Peu actif",
-        "light": "Légèrement actif",
-        "moderate": "Modérément actif",
-        "active": "Très actif",
-        "very_active": "Extrêmement actif"
+        "sedentary": "Journée surtout assise",
+        "light": "Un peu de marche",
+        "moderate": "Marche régulière",
+        "active": "Journée en mouvement",
+        "very_active": "Travail physique exigeant"
       },
       "training": {
         "0": "Aucun",
@@ -225,7 +276,7 @@
       },
       "cookingTime": {
         "less_than_30_minutes": "Moins de 30 minutes",
-        "between_30_minutes_and_1_hour": "30 à 60 minutes",
+        "between_30_minutes_and_1_hour": "Moins de 60 minutes",
         "more_than_1_hour": "Plus d'une heure"
       },
       "diet": {
@@ -252,7 +303,19 @@
         "cuisine_middle_eastern": "Moyen-Orient",
         "cuisine_indian": "Indienne",
         "cuisine_asian": "Asiatique"
+      },
+      "source": {
+        "tiktok": "TikTok",
+        "instagram": "Instagram",
+        "store_search": "{{store}}",
+        "friend": "Un ami ou une amie",
+        "other": "Autre"
       }
+    },
+    "source": {
+      "title": "Où nous as-tu connus ?",
+      "subtitle": "Ça nous aide à savoir où parler de CookEat.",
+      "otherPlaceholder": "Dis-nous où (facultatif)"
     }
   },
   "quickActions": {
@@ -269,9 +332,9 @@
     "weeklyPlan": {
       "eyebrow": "Mon objectif nutrition",
       "ready": "{{count}} repas adaptés à ton objectif",
-      "readySubtitle": "Calories, macros et liste de courses déjà organisés.",
+      "readySubtitle": "Tes apports sont calculés et ta liste de courses est prête.",
       "empty": "Planifie 7 journées complètes",
-      "emptySubtitle": "CookEat génère tes repas healthy et ta liste de courses."
+      "emptySubtitle": "CookEat prépare des repas équilibrés et ta liste de courses."
     },
     "nutrition": {
       "today": "Objectif nutrition du jour",
@@ -283,7 +346,7 @@
     "micro": "Mode vocal",
     "microDescription": "Dicte-nous tes ingrédients",
     "camera": "Mode photo",
-    "cameraDescription": "Prend en photo tes ingrédients",
+    "cameraDescription": "Prends tes ingrédients en photo",
     "manual": "Mode manuel",
     "manualDescription": "Sélectionne tes ingrédients",
     "continue": "Continuer",
@@ -544,7 +607,7 @@
     "crossSell": {
       "import": {
         "title": "Tu as vu une recette sur TikTok ?",
-        "description": "Colle le lien, on en fait une vraie recette."
+        "description": "Colle le lien pour retrouver les ingrédients et les étapes."
       },
       "generate": {
         "title": "Un frigo à vider ?",
@@ -638,7 +701,8 @@
     "profile": "Réglages",
     "planning": "Planning",
     "meals": "Repas",
-    "goal": "Objectif"
+    "goal": "Objectif",
+    "tracking": "Suivi"
   },
   "planning": {
     "dayMeals": "Repas du {{day}}",
@@ -657,23 +721,23 @@
     "weekSummary": "Jours : {{days}} · Repas : {{meals}}",
     "generation": {
       "title": "Quels jours vas-tu cuisiner ?",
-      "subtitle": "Ta semaine ira toujours du lundi au dimanche.",
+      "subtitle": "Choisis les jours où tu cuisineras pendant les sept prochains jours.",
       "daysTitle": "Jours de cuisine",
       "summary": "Jours sélectionnés : {{days}} · Repas : {{meals}}",
       "cta": "Générer le planning"
     },
     "settings": {
       "title": "Réglages du planning",
-      "subtitle": "Choisis les règles de tes prochaines semaines.",
+      "subtitle": "Choisis tes préférences pour les prochaines semaines.",
       "daysHelp": "Ces jours seront présélectionnés avant chaque génération.",
       "snackTitle": "Ajouter une collation",
       "snackHelp": "Un quatrième repas adapté à tes objectifs.",
       "durationTitle": "Temps de cuisine",
-      "durationHelp": "Limite la durée proposée pour chaque repas.",
+      "durationHelp": "Choisis le temps que tu veux consacrer à chaque repas.",
       "duration": {
         "all": "Peu importe",
         "fast": "Moins de 30 min",
-        "medium": "30 à 60 min"
+        "medium": "Moins de 60 min"
       },
       "nextPlanNotice": "Ces réglages seront appliqués au prochain planning.",
       "save": "Enregistrer les réglages"
@@ -686,7 +750,7 @@
       "title": "Combien de repas veux-tu prévoir ?",
       "description": "CookEat crée de nouvelles recettes adaptées à tes préférences.",
       "count": "Nombre de repas",
-      "preferences": "Régime, allergies, portions et temps de cuisine sont repris automatiquement.",
+      "preferences": "CookEat reprend tes préférences alimentaires, le nombre de portions et ton temps de cuisine.",
       "cta": "Préparer {{count}} repas"
     },
     "summary": "{{count}} repas cette semaine",
@@ -718,7 +782,7 @@
       "refresh": "Actualiser la liste de courses",
       "pending": "Encore {{count}} recette(s) en préparation.",
       "waiting": "Attends que toutes les recettes soient prêtes.",
-      "emptyTitle": "Ta liste est à un geste",
+      "emptyTitle": "Tes courses réunies dans une liste",
       "emptyDescription": "Les ingrédients seront regroupés et ajustés au nombre de portions.",
       "progress": "{{done}} sur {{total}} articles terminés",
       "haveIt": "Je l’ai déjà"
@@ -766,7 +830,9 @@
     "ingredientsShort": "ingr.",
     "stepsShort": "étapes",
     "stepShort": "étape",
-    "or": "OU"
+    "or": "OU",
+    "retry": "Réessayer",
+    "clear": "Effacer"
   },
   "promoCode": {
     "activated": "Code promo activé avec succès !",
@@ -858,7 +924,7 @@
     "premiumPrice": "Pour moins de 1€ / semaine",
     "emailNotAvailableTitle": "Email non disponible",
     "emailNotAvailableMessage": "L'adresse no-reply@cookeat.info a été copiée dans ton presse-papiers.",
-    "feedbackBody": "Bonjour,\n\nJe souhaite te faire part de mon feedback concernant l'application CookEat :\n\n[Ton message ici]\n\nCordialement,\n[Ton nom]",
+    "feedbackBody": "Bonjour,\n\nVoici mon retour sur l’application CookEat :\n\n[Ton message ici]\n\nCordialement,\n[Ton nom]",
     "languages": {
       "french": "Français",
       "english": "English"
@@ -913,7 +979,7 @@
     "successTitle": "Paiement réussi",
     "successMessage": "Ton plan a été activé avec succès !",
     "guestCheckout": "Paiement invité",
-    "guestCheckoutDescription": "Entre tes informations pour continuer avec le paiement",
+    "guestCheckoutDescription": "Renseigne tes informations pour passer au paiement.",
     "firstName": "Prénom",
     "firstNamePlaceholder": "Ton prénom",
     "email": "Email",
@@ -946,49 +1012,50 @@
     "processing": "Traitement de ta liste..."
   },
   "paywall": {
-    "reviewerAccessTitle": "Accès de vérification",
-    "reviewerAccessDescription": "Saisis le code réservé à la vérification de l’app.",
+    "reviewerAccessTitle": "Accès administrateur",
+    "reviewerAccessDescription": "Saisis ton code administrateur.",
     "reviewerAccessPlaceholder": "Code d’accès",
     "billedAnnually": "facturé {{price}} par an",
     "weeklyPlanning": {
       "headline": "Mange mieux, à ton rythme.",
-      "subheadline": "Planifie chaque semaine tes recettes sur 7 jours, adapte chaque repas et crée ta liste de courses en un geste.",
+      "subheadline": "Planifie tes repas, prépare tes courses et estime les calories et protéines de ton assiette avec une photo.",
       "cta": "Débloquer ma semaine",
       "goals": {
         "lose_weight": {
           "headline": "Des repas pour ta perte de poids.",
-          "subheadline": "Planifie ta semaine avec des portions adaptées à ton objectif et des repères en calories. Ta liste de courses suit ton planning."
+          "subheadline": "Des repas adaptés à ton objectif et un suivi des calories par photo pour garder le cap au quotidien."
         },
         "gain_muscle": {
           "headline": "Nourris ta prise de muscle.",
-          "subheadline": "Planifie des repas avec des protéines réparties sur la journée et des portions adaptées à ton objectif. Ta liste de courses est prête."
+          "subheadline": "Des repas adaptés à ton objectif et un suivi des calories et protéines par photo pour accompagner tes efforts."
         },
         "maintain": {
           "headline": "Garde ton équilibre.",
-          "subheadline": "Planifie des repas adaptés à tes besoins pour maintenir ton poids, avec des portions claires et ta liste de courses prête."
+          "subheadline": "Planifie des repas adaptés à tes besoins et suis tes calories par photo pour garder ton équilibre."
         },
         "balanced": {
           "headline": "Mange équilibré, simplement.",
-          "subheadline": "Retrouve chaque semaine des repas variés selon tes préférences, des portions adaptées et ta liste de courses prête."
+          "subheadline": "Des repas variés, une liste de courses prête et un suivi des calories et protéines par photo."
         }
       }
     },
     "loadingOfferings": "Chargement des offres...",
-    "title": "Débloque ton partenaire de planification",
-    "subtitle": "Planifie ta semaine de recettes sur 7 jours, adapte chaque repas et garde génération et import à portée de main.",
+    "title": "Simplifie tes repas avec CookEat",
+    "subtitle": "Planifie tes repas, prépare tes courses et estime les calories et protéines de ton assiette avec une photo.",
     "purchaseErrorTitle": "Erreur lors de l'achat",
     "purchaseErrorDescription": "Une erreur est survenue lors de l'achat. Réessaie.",
     "features": {
-      "fullDay": "7 journées complètes générées pour ton objectif",
+      "fullDay": "Tous tes repas planifiés pour 7 jours",
       "macros": "Calories et macros personnalisés",
-      "shopping": "Liste de courses interactive en magasin",
+      "shopping": "Une liste de courses à cocher en magasin",
       "unlimited": "Planifications hebdomadaires illimitées",
       "import": "Import TikTok & Insta illimité",
-      "favorites": "Sauve tes favoris",
-      "refine": "Affiner résultat",
+      "favorites": "Enregistre tes recettes préférées",
+      "refine": "Affiner les résultats",
       "diet": "Régime perso",
       "world": "Cuisine du monde",
-      "pantry": "Garde manger"
+      "pantry": "Garde-manger",
+      "photoTracking": "Calories et protéines estimées par photo"
     },
     "plans": {
       "weekly": "7 jours",
@@ -1006,7 +1073,7 @@
     "restore": "Restaurer",
     "promoCode": "Code Promo",
     "closeConfirm": {
-      "title": "Fermer le paywall",
+      "title": "Fermer les offres ?",
       "message": "Tu es sûr de vouloir fermer ? Tu pourras toujours souscrire plus tard.",
       "cancel": "Annuler",
       "close": "Fermer"
@@ -1030,7 +1097,7 @@
     "noPaymentDueNow": "Aucun paiement requis aujourd'hui",
     "trialHeadline_one": "Débloque toutes les fonctionnalités",
     "trialHeadline_other": "Débloque toutes les fonctionnalités",
-    "trialSubheadline": "Génère des recettes avec ce que tu as, importe celles qui te font envie et retrouve-les toutes au même endroit — sans limites.",
+    "trialSubheadline": "Planifie tes repas, prépare tes courses et estime les calories et protéines de ton assiette avec une photo.",
     "startTrial_one": "Commence GRATUITEMENT",
     "startTrial_other": "Commence GRATUITEMENT",
     "unlimitedRecipes": "Recettes illimitées",
@@ -1038,8 +1105,8 @@
     "customFilter": "Filtre personnalisé",
     "portionsChoice": "Choix des portions",
     "worldCuisine": "Cuisine du monde",
-    "customRecipe": "Recette personnalisé",
-    "pantry": "Garde manger",
+    "customRecipe": "Recette personnalisée",
+    "pantry": "Garde-manger",
     "variants": {
       "import": {
         "headline": "Toutes les recettes qui t’inspirent, enfin au même endroit",
@@ -1060,7 +1127,7 @@
         },
         "money": {
           "headline": "Fais durer tes courses plus longtemps",
-          "subheadline": "Cuisine d’abord ce que tu as déjà et trouve des repas qui respectent mieux ton budget."
+          "subheadline": "Cuisine avec ce que tu as déjà et trouve des repas adaptés à ton budget."
         },
         "ideas": {
           "headline": "Ne te demande plus jamais quoi cuisiner",
@@ -1068,11 +1135,11 @@
         },
         "organize": {
           "headline": "Toutes tes recettes, enfin au même endroit",
-          "subheadline": "Importe tes vidéos de recettes, retrouve les ingrédients et cuisine-les quand tu veux."
+          "subheadline": "Importe tes vidéos de recettes pour retrouver leurs ingrédients et leurs étapes quand tu cuisines."
         },
         "time": {
           "headline": "Moins de temps à chercher, plus de temps à cuisiner",
-          "subheadline": "Passe directement de tes ingrédients à une recette claire, sans chercher pendant des heures."
+          "subheadline": "Trouve une recette avec tes ingrédients, sans passer des heures à chercher."
         },
         "healthy": {
           "headline": "Mange mieux avec ce que tu as déjà",
@@ -1080,7 +1147,7 @@
         }
       },
       "focus": {
-        "quick": "Avec des idées adaptées aux repas de moins de 30 minutes.",
+        "quick": "Des repas prêts en moins de 30 minutes.",
         "beginner": "Chaque recette est expliquée simplement, étape par étape."
       }
     },
@@ -1137,7 +1204,7 @@
     "enabled": "Notifications activées",
     "description": "Tu recevras maintenant des notifications de CookEat !",
     "error": "Erreur",
-    "errorDescription": "Une erreur est survenue lors de la gestion des permissions de notification.",
+    "errorDescription": "Impossible de modifier les autorisations de notification.",
     "disabledTitle": "Notifications désactivées",
     "disabledMessage": "Active les notifications dans Réglages > CookEat pour ne rater aucun rappel !",
     "activateTitle": "Activer les notifications",
@@ -1155,7 +1222,7 @@
       "import": {
         "title_one": "Il te reste {{count}} jour d'essai 📱",
         "title_other": "Il te reste {{count}} jours d'essai 📱",
-        "body": "Une recette repérée sur TikTok ? Envoie-la moi, j'en fais une vraie fiche avec les quantités."
+        "body": "Une recette repérée sur TikTok ? Envoie-la à CookEat pour retrouver les ingrédients et les quantités."
       }
     }
   },
@@ -1298,7 +1365,7 @@
       "genericRenewalLabel": "À la fin de l’essai",
       "renewalText": "L’abonnement annuel démarre après l’essai, sauf annulation préalable.",
       "lossPersonalizationTitle": "Tout sera perdu",
-      "lossPersonalizationDescription": "Tous tes choix personnalisés que tu as sélectionnés seront perdus. Es-tu sûr de vouloir continuer ?",
+      "lossPersonalizationDescription": "Tes préférences seront perdues. Veux-tu vraiment continuer ?",
       "continueAnyway": "Continuer quand même",
       "goBack": "Retourner",
       "subtitle": "Tant que les notifications sont activées"
@@ -1315,12 +1382,12 @@
       "title": "On aimerait que tu essaies CookEat gratuitement",
       "subtitle": "Profite de {{count}} jours gratuits pour découvrir CookEat.",
       "eligibleTitle": "{{count}} jours pour essayer CookEat gratuitement",
-      "eligibleSubtitle": "Toutes tes recettes, générées ou importées, sans aucune limite pendant ton essai.",
+      "eligibleSubtitle": "Tes recettes, ton planning et ton suivi des calories par photo pendant ton essai.",
       "standardTitle": "On aimerait que tu essaies CookEat gratuitement",
-      "standardSubtitle": "Retrouve ton planning personnalisé et ta liste de courses avec CookEat.",
+      "standardSubtitle": "Ton planning, tes courses et ton suivi des calories par photo, au même endroit.",
       "trialPill": "{{count}} jours gratuits",
       "storePill": "7 jours gratuits",
-      "includedTitle": "Tout pour cuisiner au quotidien",
+      "includedTitle": "Tout pour tes repas et ton suivi",
       "noPayment": "Aucun paiement requis aujourd'hui",
       "reviewOffer": "Aucun paiement requis aujourd'hui",
       "button": "Continue GRATUITEMENT",
@@ -1330,22 +1397,22 @@
       "annualPriceLineWithoutMonthly": "Puis seulement {{price}} par an",
       "personalized": {
         "lose_weight": {
-          "subtitle": "Garde le cap sur ta perte de poids, avec des repas pensés pour toi.",
+          "subtitle": "Des repas adaptés à ton objectif et un suivi des calories par photo pour garder le cap au quotidien.",
           "includedTitle": "Ton allié pour perdre du poids",
           "nutrition": "Des portions adaptées à ton objectif"
         },
         "gain_muscle": {
-          "subtitle": "Accompagne tes efforts avec des repas pensés pour ta prise de muscle.",
+          "subtitle": "Des repas adaptés à ton objectif et un suivi des calories et protéines par photo pour accompagner tes efforts.",
           "includedTitle": "Nourris ta prise de muscle",
           "nutrition": "Des repères en protéines pour tes repas"
         },
         "maintain": {
-          "subtitle": "Garde tes bonnes habitudes, sans chercher chaque jour quoi cuisiner.",
+          "subtitle": "Planifie des repas adaptés à tes besoins et suis tes calories par photo pour garder ton équilibre.",
           "includedTitle": "Ton équilibre, jour après jour",
           "nutrition": "Des repères pour maintenir ton poids"
         },
         "balanced": {
-          "subtitle": "Mange plus équilibré, sans te demander chaque jour quoi cuisiner.",
+          "subtitle": "Des repas variés, une liste de courses prête et un suivi des calories et protéines par photo.",
           "includedTitle": "Mieux manger devient plus simple",
           "nutrition": "Des repères pour équilibrer tes repas"
         }
@@ -1370,12 +1437,12 @@
       "chef": {
         "title": "Chef de Cuisine",
         "description": "Des recettes adaptées à ton niveau avancé.",
-        "descPersonalized": "Tes saveurs préférées avec la cuisine {{style}}."
+        "descPersonalized": "Des recettes de cuisine {{style}} à ton goût."
       },
       "quick": {
         "title": "Rapide & Efficace",
-        "description": "Parfait pour tes sessions de moins de 30 min.",
-        "descPersonalized": "Des recettes adaptées pour tes sessions de {{time}}."
+        "description": "Des recettes prêtes en moins de 30 minutes.",
+        "descPersonalized": "Des recettes adaptées à ton temps de cuisine : {{time}}."
       },
       "balanced": {
         "title": "Équilibré",
@@ -1386,7 +1453,7 @@
       "gourmet": {
         "title": "Gourmand",
         "description": "Pour tes moments de plaisir en cuisine.",
-        "descPersonalized": "Le plaisir de cuisiner des plats au style {{style}}."
+        "descPersonalized": "Régale-toi avec des recettes de cuisine {{style}}."
       }
     },
     "next": "Suivant",
@@ -1436,7 +1503,7 @@
       "evening": "Soir",
       "weekend": "Week-end",
       "less_than_30_minutes": "Moins de 30 minutes",
-      "between_30_minutes_and_1_hour": "Entre 30 minutes et 1 heure",
+      "between_30_minutes_and_1_hour": "Moins de 60 minutes",
       "more_than_1_hour": "Plus de 1 heure",
       "fridge_empty": "Souvent vide",
       "fridge_classic": "Classique",
@@ -1520,7 +1587,8 @@
       "commit_all_in": "À fond, je m'y tiens",
       "commit_serious": "Sérieusement, je m'y mets",
       "commit_try": "Je vais essayer",
-      "commit_unsure": "Je ne sais pas encore"
+      "commit_unsure": "Je ne sais pas encore",
+      "equipment_fryer": "Friteuse"
     },
     "entryFeature": {
       "question": "Qu'est-ce qui t'amène sur CookEat ?",
@@ -1685,10 +1753,30 @@
       }
     },
     "welcomeTitle": "Ton partenaire nutrition pour atteindre tes objectifs 💪",
-    "welcomeSubtitle": "Mange sainement, fais le plein de protéines et progresse à ton rythme.",
+    "welcomeSubtitle": "Planifie tes repas et suis tes calories avec une simple photo.",
     "welcomeCta": "Je passe à l’action",
     "importHandoff": "Parfait. Passons à ta première recette importée 👇",
-    "welcomeSocialProof": "Déjà plus de {{total}} repas créés pour mieux manger"
+    "welcomeSocialProof": "Déjà plus de {{total}} repas créés pour mieux manger",
+    "photoTracking": {
+      "title": "Une photo, ton bilan.",
+      "subtitle": "Prends ton assiette en photo : CookEat reconnaît chaque aliment et calcule tes calories et macros.",
+      "cardTitle": "Photographie ton repas",
+      "correct": "Les aliments sont reconnus un à un. Tu peux corriger les quantités avant d’enregistrer.",
+      "try": "Analyser mon repas",
+      "later": "Plus tard",
+      "savedTitle": "Ton premier repas est suivi !",
+      "savedBody": "Il est enregistré dans ton journal. Tu peux continuer la configuration.",
+      "demo": {
+        "example": "Exemple",
+        "chicken": "Poulet",
+        "quinoa": "Quinoa",
+        "avocado": "Avocat",
+        "tomatoes": "Tomates",
+        "photo": "Photo",
+        "analysis": "Analyse",
+        "summary": "Ton bilan"
+      }
+    }
   },
   "weeklyOnboarding": {
     "preview": {
@@ -1696,7 +1784,7 @@
       "title": "Ton planning est prêt",
       "subtitle": "Voici les {{count}} repas que CookEat a créés et répartis sur tes 7 prochains jours.",
       "generatingTitle": "CookEat construit ta semaine…",
-      "generatingSubtitle": "On crée des recettes variées selon tes goûts, ton temps et ton foyer.",
+      "generatingSubtitle": "On prépare des recettes selon tes goûts, ton temps de cuisine et le nombre de personnes.",
       "generatingProgress": "Recettes créées pour toi : {{done}}/{{total}}.",
       "errorTitle": "Ta semaine n’a pas pu être créée",
       "errorSubtitle": "Réessaie ou modifie les jours et tes préférences. Tes choix sont conservés.",
@@ -1706,7 +1794,7 @@
       "firstMeal": "Premier repas",
       "generatedMeal": "Ta première recette personnalisée",
       "remaining": "CookEat complètera encore {{count}} repas pendant ton essai.",
-      "remainingReady": "{{count}} autre(s) repas déjà planifié(s) pour cette semaine.",
+      "remainingReady": "Déjà {{count}} repas de plus pour cette semaine.",
       "swap": "Changer ce repas",
       "swapHint": "Teste la personnalisation : change gratuitement un repas maintenant.",
       "swapSuccess": "Ce repas a été remplacé selon tes préférences.",
@@ -1716,12 +1804,12 @@
       "importSubtitle": "Importe-la et ajoute-la directement à cette semaine.",
       "importCta": "Essayer",
       "editable": "Tu pourras déplacer, remplacer ou verrouiller chaque repas.",
-      "cta": "Voir comment débloquer ma semaine",
+      "cta": "Continuer",
       "shoppingAccess": "Tous les ingrédients de tes repas réunis dans une liste à cocher."
     },
     "activation": {
       "loadingTitle": "On ouvre ta semaine…",
-      "loadingSubtitle": "Ton planning créé pendant l’onboarding est déjà là.",
+      "loadingSubtitle": "Le planning que tu as préparé est déjà disponible.",
       "readyTitle": "Ta semaine est débloquée !",
       "readySubtitle": "Tes {{count}} repas sont prêts à être consultés et modifiés.",
       "errorTitle": "Ton planning reste bien enregistré",
@@ -1754,7 +1842,7 @@
     "add": "Ajouter",
     "noIngredients": "Aucun ingrédient ajouté",
     "allowOtherIngredients": "Permettre d'autres ingrédients",
-    "allowOtherIngredientsDescription": "Permettre à l'IA de suggérer des ingrédients supplémentaires pour enrichir la recette",
+    "allowOtherIngredientsDescription": "Autorise CookEat à proposer d’autres ingrédients pour compléter ta recette.",
     "generating": "Génération...",
     "generate": "Générer ma recette",
     "soup": "Soupes",
@@ -1826,11 +1914,12 @@
     "editIngredients": "Modifier mes ingrédients",
     "generatingRecipe": "Génération de la recette...",
     "searchIngredientPlaceholder": "Rechercher un ingrédient",
-    "noIngredientFound": "Aucun ingrédient ne correspond à votre recherche",
-    "allIngredientsAdded": "Tous les ingrédients de cette catégorie sont déjà ajoutés"
+    "noIngredientFound": "Aucun ingrédient ne correspond à ta recherche.",
+    "allIngredientsAdded": "Tous les ingrédients de cette catégorie sont déjà ajoutés",
+    "equipment_fryer": "Friteuse"
   },
   "micro": {
-    "permissionTitle": "Permission Microphone",
+    "permissionTitle": "Accès au microphone",
     "permissionMessage": "CookEat a besoin d'accéder au microphone pour la reconnaissance vocale",
     "later": "Plus tard",
     "cancel": "Annuler",
@@ -1839,6 +1928,17 @@
     "requiredMessage": "CookEat a besoin d'accéder au microphone pour enregistrer ta voix et comprendre tes ingrédients. Autorise l'accès au microphone dans les paramètres."
   },
   "recipeDetail": {
+    "estimatedQuantities": "Quantités estimées d'après la vidéo : elle ne les indique pas",
+    "goalFit": {
+      "title": "Adaptée à ton objectif",
+      "original": "Vidéo : {{calories}} kcal · {{proteins}} g de protéines",
+      "yours": "Ta version : {{calories}} kcal · {{proteins}} g",
+      "locked": "Débloque les calories pour voir l'écart",
+      "swap": "{{from}} → {{to}}",
+      "quantity": "{{name}} : {{from}} → {{to}}",
+      "showYours": "Ma version",
+      "showOriginal": "Recette d'origine"
+    },
     "viewPhoto": "Afficher la photo en grand",
     "share": "Partager",
     "removeFromFavorites": "Retirer des favoris",
@@ -1850,6 +1950,7 @@
     "nutritionalInfoTitle": "Informations Nutritionnelles",
     "nutritionalInfoContent": "Ces valeurs sont des estimations basées sur les ingrédients et les portions indiqués.",
     "illustration": "Image d'illustration",
+    "minimumServingsNote": "Recette à préparer pour {{count}} portions minimum : en dessous, il faudrait moins de la moitié d'un ingrédient qui ne se partage pas ({{ingredient}}). Les parts en trop se gardent pour plus tard.",
     "reloadImage": "Rechercher une autre image",
     "imageSearchNoResult": "Aucune autre image pertinente n'a été trouvée.",
     "cookingTime": "Temps de cuisson",
@@ -1888,7 +1989,9 @@
     "imageUpdateError": "Erreur lors de la mise à jour de l'image",
     "imagePickError": "Erreur lors du choix de l'image",
     "chooseReplacement": "Choisir dans les repas",
-    "automaticReplacement": "Choisir automatiquement"
+    "automaticReplacement": "Choisir automatiquement",
+    "chooseThisMeal": "Choisir ce repas",
+    "choosingMeal": "Enregistrement…"
   },
   "planningHistory": {
     "empty": "Aucun planning pour le moment",
@@ -1909,7 +2012,9 @@
     "diets": {
       "none": "Tout",
       "vegetarian": "Végétarien",
-      "vegan": "Végan"
+      "vegan": "Végan",
+      "pescatarian": "Pescétarien",
+      "halal": "Halal"
     },
     "duration": "Temps de préparation",
     "exclude": "Ingrédients à exclure",
@@ -1921,6 +2026,7 @@
   },
   "planningLoading": {
     "title": "Ton planning se prépare",
+    "durationHint": "Cela peut prendre jusqu’à 30 secondes.",
     "subtitle": "Nous créons chaque recette pour ta semaine.",
     "error": "La génération a échoué",
     "messages": [
@@ -1944,6 +2050,8 @@
   },
   "mealLibrary": {
     "types": {
+      "imported": "Importées",
+      "light": "Repas légers",
       "all": "Tous",
       "protein": "Protéinées",
       "favorites": "Favoris",
@@ -1957,6 +2065,7 @@
     "cuisines": {
       "all": "Toutes les cuisines"
     },
+    "lightDescription": "Plats jusqu’à 500 kcal par portion.",
     "empty": "Aucun repas ne correspond à ces filtres.",
     "retry": "Réessayer",
     "loadMore": "Voir plus de repas"
@@ -1984,7 +2093,7 @@
       "On peaufine les derniers détails..."
     ],
     "generationError": "Erreur de génération",
-    "connectionError": "Erreur de connexion WebSocket",
+    "connectionError": "La connexion a été interrompue.",
     "internalError": "Erreur interne"
   },
   "camera": {
@@ -2007,9 +2116,9 @@
     "errorTitle": "Analyse échouée",
     "errorDescription": "On n'a pas pu analyser tes photos. Réessaie.",
     "finishButton": "C'est bon !",
-    "permissionTitle": "Permission caméra",
+    "permissionTitle": "Accès à la caméra",
     "permissionMessage": "On a besoin de ta permission pour utiliser la caméra",
-    "grantPermission": "Accorder la permission",
+    "grantPermission": "Autoriser la caméra",
     "back": "Retour",
     "skip": "Passer cette étape",
     "maxPhotosReached": "Maximum 30 photos atteint",
@@ -2021,7 +2130,7 @@
     "onboarding": {
       "video": {
         "title": "Filme tes ingrédients",
-        "message": "Filme ton frigo, tes placards ou ton plan de travail. L'IA identifiera tous les ingrédients visibles pour te proposer des recettes sur mesure.",
+        "message": "Filme ton frigo, tes placards ou ton plan de travail. CookEat identifiera tous les ingrédients visibles pour te proposer des recettes sur mesure.",
         "button": "Compris !"
       },
       "photo": {
@@ -2030,7 +2139,8 @@
         "button": "Compris !"
       }
     },
-    "extractionError": "Erreur lors de l'extraction"
+    "extractionError": "Impossible d’identifier les ingrédients",
+    "takePhoto": "Prendre une photo des ingrédients"
   },
   "onboarding_loading": {
     "messages": [
@@ -2046,13 +2156,18 @@
     "importingDescription": "On analyse la vidéo et on crée ta recette. Ça peut prendre quelques secondes.",
     "progressStep": {
       "init": "Préparation...",
-      "extracting_transcript": "Extraction de la transcription...",
-      "creating_recipe": "Création de la recette...",
-      "saving": "Enregistrement..."
+      "fetching_video": "Récupération de la vidéo…",
+      "extracting_transcript": "Lecture des sous-titres…",
+      "downloading_audio": "Écoute de la vidéo…",
+      "transcribing": "Transcription des explications…",
+      "creating_recipe": ["Création de la recette...", "Adaptation à ton objectif..."],
+      "saving": "Adaptation à ton objectif...",
+      "done": "Recette prête !"
     },
     "success": "Recette importée !",
     "errorTitle": "Impossible d'importer",
     "genericError": "Une erreur est survenue lors de l'import de la recette. Vérifie que la vidéo contient bien une recette.",
+    "timeout": "L’import prend trop de temps. Réessaie dans un instant.",
     "retry": "Réessayer",
     "upgrade": "Passer au Premium",
     "goHome": "Retour à l'accueil"
@@ -2062,11 +2177,13 @@
     "subtitle": "Tu as vu une recette sur TikTok ou Instagram ?",
     "howTo": "2 façons de faire 👇🏼",
     "secondaryBadge": "Fonctionnalité supplémentaire",
-    "secondaryTitle": "Importe aussi n'importe quelle vidéo de recette facilement 😋",
+    "secondaryTitle": "Importe aussi les recettes que tu repères en vidéo 😋",
     "secondaryHowTo": "Voici comment faire 👇🏼",
+    "swipeHint": "Glisse pour voir les étapes",
+    "step": "Étape {{current}} sur {{total}}",
     "secondaryStepLink": "Colle le lien de la vidéo",
     "secondaryStepRecipe": "CookEat crée la recette",
-    "description": "Partage la vidéo vers CookEat et l'IA s'occupe de tout : ingrédients, étapes et valeurs nutritionnelles.",
+    "description": "Partage la vidéo vers CookEat et on s'occupe de tout : ingrédients, étapes et valeurs nutritionnelles.",
     "howItWorks": "Comment ça marche ?",
     "step1": "1. Ouvre TikTok ou Instagram",
     "step2": "2. Appuie sur « Partager »",
@@ -2108,7 +2225,7 @@
     "editSelection": "Modifier les jours",
     "editPreferences": "Modifier mes préférences",
     "offerTitle": "Mange mieux, dès aujourd’hui.",
-    "offerSubtitle": "Découvre les offres pour accéder à ton planning et à ta liste de courses.",
+    "offerSubtitle": "Ton planning, tes courses et ton suivi des calories par photo, au même endroit.",
     "offerPill": "CookEat Premium",
     "offerReassurance": "Choisis ton offre à l’étape suivante",
     "seePlans": "Voir les offres",
@@ -2129,11 +2246,11 @@
       "75": "Plus d’une heure"
     },
     "activityDescriptions": {
-      "sedentary": "Surtout assis, peu de marche.",
-      "light": "Quelques déplacements à pied chaque jour.",
-      "moderate": "Souvent debout, tu marches régulièrement.",
-      "active": "Tu marches beaucoup ou ton travail est physique.",
-      "very_active": "Tu fais des efforts physiques soutenus toute la journée."
+      "sedentary": "Tu passes l’essentiel de ta journée en position assise et tu marches peu.",
+      "light": "Tes journées se passent surtout en position assise, avec quelques courts trajets à pied.",
+      "moderate": "Tu alternes entre position assise, station debout et marche au fil de la journée.",
+      "active": "Tu passes une grande partie de la journée à marcher ou à faire des tâches physiques.",
+      "very_active": "Tu portes souvent des charges lourdes ou fais un travail manuel exigeant."
     },
     "caloriesPerDay": "kcal par jour",
     "toward": "Pour avancer vers {{weight}} kg",
@@ -2287,7 +2404,7 @@
     "title": "Modifier",
     "hint": "Déplacez les repas ou supprimez-les avec la corbeille. Enregistrez vos changements avec « Terminé ».",
     "moveTo": "Déplacer vers…",
-    "destinationHint": "Sur un créneau occupé, les deux repas échangent leur place.",
+    "destinationHint": "Si l’emplacement est déjà occupé, les deux repas sont échangés.",
     "empty": "Emplacement vide",
     "portions_one": "{{count}} portion",
     "portions_other": "{{count}} portions",
@@ -2308,24 +2425,27 @@
     "help": "Facultatif : ajoute les aliments que tu veux utiliser cette semaine.",
     "photo": "Scanner mon frigo",
     "gallery": "Galerie",
-    "photoHelp": "Tes ingrédients deviennent le point de départ de ta semaine protéinée.",
+    "photoHelp": "Utilise tes ingrédients pour préparer tes repas de la semaine.",
     "placeholder": "Ex. poulet, riz, tomates",
     "manual": "Ajouter des ingrédients",
     "add": "Ajouter",
     "remove": "Supprimer",
     "review": "Corrige la liste si nécessaire. Touche un aliment pour le retirer.",
-    "priority": "Autoriser d’autres ingrédients",
-    "strict": "Uniquement mes ingrédients",
-    "basics": "Basiques autorisés : eau, sel, poivre et huile.",
-    "quantities": "Les quantités ne sont pas connues : vérifie que tes stocks suffisent.",
+    "completeQuestion": "On peut compléter avec quelques courses ?",
+    "priority": "Oui, je peux faire des courses",
+    "strict": "Non, seulement ce que j’ai",
+    "basics": "Tu peux aussi utiliser de l’eau, du sel, du poivre et de l’huile.",
+    "quantities": "Les quantités ne sont pas indiquées. Vérifie que tu as assez de chaque ingrédient.",
     "scanError": "La photo n’a pas pu être analysée. Réessaie ou saisis les aliments.",
     "saveError": "La liste n’a pas pu être enregistrée.",
     "owned": "Déjà chez toi",
-    "shoppingHelp": "Les aliments déjà chez toi sont cochés. Décoche-les si tu dois compléter les quantités.",
+    "shoppingHelp": "Les ingrédients déjà chez toi sont cochés. Décoche-les s’il t’en manque.",
     "coverage": "Tu as {{owned}} ingrédients sur {{required}}",
-    "categories": "Choisir par catégorie"
+    "categories": "Choisir par catégorie",
+    "strictRecovery": "Les achats complémentaires gardent ton budget, ton régime et tes exclusions. Tes ingrédients restent prioritaires."
   },
   "planningSlots": {
+    "elapsed": "Horaire passé",
     "add": "Ajouter un repas",
     "past": "Journée passée"
   },
@@ -2348,9 +2468,9 @@
     "weekEyebrow": "TON FRIGO → TA SEMAINE",
     "weekTitle": "Ta semaine prend forme.",
     "weekReady": "Ta semaine est prête.",
-    "weekSubtitle": "Tes ingrédients, un planning protéiné et les courses à compléter.",
-    "weekWorking": "Assemblage des repas en cours…",
-    "weekHelp": "Les repas et leurs protéines apparaissent ensuite dans ton planning.",
+    "weekSubtitle": "Des repas avec tes ingrédients et la liste de ce qu’il te manque.",
+    "weekWorking": "Préparation de ton planning…",
+    "weekHelp": "Retrouve ensuite tes repas et leurs apports en protéines dans le planning.",
     "analyzing": "Analyse en cours…"
   },
   "presentationMode": {
@@ -2359,7 +2479,267 @@
     "activate": "Activer",
     "deactivate": "Désactiver",
     "invalid": "Code incorrect",
-    "enabled": "Mode présentation activé. Le scan lance directement le planning.",
+    "enabled": "Mode présentation activé.",
     "disabled": "Mode présentation désactivé."
+  },
+  "pantryReview": {
+    "foundTitle": "Voici ce qu’on a trouvé",
+    "count_one": "{{count}} ingrédient",
+    "count_other": "{{count}} ingrédients",
+    "selectedCount_one": "{{count}} ingrédient sélectionné",
+    "selectedCount_other": "{{count}} ingrédients sélectionnés",
+    "keptCount_one": "Ton ingrédient est conservé.",
+    "keptCount_other": "Tes {{count}} ingrédients sont conservés.",
+    "addTitle": "Ajouter un ingrédient",
+    "search": "Rechercher ou saisir un ingrédient",
+    "clearSearch": "Effacer la recherche",
+    "suggestions": "Suggestions",
+    "noResults": "Aucun résultat. Tu peux ajouter le nom saisi.",
+    "addName": "Ajouter « {{name}} »",
+    "removeName": "Supprimer {{name}}",
+    "added": "{{name}} ajouté ✓",
+    "removed": "{{name}} retiré",
+    "done": "Terminé",
+    "continueEmpty": "Continuer sans ingrédients",
+    "emptyScan": "Aucun ingrédient reconnu. Ajoute-en ou reprends une photo.",
+    "emptyManual": "Ajoute les ingrédients que tu veux utiliser cette semaine.",
+    "limit": "Tu peux ajouter jusqu’à 100 ingrédients.",
+    "analyzePhotos": "Analyser les photos",
+    "help": "CookEat les utilisera en priorité dans tes repas de la semaine."
+  },
+  "cookingPreferences": {
+    "levelTitle": "Quel est ton niveau en cuisine ?",
+    "levelSubtitle": "Des recettes adaptées à tes habitudes, avec des étapes faciles à suivre.",
+    "equipmentTitle": "Quel matériel as-tu ?",
+    "equipmentSubtitle": "Une plaque, une poêle et une casserole suffisent. Ajoute les appareils que tu possèdes.",
+    "basicKitchen": "Juste les ustensiles de base",
+    "budgetTitle": "Quel budget pour tes repas ?",
+    "budgetSubtitle": "Avec un petit budget, on privilégie les ingrédients courants, on les réutilise et certains plats peuvent revenir dans la semaine."
+  },
+  "recipeChat": {
+    "title": "La recette, à ta façon",
+    "subtitle": "Une question ou un ingrédient à remplacer ?",
+    "personal": "Version personnelle · enregistrée sur cet appareil",
+    "notice": "Questions de cuisine, portions, nutrition et budget. Les adaptations restent sur cet appareil et ne modifient pas le catalogue.",
+    "welcome": "Comment puis-je t’aider avec cette recette ?",
+    "questionExample": "Puis-je retirer cet ingrédient : {{ingredient}} ?",
+    "changeExample": "Remplace cet ingrédient : {{ingredient}}.",
+    "placeholder": "Ta question ou ton changement…",
+    "send": "Envoyer",
+    "close": "Fermer",
+    "thinking": "Je prépare ta réponse…",
+    "error": "La réponse n’a pas pu être préparée. Ta demande est conservée : réessaie.",
+    "loadError": "Impossible d’ouvrir la conversation. Réessaie.",
+    "reset": "Revenir à la recette originale",
+    "resetDescription": "Les adaptations et la conversation de cette recette seront supprimées sur cet appareil.",
+    "adaptedNote": "Adaptation personnelle par IA. Quantités, nutrition et prix estimés ; vérifier les étiquettes des produits.",
+    "retry": "Réessayer"
+  },
+  "water": {
+    "title": "Hydratation",
+    "reached": "Objectif atteint, bravo !",
+    "remaining": "Encore {{liters}} L à boire aujourd’hui",
+    "progressLabel": "{{current}} litres bus sur {{goal}} litres",
+    "bottleHint": "{{count}} bouteilles de {{ml}} ml, calculées selon ton poids et ton activité",
+    "remove": "Retirer un verre",
+    "addGlass": "Verre {{ml}} ml",
+    "addBottle": "Bouteille {{ml}} ml"
+  },
+  "tracking": {
+    "pantryRecipes": {
+      "title": "Recettes compatibles",
+      "detected": "Ingrédients reconnus ({{count}})",
+      "loading": "Recherche de recettes compatibles…",
+      "noMatch": "Aucune recette du catalogue ne correspond à tous les ingrédients nécessaires.",
+      "unreadable": "Aucun ingrédient lisible. Essaie avec une photo plus nette.",
+      "error": "La recherche n’a pas abouti. Tu peux la relancer.",
+      "scan": "Scanner des ingrédients",
+      "addPhotos": "Ajouter des photos",
+      "find": "Trouver des recettes"
+    },
+    "mealPhoto": "Photo du repas",
+    "createFood": "Créer un aliment",
+    "foodName": "Nom de l’aliment",
+    "portionGrams": "Quantité consommée (g)",
+    "editNutrition": "Modifier les valeurs",
+    "editFoodNutrition": "Modifier les valeurs de {{name}}",
+    "editMealNutrition": "Modifier le total du repas",
+    "resetMealNutrition": "Recalculer depuis les aliments",
+    "userNutrition": "Valeurs saisies à la main",
+    "portionNutritionNote": "Indique les calories et les macros pour la quantité consommée, pas pour 100 g.",
+    "mealNutritionNote": "Indique les calories et les macros du repas entier. Tu peux aussi enregistrer un repas sans détailler ses aliments.",
+    "manualTotalNote": "Total saisi à la main. Modifier les aliments recalculera ce total.",
+    "nutritionInputHelp": "Renseigne les calories et les protéines. Glucides et lipides sont facultatifs. Tu peux utiliser une virgule et saisir 0.",
+    "optional": "facultatif",
+    "applyNutrition": "Appliquer",
+    "addManually": "Ajouter sans photo",
+    "addManuallyHint": "Décris-le-nous ou saisis ses valeurs",
+    "manualTitle": "Repas sans photo",
+    "withoutPhoto": "Sans photo",
+    "manualBody": "Pas de photo ? Décris-nous ton repas, saisis directement ses calories et macros, ou ajoute les aliments un par un.",
+    "describeTitle": "Décris-nous ton repas",
+    "describePlaceholder": "Ex. : un burger, des frites et un coca",
+    "describeSubtitle": "Dis-nous ce que tu as mangé, on remplit tout",
+    "describeWelcome": "Qu’as-tu mangé ? Décris ton repas, même approximativement, et j’ajoute les aliments, les quantités et les valeurs nutritionnelles.",
+    "describeExample": "Ce midi : un burger, des frites et un coca",
+    "describeBreakfastExample": "Au petit-déj : 2 tartines beurre confiture et un café au lait",
+    "enterMealNutrition": "Saisir calories et macros",
+    "enterMealNutritionHint": "Tu connais déjà les valeurs ? Entre-les directement.",
+    "emptyMealHint": "Donne-lui un nom, puis décris-le ou ajoute ses aliments.",
+    "mealCategory": "Type de repas",
+    "title": "Mon suivi",
+    "dailyJournal": "CHAQUE REPAS COMPTE",
+    "streakLabel": "{{count}} jours de suivi consécutifs",
+    "today": "Aujourd’hui",
+    "goal": "Objectif",
+    "dailyTarget": "MON REPÈRE",
+    "kcalPerDay": "kcal par jour",
+    "flexibleTarget": "Un repère flexible, jour après jour.",
+    "energyLabel": "{{current}} calories suivies sur un repère de {{goal}}",
+    "proteins": "Protéines",
+    "carbs": "Glucides",
+    "fats": "Lipides",
+    "yourMeals": "Mes repas",
+    "emptyTitle": "Ton repas, en une photo",
+    "emptyBody": "Photographie ton assiette, découvre ses aliments et ajuste les quantités.",
+    "scanMeal": "Scanner mon repas",
+    "editMeal": "Modifier le repas",
+    "deleteMeal": "Supprimer {{name}}",
+    "deleteTitle": "Supprimer ce repas ?",
+    "deleteBody": "Ce repas et sa photo seront retirés de ton journal.",
+    "loadError": "Impossible de charger ton journal. Réessaie.",
+    "saveError": "Impossible d’enregistrer. Tes corrections sont conservées.",
+    "captureTitle": "Un repas, une photo",
+    "photoPromise": "Vois ce qu’il y a dans ton assiette",
+    "cameraPermission": "Autorise la caméra pour analyser ton repas. Tu peux aussi choisir une photo.",
+    "cameraUnavailable": "La caméra est indisponible. Choisis une photo dans ta galerie.",
+    "allowCamera": "Activer la caméra",
+    "settings": "Ouvrir les réglages",
+    "frameMeal": "Cadre toute ton assiette, avec une bonne lumière.",
+    "gallery": "Galerie",
+    "takePhoto": "Photographier mon repas",
+    "photoError": "La photo n’a pas pu être préparée. Réessaie.",
+    "analysisError": "Analyse indisponible. Réessaie avec une photo plus nette.",
+    "untitledMeal": "Mon repas",
+    "retake": "Changer de photo",
+    "saved": "Repas ajouté !",
+    "autoSaved": "Ajouté à ta journée · modifications enregistrées automatiquement",
+    "defaultNutritionNote": "Ces valeurs seront réutilisées par défaut pour cet aliment.",
+    "viewDay": "Voir ma journée",
+    "catalogueCandidate": "Ce plat attend une nouvelle photo et une vérification avant de rejoindre les recettes CookEat.",
+    "analyzing": "Lecture de ton assiette…",
+    "analyzingNote": "On reconnaît les aliments et on estime leurs quantités.",
+    "revealing": "Ton assiette prend vie",
+    "skip": "Passer",
+    "yourMeal": "TON REPAS",
+    "adding": "Ajout à ton assiette…",
+    "estimateNote": "Valeurs indicatives · aliments, quantités et nutriments modifiables.",
+    "checkMeal": "Ton repas, décrypté",
+    "estimated": "Estimation",
+    "mealTitle": "Nom de ton repas",
+    "foods": "Les aliments",
+    "correctNote": "Corrige un aliment ou sa quantité : les calories et macros se recalculent.",
+    "foodGrams": "Quantité de {{name}} en grammes",
+    "lessGrams": "Retirer {{step}} g",
+    "moreGrams": "Ajouter {{step}} g",
+    "hiddenEstimate": "Ingrédient non visible, estimé",
+    "noReference": "Référence à préciser",
+    "chooseReference": "Choisir un aliment",
+    "changeReference": "Changer de référence",
+    "removeFood": "Retirer {{name}}",
+    "addFood": "Ajouter un aliment",
+    "types": "Type de repas",
+    "breakfast": "Petit déjeuner",
+    "lunch": "Déjeuner",
+    "snack": "Collation",
+    "dinner": "Dîner",
+    "addToDay": "Ajouter à ma journée",
+    "saveChanges": "Enregistrer les modifications",
+    "replay": "Revoir l’animation",
+    "notFood": "Aucun repas reconnu. Essaie une photo de ton assiette.",
+    "uncertain": "Photo peu lisible : vérifie chaque aliment.",
+    "chooseFood": "Quel aliment ?",
+    "searchFood": "Rechercher un aliment…",
+    "searchError": "Recherche indisponible. Réessaie.",
+    "changeFood": "Modifier {{name}}",
+    "calories": "Calories",
+    "streakLabel_one": "{{count}} jour de suivi consécutif",
+    "streakLabel_other": "{{count}} jours de suivi consécutifs",
+    "analysisPaused": "Analyse interrompue",
+    "partialEstimate": "Estimation partielle : précise les aliments sans référence pour obtenir le total.",
+    "nutritionTitle": "Ton bilan nutritionnel",
+    "mealEnergy": "ÉNERGIE DU REPAS",
+    "kcalInMeal": "kcal dans ce repas",
+    "macroDistribution": "Répartition des protéines, glucides et lipides",
+    "energyShare": "{{percent}} % des kcal",
+    "nutritionEstimateNote": "Estimation du repas, sauces comprises · aliments et quantités modifiables.",
+    "estimatedFood": "Composition estimée · modifier si besoin",
+    "mealRecap": "Mon repas",
+    "recapCount": "{{count}} aliments · {{grams}} g estimés",
+    "checkIngredients": "Vérifier les aliments et quantités",
+    "shareDish": "Proposer ce plat à CookEat",
+    "shareReferenceNote": "Avec mon accord, ma photo reste une référence privée pendant 30 jours maximum pour créer une nouvelle image. Ma photo ne sera jamais publiée.",
+    "buildupNote": "Le bilan se complète à chaque aliment.",
+    "recognitionCount": "{{count}} / {{total}} aliments reconnus",
+    "recognitionSoFar": "{{count}} aliment(s) trouvé(s) · analyse en cours…",
+    "recognitionWaiting": "Les aliments apparaîtront ici.",
+    "buildingSummary": "Bilan en cours…",
+    "backToCamera": "Retour à la caméra",
+    "captureHelp": "Comment photographier ton repas ?",
+    "captureHelpBody": "Cadre toute ton assiette, bien éclairée, vue de dessus ou légèrement de côté. Évite les mains et les emballages devant les aliments. Après l’analyse, vérifie les aliments et les quantités. Tu peux aussi choisir une photo dans ta galerie.",
+    "chatTitle": "Ajuster mon bilan",
+    "chatSubtitle": "Un aliment mal reconnu ou une quantité à corriger ?",
+    "chatQuantityExample": "Comment corriger une quantité estimée ?",
+    "chatQuestionExample": "Quels aliments apportent le plus de protéines dans ce repas ?",
+    "chatWelcome": "Que veux-tu corriger dans ce repas ?"
+  },
+  "planningBudget": {
+    "loadError": "Impossible de charger les budgets. Réessaie.",
+    "totalForPeople": "Budget total du foyer · {{count}} personne(s)",
+    "totalWeek": "POUR UNE SEMAINE",
+    "less": "Diminuer le budget",
+    "more": "Augmenter le budget",
+    "amount": "Budget total hebdomadaire",
+    "perPerson": "{{amount}} par personne sur les jours choisis",
+    "range": "De {{minimum}} à {{maximum}} au total",
+    "estimateNote": "Prix moyens approximatifs des ingrédients consommés, adaptés au pays et à la devise. Les achats en paquets peuvent coûter davantage.",
+    "peopleNote": "Le budget suivant sera le total pour toutes ces personnes.",
+    "cap": "Budget total choisi : {{amount}}",
+    "over": "Estimation au-dessus du budget de {{amount}} après tes modifications.",
+    "totalForPeople_one": "Budget total pour {{count}} personne",
+    "totalForPeople_other": "Budget total pour {{count}} personnes",
+    "totalDays_one": "Budget pour {{count}} jour",
+    "totalDays_other": "Budget pour {{count}} jours"
+  },
+  "mealImport": {
+    "add": "Importer une recette",
+    "title": "Ajouter une recette",
+    "link": "Coller un lien",
+    "linkNote": "TikTok, Instagram ou YouTube",
+    "share": "Importer par partage",
+    "shareNote": "Voir comment envoyer une vidéo à CookEat",
+    "history": "Mes recettes importées"
+  },
+  "recipeCredits": {
+    "title": "Sources et licences",
+    "description": "Origine et licences des recettes adaptées du catalogue CookEat.",
+    "empty": "Aucune recette trouvée.",
+    "adaptations": "Traduction, quantités et repères nutritionnels adaptés par CookEat. Les textes adaptés conservent la licence indiquée."
+  },
+  "mealReminders": {
+    "title": "Rappels de repas",
+    "rowDescription": "Avant chaque repas, pour penser à la photo",
+    "subtitle": "On te prévient juste avant chaque repas pour que tu n’oublies pas de prendre ton assiette en photo.",
+    "breakfast": "Petit-déjeuner",
+    "lunch": "Déjeuner",
+    "dinner": "Dîner",
+    "earlier": "Avancer le rappel du {{meal}}",
+    "later": "Retarder le rappel du {{meal}}",
+    "timeLabel": "{{meal}} : rappel à {{time}}",
+    "save": "Enregistrer",
+    "reset": "Rétablir les horaires par défaut",
+    "enableNotifications": "Les notifications sont désactivées. Touche ici pour les activer.",
+    "loadError": "Impossible de charger tes rappels. Réessaie.",
+    "saveError": "Impossible d’enregistrer tes horaires. Réessaie."
   }
 }

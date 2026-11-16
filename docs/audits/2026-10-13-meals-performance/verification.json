@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-13",
+  "scope": [
+    "app/(tabs)/meals.tsx",
+    "components/planning/PlanMealCard.tsx",
+    "scripts/test-meals-cache.cjs"
+  ],
+  "checks": {
+    "typescript": "passed",
+    "targeted_eslint": "passed",
+    "meals_cache_regression": "passed",
+    "card_entrance": "passed",
+    "entrance_replay": "passed",
+    "scoped_diff_check": "passed"
+  },
+  "android_smoke": [
+    "Italian and French cuisine selection",
+    "Japanese main dishes selection",
+    "Three consecutive list swipes with visible meals",
+    "Opening a scrolled meal and returning preserves visible recipe identities and bounds"
+  ],
+  "performance_limit": "gfxinfo samples are short debug emulator diagnostics, not a repeatable benchmark. All samples report substantial jank; no frame-rate or percentage improvement claim is supported. Real-device fluidity and iOS remain unverified.",
+  "workspace_note": "Existing changes preserved. Full repository diff check flags pre-existing trailing whitespace in app/paywall.tsx:863; edited tracked files pass.",
+  "sources": [
+    "https://reactnative.dev/docs/optimizing-flatlist-configuration",
+    "https://docs.expo.dev/versions/latest/sdk/image/"
+  ]
+}

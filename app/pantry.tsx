@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { EntranceView } from '../components/motion/Entrance';
 import { NavigationIconButton } from '../components/NavigationIconButton';
 import React, { useState, useEffect } from 'react';
@@ -232,7 +233,7 @@ export default function PantryScreen() {
             {/* Bouton d'ajout */}
             <View style={{ ...styles.section, marginBottom: 0 }}>
               <TouchableOpacity
-                style={{ ...styles.addButton, padding: 7, paddingHorizontal: 15, backgroundColor: 'white', borderColor: Colors.light.button, borderWidth: 2 }}
+                style={{ ...styles.addButton, padding: 7, paddingHorizontal: 15, backgroundColor: designTheme.surface, borderColor: Colors.light.button, borderWidth: 2 }}
                 onPress={showAddIngredientAlert}
               >
                 <IconSymbol
@@ -265,7 +266,7 @@ export default function PantryScreen() {
                 style={styles.removeButton}
                 onPress={() => removeItem(item.id)}
               >
-                <IconSymbol name="trash" size={24} color='gray' weight="bold" />
+                <IconSymbol name="trash" size={24} color={designTheme.muted} weight="bold" />
               </TouchableOpacity>
             </EntranceView>)
           )}
@@ -276,7 +277,7 @@ export default function PantryScreen() {
           <TouchableOpacity
             style={[
               styles.addButton,
-              { backgroundColor: 'white', borderColor: !isRecording ? Colors.light.button : '#DB5244', borderWidth: 2 },
+              { backgroundColor: designTheme.surface, borderColor: !isRecording ? Colors.light.button : '#DB5244', borderWidth: 2 },
               isRecording && styles.recordingButton
             ]}
             onPress={handleMicroButtonPress}
@@ -310,7 +311,7 @@ export default function PantryScreen() {
         <IconSymbol
           name={'arrow.right'}
           size={20}
-          color="white"
+          color={designTheme.onPrimary}
           weight="bold"
         />
       </TouchableOpacity>}
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#E9E9E9',
+    borderBottomColor: designTheme.line,
   },
   backButton: {
     padding: 5,
@@ -354,9 +355,9 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   statCard: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     padding: 20,
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -385,9 +386,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Degular'
   },
   emptyState: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     padding: 40,
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -412,11 +413,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   pantryItem: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
     marginBottom: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -447,7 +448,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 15,
-    borderRadius: 200,
+    borderRadius: AppRadii.pill,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -458,7 +459,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#DB5244',
   },
   addButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 16,
     marginLeft: 8,
     fontFamily: 'Degular'
@@ -475,7 +476,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 15,
-    borderRadius: 200,
+    borderRadius: AppRadii.pill,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -483,9 +484,9 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   voiceCard: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
     padding: 20,
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

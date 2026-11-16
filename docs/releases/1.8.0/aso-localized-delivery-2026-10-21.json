@@ -1,0 +1,35 @@
+{
+  "verifiedAt": "2026-10-21T01:04:35.312573+00:00",
+  "scope": "8 existing non-French localizations: names, Apple subtitles, Google short descriptions",
+  "locales": [
+    "en-US",
+    "en-GB",
+    "en-CA",
+    "en-AU",
+    "de-DE",
+    "es-ES",
+    "es-MX",
+    "pt-BR"
+  ],
+  "apple": {
+    "all8ReadbackMatch": true,
+    "appInfoId": "ebb11605-17e4-4abd-a4b6-6475de7fe923",
+    "reviewState": "WAITING_FOR_REVIEW",
+    "submissionId": "a262465e-a547-4212-bf85-9f5f3e90a7e8",
+    "reviewRestarted": false
+  },
+  "google": {
+    "all8ReadbackMatch": true,
+    "corrections": 16,
+    "reviewRestartConfirmed": true,
+    "state": "Automatic preliminary checks running; review queued after completion",
+    "managedPublishing": true,
+    "authorization": "User authorized Google Play review restart in the ongoing metadata correction workflow."
+  },
+  "fullDescriptionsPreserved": true,
+  "frenchPreserved": true,
+  "screenshotsChanged": false,
+  "newBinaryBuilt": false,
+  "publicRelease": false,
+  "marketEvidence": "Direct competitor storefront wording; no measured keyword volume, historical market conversion or uplift claim. See aso-localized-audit-2026-10-21.md."
+}

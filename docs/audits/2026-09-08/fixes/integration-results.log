@@ -1,0 +1,28 @@
+yarn run v1.22.22
+$ /Users/hadjadji/work/perso/cookeat/api/node_modules/.bin/ts-node scripts/test-anonymous-planning.ts
+(node:94377) [MONGOOSE] DeprecationWarning: Mongoose: the `strictQuery` option will be switched back to `false` by default in Mongoose 7. Use `mongoose.set('strictQuery', false);` if you want to prepare for this change. Or use `mongoose.set('strictQuery', true);` to suppress this warning.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[Redis] Connected
+PASS cryptographic anonymous credential
+PASS migration preserves existing identity
+PASS session registration is retryable
+PASS bound installation cannot be claimed with mobileId alone
+PASS profile survives migration without exposing credentials
+PASS onboarding without signup
+PASS onboarding cannot elevate privileges or change token
+PASS forged premium request without token rejected
+PASS client premium boolean never grants access
+PASS anonymous free preview
+PASS plan identifiers alone do not authenticate
+PASS cross-user history rejected
+PASS invalid calendar date rejected
+PASS preview cannot unlock another week
+PASS completed preview reused
+PASS preview does not grant shopping access
+PASS replacement differs
+PASS import source portions retained
+PASS two-serving 200g ingredient becomes 100g for one portion
+PASS shopping check survives regeneration
+PASS legacy imported meals use original portions
+21 integration assertions passed.
+Done in 1.67s.

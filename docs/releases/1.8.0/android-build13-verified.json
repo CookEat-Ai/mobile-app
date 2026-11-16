@@ -1,0 +1,12 @@
+{
+  "package": "com.gokugen.cookeat",
+  "versionName": "1.8.0",
+  "versionCode": "13",
+  "minSdk": "24",
+  "targetSdk": "36",
+  "bundletoolValidation": "PASS",
+  "sha256": "945090981d73d6f615ff020e6c43f7126f8cc6f0939efeb66061804e3216c8a0",
+  "easBuildId": "45c0e810-2e62-4287-a2b1-78b07f8d3168",
+  "commit": "c8f79d887a13b4da20dc5fa88ce8544e93afd336",
+  "runtimeVersion": "05bd917869d2bd492c58e9af12b56f220a9d638d"
+}

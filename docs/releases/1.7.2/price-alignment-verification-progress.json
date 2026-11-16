@@ -1,0 +1,61 @@
+{
+  "updatedAt": "2026-10-14T08:28:22.178Z",
+  "completed": [
+    {
+      "product": "annual",
+      "observedAt": "2026-10-14T08:27:28.172Z",
+      "exact127Verified": true,
+      "allSavedPricesPersisted": true,
+      "france": "49,99 EUR"
+    },
+    {
+      "product": "monthly",
+      "observedAt": "2026-10-14T08:27:34.535Z",
+      "exact127Verified": true,
+      "allSavedPricesPersisted": true,
+      "france": "12,99 EUR"
+    },
+    {
+      "product": "weekly",
+      "observedAt": "2026-10-14T08:27:39.388Z",
+      "exact127Verified": true,
+      "allSavedPricesPersisted": true,
+      "france": "7,99 EUR"
+    },
+    {
+      "product": "annual_discount",
+      "observedAt": "2026-10-14T08:27:44.074Z",
+      "exact127Verified": true,
+      "allSavedPricesPersisted": true,
+      "france": "29,99 EUR"
+    },
+    {
+      "product": "annual_discount_15",
+      "observedAt": "2026-10-14T08:27:48.578Z",
+      "exact127Verified": true,
+      "allSavedPricesPersisted": true,
+      "france": "37,99 EUR"
+    },
+    {
+      "product": "annual_discount_20",
+      "observedAt": "2026-10-14T08:28:13.640Z",
+      "exact127Verified": true,
+      "allSavedPricesPersisted": true,
+      "france": "35,99 EUR"
+    },
+    {
+      "product": "annual_discount_25",
+      "observedAt": "2026-10-14T08:28:17.895Z",
+      "exact127Verified": true,
+      "allSavedPricesPersisted": true,
+      "france": "33,49 EUR"
+    },
+    {
+      "product": "annual_discount_80",
+      "observedAt": "2026-10-14T08:28:22.177Z",
+      "exact127Verified": true,
+      "allSavedPricesPersisted": true,
+      "france": "30,99 EUR"
+    }
+  ]
+}

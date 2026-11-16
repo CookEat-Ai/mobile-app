@@ -1,0 +1,17 @@
+{
+  "verifiedAt": "2026-10-14",
+  "base": "https://cookeat.info/api",
+  "freshAnonymousSession": true,
+  "reviewInactiveBeforeActivation": true,
+  "reviewActivatedWithExpiry": true,
+  "foreignIdentityDenied": true,
+  "unauthenticatedAccessDenied": true,
+  "premiumPlanningPassed": true,
+  "activePlanReloaded": true,
+  "generatedMealCount": 4,
+  "weekStart": "2026-10-14",
+  "weekEnd": "2026-10-20",
+  "fixtureUserId": "6aced461f1ca1859601baecb",
+  "fixtureMobileId": "f811b854-bf1d-41b5-8d70-675d718393a5",
+  "fixtureRetained": true
+}

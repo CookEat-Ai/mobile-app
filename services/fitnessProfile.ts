@@ -1,4 +1,5 @@
 import { calculateNutritionTargets, isTargetWeightSupported, normalizeFitnessGoal } from './nutritionModel';
+import { normalizeCookingLevel, normalizeMealBudget, normalizeEquipments, type CookingLevel, type MealBudget } from './cookingPreferences';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export type FitnessGoal = 'lose_weight' | 'gain_muscle' | 'maintain' | 'balanced';
@@ -25,6 +26,8 @@ export type FitnessProfile = {
   cookingTime: string;
   favoriteCuisineStyle: string[];
   equipments?: string[];
+  cookingLevel?: CookingLevel;
+  mealBudget?: MealBudget;
 };
 
 export type FitnessProjection = {
@@ -48,7 +51,7 @@ export type FitnessProjection = {
 export const FITNESS_PROFILE_KEYS = [
   'fitnessGoal', 'sex', 'age', 'heightCm', 'currentWeightKg', 'targetChangeKg', 'targetWeightKg',
   'goalDurationWeeks', 'activityLevel', 'trainingDays', 'trainingDurationMinutes', 'nutritionWeightKg', 'dailyCalorieAdjustment', 'includeSnack', 'diet',
-  'avoidIngredients', 'cookingTime', 'favoriteCuisineStyle', 'equipments',
+  'avoidIngredients', 'cookingTime', 'favoriteCuisineStyle', 'equipments', 'cookingLevel', 'mealBudget',
 ] as const;
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
@@ -88,6 +91,8 @@ export async function loadFitnessProfile(): Promise<FitnessProfile> {
     includeSnack: values.includeSnack === 'true',
     diet: values.diet && values.diet !== 'none' ? values.diet : 'none',
     avoidIngredients: parseMulti(values.avoidIngredients),
+    cookingLevel: normalizeCookingLevel(values.cookingLevel),
+    mealBudget: normalizeMealBudget(values.mealBudget),
     cookingTime: values.cookingTime || 'less_than_30_minutes',
     favoriteCuisineStyle: parseMulti(values.favoriteCuisineStyle),
     equipments: values.equipments === null ? undefined : parseMulti(values.equipments).filter((item) => item !== 'equipment_none'),
@@ -126,9 +131,9 @@ export function fitnessProfileToPlanningPreferences(profile: FitnessProfile) {
     duration: durationMap[profile.cookingTime] || 'fast',
     cuisineStyle: [...new Set(profile.favoriteCuisineStyle.flatMap((item) => cuisineMap[item] || []))],
     diet: profile.diet,
-    equipments: profile.equipments === undefined ? [] : ['standard-kitchen', ...profile.equipments
-      .filter((item) => item !== 'equipment_none')
-      .map((item) => item.replace(/^equipment_/, ''))],
+    cookingLevel: normalizeCookingLevel(profile.cookingLevel),
+    mealBudget: normalizeMealBudget(profile.mealBudget),
+    equipments: normalizeEquipments(profile.equipments),
     allergies: profile.avoidIngredients.map((item) => allergyMap[item] || item).filter(Boolean),
     goal: normalizeFitnessGoal(profile.goal),
     includeSnack: profile.includeSnack,

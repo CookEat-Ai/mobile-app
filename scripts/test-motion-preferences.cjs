@@ -1,0 +1,19 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript');
+const tick=()=>new Promise(resolve=>setImmediate(resolve));
+function harness({foreground=true,fail=false}={}){
+ const slots=[],effects=[],listeners=new Map();let cursor=0,cleanup,removed=0,resolvePreferences;
+ const preferences=new Promise((resolve,reject)=>{resolvePreferences=()=>fail?reject(Error('unavailable')):resolve(false);});
+ const React={createElement:(type,props,...children)=>({type,props:{...props,children}}),createContext:value=>({value,Provider:'Provider'}),useContext:context=>context.value,useState:initial=>{const i=cursor++;if(!(i in slots))slots[i]=initial;return[slots[i],value=>{slots[i]=value;}];},useEffect:callback=>{if(!cleanup)effects.push(callback);}};React.default=React;
+ const exports={};vm.runInNewContext(ts.transpileModule(fs.readFileSync('contexts/MotionPreferences.tsx','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.React,esModuleInterop:true}}).outputText,{exports,require:name=>name==='react'?React:{Platform:{OS:'ios'},AccessibilityInfo:{addEventListener:(event,callback)=>{listeners.set(event,callback);return{remove(){removed++;}};},isReduceMotionEnabled:()=>preferences,isScreenReaderEnabled:()=>Promise.resolve(false)},AppState:{currentState:foreground?'active':'inactive',addEventListener:(event,callback)=>{listeners.set(event,callback);return{remove(){removed++;}};}}}});
+ return{render(){cursor=0;const tree=exports.MotionPreferencesProvider({children:null});while(effects.length)cleanup=effects.shift()();return tree.props.value;},resolvePreferences,emit(event,value){listeners.get(event)(value);},unmount(){cleanup();},removed:()=>removed};
+}
+(async()=>{
+ const h=harness();let state=h.render();assert.equal(state.ready,false,'unresolved preferences do not authorize silently skipping animations');h.emit('screenReaderChanged',false);assert.equal(h.render().ready,false,'one early preference event cannot skip foods while the other preference remains unknown');h.resolvePreferences();await tick();state=h.render();assert.equal(state.enabled,true);assert.equal(state.foreground,true);assert.equal(state.ready,true);
+ h.emit('change','inactive');state=h.render();assert.equal(state.enabled,true,'temporary inactivity does not become an accessibility motion opt-out');assert.equal(state.foreground,false);
+ h.emit('change','active');assert.equal(h.render().foreground,true);
+ h.emit('reduceMotionChanged',true);assert.equal(h.render().enabled,false);h.emit('reduceMotionChanged',false);h.emit('screenReaderChanged',true);assert.equal(h.render().enabled,false);h.emit('screenReaderChanged',false);assert.equal(h.render().enabled,true);h.unmount();assert.equal(h.removed(),3);
+ const initiallyBackground=harness({foreground:false});initiallyBackground.render();initiallyBackground.resolvePreferences();await tick();state=initiallyBackground.render();assert.equal(state.foreground,false);assert.equal(state.enabled,true);initiallyBackground.unmount();
+ const failed=harness({fail:true});failed.render();failed.resolvePreferences();await tick();state=failed.render();assert.equal(state.ready,true);assert.equal(state.enabled,false);failed.unmount();
+ const changedDuringRead=harness();changedDuringRead.render();changedDuringRead.emit('reduceMotionChanged',true);changedDuringRead.resolvePreferences();await tick();assert.equal(changedDuringRead.render().enabled,false,'a stale initial preference read cannot overwrite a newer accessibility event');changedDuringRead.unmount();
+ console.log('Motion preferences: unresolved settings, foreground/background separated from accessibility opt-out, reduced motion, screen reader, failures and listener cleanup passed.');
+})().catch(error=>{console.error(error);process.exitCode=1;});

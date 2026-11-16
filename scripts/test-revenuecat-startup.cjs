@@ -43,6 +43,7 @@ function loadService({ failConfigure = false, failInvalidate = false } = {}) {
   vm.runInNewContext(code, {
     exports, console: { log() {}, warn() {}, error() {} }, Date,
     require: id => {
+      if (id === '../services/reviewerAccess') return { hasReviewerAccess: async () => false };
       if (id === './storeCompliance') return { CREATOR_PROMO_CODES_ENABLED: false };
       if (id === 'react-native-purchases') return purchases;
       if (id === 'react-native') return { Platform: { OS: 'ios' } };
@@ -51,7 +52,11 @@ function loadService({ failConfigure = false, failInvalidate = false } = {}) {
         setItem: async () => {},
       };
       if (id === '../services/api') return { apiService: { getAppConfig: async () => ({ data: {} }) } };
-      if (id === '../services/analytics') return { setUserProperties() {} };
+      if (id === '../services/analytics') return {
+        setUserProperties() {}, getCanonicalUserId: () => null,
+        getPostHogDistinctId: () => 'posthog-linked-user',
+        identify: async id => { if (currentId !== id) await purchases.logIn(id); },
+      };
       if (id === '../services/appsflyer') return {
         getAppsFlyerUID: async () => null, getRevenueCatAttributionAttributes: async () => ({}),
       };

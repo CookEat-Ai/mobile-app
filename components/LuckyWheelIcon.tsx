@@ -1,3 +1,4 @@
+import { AppTheme as designTheme } from '../constants/AppTheme';
 import React from 'react';
 import { View } from 'react-native';
 import Svg, { G, Path, Circle, Text as SvgText } from 'react-native-svg';
@@ -8,12 +9,12 @@ export const LuckyWheelIcon = ({ size = 60 }: { size?: number }) => {
   const radius = (size / 2) - 4;
 
   const segments = [
-    { label: '15', color: '#E0E0E0', textColor: '#333' },
+    { label: '15', color: designTheme.line, textColor: '#333' },
     { label: '25', color: Colors.light.button, textColor: '#FFF' },
-    { label: '33', color: '#000000', textColor: '#FFF' },
-    { label: '15', color: '#E0E0E0', textColor: '#333' },
+    { label: '33', color: designTheme.ink, textColor: '#FFF' },
+    { label: '15', color: designTheme.line, textColor: '#333' },
     { label: '25', color: Colors.light.button, textColor: '#FFF' },
-    { label: '33', color: '#000000', textColor: '#FFF' },
+    { label: '33', color: designTheme.ink, textColor: '#FFF' },
   ];
 
   return (
@@ -56,7 +57,7 @@ export const LuckyWheelIcon = ({ size = 60 }: { size?: number }) => {
             );
           })}
           
-          <Circle cx={center} cy={center} r={radius} stroke="#FFFFFF" strokeWidth="1.5" fill="none" />
+          <Circle cx={center} cy={center} r={radius} stroke={designTheme.onPrimary} strokeWidth="1.5" fill="none" />
           
           {[0, 60, 120, 180, 240, 300].map((angle) => (
             <Circle 
@@ -68,7 +69,7 @@ export const LuckyWheelIcon = ({ size = 60 }: { size?: number }) => {
             />
           ))}
         </G>
-        <Circle cx={center} cy={center} r={size * 0.08} fill="#FFFFFF" />
+        <Circle cx={center} cy={center} r={size * 0.08} fill={designTheme.onPrimary} />
       </Svg>
     </View>
   );

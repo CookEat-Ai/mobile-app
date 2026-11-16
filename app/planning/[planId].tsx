@@ -1,3 +1,4 @@
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
 import { useEntranceReplay } from '../../hooks/useEntranceReplay';
 import { planningRevision } from '../../services/planningUpdates';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
@@ -5,16 +6,18 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useRef, useState } from 'react';
-import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { AppTheme as theme, appStyles } from '../../constants/AppTheme';
 import { contentColumn, useResponsive } from '../../hooks/useResponsive';
 import { apiService, type MealPlan } from '../../services/api';
+import { usePlanningClock } from '../../hooks/usePlanningClock';
 import { formatPlanRange, isPastPlan } from '../../services/planningDisplay';
 import { PlanWeekContent } from '../../components/planning/PlanWeekContent';
 
 export default function PlanDetailScreen() {
+  const clock = usePlanningClock();
   const { planId } = useLocalSearchParams<{ planId: string }>();
   const scrollRef = useRef<ScrollView>(null);
   const scrollOffset = useRef(0);
@@ -56,17 +59,17 @@ export default function PlanDetailScreen() {
   return <View style={appStyles.screen}>
     <View style={[styles.topBar, { paddingTop: insets.top + 8, paddingHorizontal: gutter }]}>
       <NavigationIconButton style={appStyles.iconButton} onPress={() => router.back()} accessibilityRole="button" accessibilityLabel={t('common.back')} />
-      <Text style={[appStyles.headerTitle, { fontSize: font(29) }]}>{t('tabs.planning')}</Text><View style={{ width: 44 }} />
+      <Text style={[appStyles.headerTitle, appStyles.backHeaderLeadingTitle, { fontSize: font(29) }]}>{t('tabs.planning')}</Text>
     </View>
     <ScrollView ref={scrollRef} scrollEventThrottle={16} onScroll={event => { scrollOffset.current = event.nativeEvent.contentOffset.y; }} contentContainerStyle={{ ...contentColumn(), paddingHorizontal: gutter, paddingBottom: 32 + insets.bottom }} showsVerticalScrollIndicator={false}>
       {loading && <ActivityIndicator style={styles.loader} color={theme.ink} />}
       {error && <View><Text style={appStyles.error}>{error}</Text><TouchableOpacity style={appStyles.button} onPress={() => void loadPlan()}><Text style={appStyles.buttonText}>{t('mealLibrary.retry')}</Text></TouchableOpacity></View>}
       {plan && <><Text style={styles.week}>{formatPlanRange(plan, i18n.resolvedLanguage || 'fr')}</Text>
-        <PlanWeekContent key={plan._id} plan={plan} onPlanChange={setPlan} onRevealStart={alignPlanningDays} />
-        {!isPastPlan(plan) && <TouchableOpacity accessibilityRole="button" style={styles.regenerate} onPress={() => {
-          if (isPastPlan(plan)) return;
-          router.push({ pathname: '/planning/configure', params: { replace: 'true' } });
-        }}><Ionicons name="refresh-outline" size={20} color={theme.ink} /><Text style={appStyles.textAction}>{t('planningDetail.regenerate')}</Text></TouchableOpacity>}
+        <PlanWeekContent key={plan._id} plan={plan} onPlanChange={setPlan} onRevealStart={alignPlanningDays} onRegenerate={!isPastPlan(plan, clock.today) ? () => {
+          if (isPastPlan(plan, clock.today)) return;
+          router.push({ pathname: '/planning/configure', params: { replace: 'true', sourcePlanId: plan._id } });
+        } : undefined}/>
+        {isPastPlan(plan, clock.today) && <TouchableOpacity accessibilityRole="button" style={styles.regenerate} onPress={() => router.push('/planning/configure')}><Ionicons name="add-circle-outline" size={20} color={theme.ink}/><Text style={appStyles.textAction}>{t('dailyApp.createWeek')}</Text></TouchableOpacity>}
       </>}
     </ScrollView>
   </View>;

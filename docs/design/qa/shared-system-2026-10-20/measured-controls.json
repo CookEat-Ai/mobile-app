@@ -1,0 +1,70 @@
+{
+  "ios": [
+    {
+      "AXLabel": "Fermer",
+      "AXValue": null,
+      "AXRole": null,
+      "frame": {
+        "y": 86.33333396911621,
+        "x": 338,
+        "width": 44,
+        "height": 44
+      }
+    },
+    {
+      "AXLabel": "Ta question ou ton changement… Ta question ou ton changement…",
+      "AXValue": null,
+      "AXRole": null,
+      "frame": {
+        "y": 792,
+        "x": 14,
+        "width": 316,
+        "height": 48
+      }
+    }
+  ],
+  "android": [
+    {
+      "index": "3",
+      "text": "",
+      "resource-id": "",
+      "class": "android.widget.Button",
+      "package": "com.gokugen.cookeat.featureqa",
+      "content-desc": "Fermer",
+      "checkable": "false",
+      "checked": "false",
+      "clickable": "true",
+      "enabled": "true",
+      "focusable": "true",
+      "focused": "false",
+      "scrollable": "false",
+      "long-clickable": "false",
+      "password": "false",
+      "selected": "false",
+      "bounds": "[912,183][1028,298]",
+      "drawing-order": "4",
+      "hint": ""
+    },
+    {
+      "index": "6",
+      "text": "Ta question ou ton changement…",
+      "resource-id": "",
+      "class": "android.widget.EditText",
+      "package": "com.gokugen.cookeat.featureqa",
+      "content-desc": "Ta question ou ton changement…",
+      "checkable": "false",
+      "checked": "false",
+      "clickable": "true",
+      "enabled": "true",
+      "focusable": "true",
+      "focused": "false",
+      "scrollable": "false",
+      "long-clickable": "true",
+      "password": "false",
+      "selected": "false",
+      "bounds": "[36,2211][891,2337]",
+      "drawing-order": "7",
+      "hint": "Ta question ou ton changement…"
+    }
+  ]
+}

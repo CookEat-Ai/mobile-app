@@ -1,3 +1,5 @@
+import { normalizeCookingLevel, normalizeMealBudget, normalizeEquipments, type CookingLevel, type MealBudget } from './cookingPreferences';
+import { planningGenerationWindow } from './planning-time';
 import { fitnessProfileToPlanningPreferences, loadFitnessProfile } from './fitnessProfile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { MealPlan } from './api';
@@ -12,8 +14,8 @@ export const WEEKLY_MEAL_COUNT_KEY = 'weeklyMealCount';
 export const PLANNING_GENERATION_SETTINGS_KEY = '@cookeat_planning_generation_settings_v1';
 export const DEFAULT_WEEKLY_MEAL_COUNT = 21;
 export const WEEKLY_PLANNING_HORIZON_DAYS = 7;
-export const DEFAULT_COOKING_DAYS = [0, 1, 2, 3, 4] as const;
-export const PLANNING_MINIMUM_LOADING_MS = 5000;
+export const DEFAULT_COOKING_DAYS = [0, 1, 2, 3, 4, 5, 6] as const;
+export const PLANNING_MINIMUM_LOADING_MS = 3000;
 
 /** Complète uniquement le temps restant avant de révéler un planning créé. */
 export async function waitForPlanningMinimumDuration(startedAt: number): Promise<void> {
@@ -30,14 +32,27 @@ export function roundNutritionValue(value: unknown): number {
   return Number.isFinite(numericValue) ? Math.round(numericValue) : 0;
 }
 
+export const PLANNING_DIETS = ['none', 'vegetarian', 'vegan', 'pescatarian', 'halal'] as const;
+export type PlanningDiet = typeof PLANNING_DIETS[number];
+
+export function normalizePlanningDiet(value: unknown): PlanningDiet {
+  return PLANNING_DIETS.includes(value as PlanningDiet) ? value as PlanningDiet : 'none';
+}
+
 export type PlanningGenerationSettings = {
   servings?: number;
+  weeklyBudget?: number;
+  country?: string;
+  currency?: string;
+  cookingLevel?: CookingLevel;
+  mealBudget?: MealBudget;
+  equipments?: string[];
   cookingDays: number[];
   includeSnack: boolean;
   duration: 'all' | 'fast' | 'medium';
   mealsByDay: Record<string, PlanningMealType[]>;
   cuisineIds: string[];
-  diet: 'none' | 'vegetarian' | 'vegan';
+  diet: PlanningDiet;
   excludedIngredients: string[];
   pantryIngredients?: string[];
   pantryMode?: 'priority' | 'strict';
@@ -45,6 +60,9 @@ export type PlanningGenerationSettings = {
 
 export const DEFAULT_PLANNING_GENERATION_SETTINGS: PlanningGenerationSettings = {
   servings: 1,
+  cookingLevel: 'beginner',
+  mealBudget: 'budget_medium',
+  equipments: ['standard-kitchen'],
   cookingDays: [...DEFAULT_COOKING_DAYS],
   includeSnack: true,
   duration: 'all',
@@ -85,7 +103,7 @@ export function isCompleteWeeklyPlan(plan: MealPlan | null | undefined): plan is
         && meal.status === 'ready'
         && Boolean(meal.catalogRecipeId)
         && meal.title.trim().length > 0
-        && Boolean(meal.image)
+        && (Boolean(meal.image) || meal.artworkOnly === true)
         && Number(meal.calories) > 0
         && Number(meal.proteins) > 0));
   });
@@ -101,12 +119,16 @@ export function isUsableWeeklyPlan(plan: MealPlan | null | undefined): plan is M
     && meal.status === 'ready'
     && Boolean(meal.mealType)
     && meal.title.trim().length > 0
-    && Boolean(meal.image)
+    && (Boolean(meal.image) || meal.artworkOnly === true)
     && Number(meal.calories) > 0);
 }
 
 export function localDateKey(date: Date = new Date()): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+export function planningStartKey(date: Date = new Date()): string {
+  return planningGenerationWindow(undefined, date).weekStart;
 }
 
 export function startOfWeekMondayKey(date: Date = new Date()): string {
@@ -148,8 +170,9 @@ export async function loadPlanningGenerationSettings(): Promise<PlanningGenerati
       ...DEFAULT_PLANNING_GENERATION_SETTINGS,
       cookingDays: [...DEFAULT_COOKING_DAYS],
       mealsByDay: { ...DEFAULT_PLANNING_GENERATION_SETTINGS.mealsByDay },
+      cookingLevel: preferences.cookingLevel, mealBudget: preferences.mealBudget, equipments: preferences.equipments,
       cuisineIds: preferences.cuisineStyle,
-      diet: preferences.diet === 'vegan' || preferences.diet === 'vegetarian' ? preferences.diet : 'none',
+      diet: normalizePlanningDiet(preferences.diet),
       excludedIngredients: [],
     };
     }
@@ -157,6 +180,9 @@ export async function loadPlanningGenerationSettings(): Promise<PlanningGenerati
     const cookingDays = normalizeCookingDays(parsed.cookingDays);
     return {
       cookingDays,
+      weeklyBudget: Number(parsed.weeklyBudget) > 0 ? Number(parsed.weeklyBudget) : undefined, country: parsed.country, currency: parsed.currency,
+      cookingLevel: normalizeCookingLevel(parsed.cookingLevel), mealBudget: normalizeMealBudget(parsed.mealBudget),
+      equipments: normalizeEquipments(parsed.equipments),
       servings: Math.min(20, Math.max(1, Math.trunc(Number(parsed.servings) || 1))),
       pantryIngredients: Array.isArray(parsed.pantryIngredients) ? parsed.pantryIngredients.map(String).map(item => item.trim()).filter(Boolean).slice(0, 100) : [],
       pantryMode: parsed.pantryMode === 'strict' ? 'strict' : 'priority',
@@ -164,7 +190,7 @@ export async function loadPlanningGenerationSettings(): Promise<PlanningGenerati
       duration: parsed.duration === 'fast' || parsed.duration === 'medium' ? parsed.duration : 'all',
       mealsByDay: dailyMealsForDays(cookingDays),
       cuisineIds: Array.isArray(parsed.cuisineIds) ? [...new Set(parsed.cuisineIds.map(String).filter(Boolean))] : [],
-      diet: parsed.diet === 'vegetarian' || parsed.diet === 'vegan' ? parsed.diet : 'none',
+      diet: normalizePlanningDiet(parsed.diet),
       excludedIngredients: Array.isArray(parsed.excludedIngredients)
         ? [...new Set(parsed.excludedIngredients.map(String).map((item) => item.trim()).filter(Boolean))]
         : [],
@@ -182,6 +208,9 @@ export async function loadPlanningGenerationSettings(): Promise<PlanningGenerati
 
 export async function savePlanningGenerationSettings(settings: PlanningGenerationSettings): Promise<void> {
   await AsyncStorage.setItem(PLANNING_GENERATION_SETTINGS_KEY, JSON.stringify({
+    weeklyBudget: settings.weeklyBudget, country: settings.country, currency: settings.currency,
+    cookingLevel: normalizeCookingLevel(settings.cookingLevel), mealBudget: normalizeMealBudget(settings.mealBudget),
+    equipments: normalizeEquipments(settings.equipments),
     servings: Math.min(20, Math.max(1, Math.trunc(Number(settings.servings) || 1))),
     cookingDays: normalizeCookingDays(settings.cookingDays),
     includeSnack: true,

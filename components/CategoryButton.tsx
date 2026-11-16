@@ -1,3 +1,4 @@
+import { AppTheme as theme, AppRadii } from '../constants/AppTheme';
 import { feedback } from '../services/haptics';
 import { EntranceTouchable } from './motion/Entrance';
 import { Ionicons } from '@expo/vector-icons';
@@ -18,7 +19,6 @@ interface CategoryButtonProps {
 export default function CategoryButton({
   title,
   icon,
-  colorIcon,
   onPress,
   isMore = false,
   isSelected = false
@@ -38,7 +38,7 @@ export default function CategoryButton({
         styles.container,
         {
           backgroundColor: getBackgroundColor(),
-          borderColor: colors.border
+          borderColor: isSelected ? theme.yellow : theme.line
         }
       ]}
       onPress={() => { if (onPress) feedback.selection(); onPress?.(); }}
@@ -46,7 +46,7 @@ export default function CategoryButton({
       <Ionicons
         name={icon}
         size={26}
-        color={colorIcon}
+        color={theme.ink}
       />
       <Text style={[styles.title]}>
         {title}
@@ -62,7 +62,8 @@ const styles = StyleSheet.create({
     // Sans plafond, la tuile atteignait 240pt de côté sur iPad pour un libellé
     // de 12pt.
     maxWidth: 120,
-    borderRadius: 16,
+    borderRadius: AppRadii.control,
+    borderWidth: 1,
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -70,6 +71,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: font(12),
     fontFamily: 'CronosProBold',
+    color: theme.ink,
     marginTop: 8,
     textAlign: 'center'
   },

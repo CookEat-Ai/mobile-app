@@ -1,0 +1,29 @@
+{
+  "verifiedAt": "2026-10-21T00:52:26.077219+00:00",
+  "locale": "fr-FR",
+  "name": "CookEat : Compteur de calories",
+  "appleSubtitle": "Photo, macros et menus adaptés",
+  "googleShortDescription": "Analyse tes repas en photo, suis tes macros et planifie tes menus.",
+  "apple": {
+    "saved": true,
+    "readbackVerified": true,
+    "appInfoId": "ebb11605-17e4-4abd-a4b6-6475de7fe923",
+    "versionState": "WAITING_FOR_REVIEW",
+    "submissionRetained": true
+  },
+  "google": {
+    "saved": true,
+    "readbackVerified": true,
+    "state": "Resubmission confirmed; automatic preliminary checks running before review",
+    "restartReviewRequired": true,
+    "explicitUserRestartAuthorization": true,
+    "restartPerformed": true,
+    "includedPendingListingChanges": 13,
+    "productionBuild": 13,
+    "managedPublishing": true
+  },
+  "otherLocaleTextChangedInThisTask": false,
+  "newBinaryBuilt": false,
+  "publicRelease": false,
+  "evidenceBasis": "Competitor French storefront titles observed 2026-10-21; no measured search-volume or conversion uplift claim."
+}

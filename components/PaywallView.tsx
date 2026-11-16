@@ -1,3 +1,4 @@
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { NavigationIconButton } from './NavigationIconButton';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -21,6 +22,7 @@ import {
 } from 'react-native-purchases';
 import { Colors } from '../constants/Colors';
 import {
+  FORM_CONTENT_MAX_WIDTH,
   font,
   getPaywallCloseTopInset,
   ONBOARDING_CTA_BOTTOM_GAP,
@@ -44,6 +46,7 @@ type Props = {
   copy: PaywallCopy;
   onPurchase: (pack: PurchasesPackage) => void;
   onRestore: () => void;
+  onTestimonialPress?: () => void;
   /** Absent = paywall non fermable (hard). Présent = croix affichée. */
   onClose?: () => void;
   /** Délai avant l'apparition de la croix, en ms. 0 = immédiate. */
@@ -64,7 +67,7 @@ type Props = {
 
 /** L'annuel reste le choix recommandé, le mensuel l'alternative principale. */
 const PACKAGE_ORDER: string[] = [PACKAGE_TYPE.ANNUAL, PACKAGE_TYPE.MONTHLY, PACKAGE_TYPE.WEEKLY];
-const PLAN_BORDER_COLOR = '#EDE7CE';
+const PLAN_BORDER_COLOR = designTheme.line;
 
 function sortPackages(packages: PurchasesPackage[]): PurchasesPackage[] {
   return [...packages].sort((a, b) => {
@@ -102,6 +105,7 @@ export function PaywallView({
   copy,
   onPurchase,
   onRestore,
+  onTestimonialPress,
   onClose,
   closeDelayMs = 0,
   isPurchasing,
@@ -340,7 +344,7 @@ export function PaywallView({
 
           <View style={styles.planPriceColumn}>
             <View style={[styles.planRadio, isSelected && styles.planRadioSelected]}>
-              {isSelected ? <Ionicons name="checkmark" size={16} color="white" /> : null}
+              {isSelected ? <Ionicons name="checkmark" size={16} color={designTheme.onPrimary} /> : null}
             </View>
             {/* Keep the amount at its intended size. iOS auto-fitting with
                 Degular and a mixed-font suffix can collapse it to a few pixels. */}
@@ -423,7 +427,10 @@ export function PaywallView({
         </Text>
         <Text style={styles.subheadline}>{copy.subheadline}</Text>
 
-        <PaywallTestimonial testimonialKey={copy.testimonialKey} />
+        <PaywallTestimonial
+          testimonialKey={copy.testimonialKey}
+          onPress={__DEV__ ? onTestimonialPress : undefined}
+        />
 
         <View style={styles.plans}>{packages.map(renderPackage)}</View>
         {hasHiddenPlans ? (
@@ -496,7 +503,7 @@ export function PaywallView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.cream,
   },
   header: {
     alignSelf: 'flex-start',
@@ -508,7 +515,7 @@ const styles = StyleSheet.create({
   closeButton: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: AppRadii.card,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(253, 249, 226, 0.92)',
@@ -517,7 +524,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    ...contentColumn(),
+    ...contentColumn(FORM_CONTENT_MAX_WIDTH),
     paddingHorizontal: 24,
   },
   discountHero: {
@@ -526,11 +533,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.button,
     paddingHorizontal: 28,
     paddingVertical: 14,
-    borderRadius: 24,
+    borderRadius: AppRadii.card,
     marginBottom: 20,
   },
   discountHeroValue: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: font(48),
     lineHeight: font(54),
     fontFamily: 'Degular',
@@ -572,8 +579,8 @@ const styles = StyleSheet.create({
     width: '100%',
     minHeight: 88,
     flexDirection: 'row',
-    backgroundColor: 'white',
-    borderRadius: 26,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.card,
     borderWidth: 2,
     borderColor: PLAN_BORDER_COLOR,
     paddingVertical: 14,
@@ -610,10 +617,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.button,
     paddingHorizontal: 14,
     paddingVertical: 5,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
   },
   planBadgeText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: font(14),
     lineHeight: font(18),
     fontFamily: 'CronosProBold',
@@ -646,7 +653,7 @@ const styles = StyleSheet.create({
   planRadio: {
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
     borderWidth: 2,
     borderColor: '#D8D2BA',
     alignItems: 'center',
@@ -687,7 +694,7 @@ const styles = StyleSheet.create({
   planPerMonth: {
     fontSize: font(12),
     fontFamily: 'CronosPro',
-    color: '#8E8E93',
+    color: designTheme.muted,
     marginTop: 4,
     textAlign: 'right',
   },
@@ -712,10 +719,10 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.cream,
   },
   footer: {
-    ...contentColumn(),
+    ...contentColumn(FORM_CONTENT_MAX_WIDTH),
     paddingHorizontal: 24,
     paddingTop: 12,
   },
@@ -737,7 +744,7 @@ const styles = StyleSheet.create({
   legalLink: {
     fontSize: font(12),
     fontFamily: 'CronosPro',
-    color: '#8E8E93',
+    color: designTheme.muted,
     textDecorationLine: 'underline',
   },
   legalSeparator: {

@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
+import { notificationService } from './notificationService';
 import { Platform } from 'react-native';
 import type { CustomerInfo } from 'react-native-purchases';
 import { ENTITLEMENT_ID } from '../config/revenuecat';
@@ -37,6 +38,7 @@ export async function requestTrialReminderIntent(): Promise<boolean> {
   const enabled = response.status === 'granted';
 
   await AsyncStorage.setItem(INTENT_KEY, enabled ? 'enabled' : 'denied');
+  if (enabled) void notificationService.registerForPushNotificationsAsync().catch(() => undefined);
   analytics.track('trial_reminder_intent_selected', { enabled });
   analytics.track('notification_permission_result', {
     context: 'trial_midpoint_reminder',

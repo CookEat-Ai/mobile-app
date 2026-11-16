@@ -1,7 +1,17 @@
-import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
+import { DefaultTheme, Stack, ThemeProvider, usePathname } from 'expo-router';
+import { useEffect } from 'react';
+import analytics from '../../services/analytics';
+import { MODAL_ROUTE_ANIMATION } from '../../constants/ModalPresentation';
 import 'react-native-reanimated';
 
 export default function OnboardingLayout() {
+  const pathname = usePathname();
+  useEffect(() => {
+    if (!pathname.startsWith('/onboarding/')) return;
+    void analytics.track('onboarding_screen_viewed', {
+      screen_id: pathname.slice('/onboarding/'.length),
+    });
+  }, [pathname]);
   return (
     <ThemeProvider value={DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
@@ -13,8 +23,9 @@ export default function OnboardingLayout() {
         <Stack.Screen name="personalizedRecipes" options={{ headerShown: false }} />
         <Stack.Screen name="videoDemo" options={{ headerShown: false }} />
         <Stack.Screen name="generationDemo" options={{ headerShown: false }} />
-        <Stack.Screen name="videoImportTutorial" options={{ headerShown: false }} />
+        <Stack.Screen name="videoImportTutorial" options={{ headerShown: false, presentation: 'modal', animation: MODAL_ROUTE_ANIMATION, gestureEnabled: true }} />
         <Stack.Screen name="weeklyPlanPreview" options={{ headerShown: false }} />
+        <Stack.Screen name="photoTrackingDemo" options={{ headerShown: false }} />
         <Stack.Screen name="promoCode" options={{ headerShown: false }} />
         <Stack.Screen name="offerTrial" options={{ headerShown: false }} />
         <Stack.Screen name="reminder" options={{ headerShown: false }} />

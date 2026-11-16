@@ -1,19 +1,22 @@
-// Future admin access (disabled):
-// import { activateReviewerAccess } from '../services/reviewerAccess';
+import { AppSpinner as ActivityIndicator } from '../components/ui/AppSpinner';
+import { AppModal as Modal } from '../components/ui/AppModal';
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
+import { activateReviewerAccess } from '../services/reviewerAccess';
 import { CREATOR_PROMO_CODES_ENABLED } from '../config/storeCompliance';
 import { NavigationIconButton } from '../components/NavigationIconButton';
 import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { feedback } from '../services/haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { StyleSheet, View, ActivityIndicator, Text, TouchableOpacity, Animated, Easing, Image, Platform, BackHandler, Alert, Modal, TextInput, Keyboard, Pressable } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Animated, Easing, Image, Platform, BackHandler, Alert, TextInput, Keyboard, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Purchases, { PurchasesOffering, PurchasesPackage } from 'react-native-purchases';
 import { PaywallView } from '../components/PaywallView';
 import { ExitOfferPaywallView } from '../components/ExitOfferPaywallView';
 import { resolvePaywallCopy } from '../services/paywallCopy';
 import type { EntryFeature } from '../services/analytics';
-// import { Accelerometer } from 'expo-sensors';
+import { Accelerometer } from 'expo-sensors';
+import { createShakeDetector } from '../services/shakeGesture';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { G, Path } from 'react-native-svg';
 import analytics from '../services/analytics';
@@ -184,99 +187,73 @@ export default function PaywallScreen() {
   const [isRestoring, setIsRestoring] = useState(false);
   const [hasOfferingsError, setHasOfferingsError] = useState(false);
   const [reloadToken, setReloadToken] = useState(0);
-  // Disabled for Store delivery. Retained for a future authenticated admin flow.
-//   /**
-//    * Saisie de code cachée, réservée au contournement du paywall.
-//    *
-//    * Sert d'abord aux relecteurs Apple et Google : le paywall est une boucle
-//    * fermée, et un relecteur qui passe l'écran promo du tunnel n'a plus aucun
-//    * moyen d'entrer dans l'app. Ce raccourci reste accessible depuis le paywall
-//    * lui-même, quoi qu'il ait fait avant.
-//    *
-//    * Déclenché en secouant l'appareil, plutôt que par un lien « J'ai un code
-//    * promo » : un lien apprendrait à tous les utilisateurs qu'une remise existe,
-//    * avant même qu'ils aient vu le prix plein.
-//    */
-//   const [showCodeModal, setShowCodeModal] = useState(false);
-//   const [codeInput, setCodeInput] = useState('');
-//   const [codeLoading, setCodeLoading] = useState(false);
-//   const [codeError, setCodeError] = useState('');
+  const [showCodeModal, setShowCodeModal] = useState(false);
+  const [codeInput, setCodeInput] = useState('');
+  const [codeLoading, setCodeLoading] = useState(false);
+  const [codeError, setCodeError] = useState('');
 //
-//   const openSecretCodeEntry = useCallback((trigger: string) => {
-//     feedback.success();
-//     analytics.track('paywall_secret_code_opened', {
-//       ...paywallAnalyticsProperties,
-//       trigger,
-//     });
-//     setCodeError('');
-//     setShowCodeModal(true);
-//   }, [paywallAnalyticsProperties]);
+  const openSecretCodeEntry = useCallback((trigger: string) => {
+    feedback.success();
+    analytics.track('paywall_secret_code_opened', {
+      ...paywallAnalyticsProperties,
+      trigger,
+    });
+    setCodeError('');
+    setShowCodeModal(true);
+  }, [paywallAnalyticsProperties]);
 //
-//   /**
-//    * Détection de secousse.
-//    *
-//    * L'accéléromètre renvoie des g : au repos la norme du vecteur vaut ~1. On
-//    * exige plusieurs franchissements de seuil rapprochés — un choc isolé (poser
-//    * le téléphone, un pas un peu sec) ne doit pas ouvrir la saisie.
-//    */
-//   useEffect(() => {
-//     if (showCodeModal) return;
+  /**
+   * Détection de secousse.
+   *
+   * L'accéléromètre renvoie des g : au repos la norme du vecteur vaut ~1. On
+   * exige plusieurs franchissements de seuil rapprochés — un choc isolé (poser
+   * le téléphone, un pas un peu sec) ne doit pas ouvrir la saisie.
+   */
+  useEffect(() => {
+    if (showCodeModal) return;
 //
-//     const SHAKE_FORCE = 1.8;
-//     const SHAKE_HITS_REQUIRED = 3;
-//     const SHAKE_WINDOW_MS = 1200;
+    const detect = createShakeDetector();
+    let cancelled = false;
+    Accelerometer.setUpdateInterval(80);
+    const subscription = Accelerometer.addListener(sample => {
+      if (cancelled || !detect(sample, Date.now())) return;
+      cancelled = true;
+      openSecretCodeEntry('shake');
+    });
+
+    return () => {
+      cancelled = true;
+      subscription.remove();
+    };
+  }, [showCodeModal, openSecretCodeEntry]);
 //
-//     let hits: number[] = [];
-//     let cancelled = false;
-//
-//     Accelerometer.setUpdateInterval(80);
-//     const subscription = Accelerometer.addListener(({ x, y, z }) => {
-//       if (cancelled) return;
-//       const force = Math.sqrt(x * x + y * y + z * z);
-//       if (force < SHAKE_FORCE) return;
-//
-//       const now = Date.now();
-//       hits = [...hits.filter((at) => now - at < SHAKE_WINDOW_MS), now];
-//       if (hits.length >= SHAKE_HITS_REQUIRED) {
-//         hits = [];
-//         cancelled = true;
-//         openSecretCodeEntry('shake');
-//       }
-//     });
-//
-//     return () => {
-//       cancelled = true;
-//       subscription.remove();
-//     };
-//   }, [showCodeModal, openSecretCodeEntry]);
-//
-//   const handleSubmitSecretCode = async () => {
-//     const trimmed = codeInput.trim();
-//     if (!trimmed) return;
-//     Keyboard.dismiss();
-//     setCodeError('');
-//     setCodeLoading(true);
-//     try {
-//       if (!await activateReviewerAccess(trimmed)) {
-//         setCodeError(t('paywall.promoCodeInvalidMessage'));
-//         return;
-//       }
-//       if (shouldCompleteOnPurchase) {
-//         await analytics.completeOnboarding({
-//           ...paywallAnalyticsProperties,
-//           completion_method: 'reviewer_access',
-//         });
-//       }
-//       analytics.track('paywall_reviewer_access_activated', paywallAnalyticsProperties);
-//       setShowCodeModal(false);
-//       setCodeInput('');
-//       router.replace('/(tabs)' as any);
-//     } catch {
-//       setCodeError(t('paywall.promoCodeError'));
-//     } finally {
-//       setCodeLoading(false);
-//     }
-//   };
+  const handleSubmitSecretCode = async () => {
+    const trimmed = codeInput.trim();
+    if (!trimmed) return;
+    Keyboard.dismiss();
+    setCodeError('');
+    setCodeLoading(true);
+    try {
+      if (!await activateReviewerAccess(trimmed)) {
+        setCodeError(t('paywall.promoCodeInvalidMessage'));
+        return;
+      }
+      if (shouldCompleteOnPurchase) {
+        await analytics.completeOnboarding({
+          ...paywallAnalyticsProperties,
+          completion_method: 'admin_access',
+        });
+      }
+      analytics.track('paywall_admin_access_activated', paywallAnalyticsProperties);
+      setShowCodeModal(false);
+      setCodeInput('');
+      router.replace('/(tabs)' as any);
+    } catch {
+      setCodeError(t('paywall.promoCodeError'));
+    } finally {
+      setCodeLoading(false);
+    }
+  };
 //
   const [isSpinning, setIsSpinning] = useState(false);
   const [spinResult, setSpinResult] = useState<number | null>(null);
@@ -390,15 +367,19 @@ export default function PaywallScreen() {
     return () => spinValue.removeListener(listenerId);
   }, []);
 
+  // Envoyé une fois l'offering chargé (ou en échec), pour savoir quel offering
+  // a été vu : c'est lui qui porte le bras du test de prix RevenueCat.
+  const viewedOfferingId = offering?.identifier ?? null;
   useEffect(() => {
-    if (!isPersonalizationResolved) return;
+    if (!isPersonalizationResolved || loading) return;
     analytics.track('paywall_viewed', {
       ...paywallAnalyticsProperties,
       initial_state: viewState,
       is_onboarding: isFromOnboarding,
       is_discounted: viewState === 'DISCOUNTED' || viewState === 'PROMO_DISCOUNTED',
+      offering_id: viewedOfferingId,
     });
-  }, [isFromOnboarding, isPersonalizationResolved, paywallAnalyticsProperties, viewState]);
+  }, [isFromOnboarding, isPersonalizationResolved, loading, paywallAnalyticsProperties, viewState, viewedOfferingId]);
 
   useEffect(() => {
     const loadOfferings = async () => {
@@ -886,7 +867,7 @@ export default function PaywallScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Future admin access: gesture and access-code modal disabled.
+
       <Pressable
         onLongPress={() => openSecretCodeEntry('long_press')}
         delayLongPress={2000}
@@ -898,7 +879,6 @@ export default function PaywallScreen() {
       <Modal
         visible={showCodeModal}
         transparent
-        animationType="fade"
         onRequestClose={() => setShowCodeModal(false)}
       >
         <Pressable style={styles.codeBackdrop} onPress={() => setShowCodeModal(false)}>
@@ -912,6 +892,7 @@ export default function PaywallScreen() {
               onChangeText={(text) => { setCodeInput(text); setCodeError(''); }}
               placeholder={t('paywall.reviewerAccessPlaceholder')}
               placeholderTextColor="#AEAEB2"
+              secureTextEntry
               autoCapitalize="none"
               autoCorrect={false}
               autoFocus
@@ -939,7 +920,6 @@ export default function PaywallScreen() {
           </Pressable>
         </Pressable>
       </Modal>
-      */}
 
       {viewState === 'WHEEL' ? (
         <Animated.View style={[styles.container, styles.wheelContainer, { opacity: fadeAnim }]}>
@@ -981,7 +961,7 @@ export default function PaywallScreen() {
                   {/* Segment 2 (45-90°) - 20% - Couleur bouton */}
                   <Path d="M50,50 L85.35,85.35 A50,50 0 0,1 50,100 Z" fill={Colors.light.button} />
                   {/* Segment 3 (90-135°) - 15% - Blanc */}
-                  <Path d="M50,50 L50,100 A50,50 0 0,1 14.65,85.35 Z" fill="#FFFFFF" />
+                  <Path d="M50,50 L50,100 A50,50 0 0,1 14.65,85.35 Z" fill={designTheme.onPrimary} />
                   {/* Segment 4 (135-180°) - 25% - Couleur bouton */}
                   <Path d="M50,50 L14.65,85.35 A50,50 0 0,1 0,50 Z" fill={Colors.light.button} />
                   {/* Segment 5 (180-225°) - 33% - Noir */}
@@ -989,7 +969,7 @@ export default function PaywallScreen() {
                   {/* Segment 6 (225-270°) - 20% - Couleur bouton */}
                   <Path d="M50,50 L14.65,14.65 A50,50 0 0,1 50,0 Z" fill={Colors.light.button} />
                   {/* Segment 7 (270-315°) - 15% - Blanc */}
-                  <Path d="M50,50 L50,0 A50,50 0 0,1 85.35,14.65 Z" fill="#FFFFFF" />
+                  <Path d="M50,50 L50,0 A50,50 0 0,1 85.35,14.65 Z" fill={designTheme.onPrimary} />
                   {/* Segment 8 (315-360°) - 25% - Couleur bouton */}
                   <Path d="M50,50 L85.35,14.65 A50,50 0 0,1 100,50 Z" fill={Colors.light.button} />
                 </G>
@@ -1003,7 +983,7 @@ export default function PaywallScreen() {
                 <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>20%</Text>
               </View>
               <View style={[styles.segment, { transform: [{ rotate: '112.5deg' }] }]}>
-                <Text style={[styles.segmentText, { color: '#000', fontSize: 18 }]}>15%</Text>
+                <Text style={[styles.segmentText, { color: designTheme.ink, fontSize: 18 }]}>15%</Text>
               </View>
               <View style={[styles.segment, { transform: [{ rotate: '157.5deg' }] }]}>
                 <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>25%</Text>
@@ -1015,7 +995,7 @@ export default function PaywallScreen() {
                 <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>20%</Text>
               </View>
               <View style={[styles.segment, { transform: [{ rotate: '292.5deg' }] }]}>
-                <Text style={[styles.segmentText, { color: '#000', fontSize: 18 }]}>15%</Text>
+                <Text style={[styles.segmentText, { color: designTheme.ink, fontSize: 18 }]}>15%</Text>
               </View>
               <View style={[styles.segment, { transform: [{ rotate: '337.5deg' }] }]}>
                 <Text style={[styles.segmentText, { color: '#fff', fontSize: 18 }]}>25%</Text>
@@ -1056,7 +1036,7 @@ export default function PaywallScreen() {
           </View>
         </Animated.View>
       ) : (
-        <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+        <View style={{ flex: 1, backgroundColor: designTheme.surface }}>
           {loading ? (
             <View style={styles.loadingModalOverlay}>
               <ActivityIndicator size="large" color={Colors.light.button} />
@@ -1091,6 +1071,7 @@ export default function PaywallScreen() {
               onClose={handleDismiss}
               closeDelayMs={3000}
               testimonialKey={paywallCopy.testimonialKey}
+              onTestimonialPress={__DEV__ ? () => openSecretCodeEntry('testimonial_press') : undefined}
               isPurchasing={isPurchasing}
               isRestoring={isRestoring}
             />
@@ -1099,6 +1080,7 @@ export default function PaywallScreen() {
               key={offering.identifier || 'default'}
               offering={offering}
               copy={paywallCopy}
+              onTestimonialPress={__DEV__ ? () => openSecretCodeEntry('testimonial_press') : undefined}
               onPurchase={handlePurchasePackage}
               onRestore={handleRestorePress}
               onClose={handleDismiss}
@@ -1125,13 +1107,12 @@ const styles = StyleSheet.create({
   },
   codeBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
     paddingHorizontal: 28,
   },
   codeCard: {
-    backgroundColor: '#FDF9E2',
-    borderRadius: 24,
+    backgroundColor: designTheme.cream,
+    borderRadius: AppRadii.card,
     padding: 24,
     gap: 14,
     alignItems: 'center',
@@ -1150,8 +1131,8 @@ const styles = StyleSheet.create({
   },
   codeInput: {
     width: '100%',
-    backgroundColor: '#FFF',
-    borderRadius: 14,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.control,
     borderWidth: 2,
     borderColor: Colors.light.border,
     paddingVertical: 14,
@@ -1171,7 +1152,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: Colors.light.button,
     paddingVertical: 16,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     alignItems: 'center',
   },
   codeSubmitDisabled: {
@@ -1190,7 +1171,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: designTheme.surface,
   },
   center: {
     justifyContent: 'center',
@@ -1206,7 +1187,7 @@ const styles = StyleSheet.create({
   wheelContainer: {
     paddingTop: 70,
     alignItems: 'center',
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.cream,
   },
   wheelHeader: {
     paddingHorizontal: 30,
@@ -1223,7 +1204,7 @@ const styles = StyleSheet.create({
   wheelSubtitle: {
     fontSize: font(16),
     fontFamily: 'CronosPro',
-    color: '#8C8C8C',
+    color: designTheme.muted,
     textAlign: 'center',
   },
   visualContainer: {
@@ -1263,8 +1244,8 @@ const styles = StyleSheet.create({
     left: '35%',
     width: '30%',
     height: '30%',
-    backgroundColor: 'white',
-    borderRadius: 100,
+    backgroundColor: designTheme.surface,
+    borderRadius: AppRadii.pill,
     borderWidth: 4,
     borderColor: '#000',
     justifyContent: 'center',
@@ -1286,7 +1267,7 @@ const styles = StyleSheet.create({
   spinButton: {
     backgroundColor: Colors.light.button,
     paddingVertical: 18,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     alignItems: 'center',
     shadowColor: Colors.light.button,
     shadowOffset: { width: 0, height: 4 },
@@ -1295,7 +1276,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   spinButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: font(20),
     fontFamily: 'Degular'
   },
@@ -1324,12 +1305,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
     paddingVertical: 16,
     paddingHorizontal: 40,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     width: '100%',
     alignItems: 'center',
   },
   claimButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 18,
     fontFamily: 'Degular'
   },
@@ -1353,12 +1334,12 @@ const styles = StyleSheet.create({
   errorRetryButton: {
     marginTop: 24,
     backgroundColor: Colors.light.button,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     paddingVertical: 14,
     paddingHorizontal: 32,
   },
   errorRetryText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 17,
     fontFamily: 'Degular',
   },

@@ -1,0 +1,7 @@
+const fs=require('fs'),vm=require('vm');const root='/Users/hadjadji/work/perso/cookeat/mobileapp';const ts=require(root+'/node_modules/typescript');
+function load(file){const exports={};const code=ts.transpileModule(fs.readFileSync(root+'/'+file,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText;vm.runInNewContext(code,{exports,require:()=>({}),Date,console});return exports}
+const planning=load('services/weeklyPlanning.ts');const fitness=load('services/fitnessProfile.ts');
+const full={meals:[{source:'catalog',catalogRecipeId:'1',recipeId:'1',dayIndex:0,mealType:'dinner',title:'Test',image:'/api/resources/test.jpg',calories:500}],nutritionTargets:{dailyCalories:2000}};
+console.log('catalog plan usable:',planning.isUsableWeeklyPlan(full));full.meals[0]={...full.meals[0],source:'library',catalogRecipeId:undefined,recipeId:'imported'};console.log('same plan after imported recipe usable:',planning.isUsableWeeklyPlan(full));
+function keys(o,p=''){return Object.entries(o).flatMap(([k,v])=>v&&typeof v==='object'?keys(v,p+k+'.'):[p+k])}
+const en=JSON.parse(fs.readFileSync(root+'/locales/en.json'));const paths=keys(en);for(const locale of ['fr','de','es-ES','es-MX','pt-BR']){const data=JSON.parse(fs.readFileSync(root+'/locales/'+locale+'.json'));const set=new Set(keys(data));console.log(locale,'missing keys',paths.filter(x=>!set.has(x)).join(','));}

@@ -1,0 +1,77 @@
+{
+  "files": [
+    {
+      "file": "paywall-49-eur.png",
+      "pixelsUnchanged": true,
+      "size": [
+        1179,
+        2556
+      ],
+      "embeddedMetadata": [],
+      "remainingFilesystemAttributes": [
+        "com.apple.provenance"
+      ]
+    },
+    {
+      "file": "paywall-39-eur.png",
+      "pixelsUnchanged": true,
+      "size": [
+        1179,
+        2556
+      ],
+      "embeddedMetadata": [],
+      "remainingFilesystemAttributes": [
+        "com.apple.provenance"
+      ]
+    },
+    {
+      "file": "paywall-44-eur.png",
+      "pixelsUnchanged": true,
+      "size": [
+        1179,
+        2556
+      ],
+      "embeddedMetadata": [],
+      "remainingFilesystemAttributes": [
+        "com.apple.provenance"
+      ]
+    },
+    {
+      "file": "customer-override-39.png",
+      "pixelsUnchanged": true,
+      "size": [
+        1512,
+        805
+      ],
+      "embeddedMetadata": [],
+      "remainingFilesystemAttributes": [
+        "com.apple.provenance"
+      ]
+    },
+    {
+      "file": "customer-override-44.png",
+      "pixelsUnchanged": true,
+      "size": [
+        1512,
+        805
+      ],
+      "embeddedMetadata": [],
+      "remainingFilesystemAttributes": [
+        "com.apple.provenance"
+      ]
+    },
+    {
+      "file": "customer-restored-in-app.png",
+      "pixelsUnchanged": true,
+      "size": [
+        1512,
+        805
+      ],
+      "embeddedMetadata": [],
+      "remainingFilesystemAttributes": [
+        "com.apple.provenance"
+      ]
+    }
+  ],
+  "limitation": "macOS retains/re-adds com.apple.provenance despite xattr -c and explicit deletion, including outside sandbox. No embedded EXIF/XMP/IPTC/C2PA/text/software/timestamp chunks remain."
+}

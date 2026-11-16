@@ -1,0 +1,305 @@
+{
+  "checkedAt": "2026-10-13",
+  "selection": "Published CookEat recipes with approved owned photos, matching cuisineId. Display photos are illustrative, not previews of a generated plan.",
+  "photos": [
+    {
+      "cuisineId": "african",
+      "recipeId": "catalog-owned-rotation-african-chickpea-carrot-date-couscous",
+      "title": "Couscous aux pois chiches, carottes et dattes",
+      "image": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-african-chickpea-carrot-date-couscous.png",
+      "attribution": {
+        "provider": "owned",
+        "sourceUrl": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-african-chickpea-carrot-date-couscous.png",
+        "creator": "CookEat — imagegen",
+        "license": "CookEat owned asset",
+        "title": "Couscous aux pois chiches, carottes et dattes",
+        "searchQuery": "Use case: photorealistic-natural. Asset: CookEat recipe photograph. One square editorial food photograph of the finished dish, Couscous aux pois chiches, carottes et dattes. Show exactly this one serving, realistically cooked and plated according to these instructions: Émincer la carotte en fines demi-rondelles et couper les dattes dénoyautées en petits morceaux. Cuire la carotte avec huile, cumin et 70 ml d’eau à couvert 8 minutes. Ajouter pois chiches et couscous déjà cuits ainsi que les dattes. Réchauffer 4 minutes en remuant puis ajouter citron et amandes concassées. Ingredients (do not add others): pois chiches cuits 245 g, couscous cuit 130 g, carottes 140 g, dattes Medjool dénoyautées 25 g, huile d'olive 5 g, cumin moulu 2 g, amandes 18 g, jus de citron 25 g. Natural daylight, appetizing realistic textures, overhead or gentle three-quarter view on a neutral dining surface, a single plate or bowl suited to this dish. No text, watermark, labels, collage, people, meat, fish, dairy, eggs or extra garnishes. Entire serving visible.",
+        "selectedAt": "2026-09-08T07:36:45.169Z"
+      },
+      "availability": [
+        {
+          "status": 200,
+          "contentType": "image/png"
+        },
+        {
+          "status": 200,
+          "contentType": "image/png"
+        }
+      ]
+    },
+    {
+      "cuisineId": "american",
+      "recipeId": "catalog-owned-rotation-american-chickpea-avocado-celery-sandwich",
+      "title": "Sandwich aux pois chiches, avocat et céleri",
+      "image": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-american-chickpea-avocado-celery-sandwich.png",
+      "attribution": {
+        "provider": "owned",
+        "sourceUrl": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-american-chickpea-avocado-celery-sandwich.png",
+        "creator": "CookEat — imagegen",
+        "license": "CookEat owned asset",
+        "title": "Sandwich aux pois chiches, avocat et céleri",
+        "searchQuery": "Use case: photorealistic-natural. Asset: CookEat recipe photograph. One square editorial food photograph of the finished dish, Sandwich aux pois chiches, avocat et céleri. Show exactly this one serving, realistically cooked and plated according to these instructions: Rincer et égoutter les pois chiches déjà cuits puis les écraser grossièrement avec l’avocat et le jus de citron. Incorporer le céleri finement haché, le persil et les graines de courge. Répartir entre deux tranches de pain et presser doucement avant de couper. Ingredients (do not add others): pois chiches cuits 240 g, avocat 65 g, céleri 60 g, pain complet 70 g, jus de citron 25 g, persil frais 10 g, graines de courge décortiquées 12 g. Natural daylight, appetizing realistic textures, overhead or gentle three-quarter view on a neutral dining surface, a single plate or bowl suited to this dish. No text, watermark, labels, collage, people, meat, fish, dairy, eggs or extra garnishes. Entire serving visible.",
+        "selectedAt": "2026-09-08T07:36:45.170Z"
+      },
+      "availability": [
+        {
+          "status": 200,
+          "contentType": "image/png"
+        },
+        {
+          "status": 200,
+          "contentType": "image/png"
+        }
+      ]
+    },
+    {
+      "cuisineId": "chinese",
+      "recipeId": "catalog-owned-rotation-chinese-edamame-tomato-noodles",
+      "title": "Nouilles de riz aux edamame et tomates fondantes",
+      "image": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-chinese-edamame-tomato-noodles.png",
+      "attribution": {
+        "provider": "owned",
+        "sourceUrl": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-chinese-edamame-tomato-noodles.png",
+        "creator": "CookEat — imagegen",
+        "license": "CookEat owned asset",
+        "title": "Nouilles de riz aux edamame et tomates fondantes",
+        "searchQuery": "Use case: photorealistic-natural. Asset: CookEat recipe photograph. One square editorial food photograph of the finished dish, Nouilles de riz aux edamame et tomates fondantes. Show exactly this one serving, realistically cooked and plated according to these instructions: Cuire les edamame décortiqués 5 minutes à l’eau bouillante et égoutter. Hacher l’ail et détailler les tomates en petits dés. Faire fondre ail et tomates dans l’huile 7 minutes. Ajouter les edamame, les nouilles de riz déjà cuites et la sauce soja ; remuer 3 minutes jusqu’à ce que les nouilles soient chaudes. Parsemer de sésame. Ingredients (do not add others): edamame 230 g, nouilles de riz cuites 150 g, tomates 170 g, ail 5 g, sauce soja 10 g, huile de colza 5 g, graines de sésame 10 g. Natural daylight, appetizing realistic textures, overhead or gentle three-quarter view on a neutral dining surface, a single plate or bowl suited to this dish. No text, watermark, labels, collage, people, meat, fish, dairy, eggs or extra garnishes. Entire serving visible.",
+        "selectedAt": "2026-09-08T06:06:11.589Z"
+      },
+      "availability": [
+        {
+          "status": 200,
+          "contentType": "image/png"
+        },
+        {
+          "status": 200,
+          "contentType": "image/png"
+        }
+      ]
+    },
+    {
+      "cuisineId": "french",
+      "recipeId": "catalog-owned-rotation-french-chickpea-ratatouille",
+      "title": "Ratatouille aux pois chiches et amandes",
+      "image": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-french-chickpea-ratatouille.png",
+      "attribution": {
+        "provider": "owned",
+        "sourceUrl": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-french-chickpea-ratatouille.png",
+        "creator": "CookEat — imagegen",
+        "license": "CookEat owned asset",
+        "title": "Ratatouille minute aux pois chiches et amandes",
+        "searchQuery": "Use case: photorealistic-natural. Asset: CookEat recipe photograph. One square editorial food photograph of the finished dish, Ratatouille minute aux pois chiches et amandes. Show exactly this one serving, realistically cooked and plated according to these instructions: Couper tous les légumes en petits dés de 5 mm. Chauffer l’huile et faire revenir aubergine et poivron 5 minutes. Ajouter courgette, tomate, thym et 60 ml d’eau. Couvrir 6 minutes puis incorporer les pois chiches cuits pour 3 minutes supplémentaires. Parsemer d’amandes hachées. Ingredients (do not add others): pois chiches cuits 240 g, courgettes 100 g, aubergine 80 g, tomates 120 g, poivron rouge 70 g, amandes 15 g, huile d'olive 5 g, thym séché 1 g. Natural daylight, appetizing realistic textures, overhead or gentle three-quarter view on a neutral dining surface, a single plate or bowl suited to this dish. No text, watermark, labels, collage, people, meat, fish, dairy, eggs or extra garnishes. Entire serving visible.",
+        "selectedAt": "2026-09-08T03:52:50.618Z"
+      },
+      "availability": [
+        {
+          "status": 200,
+          "contentType": "image/png"
+        },
+        {
+          "status": 200,
+          "contentType": "image/png"
+        }
+      ]
+    },
+    {
+      "cuisineId": "indian",
+      "recipeId": "catalog-owned-rotation-indian-lentil-coconut-dal",
+      "title": "Dal de lentilles au lait de coco",
+      "image": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-indian-lentil-coconut-dal.png",
+      "attribution": {
+        "provider": "owned",
+        "sourceUrl": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-indian-lentil-coconut-dal.png",
+        "creator": "CookEat — imagegen",
+        "license": "CookEat owned asset",
+        "title": "Dal express de lentilles au lait de coco",
+        "searchQuery": "Use case: photorealistic-natural. Asset: CookEat recipe photograph. One square editorial food photograph of the finished dish, Dal express de lentilles au lait de coco. Show exactly this one serving, realistically cooked and plated according to these instructions: Faire revenir le gingembre haché, le cumin et le curcuma dans l’huile une minute. Ajouter la tomate en petits dés et cuire 3 minutes. Verser les lentilles déjà cuites, le lait de coco et 100 ml d’eau. Laisser frémir 8 minutes puis écraser partiellement pour une texture de dal. Ajouter la coriandre. Ingredients (do not add others): lentilles cuites 280 g, lait de coco 70 g, tomates 120 g, curcuma moulu 1 g, gingembre 8 g, cumin moulu 1 g, huile de colza 4 g, coriandre fraîche 8 g. Natural daylight, appetizing realistic textures, overhead or gentle three-quarter view on a neutral dining surface, a single plate or bowl suited to this dish. No text, watermark, labels, collage, people, meat, fish, dairy, eggs or extra garnishes. Entire serving visible.",
+        "selectedAt": "2026-09-08T04:32:07.471Z"
+      },
+      "availability": [
+        {
+          "status": 200,
+          "contentType": "image/png"
+        },
+        {
+          "status": 200,
+          "contentType": "image/png"
+        }
+      ]
+    },
+    {
+      "cuisineId": "international",
+      "recipeId": "catalog-owned-rotation-international-blackbean-quinoa-mango-salad",
+      "title": "Salade de quinoa, haricots noirs et mangue",
+      "image": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-international-blackbean-quinoa-mango-salad.png",
+      "attribution": {
+        "provider": "owned",
+        "sourceUrl": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-international-blackbean-quinoa-mango-salad.png",
+        "creator": "CookEat — imagegen",
+        "license": "CookEat owned asset",
+        "title": "Salade de quinoa, haricots noirs et mangue",
+        "searchQuery": "Use case: photorealistic-natural. Asset: CookEat recipe photograph. One square editorial food photograph of the finished dish, Salade de quinoa, haricots noirs et mangue. Show exactly this one serving, realistically cooked and plated according to these instructions: Couper mangue pelée et poivron en petits dés. Rincer et égoutter les haricots noirs déjà cuits. Mélanger avec le quinoa déjà cuit froid, le citron vert et la coriandre. Ajouter les graines de courge. Ingredients (do not add others): haricots noirs cuits 270 g, quinoa cuit 100 g, mangue 120 g, poivron rouge 100 g, jus de citron vert 30 g, graines de courge décortiquées 15 g, coriandre fraîche 12 g. Natural daylight, appetizing realistic textures, overhead or gentle three-quarter view on a neutral dining surface, a single plate or bowl suited to this dish. No text, watermark, labels, collage, people, meat, fish, dairy, eggs or extra garnishes. Entire serving visible.",
+        "selectedAt": "2026-09-08T08:03:23.714Z"
+      },
+      "availability": [
+        {
+          "status": 200,
+          "contentType": "image/png"
+        },
+        {
+          "status": 200,
+          "contentType": "image/png"
+        }
+      ]
+    },
+    {
+      "cuisineId": "italian",
+      "recipeId": "catalog-owned-rotation-italian-broccoli-ceci-pesto",
+      "title": "Pâtes au pesto de brocoli, pois chiches et tournesol",
+      "image": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-italian-broccoli-ceci-pesto.png",
+      "attribution": {
+        "provider": "owned",
+        "sourceUrl": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-italian-broccoli-ceci-pesto.png",
+        "creator": "CookEat — imagegen",
+        "license": "CookEat owned asset",
+        "title": "Pâtes au pesto de brocoli, pois chiches et tournesol",
+        "searchQuery": "Use case: photorealistic-natural. Asset: CookEat recipe photograph. One square editorial food photograph of the finished dish, Pâtes au pesto de brocoli, pois chiches et tournesol. Show exactly this one serving, realistically cooked and plated according to these instructions: Porter de l’eau à ébullition. Cuire les pâtes 10 minutes, ajouter les petites fleurettes de brocoli pour les 5 dernières minutes. Égoutter les pois chiches cuits. Prélever la moitié du brocoli et le mixer avec les graines, le basilic, le citron et 80 ml d’eau de cuisson. Égoutter les pâtes et le brocoli restant, les mélanger au pesto et aux pois chiches puis réchauffer 2 minutes. Ingredients (do not add others): pâtes sèches 65 g, pois chiches cuits 180 g, brocoli 150 g, graines de tournesol décortiquées 15 g, basilic frais 8 g, jus de citron 15 g. Natural daylight, appetizing realistic textures, overhead or gentle three-quarter view on a neutral dining surface, a single plate or bowl suited to this dish. No text, watermark, labels, collage, people, meat, fish, dairy, eggs or extra garnishes. Entire serving visible.",
+        "selectedAt": "2026-09-08T03:25:48.229Z"
+      },
+      "availability": [
+        {
+          "status": 200,
+          "contentType": "image/png"
+        },
+        {
+          "status": 200,
+          "contentType": "image/png"
+        }
+      ]
+    },
+    {
+      "cuisineId": "japanese",
+      "recipeId": "catalog-owned-rotation-japanese-edamame-soba-cold",
+      "title": "Soba fraîches aux edamame et gingembre",
+      "image": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-japanese-edamame-soba-cold.png",
+      "attribution": {
+        "provider": "owned",
+        "sourceUrl": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-japanese-edamame-soba-cold.png",
+        "creator": "CookEat — imagegen",
+        "license": "CookEat owned asset",
+        "title": "Soba fraîches aux edamame et gingembre",
+        "searchQuery": "Use case: photorealistic-natural. Asset: CookEat recipe photograph. One square editorial food photograph of the finished dish, Soba fraîches aux edamame et gingembre. Show exactly this one serving, realistically cooked and plated according to these instructions: Cuire les soba sans œuf selon le paquet, environ 4 minutes, puis rincer à l’eau froide. Cuire séparément les edamame décortiqués 5 minutes à l’eau bouillante et les refroidir. Tailler le concombre en bâtonnets et le gingembre en filaments très fins. Mélanger aux nouilles et edamame avec sauce soja, citron et huile. Ajouter le nori émietté au dernier moment. Ingredients (do not add others): edamame 200 g, nouilles soba sèches 55 g, concombre 100 g, gingembre 8 g, sauce soja 10 g, huile de sésame 5 g, algue nori séchée nature 2 g, jus de citron 20 g. Natural daylight, appetizing realistic textures, overhead or gentle three-quarter view on a neutral dining surface, a single plate or bowl suited to this dish. No text, watermark, labels, collage, people, meat, fish, dairy, eggs or extra garnishes. Entire serving visible.",
+        "selectedAt": "2026-09-08T05:38:53.155Z"
+      },
+      "availability": [
+        {
+          "status": 200,
+          "contentType": "image/png"
+        },
+        {
+          "status": 200,
+          "contentType": "image/png"
+        }
+      ]
+    },
+    {
+      "cuisineId": "mediterranean",
+      "recipeId": "catalog-owned-coverage-mediterranean-lentil",
+      "title": "Salade de lentilles aux olives, tomates et concombre",
+      "image": "/api/resources/uploads/catalog-owned/coverage-mediterranean-lentil.png",
+      "attribution": {
+        "provider": "owned",
+        "sourceUrl": "/api/resources/uploads/catalog-owned/coverage-mediterranean-lentil.png",
+        "creator": "CookEat — generated with imagegen",
+        "license": "CookEat owned asset",
+        "title": "Salade de lentilles aux olives, tomates et concombre",
+        "selectedAt": "2026-09-08T01:48:20.632Z"
+      },
+      "availability": [
+        {
+          "status": 200,
+          "contentType": "image/png"
+        },
+        {
+          "status": 200,
+          "contentType": "image/png"
+        }
+      ]
+    },
+    {
+      "cuisineId": "mexican",
+      "recipeId": "catalog-owned-rotation-mexican-blackbean-avocado-tostadas",
+      "title": "Tostadas aux haricots noirs et avocat",
+      "image": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-mexican-blackbean-avocado-tostadas.png",
+      "attribution": {
+        "provider": "owned",
+        "sourceUrl": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-mexican-blackbean-avocado-tostadas.png",
+        "creator": "CookEat — imagegen",
+        "license": "CookEat owned asset",
+        "title": "Tostadas aux haricots noirs et avocat",
+        "searchQuery": "Use case: photorealistic-natural. Asset: CookEat recipe photograph. One square editorial food photograph of the finished dish, Tostadas aux haricots noirs et avocat. Show exactly this one serving, realistically cooked and plated according to these instructions: Badigeonner les tortillas avec l’huile et les faire griller à la poêle 3 minutes par face pour les rendre croustillantes. Réchauffer les haricots noirs cuits avec deux cuillères d’eau dans une casserole puis les écraser. Étaler les haricots sur les tortillas. Ajouter tomate en dés, avocat en lamelles, coriandre et citron vert. Servir aussitôt. Ingredients (do not add others): haricots noirs cuits 260 g, tortillas de maïs 60 g, avocat 60 g, tomates 80 g, jus de citron vert 20 g, coriandre fraîche 8 g, huile de colza 5 g. Natural daylight, appetizing realistic textures, overhead or gentle three-quarter view on a neutral dining surface, a single plate or bowl suited to this dish. No text, watermark, labels, collage, people, meat, fish, dairy, eggs or extra garnishes. Entire serving visible.",
+        "selectedAt": "2026-09-08T04:09:27.474Z"
+      },
+      "availability": [
+        {
+          "status": 200,
+          "contentType": "image/png"
+        },
+        {
+          "status": 200,
+          "contentType": "image/png"
+        }
+      ]
+    },
+    {
+      "cuisineId": "middle-eastern",
+      "recipeId": "catalog-owned-rotation-middle-chickpea-hummus-mushrooms",
+      "title": "Houmous chaud garni de champignons au cumin",
+      "image": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-middle-chickpea-hummus-mushrooms.png",
+      "attribution": {
+        "provider": "owned",
+        "sourceUrl": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-middle-chickpea-hummus-mushrooms.png",
+        "creator": "CookEat — imagegen",
+        "license": "CookEat owned asset",
+        "title": "Houmous chaud garni de champignons au cumin",
+        "searchQuery": "Use case: photorealistic-natural. Asset: CookEat recipe photograph. One square editorial food photograph of the finished dish, Houmous chaud garni de champignons au cumin. Show exactly this one serving, realistically cooked and plated according to these instructions: Réchauffer les pois chiches déjà cuits avec 80 ml d’eau 5 minutes puis mixer avec tahini et citron. Étaler ce houmous dans une assiette creuse. Faire revenir les champignons émincés dans l’huile avec le cumin 10 minutes. Répartir sur le houmous et ajouter le persil haché. Ingredients (do not add others): pois chiches cuits 240 g, tahini 20 g, champignons 160 g, cumin moulu 1 g, jus de citron 25 g, huile d'olive 5 g, persil frais 10 g. Natural daylight, appetizing realistic textures, overhead or gentle three-quarter view on a neutral dining surface, a single plate or bowl suited to this dish. No text, watermark, labels, collage, people, meat, fish, dairy, eggs or extra garnishes. Entire serving visible.",
+        "selectedAt": "2026-09-08T05:14:00.694Z"
+      },
+      "availability": [
+        {
+          "status": 200,
+          "contentType": "image/png"
+        },
+        {
+          "status": 200,
+          "contentType": "image/png"
+        }
+      ]
+    },
+    {
+      "cuisineId": "thai",
+      "recipeId": "catalog-owned-rotation-thai-chickpea-sweetpotato-peanut-curry",
+      "title": "Pois chiches et patate douce au curry de cacahuète",
+      "image": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-thai-chickpea-sweetpotato-peanut-curry.png",
+      "attribution": {
+        "provider": "owned",
+        "sourceUrl": "/api/resources/uploads/catalog-owned/catalog-owned-rotation-thai-chickpea-sweetpotato-peanut-curry.png",
+        "creator": "CookEat — imagegen",
+        "license": "CookEat owned asset",
+        "title": "Pois chiches et patate douce au curry de cacahuète",
+        "searchQuery": "Use case: photorealistic-natural. Asset: CookEat recipe photograph. One square editorial food photograph of the finished dish, Pois chiches et patate douce au curry de cacahuète. Show exactly this one serving, realistically cooked and plated according to these instructions: Éplucher la patate douce et la couper en dés de 1 cm. Délayer la purée de cacahuète avec lait de coco et 150 ml d’eau, ajouter gingembre râpé et piment épépiné haché. Ajouter la patate douce et cuire à couvert 10 minutes en remuant. Ajouter les pois chiches déjà cuits pour 4 minutes puis terminer avec citron vert et coriandre. Ingredients (do not add others): pois chiches cuits 250 g, patate douce 150 g, beurre de cacahuète 25 g, lait de coco 60 g, gingembre 9 g, piment jalapeño 6 g, jus de citron vert 25 g, coriandre fraîche 10 g. Natural daylight, appetizing realistic textures, overhead or gentle three-quarter view on a neutral dining surface, a single plate or bowl suited to this dish. No text, watermark, labels, collage, people, meat, fish, dairy, eggs or extra garnishes. Entire serving visible.",
+        "selectedAt": "2026-09-08T06:49:39.621Z"
+      },
+      "availability": [
+        {
+          "status": 200,
+          "contentType": "image/png"
+        },
+        {
+          "status": 200,
+          "contentType": "image/png"
+        }
+      ]
+    }
+  ]
+}

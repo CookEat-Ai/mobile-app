@@ -6,6 +6,7 @@ export function normalizeFitnessGoal(value: unknown): typeof FITNESS_GOALS[numbe
 }
 export type BiologicalSex = 'male' | 'female' | 'unspecified';
 export type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
+export const NUTRITION_MODEL_VERSION = 'nutrition-v4';
 
 export type NutritionProfileInput = {
   goal: FitnessGoal;
@@ -39,9 +40,9 @@ export type NutritionTargets = {
 
 const ACTIVITY_FACTORS: Record<ActivityLevel, number> = {
   sedentary: 1.4,
-  light: 1.55,
-  moderate: 1.7,
-  active: 1.85,
+  light: 1.45,
+  moderate: 1.55,
+  active: 1.75,
   very_active: 2.0,
 };
 
@@ -89,9 +90,13 @@ export function estimateMaintenanceCalories(profile: NutritionProfileInput): num
   const weight = profile.nutritionWeightKg ?? profile.currentWeightKg;
   const common = 10 * weight + 6.25 * profile.heightCm - 5 * profile.age;
   const sexConstant = profile.sex === 'male' ? 5 : profile.sex === 'female' ? -161 : -78;
-  // Daily-life PAL is a planning estimate, starting at 1.4 (FAO/WHO/UNU;
-  // https://www.fao.org/4/y5686e/y5686e07.htm). It excludes reported workouts.
-  // The 0.15 increments are product assumptions, NOT validated individual PALs.
+  // Conservative NON-EXERCISE baselines matching the app's daily-life answers.
+  // These category mappings are product assumptions, NOT measured individual
+  // PALs or a table validated by FAO. FAO lifestyle PALs may already include
+  // exercise: never use a whole-lifestyle/exercise-frequency factor here and
+  // add those same workouts again. Higher baselines are reserved for a physical
+  // job or sustained daily exertion, independent of reported workout frequency.
+  // https://www.fao.org/4/y5686e/y5686e07.htm
   // Workouts: representative durations 20/45/75 min, moderate effort at 5 MET
   // (2024 Adult Compendium, code 02061), minus rest already in the baseline.
   // https://pacompendium.com/conditioning-exercise/
@@ -110,10 +115,13 @@ export function calculateNutritionTargets(raw: unknown): NutritionTargets {
   const weight = profile.nutritionWeightKg ?? profile.currentWeightKg;
   const hasRemainingTarget = direction !== 0 && (targetWeightKg - weight) * direction > 0;
   const maintenance = estimateMaintenanceCalories(profile);
-  // Starting budgets, not a kcal/kg-to-deadline conversion. Moderate surplus
-  // within the 10–20% range reviewed by Iraki et al., 2019, doi:10.3390/sports7070154.
+  // Starting budgets, not a kcal/kg-to-deadline conversion. Use a conservative
+  // 5% muscle-gain surplus without a fixed kcal floor. Training experience is
+  // unknown; a blanket 15% surplus can unnecessarily increase fat gain.
+  // Helms et al., 2023, doi:10.1186/s40798-023-00651-y (small trained sample;
+  // this is a starting assumption, not a validated individual prescription).
   const goalAdjustment = !hasRemainingTarget ? 0 : direction > 0
-    ? clamp(maintenance * 0.15, 200, 400) : -clamp(maintenance * 0.15, 250, 500);
+    ? maintenance * 0.05 : -clamp(maintenance * 0.15, 250, 500);
   const minimumCalories = profile.sex === 'male' ? 1500 : 1200;
   const dailyCalories = clamp(Math.round((maintenance + goalAdjustment + (profile.dailyCalorieAdjustment || 0)) / 50) * 50, minimumCalories, 4500);
   const proteinMultiplier = profile.goal === 'gain_muscle' || profile.goal === 'lose_weight' ? 1.6 : 1.3;

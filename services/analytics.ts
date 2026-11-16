@@ -44,6 +44,12 @@ class AnalyticsService {
   private posthog: PostHog | null = null;
   private isInitialized = false;
   private userId: string | null = null;
+  private canonicalUserId: string | null = null;
+  private posthogIdentifiedUserId: string | null = null;
+  private posthogReady = false;
+  private initPromise: Promise<string | null> | null = null;
+  private identityRevision = 0;
+  private identitySync: Promise<void> = Promise.resolve();
   private entryFeature: EntryFeature | null = null;
   private attributionUnsubscribe: (() => void) | null = null;
   private deepLinkUnsubscribe: (() => void) | null = null;
@@ -51,23 +57,36 @@ class AnalyticsService {
   private trackingPermissionPromise: Promise<void> | null = null;
   private readonly FIRST_RUN_KEY = '@cookeat_first_run';
 
-  async init(): Promise<string | null> {
-    if (this.isInitialized) return this.userId;
+  init(): Promise<string | null> {
+    if (this.isInitialized) return Promise.resolve(this.canonicalUserId);
+    if (!this.initPromise) {
+      this.initPromise = this.initialize().finally(() => { this.initPromise = null; });
+    }
+    return this.initPromise;
+  }
 
+  private async initialize(): Promise<string | null> {
+    const revision = this.identityRevision;
     try {
       const storedUserId = await AsyncStorage.getItem('userId');
       const uniqueId = await getUniqueDeviceId();
-      const finalUserId = storedUserId || uniqueId;
-      this.userId = finalUserId;
-
-      console.log('🆔 [Analytics] User ID:', finalUserId, storedUserId ? '(Stored)' : '(Mobile ID)');
+      if (revision === this.identityRevision) this.canonicalUserId = storedUserId;
+      this.userId = this.canonicalUserId;
 
       if (POSTHOG_API_KEY && !POSTHOG_API_KEY.includes('YOUR_POSTHOG')) {
         this.posthog = new PostHog(POSTHOG_API_KEY, {
           host: POSTHOG_HOST,
         });
 
-        this.posthog.identify(finalUserId);
+        await this.posthog.ready();
+        this.posthogReady = true;
+        // Migration locale du démarrage précédent : un ID d'installation ne
+        // doit jamais être une identité PostHog déjà identifiée.
+        if (!this.canonicalUserId && this.posthog.getDistinctId() === uniqueId) {
+          this.posthog.reset();
+        }
+        this.identifyPostHogUser();
+        this.userId = this.canonicalUserId || this.posthog.getDistinctId();
 
         const languageCode = Localization.getLocales()?.[0]?.languageCode || 'en';
         this.posthog.setPersonProperties({
@@ -78,6 +97,8 @@ class AnalyticsService {
 
         console.log('✅ PostHog initialisé');
       }
+
+      this.userId ||= uniqueId; // Fallback local si PostHog est désactivé.
 
       // Le motif d'installation est rechargé avant tout event pour que chaque
       // event de la session le porte, y compris ceux émis avant que
@@ -108,21 +129,22 @@ class AnalyticsService {
       // PostHog ne doit pas attendre la fenêtre ATT d'AppsFlyer. À partir d'ici,
       // les événements produit sont capturés immédiatement ; AppsFlyer possède
       // sa propre file d'attente jusqu'à la fin de son initialisation native.
-      this.isInitialized = true;
-
       const hasRunBefore = await AsyncStorage.getItem(this.FIRST_RUN_KEY);
       if (!hasRunBefore) {
         await AsyncStorage.setItem(this.FIRST_RUN_KEY, 'true');
-        await this.track('first_open');
+        await this.captureEvent('first_open');
       }
 
+      // first_open précède toujours les écrans mis en attente au démarrage.
+      this.isInitialized = true;
       await this.flushPendingEvents();
 
-      await appsFlyerService.init(finalUserId);
-      const appsFlyerUID = await appsFlyerService.getAppsFlyerUID();
-      this.applyCrossToolIdentity(finalUserId, appsFlyerUID);
+      // Lire l'identité courante ici : le serveur peut l'avoir fournie pendant
+      // l'initialisation. Aucun ID capturé avant un await ne doit la remplacer.
+      await appsFlyerService.init(this.userId || undefined);
+      await this.enqueueIdentitySync();
 
-      return finalUserId;
+      return this.canonicalUserId;
     } catch (error) {
       console.error('❌ Erreur initialisation Analytics:', error);
       return null;
@@ -139,9 +161,7 @@ class AnalyticsService {
 
         // Après la réponse ATT, on redemande aux SDK natifs les identifiants
         // autorisés puis on relie l'AppsFlyer UID au profil PostHog commun.
-        if (this.userId) {
-          await this.identify(this.userId);
-        }
+        await this.enqueueIdentitySync();
       } catch (error) {
         console.error('❌ Erreur demande permission tracking:', error);
       }
@@ -157,6 +177,10 @@ class AnalyticsService {
       return;
     }
 
+    await this.captureEvent(eventName, properties);
+  }
+
+  private async captureEvent(eventName: string, properties?: Record<string, any>): Promise<void> {
     // Récupérer la variante actuelle pour l'ajouter à chaque événement
     const variant = await this.getOnboardingVariant();
     const enrichedProperties = {
@@ -219,106 +243,144 @@ class AnalyticsService {
     await this.track('onboarding_completed', properties);
   }
 
-  async identify(userId: string) {
-    this.userId = userId;
-    if (this.posthog && this.isInitialized) {
-      this.posthog.identify(userId);
-    }
-    appsFlyerService.setCustomerUserId(userId);
-    Sentry.setUser({ id: userId });
-
-    const appsFlyerUID = await appsFlyerService.getAppsFlyerUID();
-    this.applyCrossToolIdentity(userId, appsFlyerUID);
-    const attribution = await appsFlyerService.getFirstTouchAttribution();
-    if (attribution) {
-      await this.applyFirstTouchAttribution(attribution, false);
-    }
-    await this.syncRevenueCatIdentity(userId, appsFlyerUID);
+  /** Identité serveur uniquement ; l'identité d'installation reste anonyme. */
+  async identify(userId: string): Promise<void> {
+    const canonicalId = userId.trim();
+    if (!canonicalId) return;
+    if (this.canonicalUserId !== canonicalId) this.identityRevision++;
+    this.canonicalUserId = canonicalId;
+    this.userId = canonicalId;
+    this.identifyPostHogUser();
+    const revision = this.identityRevision;
+    await appsFlyerService.setCustomerUserId(canonicalId);
+    if (revision !== this.identityRevision) return;
+    await this.enqueueIdentitySync();
   }
 
-  /**
-   * Coupe toutes les liaisons avec le compte précédent sans arrêter la mesure
-   * anonyme du nouvel onboarding. La suppression explicite fait aussi tourner
-   * l'identifiant d'installation ; une simple identité serveur devenue obsolète
-   * conserve l'installation mais quitte le profil connu.
-   */
+  getCanonicalUserId(): string | null {
+    return this.canonicalUserId;
+  }
+
+  getPostHogDistinctId(): string | null {
+    return this.posthogReady ? this.posthog!.getDistinctId() : this.canonicalUserId;
+  }
+
+  private identifyPostHogUser(): void {
+    if (!this.posthogReady || !this.posthog || !this.canonicalUserId) return;
+    if (this.posthogIdentifiedUserId && this.posthogIdentifiedUserId !== this.canonicalUserId) {
+      // Un véritable changement de compte ne fusionne jamais deux personnes.
+      this.posthog.reset();
+      this.restorePostHogContext();
+    }
+    if (this.posthogIdentifiedUserId !== this.canonicalUserId) {
+      this.posthog.identify(this.canonicalUserId);
+      this.posthogIdentifiedUserId = this.canonicalUserId;
+    }
+  }
+
+  /** Sérialise les mutations RevenueCat ; ignore les résultats d'une ancienne identité. */
+  private enqueueIdentitySync(resetRevenueCat = false): Promise<void> {
+    const revision = this.identityRevision;
+    const sync = this.identitySync.then(async () => {
+      if (revision !== this.identityRevision) return;
+      await appsFlyerService.init(this.userId || undefined);
+      if (revision !== this.identityRevision) return;
+      const appsFlyerUID = await appsFlyerService.getAppsFlyerUID();
+      if (revision !== this.identityRevision) return;
+      this.applyCrossToolIdentity(appsFlyerUID);
+      const attribution = await appsFlyerService.getFirstTouchAttribution();
+      if (revision !== this.identityRevision) return;
+      if (attribution && this.posthogReady && this.posthog) {
+        this.posthog.setPersonProperties({}, { ...attribution });
+        this.registerSuperProperties({ ...attribution });
+      }
+      await this.syncRevenueCatIdentity(revision, appsFlyerUID, resetRevenueCat);
+    }).catch(error => {
+      console.warn('⚠️ Identité analytics non synchronisée:', error);
+    });
+    this.identitySync = sync;
+    return sync;
+  }
+
+  /** Coupe les liens avec le compte supprimé et revient à un vrai profil anonyme. */
   async resetIdentity(options: {
     rotateDeviceId?: boolean;
     clearAttribution?: boolean;
   } = {}): Promise<string> {
-    const anonymousUserId = options.rotateDeviceId
-      ? await rotateUniqueDeviceId()
-      : await getUniqueDeviceId();
-
-    this.userId = anonymousUserId;
+    const revision = ++this.identityRevision;
+    this.canonicalUserId = null;
+    this.posthogIdentifiedUserId = null;
+    this.userId = null;
     this.entryFeature = null;
     this.pendingEvents = [];
-
-    if (this.posthog) {
+    if (this.posthogReady && this.posthog) {
       this.posthog.reset();
-      this.posthog.identify(anonymousUserId);
-      this.posthog.setPersonProperties({ canonical_user_id: anonymousUserId });
-      this.registerSuperProperties({ canonical_user_id: anonymousUserId });
+      this.restorePostHogContext();
     }
-
-    await appsFlyerService.resetCustomerIdentity(
-      anonymousUserId,
-      options.clearAttribution ?? false,
-    );
     Sentry.setUser(null);
 
-    try {
-      if (!(await Purchases.isAnonymous())) {
-        await Purchases.logOut();
-      }
-      const appsFlyerUID = await appsFlyerService.getAppsFlyerUID();
-      await this.syncRevenueCatIdentity(anonymousUserId, appsFlyerUID);
-    } catch (error) {
-      console.warn('⚠️ Réinitialisation RevenueCat incomplète:', error);
-    }
-
-    return anonymousUserId;
+    const installationId = options.rotateDeviceId
+      ? await rotateUniqueDeviceId()
+      : await getUniqueDeviceId();
+    if (revision !== this.identityRevision) return this.userId || installationId;
+    this.userId = this.getPostHogDistinctId() || installationId;
+    await appsFlyerService.resetCustomerIdentity(this.userId, options.clearAttribution ?? false);
+    if (revision === this.identityRevision) await this.enqueueIdentitySync(true);
+    return this.userId || installationId;
   }
 
-  private applyCrossToolIdentity(userId: string, appsFlyerUID: string | null) {
+  private restorePostHogContext(): void {
+    this.posthog?.setPersonProperties({
+      user_language: Localization.getLocales()?.[0]?.languageCode || 'en',
+      app_environment: APP_ENVIRONMENT,
+    });
+    this.registerSuperProperties({ app_environment: APP_ENVIRONMENT });
+  }
+
+  private applyCrossToolIdentity(appsFlyerUID: string | null): void {
     const properties = {
-      canonical_user_id: userId,
+      canonical_user_id: this.canonicalUserId,
       ...(appsFlyerUID ? { appsflyer_id: appsFlyerUID } : {}),
     };
-
-    if (this.posthog) {
-      this.posthog.identify(userId);
+    if (this.posthogReady && this.posthog) {
+      // Ajouter des attributs ne doit jamais réidentifier l'utilisateur.
       this.posthog.setPersonProperties(properties);
       this.registerSuperProperties(properties);
     }
-
-    Sentry.setUser({
-      id: userId,
+    Sentry.setUser(this.canonicalUserId ? {
+      id: this.canonicalUserId,
       ...(appsFlyerUID ? { appsflyer_id: appsFlyerUID } : {}),
-    });
+    } : null);
   }
 
-  private async syncRevenueCatIdentity(userId: string, appsFlyerUID: string | null) {
+  private async syncRevenueCatIdentity(
+    revision: number,
+    appsFlyerUID: string | null,
+    resetAnonymous = false,
+  ): Promise<void> {
     try {
-      if (!(await Purchases.isConfigured())) return;
+      if (!(await Purchases.isConfigured()) || revision !== this.identityRevision) return;
       const currentAppUserId = await Purchases.getAppUserID();
-      if (currentAppUserId !== userId) {
-        await Purchases.logIn(userId);
+      if (revision !== this.identityRevision) return;
+      if (this.canonicalUserId && currentAppUserId !== this.canonicalUserId) {
+        await Purchases.logIn(this.canonicalUserId);
+      } else if (resetAnonymous && !this.canonicalUserId && !(await Purchases.isAnonymous())) {
+        if (revision !== this.identityRevision) return;
+        await Purchases.logOut();
       }
-
+      if (revision !== this.identityRevision) return;
       const attributionAttributes = await appsFlyerService.getRevenueCatAttributionAttributes();
+      if (revision !== this.identityRevision) return;
+      const posthogId = this.getPostHogDistinctId();
       await Purchases.setAttributes({
-        $posthogUserId: userId,
+        ...(posthogId ? { $posthogUserId: posthogId } : {}),
         ...(appsFlyerUID ? { $appsflyerId: appsFlyerUID } : {}),
         ...attributionAttributes,
       });
-
-      // RevenueCat collecte IDFA/IDFV/GAID uniquement lorsque la plateforme
-      // les rend disponibles (ATT/LAT restent respectés par le SDK natif).
+      if (revision !== this.identityRevision) return;
+      // Les SDK respectent ATT/LAT ; aucun identifiant publicitaire n'est forcé.
       await Purchases.collectDeviceIdentifiers();
     } catch (error) {
-      // `identify` peut exceptionnellement être appelé avant configure(); les
-      // attributs seront alors rejoués par RevenueCatService.initialize().
       console.warn('⚠️ Identité RevenueCat non synchronisée:', error);
     }
   }

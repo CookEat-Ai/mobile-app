@@ -1,7 +1,8 @@
+import { AppSpinner as ActivityIndicator } from './ui/AppSpinner';
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { NavigationIconButton } from './NavigationIconButton';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
   Animated,
   Linking,
   Platform,
@@ -9,8 +10,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-} from 'react-native';
+  View} from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -23,7 +23,7 @@ import {
   type PurchasesPackage,
 } from 'react-native-purchases';
 import { Colors } from '../constants/Colors';
-import { font, getPaywallCloseTopInset } from '../constants/Layout';
+import { FORM_CONTENT_MAX_WIDTH, font, getPaywallCloseTopInset } from '../constants/Layout';
 import { contentColumn, useResponsive } from '../hooks/useResponsive';
 import { getPrivacyPolicyUrl, getTermsUrl } from '../config/legal';
 import { resolveTrialEligibilityForPackage } from '../services/trialEligibility';
@@ -48,6 +48,7 @@ type Props = {
   baseOffering?: PurchasesOffering | null;
   onPurchase: (pack: PurchasesPackage) => void;
   onRestore: () => void;
+  onTestimonialPress?: () => void;
   onClose?: () => void;
   closeDelayMs?: number;
   isPurchasing?: boolean;
@@ -102,6 +103,7 @@ export function ExitOfferPaywallView({
   baseOffering,
   onPurchase,
   onRestore,
+  onTestimonialPress,
   onClose,
   closeDelayMs = 0,
   isPurchasing,
@@ -309,7 +311,7 @@ export function ExitOfferPaywallView({
             <Sparkle size={10} color="#C9BFA0" style={[styles.sparkle, { bottom: 14, right: 8 }]} />
 
             <LinearGradient
-              colors={['#FFC93F', '#FEB50A', '#F58A0B']}
+              colors={['#FFC93F', designTheme.yellow, '#F58A0B']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={[
@@ -343,7 +345,11 @@ export function ExitOfferPaywallView({
           </Text>
         ) : null}
 
-        <PaywallTestimonial testimonialKey={testimonialKey} style={styles.testimonial} />
+        <PaywallTestimonial
+          testimonialKey={testimonialKey}
+          style={styles.testimonial}
+          onPress={__DEV__ ? onTestimonialPress : undefined}
+        />
       </ScrollView>
 
       <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) + 8 }]}>
@@ -405,7 +411,7 @@ export function ExitOfferPaywallView({
           activeOpacity={0.85}
         >
           {isPurchasing ? (
-            <ActivityIndicator color="white" />
+            <ActivityIndicator color={designTheme.onPrimary} />
           ) : (
             <View style={styles.ctaContent}>
               <Text style={styles.ctaText} numberOfLines={1} adjustsFontSizeToFit>
@@ -461,7 +467,7 @@ export function ExitOfferPaywallView({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FDF9E2',
+    backgroundColor: designTheme.cream,
   },
   scroll: {
     flex: 1,
@@ -475,13 +481,13 @@ const styles = StyleSheet.create({
   closeButton: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: AppRadii.card,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(253, 249, 226, 0.94)',
   },
   scrollContent: {
-    ...contentColumn(),
+    ...contentColumn(FORM_CONTENT_MAX_WIDTH),
     paddingHorizontal: 24,
     paddingTop: 12,
     alignItems: 'center',
@@ -512,7 +518,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   badge: {
-    borderRadius: 24,
+    borderRadius: AppRadii.card,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 10,
@@ -525,7 +531,7 @@ const styles = StyleSheet.create({
   badgeText: {
     width: '100%',
     textAlign: 'center',
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: font(60),
     lineHeight: font(66),
     fontFamily: 'Degular',
@@ -565,7 +571,7 @@ const styles = StyleSheet.create({
     marginTop: 18,
   },
   footer: {
-    ...contentColumn(),
+    ...contentColumn(FORM_CONTENT_MAX_WIDTH),
     paddingHorizontal: 24,
     paddingTop: 12,
     gap: 10,
@@ -583,7 +589,7 @@ const styles = StyleSheet.create({
     maxWidth: '86%',
     paddingHorizontal: PAYWALL_CTA_HORIZONTAL_INSET,
     paddingVertical: 6,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     backgroundColor: Colors.light.button,
     alignItems: 'center',
     justifyContent: 'center',
@@ -594,7 +600,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   planRibbonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: font(16),
     fontFamily: 'CronosProBold',
     includeFontPadding: false,
@@ -619,7 +625,7 @@ const styles = StyleSheet.create({
     gap: 12,
     minHeight: 86,
     backgroundColor: '#FFF8EC',
-    borderRadius: 26,
+    borderRadius: AppRadii.card,
     borderWidth: PLAN_CARD_BORDER_WIDTH,
     borderColor: Colors.light.button,
     paddingTop: 19,
@@ -643,7 +649,7 @@ const styles = StyleSheet.create({
   planDuration: {
     fontSize: font(15),
     fontFamily: 'CronosPro',
-    color: '#8E8E93',
+    color: designTheme.muted,
     marginTop: 2,
   },
   planPrice: {
@@ -654,7 +660,7 @@ const styles = StyleSheet.create({
   },
   cta: {
     backgroundColor: Colors.light.button,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     paddingHorizontal: 18,
     paddingVertical: 17,
     alignItems: 'center',
@@ -665,7 +671,7 @@ const styles = StyleSheet.create({
   },
   ctaText: {
     flexShrink: 1,
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: font(19),
     fontFamily: 'Degular',
     textAlign: 'center',
@@ -711,7 +717,7 @@ const styles = StyleSheet.create({
   legalLink: {
     fontSize: font(12),
     fontFamily: 'CronosPro',
-    color: '#8E8E93',
+    color: designTheme.muted,
     textDecorationLine: 'underline',
   },
   legalSeparator: {

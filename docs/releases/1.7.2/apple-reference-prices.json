@@ -1,0 +1,8422 @@
+{
+  "observedDate": "2026-10-14",
+  "source": "App Store Connect current resolved subscription prices",
+  "products": {
+    "monthly": [
+      {
+        "territory": "AFG",
+        "countryCode": "AF",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "AGO",
+        "countryCode": "AO",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "AIA",
+        "countryCode": "AI",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ALB",
+        "countryCode": "AL",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARE",
+        "countryCode": "AE",
+        "customerPrice": "59.99",
+        "currency": "AED"
+      },
+      {
+        "territory": "ARG",
+        "countryCode": "AR",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARM",
+        "countryCode": "AM",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ATG",
+        "countryCode": "AG",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "AUS",
+        "countryCode": "AU",
+        "customerPrice": "22.99",
+        "currency": "AUD"
+      },
+      {
+        "territory": "AUT",
+        "countryCode": "AT",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "AZE",
+        "countryCode": "AZ",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BEL",
+        "countryCode": "BE",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BEN",
+        "countryCode": "BJ",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BFA",
+        "countryCode": "BF",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BGR",
+        "countryCode": "BG",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BHR",
+        "countryCode": "BH",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BHS",
+        "countryCode": "BS",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BIH",
+        "countryCode": "BA",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BLR",
+        "countryCode": "BY",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BLZ",
+        "countryCode": "BZ",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BMU",
+        "countryCode": "BM",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BOL",
+        "countryCode": "BO",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRA",
+        "countryCode": "BR",
+        "customerPrice": "99.9",
+        "currency": "BRL"
+      },
+      {
+        "territory": "BRB",
+        "countryCode": "BB",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRN",
+        "countryCode": "BN",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BTN",
+        "countryCode": "BT",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BWA",
+        "countryCode": "BW",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CAN",
+        "countryCode": "CA",
+        "customerPrice": "19.99",
+        "currency": "CAD"
+      },
+      {
+        "territory": "CHE",
+        "countryCode": "CH",
+        "customerPrice": "14.0",
+        "currency": "CHF"
+      },
+      {
+        "territory": "CHL",
+        "countryCode": "CL",
+        "customerPrice": "17990",
+        "currency": "CLP"
+      },
+      {
+        "territory": "CHN",
+        "countryCode": "CN",
+        "customerPrice": "98.0",
+        "currency": "CNY"
+      },
+      {
+        "territory": "CIV",
+        "countryCode": "CI",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CMR",
+        "countryCode": "CM",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "COD",
+        "countryCode": "CD",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "COG",
+        "countryCode": "CG",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "COL",
+        "countryCode": "CO",
+        "customerPrice": "69900.0",
+        "currency": "COP"
+      },
+      {
+        "territory": "CPV",
+        "countryCode": "CV",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CRI",
+        "countryCode": "CR",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYM",
+        "countryCode": "KY",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYP",
+        "countryCode": "CY",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "CZE",
+        "countryCode": "CZ",
+        "customerPrice": "399.0",
+        "currency": "CZK"
+      },
+      {
+        "territory": "DEU",
+        "countryCode": "DE",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "DMA",
+        "countryCode": "DM",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "DNK",
+        "countryCode": "DK",
+        "customerPrice": "129.0",
+        "currency": "DKK"
+      },
+      {
+        "territory": "DOM",
+        "countryCode": "DO",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "DZA",
+        "countryCode": "DZ",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ECU",
+        "countryCode": "EC",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "EGY",
+        "countryCode": "EG",
+        "customerPrice": "799.99",
+        "currency": "EGP"
+      },
+      {
+        "territory": "ESP",
+        "countryCode": "ES",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "EST",
+        "countryCode": "EE",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FIN",
+        "countryCode": "FI",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FJI",
+        "countryCode": "FJ",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "FRA",
+        "countryCode": "FR",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FSM",
+        "countryCode": "FM",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GAB",
+        "countryCode": "GA",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GBR",
+        "countryCode": "GB",
+        "customerPrice": "14.99",
+        "currency": "GBP"
+      },
+      {
+        "territory": "GEO",
+        "countryCode": "GE",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GHA",
+        "countryCode": "GH",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GMB",
+        "countryCode": "GM",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GNB",
+        "countryCode": "GW",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GRC",
+        "countryCode": "GR",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "GRD",
+        "countryCode": "GD",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GTM",
+        "countryCode": "GT",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GUY",
+        "countryCode": "GY",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "HKG",
+        "countryCode": "HK",
+        "customerPrice": "118.0",
+        "currency": "HKD"
+      },
+      {
+        "territory": "HND",
+        "countryCode": "HN",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "HRV",
+        "countryCode": "HR",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "HUN",
+        "countryCode": "HU",
+        "customerPrice": "6990",
+        "currency": "HUF"
+      },
+      {
+        "territory": "IDN",
+        "countryCode": "ID",
+        "customerPrice": "249000",
+        "currency": "IDR"
+      },
+      {
+        "territory": "IND",
+        "countryCode": "IN",
+        "customerPrice": "1499.0",
+        "currency": "INR"
+      },
+      {
+        "territory": "IRL",
+        "countryCode": "IE",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "IRQ",
+        "countryCode": "IQ",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISL",
+        "countryCode": "IS",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISR",
+        "countryCode": "IL",
+        "customerPrice": "49.9",
+        "currency": "ILS"
+      },
+      {
+        "territory": "ITA",
+        "countryCode": "IT",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "JAM",
+        "countryCode": "JM",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "JOR",
+        "countryCode": "JO",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "JPN",
+        "countryCode": "JP",
+        "customerPrice": "2500",
+        "currency": "JPY"
+      },
+      {
+        "territory": "KAZ",
+        "countryCode": "KZ",
+        "customerPrice": "8990.0",
+        "currency": "KZT"
+      },
+      {
+        "territory": "KEN",
+        "countryCode": "KE",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KGZ",
+        "countryCode": "KG",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KHM",
+        "countryCode": "KH",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KNA",
+        "countryCode": "KN",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KOR",
+        "countryCode": "KR",
+        "customerPrice": "25000",
+        "currency": "KRW"
+      },
+      {
+        "territory": "KWT",
+        "countryCode": "KW",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LAO",
+        "countryCode": "LA",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBN",
+        "countryCode": "LB",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBR",
+        "countryCode": "LR",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBY",
+        "countryCode": "LY",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LCA",
+        "countryCode": "LC",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LKA",
+        "countryCode": "LK",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LTU",
+        "countryCode": "LT",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LUX",
+        "countryCode": "LU",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LVA",
+        "countryCode": "LV",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MAC",
+        "countryCode": "MO",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MAR",
+        "countryCode": "MA",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDA",
+        "countryCode": "MD",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDG",
+        "countryCode": "MG",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDV",
+        "countryCode": "MV",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MEX",
+        "countryCode": "MX",
+        "customerPrice": "299.0",
+        "currency": "MXN"
+      },
+      {
+        "territory": "MKD",
+        "countryCode": "MK",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLI",
+        "countryCode": "ML",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLT",
+        "countryCode": "MT",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MMR",
+        "countryCode": "MM",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MNE",
+        "countryCode": "ME",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MNG",
+        "countryCode": "MN",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MOZ",
+        "countryCode": "MZ",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MRT",
+        "countryCode": "MR",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MSR",
+        "countryCode": "MS",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MUS",
+        "countryCode": "MU",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MWI",
+        "countryCode": "MW",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MYS",
+        "countryCode": "MY",
+        "customerPrice": "69.9",
+        "currency": "MYR"
+      },
+      {
+        "territory": "NAM",
+        "countryCode": "NA",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NER",
+        "countryCode": "NE",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NGA",
+        "countryCode": "NG",
+        "customerPrice": "24900.0",
+        "currency": "NGN"
+      },
+      {
+        "territory": "NIC",
+        "countryCode": "NI",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NLD",
+        "countryCode": "NL",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "NOR",
+        "countryCode": "NO",
+        "customerPrice": "199.0",
+        "currency": "NOK"
+      },
+      {
+        "territory": "NPL",
+        "countryCode": "NP",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NRU",
+        "countryCode": "NR",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NZL",
+        "countryCode": "NZ",
+        "customerPrice": "29.99",
+        "currency": "NZD"
+      },
+      {
+        "territory": "OMN",
+        "countryCode": "OM",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "PAK",
+        "countryCode": "PK",
+        "customerPrice": "3900.0",
+        "currency": "PKR"
+      },
+      {
+        "territory": "PAN",
+        "countryCode": "PA",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "PER",
+        "countryCode": "PE",
+        "customerPrice": "69.9",
+        "currency": "PEN"
+      },
+      {
+        "territory": "PHL",
+        "countryCode": "PH",
+        "customerPrice": "999.0",
+        "currency": "PHP"
+      },
+      {
+        "territory": "PLW",
+        "countryCode": "PW",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "PNG",
+        "countryCode": "PG",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "POL",
+        "countryCode": "PL",
+        "customerPrice": "69.99",
+        "currency": "PLN"
+      },
+      {
+        "territory": "PRT",
+        "countryCode": "PT",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "PRY",
+        "countryCode": "PY",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "QAT",
+        "countryCode": "QA",
+        "customerPrice": "49.99",
+        "currency": "QAR"
+      },
+      {
+        "territory": "ROU",
+        "countryCode": "RO",
+        "customerPrice": "79.99",
+        "currency": "RON"
+      },
+      {
+        "territory": "RUS",
+        "countryCode": "RU",
+        "customerPrice": "1290.0",
+        "currency": "RUB"
+      },
+      {
+        "territory": "RWA",
+        "countryCode": "RW",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SAU",
+        "countryCode": "SA",
+        "customerPrice": "59.99",
+        "currency": "SAR"
+      },
+      {
+        "territory": "SEN",
+        "countryCode": "SN",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SGP",
+        "countryCode": "SG",
+        "customerPrice": "19.98",
+        "currency": "SGD"
+      },
+      {
+        "territory": "SLB",
+        "countryCode": "SB",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLE",
+        "countryCode": "SL",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLV",
+        "countryCode": "SV",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SRB",
+        "countryCode": "RS",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "STP",
+        "countryCode": "ST",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SUR",
+        "countryCode": "SR",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SVK",
+        "countryCode": "SK",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SVN",
+        "countryCode": "SI",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SWE",
+        "countryCode": "SE",
+        "customerPrice": "199.0",
+        "currency": "SEK"
+      },
+      {
+        "territory": "SWZ",
+        "countryCode": "SZ",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SYC",
+        "countryCode": "SC",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCA",
+        "countryCode": "TC",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCD",
+        "countryCode": "TD",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "THA",
+        "countryCode": "TH",
+        "customerPrice": "499.0",
+        "currency": "THB"
+      },
+      {
+        "territory": "TJK",
+        "countryCode": "TJ",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TKM",
+        "countryCode": "TM",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TON",
+        "countryCode": "TO",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TTO",
+        "countryCode": "TT",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUN",
+        "countryCode": "TN",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUR",
+        "countryCode": "TR",
+        "customerPrice": "799.99",
+        "currency": "TRY"
+      },
+      {
+        "territory": "TWN",
+        "countryCode": "TW",
+        "customerPrice": "490",
+        "currency": "TWD"
+      },
+      {
+        "territory": "TZA",
+        "countryCode": "TZ",
+        "customerPrice": "39900.0",
+        "currency": "TZS"
+      },
+      {
+        "territory": "UGA",
+        "countryCode": "UG",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "UKR",
+        "countryCode": "UA",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "URY",
+        "countryCode": "UY",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "USA",
+        "countryCode": "US",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "UZB",
+        "countryCode": "UZ",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VCT",
+        "countryCode": "VC",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VEN",
+        "countryCode": "VE",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VGB",
+        "countryCode": "VG",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VNM",
+        "countryCode": "VN",
+        "customerPrice": "499000",
+        "currency": "VND"
+      },
+      {
+        "territory": "VUT",
+        "countryCode": "VU",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "XKS",
+        "countryCode": "XK",
+        "customerPrice": "12.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "YEM",
+        "countryCode": "YE",
+        "customerPrice": "14.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZAF",
+        "countryCode": "ZA",
+        "customerPrice": "299.99",
+        "currency": "ZAR"
+      },
+      {
+        "territory": "ZMB",
+        "countryCode": "ZM",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZWE",
+        "countryCode": "ZW",
+        "customerPrice": "17.99",
+        "currency": "USD"
+      }
+    ],
+    "annual_discount_25": [
+      {
+        "territory": "AFG",
+        "countryCode": "AF",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "AGO",
+        "countryCode": "AO",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "AIA",
+        "countryCode": "AI",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ALB",
+        "countryCode": "AL",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARE",
+        "countryCode": "AE",
+        "customerPrice": "134.99",
+        "currency": "AED"
+      },
+      {
+        "territory": "ARG",
+        "countryCode": "AR",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARM",
+        "countryCode": "AM",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ATG",
+        "countryCode": "AG",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "AUS",
+        "countryCode": "AU",
+        "customerPrice": "52.0",
+        "currency": "AUD"
+      },
+      {
+        "territory": "AUT",
+        "countryCode": "AT",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "AZE",
+        "countryCode": "AZ",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BEL",
+        "countryCode": "BE",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BEN",
+        "countryCode": "BJ",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BFA",
+        "countryCode": "BF",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BGR",
+        "countryCode": "BG",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BHR",
+        "countryCode": "BH",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BHS",
+        "countryCode": "BS",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BIH",
+        "countryCode": "BA",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BLR",
+        "countryCode": "BY",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BLZ",
+        "countryCode": "BZ",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BMU",
+        "countryCode": "BM",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BOL",
+        "countryCode": "BO",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRA",
+        "countryCode": "BR",
+        "customerPrice": "224.9",
+        "currency": "BRL"
+      },
+      {
+        "territory": "BRB",
+        "countryCode": "BB",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRN",
+        "countryCode": "BN",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BTN",
+        "countryCode": "BT",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BWA",
+        "countryCode": "BW",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "CAN",
+        "countryCode": "CA",
+        "customerPrice": "44.99",
+        "currency": "CAD"
+      },
+      {
+        "territory": "CHE",
+        "countryCode": "CH",
+        "customerPrice": "30.0",
+        "currency": "CHF"
+      },
+      {
+        "territory": "CHL",
+        "countryCode": "CL",
+        "customerPrice": "37490",
+        "currency": "CLP"
+      },
+      {
+        "territory": "CHN",
+        "countryCode": "CN",
+        "customerPrice": "223.0",
+        "currency": "CNY"
+      },
+      {
+        "territory": "CIV",
+        "countryCode": "CI",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "CMR",
+        "countryCode": "CM",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "COD",
+        "countryCode": "CD",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "COG",
+        "countryCode": "CG",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "COL",
+        "countryCode": "CO",
+        "customerPrice": "149900.0",
+        "currency": "COP"
+      },
+      {
+        "territory": "CPV",
+        "countryCode": "CV",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "CRI",
+        "countryCode": "CR",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYM",
+        "countryCode": "KY",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYP",
+        "countryCode": "CY",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "CZE",
+        "countryCode": "CZ",
+        "customerPrice": "890.0",
+        "currency": "CZK"
+      },
+      {
+        "territory": "DEU",
+        "countryCode": "DE",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "DMA",
+        "countryCode": "DM",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "DNK",
+        "countryCode": "DK",
+        "customerPrice": "299.0",
+        "currency": "DKK"
+      },
+      {
+        "territory": "DOM",
+        "countryCode": "DO",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "DZA",
+        "countryCode": "DZ",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ECU",
+        "countryCode": "EC",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "EGY",
+        "countryCode": "EG",
+        "customerPrice": "1869.99",
+        "currency": "EGP"
+      },
+      {
+        "territory": "ESP",
+        "countryCode": "ES",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "EST",
+        "countryCode": "EE",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FIN",
+        "countryCode": "FI",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FJI",
+        "countryCode": "FJ",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "FRA",
+        "countryCode": "FR",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FSM",
+        "countryCode": "FM",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "GAB",
+        "countryCode": "GA",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "GBR",
+        "countryCode": "GB",
+        "customerPrice": "33.49",
+        "currency": "GBP"
+      },
+      {
+        "territory": "GEO",
+        "countryCode": "GE",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "GHA",
+        "countryCode": "GH",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "GMB",
+        "countryCode": "GM",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "GNB",
+        "countryCode": "GW",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "GRC",
+        "countryCode": "GR",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "GRD",
+        "countryCode": "GD",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "GTM",
+        "countryCode": "GT",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "GUY",
+        "countryCode": "GY",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "HKG",
+        "countryCode": "HK",
+        "customerPrice": "273.0",
+        "currency": "HKD"
+      },
+      {
+        "territory": "HND",
+        "countryCode": "HN",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "HRV",
+        "countryCode": "HR",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "HUN",
+        "countryCode": "HU",
+        "customerPrice": "14990",
+        "currency": "HUF"
+      },
+      {
+        "territory": "IDN",
+        "countryCode": "ID",
+        "customerPrice": "599000",
+        "currency": "IDR"
+      },
+      {
+        "territory": "IND",
+        "countryCode": "IN",
+        "customerPrice": "3749.0",
+        "currency": "INR"
+      },
+      {
+        "territory": "IRL",
+        "countryCode": "IE",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "IRQ",
+        "countryCode": "IQ",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISL",
+        "countryCode": "IS",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISR",
+        "countryCode": "IL",
+        "customerPrice": "111.9",
+        "currency": "ILS"
+      },
+      {
+        "territory": "ITA",
+        "countryCode": "IT",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "JAM",
+        "countryCode": "JM",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "JOR",
+        "countryCode": "JO",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "JPN",
+        "countryCode": "JP",
+        "customerPrice": "5200",
+        "currency": "JPY"
+      },
+      {
+        "territory": "KAZ",
+        "countryCode": "KZ",
+        "customerPrice": "18690.0",
+        "currency": "KZT"
+      },
+      {
+        "territory": "KEN",
+        "countryCode": "KE",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "KGZ",
+        "countryCode": "KG",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "KHM",
+        "countryCode": "KH",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "KNA",
+        "countryCode": "KN",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "KOR",
+        "countryCode": "KR",
+        "customerPrice": "57500",
+        "currency": "KRW"
+      },
+      {
+        "territory": "KWT",
+        "countryCode": "KW",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "LAO",
+        "countryCode": "LA",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBN",
+        "countryCode": "LB",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBR",
+        "countryCode": "LR",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBY",
+        "countryCode": "LY",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "LCA",
+        "countryCode": "LC",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "LKA",
+        "countryCode": "LK",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "LTU",
+        "countryCode": "LT",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LUX",
+        "countryCode": "LU",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LVA",
+        "countryCode": "LV",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MAC",
+        "countryCode": "MO",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MAR",
+        "countryCode": "MA",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDA",
+        "countryCode": "MD",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDG",
+        "countryCode": "MG",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDV",
+        "countryCode": "MV",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MEX",
+        "countryCode": "MX",
+        "customerPrice": "749.0",
+        "currency": "MXN"
+      },
+      {
+        "territory": "MKD",
+        "countryCode": "MK",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLI",
+        "countryCode": "ML",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLT",
+        "countryCode": "MT",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MMR",
+        "countryCode": "MM",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MNE",
+        "countryCode": "ME",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MNG",
+        "countryCode": "MN",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MOZ",
+        "countryCode": "MZ",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MRT",
+        "countryCode": "MR",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MSR",
+        "countryCode": "MS",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MUS",
+        "countryCode": "MU",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MWI",
+        "countryCode": "MW",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MYS",
+        "countryCode": "MY",
+        "customerPrice": "149.9",
+        "currency": "MYR"
+      },
+      {
+        "territory": "NAM",
+        "countryCode": "NA",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "NER",
+        "countryCode": "NE",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "NGA",
+        "countryCode": "NG",
+        "customerPrice": "51900.0",
+        "currency": "NGN"
+      },
+      {
+        "territory": "NIC",
+        "countryCode": "NI",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "NLD",
+        "countryCode": "NL",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "NOR",
+        "countryCode": "NO",
+        "customerPrice": "449.0",
+        "currency": "NOK"
+      },
+      {
+        "territory": "NPL",
+        "countryCode": "NP",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "NRU",
+        "countryCode": "NR",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "NZL",
+        "countryCode": "NZ",
+        "customerPrice": "59.99",
+        "currency": "NZD"
+      },
+      {
+        "territory": "OMN",
+        "countryCode": "OM",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "PAK",
+        "countryCode": "PK",
+        "customerPrice": "8900.0",
+        "currency": "PKR"
+      },
+      {
+        "territory": "PAN",
+        "countryCode": "PA",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "PER",
+        "countryCode": "PE",
+        "customerPrice": "149.9",
+        "currency": "PEN"
+      },
+      {
+        "territory": "PHL",
+        "countryCode": "PH",
+        "customerPrice": "2200.0",
+        "currency": "PHP"
+      },
+      {
+        "territory": "PLW",
+        "countryCode": "PW",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "PNG",
+        "countryCode": "PG",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "POL",
+        "countryCode": "PL",
+        "customerPrice": "149.99",
+        "currency": "PLN"
+      },
+      {
+        "territory": "PRT",
+        "countryCode": "PT",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "PRY",
+        "countryCode": "PY",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "QAT",
+        "countryCode": "QA",
+        "customerPrice": "111.99",
+        "currency": "QAR"
+      },
+      {
+        "territory": "ROU",
+        "countryCode": "RO",
+        "customerPrice": "186.99",
+        "currency": "RON"
+      },
+      {
+        "territory": "RUS",
+        "countryCode": "RU",
+        "customerPrice": "2990.0",
+        "currency": "RUB"
+      },
+      {
+        "territory": "RWA",
+        "countryCode": "RW",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "SAU",
+        "countryCode": "SA",
+        "customerPrice": "149.99",
+        "currency": "SAR"
+      },
+      {
+        "territory": "SEN",
+        "countryCode": "SN",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "SGP",
+        "countryCode": "SG",
+        "customerPrice": "44.98",
+        "currency": "SGD"
+      },
+      {
+        "territory": "SLB",
+        "countryCode": "SB",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLE",
+        "countryCode": "SL",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLV",
+        "countryCode": "SV",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "SRB",
+        "countryCode": "RS",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "STP",
+        "countryCode": "ST",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "SUR",
+        "countryCode": "SR",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "SVK",
+        "countryCode": "SK",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SVN",
+        "countryCode": "SI",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SWE",
+        "countryCode": "SE",
+        "customerPrice": "449.0",
+        "currency": "SEK"
+      },
+      {
+        "territory": "SWZ",
+        "countryCode": "SZ",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "SYC",
+        "countryCode": "SC",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCA",
+        "countryCode": "TC",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCD",
+        "countryCode": "TD",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "THA",
+        "countryCode": "TH",
+        "customerPrice": "1110.0",
+        "currency": "THB"
+      },
+      {
+        "territory": "TJK",
+        "countryCode": "TJ",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "TKM",
+        "countryCode": "TM",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "TON",
+        "countryCode": "TO",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "TTO",
+        "countryCode": "TT",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUN",
+        "countryCode": "TN",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUR",
+        "countryCode": "TR",
+        "customerPrice": "1869.99",
+        "currency": "TRY"
+      },
+      {
+        "territory": "TWN",
+        "countryCode": "TW",
+        "customerPrice": "1110",
+        "currency": "TWD"
+      },
+      {
+        "territory": "TZA",
+        "countryCode": "TZ",
+        "customerPrice": "96900.0",
+        "currency": "TZS"
+      },
+      {
+        "territory": "UGA",
+        "countryCode": "UG",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "UKR",
+        "countryCode": "UA",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "URY",
+        "countryCode": "UY",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "USA",
+        "countryCode": "US",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "UZB",
+        "countryCode": "UZ",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "VCT",
+        "countryCode": "VC",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "VEN",
+        "countryCode": "VE",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "VGB",
+        "countryCode": "VG",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "VNM",
+        "countryCode": "VN",
+        "customerPrice": "970000",
+        "currency": "VND"
+      },
+      {
+        "territory": "VUT",
+        "countryCode": "VU",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "XKS",
+        "countryCode": "XK",
+        "customerPrice": "33.49",
+        "currency": "EUR"
+      },
+      {
+        "territory": "YEM",
+        "countryCode": "YE",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZAF",
+        "countryCode": "ZA",
+        "customerPrice": "749.99",
+        "currency": "ZAR"
+      },
+      {
+        "territory": "ZMB",
+        "countryCode": "ZM",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZWE",
+        "countryCode": "ZW",
+        "customerPrice": "37.49",
+        "currency": "USD"
+      }
+    ],
+    "annual": [
+      {
+        "territory": "AFG",
+        "countryCode": "AF",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "AGO",
+        "countryCode": "AO",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "AIA",
+        "countryCode": "AI",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ALB",
+        "countryCode": "AL",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARE",
+        "countryCode": "AE",
+        "customerPrice": "179.99",
+        "currency": "AED"
+      },
+      {
+        "territory": "ARG",
+        "countryCode": "AR",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARM",
+        "countryCode": "AM",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ATG",
+        "countryCode": "AG",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "AUS",
+        "countryCode": "AU",
+        "customerPrice": "69.99",
+        "currency": "AUD"
+      },
+      {
+        "territory": "AUT",
+        "countryCode": "AT",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "AZE",
+        "countryCode": "AZ",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BEL",
+        "countryCode": "BE",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BEN",
+        "countryCode": "BJ",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BFA",
+        "countryCode": "BF",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BGR",
+        "countryCode": "BG",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BHR",
+        "countryCode": "BH",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BHS",
+        "countryCode": "BS",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BIH",
+        "countryCode": "BA",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BLR",
+        "countryCode": "BY",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BLZ",
+        "countryCode": "BZ",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BMU",
+        "countryCode": "BM",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BOL",
+        "countryCode": "BO",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRA",
+        "countryCode": "BR",
+        "customerPrice": "299.9",
+        "currency": "BRL"
+      },
+      {
+        "territory": "BRB",
+        "countryCode": "BB",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRN",
+        "countryCode": "BN",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BTN",
+        "countryCode": "BT",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BWA",
+        "countryCode": "BW",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CAN",
+        "countryCode": "CA",
+        "customerPrice": "59.99",
+        "currency": "CAD"
+      },
+      {
+        "territory": "CHE",
+        "countryCode": "CH",
+        "customerPrice": "40.0",
+        "currency": "CHF"
+      },
+      {
+        "territory": "CHL",
+        "countryCode": "CL",
+        "customerPrice": "49990",
+        "currency": "CLP"
+      },
+      {
+        "territory": "CHN",
+        "countryCode": "CN",
+        "customerPrice": "298.0",
+        "currency": "CNY"
+      },
+      {
+        "territory": "CIV",
+        "countryCode": "CI",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CMR",
+        "countryCode": "CM",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "COD",
+        "countryCode": "CD",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "COG",
+        "countryCode": "CG",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "COL",
+        "countryCode": "CO",
+        "customerPrice": "199900.0",
+        "currency": "COP"
+      },
+      {
+        "territory": "CPV",
+        "countryCode": "CV",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CRI",
+        "countryCode": "CR",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYM",
+        "countryCode": "KY",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYP",
+        "countryCode": "CY",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "CZE",
+        "countryCode": "CZ",
+        "customerPrice": "1190.0",
+        "currency": "CZK"
+      },
+      {
+        "territory": "DEU",
+        "countryCode": "DE",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "DMA",
+        "countryCode": "DM",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "DNK",
+        "countryCode": "DK",
+        "customerPrice": "399.0",
+        "currency": "DKK"
+      },
+      {
+        "territory": "DOM",
+        "countryCode": "DO",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "DZA",
+        "countryCode": "DZ",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ECU",
+        "countryCode": "EC",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "EGY",
+        "countryCode": "EG",
+        "customerPrice": "2499.99",
+        "currency": "EGP"
+      },
+      {
+        "territory": "ESP",
+        "countryCode": "ES",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "EST",
+        "countryCode": "EE",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FIN",
+        "countryCode": "FI",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FJI",
+        "countryCode": "FJ",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "FRA",
+        "countryCode": "FR",
+        "customerPrice": "49.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FSM",
+        "countryCode": "FM",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GAB",
+        "countryCode": "GA",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GBR",
+        "countryCode": "GB",
+        "customerPrice": "44.99",
+        "currency": "GBP"
+      },
+      {
+        "territory": "GEO",
+        "countryCode": "GE",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GHA",
+        "countryCode": "GH",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GMB",
+        "countryCode": "GM",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GNB",
+        "countryCode": "GW",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GRC",
+        "countryCode": "GR",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "GRD",
+        "countryCode": "GD",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GTM",
+        "countryCode": "GT",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GUY",
+        "countryCode": "GY",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "HKG",
+        "countryCode": "HK",
+        "customerPrice": "368.0",
+        "currency": "HKD"
+      },
+      {
+        "territory": "HND",
+        "countryCode": "HN",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "HRV",
+        "countryCode": "HR",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "HUN",
+        "countryCode": "HU",
+        "customerPrice": "19990",
+        "currency": "HUF"
+      },
+      {
+        "territory": "IDN",
+        "countryCode": "ID",
+        "customerPrice": "799000",
+        "currency": "IDR"
+      },
+      {
+        "territory": "IND",
+        "countryCode": "IN",
+        "customerPrice": "4999.0",
+        "currency": "INR"
+      },
+      {
+        "territory": "IRL",
+        "countryCode": "IE",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "IRQ",
+        "countryCode": "IQ",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISL",
+        "countryCode": "IS",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISR",
+        "countryCode": "IL",
+        "customerPrice": "149.9",
+        "currency": "ILS"
+      },
+      {
+        "territory": "ITA",
+        "countryCode": "IT",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "JAM",
+        "countryCode": "JM",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "JOR",
+        "countryCode": "JO",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "JPN",
+        "countryCode": "JP",
+        "customerPrice": "7000",
+        "currency": "JPY"
+      },
+      {
+        "territory": "KAZ",
+        "countryCode": "KZ",
+        "customerPrice": "24990.0",
+        "currency": "KZT"
+      },
+      {
+        "territory": "KEN",
+        "countryCode": "KE",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KGZ",
+        "countryCode": "KG",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KHM",
+        "countryCode": "KH",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KNA",
+        "countryCode": "KN",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KOR",
+        "countryCode": "KR",
+        "customerPrice": "77000",
+        "currency": "KRW"
+      },
+      {
+        "territory": "KWT",
+        "countryCode": "KW",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LAO",
+        "countryCode": "LA",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBN",
+        "countryCode": "LB",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBR",
+        "countryCode": "LR",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBY",
+        "countryCode": "LY",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LCA",
+        "countryCode": "LC",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LKA",
+        "countryCode": "LK",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LTU",
+        "countryCode": "LT",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LUX",
+        "countryCode": "LU",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LVA",
+        "countryCode": "LV",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MAC",
+        "countryCode": "MO",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MAR",
+        "countryCode": "MA",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDA",
+        "countryCode": "MD",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDG",
+        "countryCode": "MG",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDV",
+        "countryCode": "MV",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MEX",
+        "countryCode": "MX",
+        "customerPrice": "999.0",
+        "currency": "MXN"
+      },
+      {
+        "territory": "MKD",
+        "countryCode": "MK",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLI",
+        "countryCode": "ML",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLT",
+        "countryCode": "MT",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MMR",
+        "countryCode": "MM",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MNE",
+        "countryCode": "ME",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MNG",
+        "countryCode": "MN",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MOZ",
+        "countryCode": "MZ",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MRT",
+        "countryCode": "MR",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MSR",
+        "countryCode": "MS",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MUS",
+        "countryCode": "MU",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MWI",
+        "countryCode": "MW",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MYS",
+        "countryCode": "MY",
+        "customerPrice": "199.9",
+        "currency": "MYR"
+      },
+      {
+        "territory": "NAM",
+        "countryCode": "NA",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NER",
+        "countryCode": "NE",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NGA",
+        "countryCode": "NG",
+        "customerPrice": "69900.0",
+        "currency": "NGN"
+      },
+      {
+        "territory": "NIC",
+        "countryCode": "NI",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NLD",
+        "countryCode": "NL",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "NOR",
+        "countryCode": "NO",
+        "customerPrice": "599.0",
+        "currency": "NOK"
+      },
+      {
+        "territory": "NPL",
+        "countryCode": "NP",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NRU",
+        "countryCode": "NR",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NZL",
+        "countryCode": "NZ",
+        "customerPrice": "79.99",
+        "currency": "NZD"
+      },
+      {
+        "territory": "OMN",
+        "countryCode": "OM",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "PAK",
+        "countryCode": "PK",
+        "customerPrice": "11900.0",
+        "currency": "PKR"
+      },
+      {
+        "territory": "PAN",
+        "countryCode": "PA",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "PER",
+        "countryCode": "PE",
+        "customerPrice": "199.9",
+        "currency": "PEN"
+      },
+      {
+        "territory": "PHL",
+        "countryCode": "PH",
+        "customerPrice": "2990.0",
+        "currency": "PHP"
+      },
+      {
+        "territory": "PLW",
+        "countryCode": "PW",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "PNG",
+        "countryCode": "PG",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "POL",
+        "countryCode": "PL",
+        "customerPrice": "199.99",
+        "currency": "PLN"
+      },
+      {
+        "territory": "PRT",
+        "countryCode": "PT",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "PRY",
+        "countryCode": "PY",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "QAT",
+        "countryCode": "QA",
+        "customerPrice": "149.99",
+        "currency": "QAR"
+      },
+      {
+        "territory": "ROU",
+        "countryCode": "RO",
+        "customerPrice": "249.99",
+        "currency": "RON"
+      },
+      {
+        "territory": "RUS",
+        "countryCode": "RU",
+        "customerPrice": "3990.0",
+        "currency": "RUB"
+      },
+      {
+        "territory": "RWA",
+        "countryCode": "RW",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SAU",
+        "countryCode": "SA",
+        "customerPrice": "199.99",
+        "currency": "SAR"
+      },
+      {
+        "territory": "SEN",
+        "countryCode": "SN",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SGP",
+        "countryCode": "SG",
+        "customerPrice": "59.98",
+        "currency": "SGD"
+      },
+      {
+        "territory": "SLB",
+        "countryCode": "SB",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLE",
+        "countryCode": "SL",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLV",
+        "countryCode": "SV",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SRB",
+        "countryCode": "RS",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "STP",
+        "countryCode": "ST",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SUR",
+        "countryCode": "SR",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SVK",
+        "countryCode": "SK",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SVN",
+        "countryCode": "SI",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SWE",
+        "countryCode": "SE",
+        "customerPrice": "599.0",
+        "currency": "SEK"
+      },
+      {
+        "territory": "SWZ",
+        "countryCode": "SZ",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SYC",
+        "countryCode": "SC",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCA",
+        "countryCode": "TC",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCD",
+        "countryCode": "TD",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "THA",
+        "countryCode": "TH",
+        "customerPrice": "1490.0",
+        "currency": "THB"
+      },
+      {
+        "territory": "TJK",
+        "countryCode": "TJ",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TKM",
+        "countryCode": "TM",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TON",
+        "countryCode": "TO",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TTO",
+        "countryCode": "TT",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUN",
+        "countryCode": "TN",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUR",
+        "countryCode": "TR",
+        "customerPrice": "2499.99",
+        "currency": "TRY"
+      },
+      {
+        "territory": "TWN",
+        "countryCode": "TW",
+        "customerPrice": "1490",
+        "currency": "TWD"
+      },
+      {
+        "territory": "TZA",
+        "countryCode": "TZ",
+        "customerPrice": "129900.0",
+        "currency": "TZS"
+      },
+      {
+        "territory": "UGA",
+        "countryCode": "UG",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "UKR",
+        "countryCode": "UA",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "URY",
+        "countryCode": "UY",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "USA",
+        "countryCode": "US",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "UZB",
+        "countryCode": "UZ",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VCT",
+        "countryCode": "VC",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VEN",
+        "countryCode": "VE",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VGB",
+        "countryCode": "VG",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VNM",
+        "countryCode": "VN",
+        "customerPrice": "1299000",
+        "currency": "VND"
+      },
+      {
+        "territory": "VUT",
+        "countryCode": "VU",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "XKS",
+        "countryCode": "XK",
+        "customerPrice": "44.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "YEM",
+        "countryCode": "YE",
+        "customerPrice": "44.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZAF",
+        "countryCode": "ZA",
+        "customerPrice": "999.99",
+        "currency": "ZAR"
+      },
+      {
+        "territory": "ZMB",
+        "countryCode": "ZM",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZWE",
+        "countryCode": "ZW",
+        "customerPrice": "49.99",
+        "currency": "USD"
+      }
+    ],
+    "annual_discount": [
+      {
+        "territory": "AFG",
+        "countryCode": "AF",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "AGO",
+        "countryCode": "AO",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "AIA",
+        "countryCode": "AI",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ALB",
+        "countryCode": "AL",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARE",
+        "countryCode": "AE",
+        "customerPrice": "119.99",
+        "currency": "AED"
+      },
+      {
+        "territory": "ARG",
+        "countryCode": "AR",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARM",
+        "countryCode": "AM",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ATG",
+        "countryCode": "AG",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "AUS",
+        "countryCode": "AU",
+        "customerPrice": "46.49",
+        "currency": "AUD"
+      },
+      {
+        "territory": "AUT",
+        "countryCode": "AT",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "AZE",
+        "countryCode": "AZ",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BEL",
+        "countryCode": "BE",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BEN",
+        "countryCode": "BJ",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BFA",
+        "countryCode": "BF",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BGR",
+        "countryCode": "BG",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BHR",
+        "countryCode": "BH",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BHS",
+        "countryCode": "BS",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BIH",
+        "countryCode": "BA",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BLR",
+        "countryCode": "BY",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BLZ",
+        "countryCode": "BZ",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BMU",
+        "countryCode": "BM",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BOL",
+        "countryCode": "BO",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRA",
+        "countryCode": "BR",
+        "customerPrice": "200.0",
+        "currency": "BRL"
+      },
+      {
+        "territory": "BRB",
+        "countryCode": "BB",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRN",
+        "countryCode": "BN",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BTN",
+        "countryCode": "BT",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BWA",
+        "countryCode": "BW",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "CAN",
+        "countryCode": "CA",
+        "customerPrice": "40.0",
+        "currency": "CAD"
+      },
+      {
+        "territory": "CHE",
+        "countryCode": "CH",
+        "customerPrice": "26.5",
+        "currency": "CHF"
+      },
+      {
+        "territory": "CHL",
+        "countryCode": "CL",
+        "customerPrice": "33490",
+        "currency": "CLP"
+      },
+      {
+        "territory": "CHN",
+        "countryCode": "CN",
+        "customerPrice": "199.0",
+        "currency": "CNY"
+      },
+      {
+        "territory": "CIV",
+        "countryCode": "CI",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "CMR",
+        "countryCode": "CM",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "COD",
+        "countryCode": "CD",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "COG",
+        "countryCode": "CG",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "COL",
+        "countryCode": "CO",
+        "customerPrice": "133900.0",
+        "currency": "COP"
+      },
+      {
+        "territory": "CPV",
+        "countryCode": "CV",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "CRI",
+        "countryCode": "CR",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYM",
+        "countryCode": "KY",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYP",
+        "countryCode": "CY",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "CZE",
+        "countryCode": "CZ",
+        "customerPrice": "790.0",
+        "currency": "CZK"
+      },
+      {
+        "territory": "DEU",
+        "countryCode": "DE",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "DMA",
+        "countryCode": "DM",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "DNK",
+        "countryCode": "DK",
+        "customerPrice": "265.0",
+        "currency": "DKK"
+      },
+      {
+        "territory": "DOM",
+        "countryCode": "DO",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "DZA",
+        "countryCode": "DZ",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ECU",
+        "countryCode": "EC",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "EGY",
+        "countryCode": "EG",
+        "customerPrice": "1669.99",
+        "currency": "EGP"
+      },
+      {
+        "territory": "ESP",
+        "countryCode": "ES",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "EST",
+        "countryCode": "EE",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FIN",
+        "countryCode": "FI",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FJI",
+        "countryCode": "FJ",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "FRA",
+        "countryCode": "FR",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FSM",
+        "countryCode": "FM",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GAB",
+        "countryCode": "GA",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GBR",
+        "countryCode": "GB",
+        "customerPrice": "30.0",
+        "currency": "GBP"
+      },
+      {
+        "territory": "GEO",
+        "countryCode": "GE",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "GHA",
+        "countryCode": "GH",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "GMB",
+        "countryCode": "GM",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GNB",
+        "countryCode": "GW",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GRC",
+        "countryCode": "GR",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "GRD",
+        "countryCode": "GD",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GTM",
+        "countryCode": "GT",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GUY",
+        "countryCode": "GY",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "HKG",
+        "countryCode": "HK",
+        "customerPrice": "243.0",
+        "currency": "HKD"
+      },
+      {
+        "territory": "HND",
+        "countryCode": "HN",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "HRV",
+        "countryCode": "HR",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "HUN",
+        "countryCode": "HU",
+        "customerPrice": "13390",
+        "currency": "HUF"
+      },
+      {
+        "territory": "IDN",
+        "countryCode": "ID",
+        "customerPrice": "535000",
+        "currency": "IDR"
+      },
+      {
+        "territory": "IND",
+        "countryCode": "IN",
+        "customerPrice": "3349.0",
+        "currency": "INR"
+      },
+      {
+        "territory": "IRL",
+        "countryCode": "IE",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "IRQ",
+        "countryCode": "IQ",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISL",
+        "countryCode": "IS",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISR",
+        "countryCode": "IL",
+        "customerPrice": "100.0",
+        "currency": "ILS"
+      },
+      {
+        "territory": "ITA",
+        "countryCode": "IT",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "JAM",
+        "countryCode": "JM",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "JOR",
+        "countryCode": "JO",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "JPN",
+        "countryCode": "JP",
+        "customerPrice": "4690",
+        "currency": "JPY"
+      },
+      {
+        "territory": "KAZ",
+        "countryCode": "KZ",
+        "customerPrice": "16690.0",
+        "currency": "KZT"
+      },
+      {
+        "territory": "KEN",
+        "countryCode": "KE",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "KGZ",
+        "countryCode": "KG",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "KHM",
+        "countryCode": "KH",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "KNA",
+        "countryCode": "KN",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "KOR",
+        "countryCode": "KR",
+        "customerPrice": "51500",
+        "currency": "KRW"
+      },
+      {
+        "territory": "KWT",
+        "countryCode": "KW",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "LAO",
+        "countryCode": "LA",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBN",
+        "countryCode": "LB",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBR",
+        "countryCode": "LR",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBY",
+        "countryCode": "LY",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "LCA",
+        "countryCode": "LC",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "LKA",
+        "countryCode": "LK",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "LTU",
+        "countryCode": "LT",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LUX",
+        "countryCode": "LU",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LVA",
+        "countryCode": "LV",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MAC",
+        "countryCode": "MO",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MAR",
+        "countryCode": "MA",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDA",
+        "countryCode": "MD",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDG",
+        "countryCode": "MG",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDV",
+        "countryCode": "MV",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MEX",
+        "countryCode": "MX",
+        "customerPrice": "669.0",
+        "currency": "MXN"
+      },
+      {
+        "territory": "MKD",
+        "countryCode": "MK",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLI",
+        "countryCode": "ML",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLT",
+        "countryCode": "MT",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MMR",
+        "countryCode": "MM",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MNE",
+        "countryCode": "ME",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MNG",
+        "countryCode": "MN",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MOZ",
+        "countryCode": "MZ",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MRT",
+        "countryCode": "MR",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MSR",
+        "countryCode": "MS",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MUS",
+        "countryCode": "MU",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MWI",
+        "countryCode": "MW",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MYS",
+        "countryCode": "MY",
+        "customerPrice": "133.9",
+        "currency": "MYR"
+      },
+      {
+        "territory": "NAM",
+        "countryCode": "NA",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "NER",
+        "countryCode": "NE",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "NGA",
+        "countryCode": "NG",
+        "customerPrice": "46500.0",
+        "currency": "NGN"
+      },
+      {
+        "territory": "NIC",
+        "countryCode": "NI",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "NLD",
+        "countryCode": "NL",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "NOR",
+        "countryCode": "NO",
+        "customerPrice": "400.0",
+        "currency": "NOK"
+      },
+      {
+        "territory": "NPL",
+        "countryCode": "NP",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "NRU",
+        "countryCode": "NR",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "NZL",
+        "countryCode": "NZ",
+        "customerPrice": "53.0",
+        "currency": "NZD"
+      },
+      {
+        "territory": "OMN",
+        "countryCode": "OM",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "PAK",
+        "countryCode": "PK",
+        "customerPrice": "7900.0",
+        "currency": "PKR"
+      },
+      {
+        "territory": "PAN",
+        "countryCode": "PA",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "PER",
+        "countryCode": "PE",
+        "customerPrice": "133.9",
+        "currency": "PEN"
+      },
+      {
+        "territory": "PHL",
+        "countryCode": "PH",
+        "customerPrice": "2000.0",
+        "currency": "PHP"
+      },
+      {
+        "territory": "PLW",
+        "countryCode": "PW",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "PNG",
+        "countryCode": "PG",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "POL",
+        "countryCode": "PL",
+        "customerPrice": "133.99",
+        "currency": "PLN"
+      },
+      {
+        "territory": "PRT",
+        "countryCode": "PT",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "PRY",
+        "countryCode": "PY",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "QAT",
+        "countryCode": "QA",
+        "customerPrice": "100.0",
+        "currency": "QAR"
+      },
+      {
+        "territory": "ROU",
+        "countryCode": "RO",
+        "customerPrice": "166.99",
+        "currency": "RON"
+      },
+      {
+        "territory": "RUS",
+        "countryCode": "RU",
+        "customerPrice": "2650.0",
+        "currency": "RUB"
+      },
+      {
+        "territory": "RWA",
+        "countryCode": "RW",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "SAU",
+        "countryCode": "SA",
+        "customerPrice": "133.99",
+        "currency": "SAR"
+      },
+      {
+        "territory": "SEN",
+        "countryCode": "SN",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "SGP",
+        "countryCode": "SG",
+        "customerPrice": "40.0",
+        "currency": "SGD"
+      },
+      {
+        "territory": "SLB",
+        "countryCode": "SB",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLE",
+        "countryCode": "SL",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLV",
+        "countryCode": "SV",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "SRB",
+        "countryCode": "RS",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "STP",
+        "countryCode": "ST",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "SUR",
+        "countryCode": "SR",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "SVK",
+        "countryCode": "SK",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SVN",
+        "countryCode": "SI",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SWE",
+        "countryCode": "SE",
+        "customerPrice": "400.0",
+        "currency": "SEK"
+      },
+      {
+        "territory": "SWZ",
+        "countryCode": "SZ",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "SYC",
+        "countryCode": "SC",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCA",
+        "countryCode": "TC",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCD",
+        "countryCode": "TD",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "THA",
+        "countryCode": "TH",
+        "customerPrice": "990.0",
+        "currency": "THB"
+      },
+      {
+        "territory": "TJK",
+        "countryCode": "TJ",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "TKM",
+        "countryCode": "TM",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "TON",
+        "countryCode": "TO",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "TTO",
+        "countryCode": "TT",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUN",
+        "countryCode": "TN",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUR",
+        "countryCode": "TR",
+        "customerPrice": "1669.99",
+        "currency": "TRY"
+      },
+      {
+        "territory": "TWN",
+        "countryCode": "TW",
+        "customerPrice": "990",
+        "currency": "TWD"
+      },
+      {
+        "territory": "TZA",
+        "countryCode": "TZ",
+        "customerPrice": "86900.0",
+        "currency": "TZS"
+      },
+      {
+        "territory": "UGA",
+        "countryCode": "UG",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "UKR",
+        "countryCode": "UA",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "URY",
+        "countryCode": "UY",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "USA",
+        "countryCode": "US",
+        "customerPrice": "29.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "UZB",
+        "countryCode": "UZ",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "VCT",
+        "countryCode": "VC",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "VEN",
+        "countryCode": "VE",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "VGB",
+        "countryCode": "VG",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "VNM",
+        "countryCode": "VN",
+        "customerPrice": "870000",
+        "currency": "VND"
+      },
+      {
+        "territory": "VUT",
+        "countryCode": "VU",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "XKS",
+        "countryCode": "XK",
+        "customerPrice": "29.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "YEM",
+        "countryCode": "YE",
+        "customerPrice": "30.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZAF",
+        "countryCode": "ZA",
+        "customerPrice": "669.99",
+        "currency": "ZAR"
+      },
+      {
+        "territory": "ZMB",
+        "countryCode": "ZM",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZWE",
+        "countryCode": "ZW",
+        "customerPrice": "33.49",
+        "currency": "USD"
+      }
+    ],
+    "annual_discount_15": [
+      {
+        "territory": "AFG",
+        "countryCode": "AF",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "AGO",
+        "countryCode": "AO",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "AIA",
+        "countryCode": "AI",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ALB",
+        "countryCode": "AL",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARE",
+        "countryCode": "AE",
+        "customerPrice": "152.99",
+        "currency": "AED"
+      },
+      {
+        "territory": "ARG",
+        "countryCode": "AR",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARM",
+        "countryCode": "AM",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ATG",
+        "countryCode": "AG",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "AUS",
+        "countryCode": "AU",
+        "customerPrice": "59.0",
+        "currency": "AUD"
+      },
+      {
+        "territory": "AUT",
+        "countryCode": "AT",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "AZE",
+        "countryCode": "AZ",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BEL",
+        "countryCode": "BE",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BEN",
+        "countryCode": "BJ",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BFA",
+        "countryCode": "BF",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BGR",
+        "countryCode": "BG",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BHR",
+        "countryCode": "BH",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BHS",
+        "countryCode": "BS",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BIH",
+        "countryCode": "BA",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BLR",
+        "countryCode": "BY",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BLZ",
+        "countryCode": "BZ",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BMU",
+        "countryCode": "BM",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BOL",
+        "countryCode": "BO",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRA",
+        "countryCode": "BR",
+        "customerPrice": "254.9",
+        "currency": "BRL"
+      },
+      {
+        "territory": "BRB",
+        "countryCode": "BB",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRN",
+        "countryCode": "BN",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BTN",
+        "countryCode": "BT",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BWA",
+        "countryCode": "BW",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "CAN",
+        "countryCode": "CA",
+        "customerPrice": "50.99",
+        "currency": "CAD"
+      },
+      {
+        "territory": "CHE",
+        "countryCode": "CH",
+        "customerPrice": "34.0",
+        "currency": "CHF"
+      },
+      {
+        "territory": "CHL",
+        "countryCode": "CL",
+        "customerPrice": "42490",
+        "currency": "CLP"
+      },
+      {
+        "territory": "CHN",
+        "countryCode": "CN",
+        "customerPrice": "253.0",
+        "currency": "CNY"
+      },
+      {
+        "territory": "CIV",
+        "countryCode": "CI",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "CMR",
+        "countryCode": "CM",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "COD",
+        "countryCode": "CD",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "COG",
+        "countryCode": "CG",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "COL",
+        "countryCode": "CO",
+        "customerPrice": "169900.0",
+        "currency": "COP"
+      },
+      {
+        "territory": "CPV",
+        "countryCode": "CV",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "CRI",
+        "countryCode": "CR",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYM",
+        "countryCode": "KY",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYP",
+        "countryCode": "CY",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "CZE",
+        "countryCode": "CZ",
+        "customerPrice": "1010.0",
+        "currency": "CZK"
+      },
+      {
+        "territory": "DEU",
+        "countryCode": "DE",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "DMA",
+        "countryCode": "DM",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "DNK",
+        "countryCode": "DK",
+        "customerPrice": "339.0",
+        "currency": "DKK"
+      },
+      {
+        "territory": "DOM",
+        "countryCode": "DO",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "DZA",
+        "countryCode": "DZ",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ECU",
+        "countryCode": "EC",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "EGY",
+        "countryCode": "EG",
+        "customerPrice": "2099.99",
+        "currency": "EGP"
+      },
+      {
+        "territory": "ESP",
+        "countryCode": "ES",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "EST",
+        "countryCode": "EE",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FIN",
+        "countryCode": "FI",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FJI",
+        "countryCode": "FJ",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "FRA",
+        "countryCode": "FR",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FSM",
+        "countryCode": "FM",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GAB",
+        "countryCode": "GA",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GBR",
+        "countryCode": "GB",
+        "customerPrice": "38.0",
+        "currency": "GBP"
+      },
+      {
+        "territory": "GEO",
+        "countryCode": "GE",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "GHA",
+        "countryCode": "GH",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "GMB",
+        "countryCode": "GM",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GNB",
+        "countryCode": "GW",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GRC",
+        "countryCode": "GR",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "GRD",
+        "countryCode": "GD",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GTM",
+        "countryCode": "GT",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GUY",
+        "countryCode": "GY",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "HKG",
+        "countryCode": "HK",
+        "customerPrice": "310.0",
+        "currency": "HKD"
+      },
+      {
+        "territory": "HND",
+        "countryCode": "HN",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "HRV",
+        "countryCode": "HR",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "HUN",
+        "countryCode": "HU",
+        "customerPrice": "16990",
+        "currency": "HUF"
+      },
+      {
+        "territory": "IDN",
+        "countryCode": "ID",
+        "customerPrice": "679000",
+        "currency": "IDR"
+      },
+      {
+        "territory": "IND",
+        "countryCode": "IN",
+        "customerPrice": "4249.0",
+        "currency": "INR"
+      },
+      {
+        "territory": "IRL",
+        "countryCode": "IE",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "IRQ",
+        "countryCode": "IQ",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISL",
+        "countryCode": "IS",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISR",
+        "countryCode": "IL",
+        "customerPrice": "126.9",
+        "currency": "ILS"
+      },
+      {
+        "territory": "ITA",
+        "countryCode": "IT",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "JAM",
+        "countryCode": "JM",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "JOR",
+        "countryCode": "JO",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "JPN",
+        "countryCode": "JP",
+        "customerPrice": "5900",
+        "currency": "JPY"
+      },
+      {
+        "territory": "KAZ",
+        "countryCode": "KZ",
+        "customerPrice": "21000.0",
+        "currency": "KZT"
+      },
+      {
+        "territory": "KEN",
+        "countryCode": "KE",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "KGZ",
+        "countryCode": "KG",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "KHM",
+        "countryCode": "KH",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "KNA",
+        "countryCode": "KN",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "KOR",
+        "countryCode": "KR",
+        "customerPrice": "65000",
+        "currency": "KRW"
+      },
+      {
+        "territory": "KWT",
+        "countryCode": "KW",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "LAO",
+        "countryCode": "LA",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBN",
+        "countryCode": "LB",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBR",
+        "countryCode": "LR",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBY",
+        "countryCode": "LY",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "LCA",
+        "countryCode": "LC",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "LKA",
+        "countryCode": "LK",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "LTU",
+        "countryCode": "LT",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LUX",
+        "countryCode": "LU",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LVA",
+        "countryCode": "LV",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MAC",
+        "countryCode": "MO",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MAR",
+        "countryCode": "MA",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDA",
+        "countryCode": "MD",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDG",
+        "countryCode": "MG",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDV",
+        "countryCode": "MV",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MEX",
+        "countryCode": "MX",
+        "customerPrice": "849.0",
+        "currency": "MXN"
+      },
+      {
+        "territory": "MKD",
+        "countryCode": "MK",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLI",
+        "countryCode": "ML",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLT",
+        "countryCode": "MT",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MMR",
+        "countryCode": "MM",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MNE",
+        "countryCode": "ME",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MNG",
+        "countryCode": "MN",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MOZ",
+        "countryCode": "MZ",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MRT",
+        "countryCode": "MR",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MSR",
+        "countryCode": "MS",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MUS",
+        "countryCode": "MU",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "MWI",
+        "countryCode": "MW",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MYS",
+        "countryCode": "MY",
+        "customerPrice": "169.9",
+        "currency": "MYR"
+      },
+      {
+        "territory": "NAM",
+        "countryCode": "NA",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "NER",
+        "countryCode": "NE",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "NGA",
+        "countryCode": "NG",
+        "customerPrice": "59000.0",
+        "currency": "NGN"
+      },
+      {
+        "territory": "NIC",
+        "countryCode": "NI",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "NLD",
+        "countryCode": "NL",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "NOR",
+        "countryCode": "NO",
+        "customerPrice": "509.0",
+        "currency": "NOK"
+      },
+      {
+        "territory": "NPL",
+        "countryCode": "NP",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "NRU",
+        "countryCode": "NR",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "NZL",
+        "countryCode": "NZ",
+        "customerPrice": "67.99",
+        "currency": "NZD"
+      },
+      {
+        "territory": "OMN",
+        "countryCode": "OM",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "PAK",
+        "countryCode": "PK",
+        "customerPrice": "10100.0",
+        "currency": "PKR"
+      },
+      {
+        "territory": "PAN",
+        "countryCode": "PA",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "PER",
+        "countryCode": "PE",
+        "customerPrice": "169.9",
+        "currency": "PEN"
+      },
+      {
+        "territory": "PHL",
+        "countryCode": "PH",
+        "customerPrice": "2500.0",
+        "currency": "PHP"
+      },
+      {
+        "territory": "PLW",
+        "countryCode": "PW",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "PNG",
+        "countryCode": "PG",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "POL",
+        "countryCode": "PL",
+        "customerPrice": "169.99",
+        "currency": "PLN"
+      },
+      {
+        "territory": "PRT",
+        "countryCode": "PT",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "PRY",
+        "countryCode": "PY",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "QAT",
+        "countryCode": "QA",
+        "customerPrice": "126.99",
+        "currency": "QAR"
+      },
+      {
+        "territory": "ROU",
+        "countryCode": "RO",
+        "customerPrice": "209.99",
+        "currency": "RON"
+      },
+      {
+        "territory": "RUS",
+        "countryCode": "RU",
+        "customerPrice": "3390.0",
+        "currency": "RUB"
+      },
+      {
+        "territory": "RWA",
+        "countryCode": "RW",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "SAU",
+        "countryCode": "SA",
+        "customerPrice": "169.99",
+        "currency": "SAR"
+      },
+      {
+        "territory": "SEN",
+        "countryCode": "SN",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "SGP",
+        "countryCode": "SG",
+        "customerPrice": "50.98",
+        "currency": "SGD"
+      },
+      {
+        "territory": "SLB",
+        "countryCode": "SB",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLE",
+        "countryCode": "SL",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLV",
+        "countryCode": "SV",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "SRB",
+        "countryCode": "RS",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "STP",
+        "countryCode": "ST",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "SUR",
+        "countryCode": "SR",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "SVK",
+        "countryCode": "SK",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SVN",
+        "countryCode": "SI",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SWE",
+        "countryCode": "SE",
+        "customerPrice": "509.0",
+        "currency": "SEK"
+      },
+      {
+        "territory": "SWZ",
+        "countryCode": "SZ",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "SYC",
+        "countryCode": "SC",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCA",
+        "countryCode": "TC",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCD",
+        "countryCode": "TD",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "THA",
+        "countryCode": "TH",
+        "customerPrice": "1260.0",
+        "currency": "THB"
+      },
+      {
+        "territory": "TJK",
+        "countryCode": "TJ",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "TKM",
+        "countryCode": "TM",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "TON",
+        "countryCode": "TO",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "TTO",
+        "countryCode": "TT",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUN",
+        "countryCode": "TN",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUR",
+        "countryCode": "TR",
+        "customerPrice": "2099.99",
+        "currency": "TRY"
+      },
+      {
+        "territory": "TWN",
+        "countryCode": "TW",
+        "customerPrice": "1260",
+        "currency": "TWD"
+      },
+      {
+        "territory": "TZA",
+        "countryCode": "TZ",
+        "customerPrice": "110000.0",
+        "currency": "TZS"
+      },
+      {
+        "territory": "UGA",
+        "countryCode": "UG",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "UKR",
+        "countryCode": "UA",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "URY",
+        "countryCode": "UY",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "USA",
+        "countryCode": "US",
+        "customerPrice": "37.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "UZB",
+        "countryCode": "UZ",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "VCT",
+        "countryCode": "VC",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "VEN",
+        "countryCode": "VE",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "VGB",
+        "countryCode": "VG",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "VNM",
+        "countryCode": "VN",
+        "customerPrice": "1100000",
+        "currency": "VND"
+      },
+      {
+        "territory": "VUT",
+        "countryCode": "VU",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "XKS",
+        "countryCode": "XK",
+        "customerPrice": "37.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "YEM",
+        "countryCode": "YE",
+        "customerPrice": "38.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZAF",
+        "countryCode": "ZA",
+        "customerPrice": "849.99",
+        "currency": "ZAR"
+      },
+      {
+        "territory": "ZMB",
+        "countryCode": "ZM",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZWE",
+        "countryCode": "ZW",
+        "customerPrice": "42.49",
+        "currency": "USD"
+      }
+    ],
+    "annual_discount_20": [
+      {
+        "territory": "AFG",
+        "countryCode": "AF",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "AGO",
+        "countryCode": "AO",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "AIA",
+        "countryCode": "AI",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ALB",
+        "countryCode": "AL",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARE",
+        "countryCode": "AE",
+        "customerPrice": "143.99",
+        "currency": "AED"
+      },
+      {
+        "territory": "ARG",
+        "countryCode": "AR",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARM",
+        "countryCode": "AM",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ATG",
+        "countryCode": "AG",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "AUS",
+        "countryCode": "AU",
+        "customerPrice": "55.99",
+        "currency": "AUD"
+      },
+      {
+        "territory": "AUT",
+        "countryCode": "AT",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "AZE",
+        "countryCode": "AZ",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BEL",
+        "countryCode": "BE",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BEN",
+        "countryCode": "BJ",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BFA",
+        "countryCode": "BF",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BGR",
+        "countryCode": "BG",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BHR",
+        "countryCode": "BH",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BHS",
+        "countryCode": "BS",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BIH",
+        "countryCode": "BA",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BLR",
+        "countryCode": "BY",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BLZ",
+        "countryCode": "BZ",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BMU",
+        "countryCode": "BM",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BOL",
+        "countryCode": "BO",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRA",
+        "countryCode": "BR",
+        "customerPrice": "239.9",
+        "currency": "BRL"
+      },
+      {
+        "territory": "BRB",
+        "countryCode": "BB",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRN",
+        "countryCode": "BN",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BTN",
+        "countryCode": "BT",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BWA",
+        "countryCode": "BW",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CAN",
+        "countryCode": "CA",
+        "customerPrice": "47.99",
+        "currency": "CAD"
+      },
+      {
+        "territory": "CHE",
+        "countryCode": "CH",
+        "customerPrice": "32.0",
+        "currency": "CHF"
+      },
+      {
+        "territory": "CHL",
+        "countryCode": "CL",
+        "customerPrice": "39990",
+        "currency": "CLP"
+      },
+      {
+        "territory": "CHN",
+        "countryCode": "CN",
+        "customerPrice": "238.0",
+        "currency": "CNY"
+      },
+      {
+        "territory": "CIV",
+        "countryCode": "CI",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CMR",
+        "countryCode": "CM",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "COD",
+        "countryCode": "CD",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "COG",
+        "countryCode": "CG",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "COL",
+        "countryCode": "CO",
+        "customerPrice": "159900.0",
+        "currency": "COP"
+      },
+      {
+        "territory": "CPV",
+        "countryCode": "CV",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CRI",
+        "countryCode": "CR",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYM",
+        "countryCode": "KY",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYP",
+        "countryCode": "CY",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "CZE",
+        "countryCode": "CZ",
+        "customerPrice": "950.0",
+        "currency": "CZK"
+      },
+      {
+        "territory": "DEU",
+        "countryCode": "DE",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "DMA",
+        "countryCode": "DM",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "DNK",
+        "countryCode": "DK",
+        "customerPrice": "319.0",
+        "currency": "DKK"
+      },
+      {
+        "territory": "DOM",
+        "countryCode": "DO",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "DZA",
+        "countryCode": "DZ",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ECU",
+        "countryCode": "EC",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "EGY",
+        "countryCode": "EG",
+        "customerPrice": "1999.99",
+        "currency": "EGP"
+      },
+      {
+        "territory": "ESP",
+        "countryCode": "ES",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "EST",
+        "countryCode": "EE",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FIN",
+        "countryCode": "FI",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FJI",
+        "countryCode": "FJ",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "FRA",
+        "countryCode": "FR",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FSM",
+        "countryCode": "FM",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GAB",
+        "countryCode": "GA",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GBR",
+        "countryCode": "GB",
+        "customerPrice": "35.99",
+        "currency": "GBP"
+      },
+      {
+        "territory": "GEO",
+        "countryCode": "GE",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GHA",
+        "countryCode": "GH",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GMB",
+        "countryCode": "GM",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GNB",
+        "countryCode": "GW",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GRC",
+        "countryCode": "GR",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "GRD",
+        "countryCode": "GD",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GTM",
+        "countryCode": "GT",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GUY",
+        "countryCode": "GY",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "HKG",
+        "countryCode": "HK",
+        "customerPrice": "293.0",
+        "currency": "HKD"
+      },
+      {
+        "territory": "HND",
+        "countryCode": "HN",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "HRV",
+        "countryCode": "HR",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "HUN",
+        "countryCode": "HU",
+        "customerPrice": "15990",
+        "currency": "HUF"
+      },
+      {
+        "territory": "IDN",
+        "countryCode": "ID",
+        "customerPrice": "639000",
+        "currency": "IDR"
+      },
+      {
+        "territory": "IND",
+        "countryCode": "IN",
+        "customerPrice": "3999.0",
+        "currency": "INR"
+      },
+      {
+        "territory": "IRL",
+        "countryCode": "IE",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "IRQ",
+        "countryCode": "IQ",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISL",
+        "countryCode": "IS",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISR",
+        "countryCode": "IL",
+        "customerPrice": "119.9",
+        "currency": "ILS"
+      },
+      {
+        "territory": "ITA",
+        "countryCode": "IT",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "JAM",
+        "countryCode": "JM",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "JOR",
+        "countryCode": "JO",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "JPN",
+        "countryCode": "JP",
+        "customerPrice": "5600",
+        "currency": "JPY"
+      },
+      {
+        "territory": "KAZ",
+        "countryCode": "KZ",
+        "customerPrice": "19990.0",
+        "currency": "KZT"
+      },
+      {
+        "territory": "KEN",
+        "countryCode": "KE",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KGZ",
+        "countryCode": "KG",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KHM",
+        "countryCode": "KH",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KNA",
+        "countryCode": "KN",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KOR",
+        "countryCode": "KR",
+        "customerPrice": "61500",
+        "currency": "KRW"
+      },
+      {
+        "territory": "KWT",
+        "countryCode": "KW",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LAO",
+        "countryCode": "LA",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBN",
+        "countryCode": "LB",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBR",
+        "countryCode": "LR",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBY",
+        "countryCode": "LY",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LCA",
+        "countryCode": "LC",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LKA",
+        "countryCode": "LK",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LTU",
+        "countryCode": "LT",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LUX",
+        "countryCode": "LU",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LVA",
+        "countryCode": "LV",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MAC",
+        "countryCode": "MO",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MAR",
+        "countryCode": "MA",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDA",
+        "countryCode": "MD",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDG",
+        "countryCode": "MG",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDV",
+        "countryCode": "MV",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MEX",
+        "countryCode": "MX",
+        "customerPrice": "799.0",
+        "currency": "MXN"
+      },
+      {
+        "territory": "MKD",
+        "countryCode": "MK",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLI",
+        "countryCode": "ML",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLT",
+        "countryCode": "MT",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MMR",
+        "countryCode": "MM",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MNE",
+        "countryCode": "ME",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MNG",
+        "countryCode": "MN",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MOZ",
+        "countryCode": "MZ",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MRT",
+        "countryCode": "MR",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MSR",
+        "countryCode": "MS",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MUS",
+        "countryCode": "MU",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MWI",
+        "countryCode": "MW",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MYS",
+        "countryCode": "MY",
+        "customerPrice": "159.9",
+        "currency": "MYR"
+      },
+      {
+        "territory": "NAM",
+        "countryCode": "NA",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NER",
+        "countryCode": "NE",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NGA",
+        "countryCode": "NG",
+        "customerPrice": "55900.0",
+        "currency": "NGN"
+      },
+      {
+        "territory": "NIC",
+        "countryCode": "NI",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NLD",
+        "countryCode": "NL",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "NOR",
+        "countryCode": "NO",
+        "customerPrice": "479.0",
+        "currency": "NOK"
+      },
+      {
+        "territory": "NPL",
+        "countryCode": "NP",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NRU",
+        "countryCode": "NR",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NZL",
+        "countryCode": "NZ",
+        "customerPrice": "63.99",
+        "currency": "NZD"
+      },
+      {
+        "territory": "OMN",
+        "countryCode": "OM",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "PAK",
+        "countryCode": "PK",
+        "customerPrice": "9500.0",
+        "currency": "PKR"
+      },
+      {
+        "territory": "PAN",
+        "countryCode": "PA",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "PER",
+        "countryCode": "PE",
+        "customerPrice": "159.9",
+        "currency": "PEN"
+      },
+      {
+        "territory": "PHL",
+        "countryCode": "PH",
+        "customerPrice": "2390.0",
+        "currency": "PHP"
+      },
+      {
+        "territory": "PLW",
+        "countryCode": "PW",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "PNG",
+        "countryCode": "PG",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "POL",
+        "countryCode": "PL",
+        "customerPrice": "159.99",
+        "currency": "PLN"
+      },
+      {
+        "territory": "PRT",
+        "countryCode": "PT",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "PRY",
+        "countryCode": "PY",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "QAT",
+        "countryCode": "QA",
+        "customerPrice": "119.99",
+        "currency": "QAR"
+      },
+      {
+        "territory": "ROU",
+        "countryCode": "RO",
+        "customerPrice": "199.99",
+        "currency": "RON"
+      },
+      {
+        "territory": "RUS",
+        "countryCode": "RU",
+        "customerPrice": "3190.0",
+        "currency": "RUB"
+      },
+      {
+        "territory": "RWA",
+        "countryCode": "RW",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SAU",
+        "countryCode": "SA",
+        "customerPrice": "159.99",
+        "currency": "SAR"
+      },
+      {
+        "territory": "SEN",
+        "countryCode": "SN",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SGP",
+        "countryCode": "SG",
+        "customerPrice": "47.98",
+        "currency": "SGD"
+      },
+      {
+        "territory": "SLB",
+        "countryCode": "SB",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLE",
+        "countryCode": "SL",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLV",
+        "countryCode": "SV",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SRB",
+        "countryCode": "RS",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "STP",
+        "countryCode": "ST",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SUR",
+        "countryCode": "SR",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SVK",
+        "countryCode": "SK",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SVN",
+        "countryCode": "SI",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SWE",
+        "countryCode": "SE",
+        "customerPrice": "479.0",
+        "currency": "SEK"
+      },
+      {
+        "territory": "SWZ",
+        "countryCode": "SZ",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SYC",
+        "countryCode": "SC",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCA",
+        "countryCode": "TC",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCD",
+        "countryCode": "TD",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "THA",
+        "countryCode": "TH",
+        "customerPrice": "1190.0",
+        "currency": "THB"
+      },
+      {
+        "territory": "TJK",
+        "countryCode": "TJ",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TKM",
+        "countryCode": "TM",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TON",
+        "countryCode": "TO",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TTO",
+        "countryCode": "TT",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUN",
+        "countryCode": "TN",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUR",
+        "countryCode": "TR",
+        "customerPrice": "1999.99",
+        "currency": "TRY"
+      },
+      {
+        "territory": "TWN",
+        "countryCode": "TW",
+        "customerPrice": "1190",
+        "currency": "TWD"
+      },
+      {
+        "territory": "TZA",
+        "countryCode": "TZ",
+        "customerPrice": "103900.0",
+        "currency": "TZS"
+      },
+      {
+        "territory": "UGA",
+        "countryCode": "UG",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "UKR",
+        "countryCode": "UA",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "URY",
+        "countryCode": "UY",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "USA",
+        "countryCode": "US",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "UZB",
+        "countryCode": "UZ",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VCT",
+        "countryCode": "VC",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VEN",
+        "countryCode": "VE",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VGB",
+        "countryCode": "VG",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VNM",
+        "countryCode": "VN",
+        "customerPrice": "1039000",
+        "currency": "VND"
+      },
+      {
+        "territory": "VUT",
+        "countryCode": "VU",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "XKS",
+        "countryCode": "XK",
+        "customerPrice": "35.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "YEM",
+        "countryCode": "YE",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZAF",
+        "countryCode": "ZA",
+        "customerPrice": "799.99",
+        "currency": "ZAR"
+      },
+      {
+        "territory": "ZMB",
+        "countryCode": "ZM",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZWE",
+        "countryCode": "ZW",
+        "customerPrice": "39.99",
+        "currency": "USD"
+      }
+    ],
+    "weekly": [
+      {
+        "territory": "AFG",
+        "countryCode": "AF",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "AGO",
+        "countryCode": "AO",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "AIA",
+        "countryCode": "AI",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ALB",
+        "countryCode": "AL",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARE",
+        "countryCode": "AE",
+        "customerPrice": "39.99",
+        "currency": "AED"
+      },
+      {
+        "territory": "ARG",
+        "countryCode": "AR",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARM",
+        "countryCode": "AM",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ATG",
+        "countryCode": "AG",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "AUS",
+        "countryCode": "AU",
+        "customerPrice": "14.99",
+        "currency": "AUD"
+      },
+      {
+        "territory": "AUT",
+        "countryCode": "AT",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "AZE",
+        "countryCode": "AZ",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BEL",
+        "countryCode": "BE",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BEN",
+        "countryCode": "BJ",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BFA",
+        "countryCode": "BF",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BGR",
+        "countryCode": "BG",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BHR",
+        "countryCode": "BH",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BHS",
+        "countryCode": "BS",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BIH",
+        "countryCode": "BA",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BLR",
+        "countryCode": "BY",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BLZ",
+        "countryCode": "BZ",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BMU",
+        "countryCode": "BM",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BOL",
+        "countryCode": "BO",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRA",
+        "countryCode": "BR",
+        "customerPrice": "59.9",
+        "currency": "BRL"
+      },
+      {
+        "territory": "BRB",
+        "countryCode": "BB",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRN",
+        "countryCode": "BN",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BTN",
+        "countryCode": "BT",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "BWA",
+        "countryCode": "BW",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CAN",
+        "countryCode": "CA",
+        "customerPrice": "12.99",
+        "currency": "CAD"
+      },
+      {
+        "territory": "CHE",
+        "countryCode": "CH",
+        "customerPrice": "9.0",
+        "currency": "CHF"
+      },
+      {
+        "territory": "CHL",
+        "countryCode": "CL",
+        "customerPrice": "9990",
+        "currency": "CLP"
+      },
+      {
+        "territory": "CHN",
+        "countryCode": "CN",
+        "customerPrice": "68.0",
+        "currency": "CNY"
+      },
+      {
+        "territory": "CIV",
+        "countryCode": "CI",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CMR",
+        "countryCode": "CM",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "COD",
+        "countryCode": "CD",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "COG",
+        "countryCode": "CG",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "COL",
+        "countryCode": "CO",
+        "customerPrice": "49900.0",
+        "currency": "COP"
+      },
+      {
+        "territory": "CPV",
+        "countryCode": "CV",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CRI",
+        "countryCode": "CR",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYM",
+        "countryCode": "KY",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYP",
+        "countryCode": "CY",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "CZE",
+        "countryCode": "CZ",
+        "customerPrice": "249.0",
+        "currency": "CZK"
+      },
+      {
+        "territory": "DEU",
+        "countryCode": "DE",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "DMA",
+        "countryCode": "DM",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "DNK",
+        "countryCode": "DK",
+        "customerPrice": "89.0",
+        "currency": "DKK"
+      },
+      {
+        "territory": "DOM",
+        "countryCode": "DO",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "DZA",
+        "countryCode": "DZ",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ECU",
+        "countryCode": "EC",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "EGY",
+        "countryCode": "EG",
+        "customerPrice": "499.99",
+        "currency": "EGP"
+      },
+      {
+        "territory": "ESP",
+        "countryCode": "ES",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "EST",
+        "countryCode": "EE",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FIN",
+        "countryCode": "FI",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FJI",
+        "countryCode": "FJ",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "FRA",
+        "countryCode": "FR",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FSM",
+        "countryCode": "FM",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GAB",
+        "countryCode": "GA",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GBR",
+        "countryCode": "GB",
+        "customerPrice": "9.99",
+        "currency": "GBP"
+      },
+      {
+        "territory": "GEO",
+        "countryCode": "GE",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GHA",
+        "countryCode": "GH",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GMB",
+        "countryCode": "GM",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GNB",
+        "countryCode": "GW",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GRC",
+        "countryCode": "GR",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "GRD",
+        "countryCode": "GD",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GTM",
+        "countryCode": "GT",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "GUY",
+        "countryCode": "GY",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "HKG",
+        "countryCode": "HK",
+        "customerPrice": "88.0",
+        "currency": "HKD"
+      },
+      {
+        "territory": "HND",
+        "countryCode": "HN",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "HRV",
+        "countryCode": "HR",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "HUN",
+        "countryCode": "HU",
+        "customerPrice": "4490",
+        "currency": "HUF"
+      },
+      {
+        "territory": "IDN",
+        "countryCode": "ID",
+        "customerPrice": "169000",
+        "currency": "IDR"
+      },
+      {
+        "territory": "IND",
+        "countryCode": "IN",
+        "customerPrice": "999.0",
+        "currency": "INR"
+      },
+      {
+        "territory": "IRL",
+        "countryCode": "IE",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "IRQ",
+        "countryCode": "IQ",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISL",
+        "countryCode": "IS",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISR",
+        "countryCode": "IL",
+        "customerPrice": "34.9",
+        "currency": "ILS"
+      },
+      {
+        "territory": "ITA",
+        "countryCode": "IT",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "JAM",
+        "countryCode": "JM",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "JOR",
+        "countryCode": "JO",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "JPN",
+        "countryCode": "JP",
+        "customerPrice": "1500",
+        "currency": "JPY"
+      },
+      {
+        "territory": "KAZ",
+        "countryCode": "KZ",
+        "customerPrice": "5990.0",
+        "currency": "KZT"
+      },
+      {
+        "territory": "KEN",
+        "countryCode": "KE",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KGZ",
+        "countryCode": "KG",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KHM",
+        "countryCode": "KH",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KNA",
+        "countryCode": "KN",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "KOR",
+        "countryCode": "KR",
+        "customerPrice": "17000",
+        "currency": "KRW"
+      },
+      {
+        "territory": "KWT",
+        "countryCode": "KW",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LAO",
+        "countryCode": "LA",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBN",
+        "countryCode": "LB",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBR",
+        "countryCode": "LR",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBY",
+        "countryCode": "LY",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LCA",
+        "countryCode": "LC",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LKA",
+        "countryCode": "LK",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "LTU",
+        "countryCode": "LT",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LUX",
+        "countryCode": "LU",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LVA",
+        "countryCode": "LV",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MAC",
+        "countryCode": "MO",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MAR",
+        "countryCode": "MA",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDA",
+        "countryCode": "MD",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDG",
+        "countryCode": "MG",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDV",
+        "countryCode": "MV",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MEX",
+        "countryCode": "MX",
+        "customerPrice": "199.0",
+        "currency": "MXN"
+      },
+      {
+        "territory": "MKD",
+        "countryCode": "MK",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLI",
+        "countryCode": "ML",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLT",
+        "countryCode": "MT",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MMR",
+        "countryCode": "MM",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MNE",
+        "countryCode": "ME",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MNG",
+        "countryCode": "MN",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MOZ",
+        "countryCode": "MZ",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MRT",
+        "countryCode": "MR",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MSR",
+        "countryCode": "MS",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MUS",
+        "countryCode": "MU",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MWI",
+        "countryCode": "MW",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "MYS",
+        "countryCode": "MY",
+        "customerPrice": "49.9",
+        "currency": "MYR"
+      },
+      {
+        "territory": "NAM",
+        "countryCode": "NA",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NER",
+        "countryCode": "NE",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NGA",
+        "countryCode": "NG",
+        "customerPrice": "14900.0",
+        "currency": "NGN"
+      },
+      {
+        "territory": "NIC",
+        "countryCode": "NI",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NLD",
+        "countryCode": "NL",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "NOR",
+        "countryCode": "NO",
+        "customerPrice": "129.0",
+        "currency": "NOK"
+      },
+      {
+        "territory": "NPL",
+        "countryCode": "NP",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NRU",
+        "countryCode": "NR",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "NZL",
+        "countryCode": "NZ",
+        "customerPrice": "19.99",
+        "currency": "NZD"
+      },
+      {
+        "territory": "OMN",
+        "countryCode": "OM",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "PAK",
+        "countryCode": "PK",
+        "customerPrice": "2900.0",
+        "currency": "PKR"
+      },
+      {
+        "territory": "PAN",
+        "countryCode": "PA",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "PER",
+        "countryCode": "PE",
+        "customerPrice": "44.9",
+        "currency": "PEN"
+      },
+      {
+        "territory": "PHL",
+        "countryCode": "PH",
+        "customerPrice": "599.0",
+        "currency": "PHP"
+      },
+      {
+        "territory": "PLW",
+        "countryCode": "PW",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "PNG",
+        "countryCode": "PG",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "POL",
+        "countryCode": "PL",
+        "customerPrice": "49.99",
+        "currency": "PLN"
+      },
+      {
+        "territory": "PRT",
+        "countryCode": "PT",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "PRY",
+        "countryCode": "PY",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "QAT",
+        "countryCode": "QA",
+        "customerPrice": "39.99",
+        "currency": "QAR"
+      },
+      {
+        "territory": "ROU",
+        "countryCode": "RO",
+        "customerPrice": "49.99",
+        "currency": "RON"
+      },
+      {
+        "territory": "RUS",
+        "countryCode": "RU",
+        "customerPrice": "899.0",
+        "currency": "RUB"
+      },
+      {
+        "territory": "RWA",
+        "countryCode": "RW",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SAU",
+        "countryCode": "SA",
+        "customerPrice": "39.99",
+        "currency": "SAR"
+      },
+      {
+        "territory": "SEN",
+        "countryCode": "SN",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SGP",
+        "countryCode": "SG",
+        "customerPrice": "14.98",
+        "currency": "SGD"
+      },
+      {
+        "territory": "SLB",
+        "countryCode": "SB",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLE",
+        "countryCode": "SL",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLV",
+        "countryCode": "SV",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SRB",
+        "countryCode": "RS",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "STP",
+        "countryCode": "ST",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SUR",
+        "countryCode": "SR",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SVK",
+        "countryCode": "SK",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SVN",
+        "countryCode": "SI",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SWE",
+        "countryCode": "SE",
+        "customerPrice": "129.0",
+        "currency": "SEK"
+      },
+      {
+        "territory": "SWZ",
+        "countryCode": "SZ",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "SYC",
+        "countryCode": "SC",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCA",
+        "countryCode": "TC",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCD",
+        "countryCode": "TD",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "THA",
+        "countryCode": "TH",
+        "customerPrice": "399.0",
+        "currency": "THB"
+      },
+      {
+        "territory": "TJK",
+        "countryCode": "TJ",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TKM",
+        "countryCode": "TM",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TON",
+        "countryCode": "TO",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TTO",
+        "countryCode": "TT",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUN",
+        "countryCode": "TN",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUR",
+        "countryCode": "TR",
+        "customerPrice": "499.99",
+        "currency": "TRY"
+      },
+      {
+        "territory": "TWN",
+        "countryCode": "TW",
+        "customerPrice": "320",
+        "currency": "TWD"
+      },
+      {
+        "territory": "TZA",
+        "countryCode": "TZ",
+        "customerPrice": "29900.0",
+        "currency": "TZS"
+      },
+      {
+        "territory": "UGA",
+        "countryCode": "UG",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "UKR",
+        "countryCode": "UA",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "URY",
+        "countryCode": "UY",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "USA",
+        "countryCode": "US",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "UZB",
+        "countryCode": "UZ",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VCT",
+        "countryCode": "VC",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VEN",
+        "countryCode": "VE",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VGB",
+        "countryCode": "VG",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "VNM",
+        "countryCode": "VN",
+        "customerPrice": "299000",
+        "currency": "VND"
+      },
+      {
+        "territory": "VUT",
+        "countryCode": "VU",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "XKS",
+        "countryCode": "XK",
+        "customerPrice": "7.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "YEM",
+        "countryCode": "YE",
+        "customerPrice": "9.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZAF",
+        "countryCode": "ZA",
+        "customerPrice": "199.99",
+        "currency": "ZAR"
+      },
+      {
+        "territory": "ZMB",
+        "countryCode": "ZM",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZWE",
+        "countryCode": "ZW",
+        "customerPrice": "11.99",
+        "currency": "USD"
+      }
+    ],
+    "annual_discount_80": [
+      {
+        "territory": "AFG",
+        "countryCode": "AF",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "AGO",
+        "countryCode": "AO",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "AIA",
+        "countryCode": "AI",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "ALB",
+        "countryCode": "AL",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARE",
+        "countryCode": "AE",
+        "customerPrice": "142.99",
+        "currency": "AED"
+      },
+      {
+        "territory": "ARG",
+        "countryCode": "AR",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "ARM",
+        "countryCode": "AM",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ATG",
+        "countryCode": "AG",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "AUS",
+        "countryCode": "AU",
+        "customerPrice": "55.0",
+        "currency": "AUD"
+      },
+      {
+        "territory": "AUT",
+        "countryCode": "AT",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "AZE",
+        "countryCode": "AZ",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BEL",
+        "countryCode": "BE",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BEN",
+        "countryCode": "BJ",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BFA",
+        "countryCode": "BF",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "BGR",
+        "countryCode": "BG",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BHR",
+        "countryCode": "BH",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "BHS",
+        "countryCode": "BS",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "BIH",
+        "countryCode": "BA",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "BLR",
+        "countryCode": "BY",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BLZ",
+        "countryCode": "BZ",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "BMU",
+        "countryCode": "BM",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "BOL",
+        "countryCode": "BO",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRA",
+        "countryCode": "BR",
+        "customerPrice": "239.0",
+        "currency": "BRL"
+      },
+      {
+        "territory": "BRB",
+        "countryCode": "BB",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "BRN",
+        "countryCode": "BN",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "BTN",
+        "countryCode": "BT",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "BWA",
+        "countryCode": "BW",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "CAN",
+        "countryCode": "CA",
+        "customerPrice": "47.95",
+        "currency": "CAD"
+      },
+      {
+        "territory": "CHE",
+        "countryCode": "CH",
+        "customerPrice": "33.5",
+        "currency": "CHF"
+      },
+      {
+        "territory": "CHL",
+        "countryCode": "CL",
+        "customerPrice": "43000",
+        "currency": "CLP"
+      },
+      {
+        "territory": "CHN",
+        "countryCode": "CN",
+        "customerPrice": "233.0",
+        "currency": "CNY"
+      },
+      {
+        "territory": "CIV",
+        "countryCode": "CI",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "CMR",
+        "countryCode": "CM",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "COD",
+        "countryCode": "CD",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "COG",
+        "countryCode": "CG",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "COL",
+        "countryCode": "CO",
+        "customerPrice": "166900.0",
+        "currency": "COP"
+      },
+      {
+        "territory": "CPV",
+        "countryCode": "CV",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "CRI",
+        "countryCode": "CR",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYM",
+        "countryCode": "KY",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "CYP",
+        "countryCode": "CY",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "CZE",
+        "countryCode": "CZ",
+        "customerPrice": "950.0",
+        "currency": "CZK"
+      },
+      {
+        "territory": "DEU",
+        "countryCode": "DE",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "DMA",
+        "countryCode": "DM",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "DNK",
+        "countryCode": "DK",
+        "customerPrice": "309.0",
+        "currency": "DKK"
+      },
+      {
+        "territory": "DOM",
+        "countryCode": "DO",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "DZA",
+        "countryCode": "DZ",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "ECU",
+        "countryCode": "EC",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "EGY",
+        "countryCode": "EG",
+        "customerPrice": "1909.99",
+        "currency": "EGP"
+      },
+      {
+        "territory": "ESP",
+        "countryCode": "ES",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "EST",
+        "countryCode": "EE",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FIN",
+        "countryCode": "FI",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FJI",
+        "countryCode": "FJ",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "FRA",
+        "countryCode": "FR",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "FSM",
+        "countryCode": "FM",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "GAB",
+        "countryCode": "GA",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "GBR",
+        "countryCode": "GB",
+        "customerPrice": "35.95",
+        "currency": "GBP"
+      },
+      {
+        "territory": "GEO",
+        "countryCode": "GE",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GHA",
+        "countryCode": "GH",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "GMB",
+        "countryCode": "GM",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "GNB",
+        "countryCode": "GW",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "GRC",
+        "countryCode": "GR",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "GRD",
+        "countryCode": "GD",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "GTM",
+        "countryCode": "GT",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "GUY",
+        "countryCode": "GY",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "HKG",
+        "countryCode": "HK",
+        "customerPrice": "283.0",
+        "currency": "HKD"
+      },
+      {
+        "territory": "HND",
+        "countryCode": "HN",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "HRV",
+        "countryCode": "HR",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "HUN",
+        "countryCode": "HU",
+        "customerPrice": "16690",
+        "currency": "HUF"
+      },
+      {
+        "territory": "IDN",
+        "countryCode": "ID",
+        "customerPrice": "595000",
+        "currency": "IDR"
+      },
+      {
+        "territory": "IND",
+        "countryCode": "IN",
+        "customerPrice": "3549.0",
+        "currency": "INR"
+      },
+      {
+        "territory": "IRL",
+        "countryCode": "IE",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "IRQ",
+        "countryCode": "IQ",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISL",
+        "countryCode": "IS",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ISR",
+        "countryCode": "IL",
+        "customerPrice": "119.0",
+        "currency": "ILS"
+      },
+      {
+        "territory": "ITA",
+        "countryCode": "IT",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "JAM",
+        "countryCode": "JM",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "JOR",
+        "countryCode": "JO",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "JPN",
+        "countryCode": "JP",
+        "customerPrice": "6000",
+        "currency": "JPY"
+      },
+      {
+        "territory": "KAZ",
+        "countryCode": "KZ",
+        "customerPrice": "21490.0",
+        "currency": "KZT"
+      },
+      {
+        "territory": "KEN",
+        "countryCode": "KE",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "KGZ",
+        "countryCode": "KG",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "KHM",
+        "countryCode": "KH",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "KNA",
+        "countryCode": "KN",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "KOR",
+        "countryCode": "KR",
+        "customerPrice": "60000",
+        "currency": "KRW"
+      },
+      {
+        "territory": "KWT",
+        "countryCode": "KW",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "LAO",
+        "countryCode": "LA",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBN",
+        "countryCode": "LB",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBR",
+        "countryCode": "LR",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "LBY",
+        "countryCode": "LY",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "LCA",
+        "countryCode": "LC",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "LKA",
+        "countryCode": "LK",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "LTU",
+        "countryCode": "LT",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LUX",
+        "countryCode": "LU",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "LVA",
+        "countryCode": "LV",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MAC",
+        "countryCode": "MO",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "MAR",
+        "countryCode": "MA",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDA",
+        "countryCode": "MD",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDG",
+        "countryCode": "MG",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "MDV",
+        "countryCode": "MV",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "MEX",
+        "countryCode": "MX",
+        "customerPrice": "710.0",
+        "currency": "MXN"
+      },
+      {
+        "territory": "MKD",
+        "countryCode": "MK",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLI",
+        "countryCode": "ML",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "MLT",
+        "countryCode": "MT",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MMR",
+        "countryCode": "MM",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "MNE",
+        "countryCode": "ME",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "MNG",
+        "countryCode": "MN",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "MOZ",
+        "countryCode": "MZ",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "MRT",
+        "countryCode": "MR",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "MSR",
+        "countryCode": "MS",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "MUS",
+        "countryCode": "MU",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "MWI",
+        "countryCode": "MW",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "MYS",
+        "countryCode": "MY",
+        "customerPrice": "166.9",
+        "currency": "MYR"
+      },
+      {
+        "territory": "NAM",
+        "countryCode": "NA",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "NER",
+        "countryCode": "NE",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "NGA",
+        "countryCode": "NG",
+        "customerPrice": "59500.0",
+        "currency": "NGN"
+      },
+      {
+        "territory": "NIC",
+        "countryCode": "NI",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "NLD",
+        "countryCode": "NL",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "NOR",
+        "countryCode": "NO",
+        "customerPrice": "475.0",
+        "currency": "NOK"
+      },
+      {
+        "territory": "NPL",
+        "countryCode": "NP",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "NRU",
+        "countryCode": "NR",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "NZL",
+        "countryCode": "NZ",
+        "customerPrice": "71.95",
+        "currency": "NZD"
+      },
+      {
+        "territory": "OMN",
+        "countryCode": "OM",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "PAK",
+        "countryCode": "PK",
+        "customerPrice": "9300.0",
+        "currency": "PKR"
+      },
+      {
+        "territory": "PAN",
+        "countryCode": "PA",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "PER",
+        "countryCode": "PE",
+        "customerPrice": "166.9",
+        "currency": "PEN"
+      },
+      {
+        "territory": "PHL",
+        "countryCode": "PH",
+        "customerPrice": "2390.0",
+        "currency": "PHP"
+      },
+      {
+        "territory": "PLW",
+        "countryCode": "PW",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "PNG",
+        "countryCode": "PG",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "POL",
+        "countryCode": "PL",
+        "customerPrice": "166.99",
+        "currency": "PLN"
+      },
+      {
+        "territory": "PRT",
+        "countryCode": "PT",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "PRY",
+        "countryCode": "PY",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "QAT",
+        "countryCode": "QA",
+        "customerPrice": "119.0",
+        "currency": "QAR"
+      },
+      {
+        "territory": "ROU",
+        "countryCode": "RO",
+        "customerPrice": "190.99",
+        "currency": "RON"
+      },
+      {
+        "territory": "RUS",
+        "countryCode": "RU",
+        "customerPrice": "3090.0",
+        "currency": "RUB"
+      },
+      {
+        "territory": "RWA",
+        "countryCode": "RW",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "SAU",
+        "countryCode": "SA",
+        "customerPrice": "142.99",
+        "currency": "SAR"
+      },
+      {
+        "territory": "SEN",
+        "countryCode": "SN",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "SGP",
+        "countryCode": "SG",
+        "customerPrice": "47.95",
+        "currency": "SGD"
+      },
+      {
+        "territory": "SLB",
+        "countryCode": "SB",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLE",
+        "countryCode": "SL",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "SLV",
+        "countryCode": "SV",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "SRB",
+        "countryCode": "RS",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "STP",
+        "countryCode": "ST",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "SUR",
+        "countryCode": "SR",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "SVK",
+        "countryCode": "SK",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SVN",
+        "countryCode": "SI",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "SWE",
+        "countryCode": "SE",
+        "customerPrice": "475.0",
+        "currency": "SEK"
+      },
+      {
+        "territory": "SWZ",
+        "countryCode": "SZ",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "SYC",
+        "countryCode": "SC",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCA",
+        "countryCode": "TC",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "TCD",
+        "countryCode": "TD",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "THA",
+        "countryCode": "TH",
+        "customerPrice": "1190.0",
+        "currency": "THB"
+      },
+      {
+        "territory": "TJK",
+        "countryCode": "TJ",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "TKM",
+        "countryCode": "TM",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "TON",
+        "countryCode": "TO",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "TTO",
+        "countryCode": "TT",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUN",
+        "countryCode": "TN",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "TUR",
+        "countryCode": "TR",
+        "customerPrice": "1909.99",
+        "currency": "TRY"
+      },
+      {
+        "territory": "TWN",
+        "countryCode": "TW",
+        "customerPrice": "1175",
+        "currency": "TWD"
+      },
+      {
+        "territory": "TZA",
+        "countryCode": "TZ",
+        "customerPrice": "95000.0",
+        "currency": "TZS"
+      },
+      {
+        "territory": "UGA",
+        "countryCode": "UG",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "UKR",
+        "countryCode": "UA",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "URY",
+        "countryCode": "UY",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "USA",
+        "countryCode": "US",
+        "customerPrice": "35.99",
+        "currency": "USD"
+      },
+      {
+        "territory": "UZB",
+        "countryCode": "UZ",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "VCT",
+        "countryCode": "VC",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "VEN",
+        "countryCode": "VE",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "VGB",
+        "countryCode": "VG",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "VNM",
+        "countryCode": "VN",
+        "customerPrice": "1195000",
+        "currency": "VND"
+      },
+      {
+        "territory": "VUT",
+        "countryCode": "VU",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "XKS",
+        "countryCode": "XK",
+        "customerPrice": "30.99",
+        "currency": "EUR"
+      },
+      {
+        "territory": "YEM",
+        "countryCode": "YE",
+        "customerPrice": "35.95",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZAF",
+        "countryCode": "ZA",
+        "customerPrice": "719.0",
+        "currency": "ZAR"
+      },
+      {
+        "territory": "ZMB",
+        "countryCode": "ZM",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      },
+      {
+        "territory": "ZWE",
+        "countryCode": "ZW",
+        "customerPrice": "43.0",
+        "currency": "USD"
+      }
+    ]
+  }
+}

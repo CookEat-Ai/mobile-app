@@ -1,3 +1,4 @@
+import { AppRadii } from '../constants/AppTheme';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Platform, StyleSheet, TextInput, View } from 'react-native';
@@ -11,7 +12,7 @@ interface SearchBarProps {
   onSearch?: () => void;
 }
 
-export default function SearchBar({ value, onChangeText, onSearch }: SearchBarProps) {
+export default function SearchBar({ value, onChangeText, onSearch, placeholder }: SearchBarProps) {
   const { t } = useTranslation();
   const colors = Colors.light;
 
@@ -19,7 +20,7 @@ export default function SearchBar({ value, onChangeText, onSearch }: SearchBarPr
   return (
     <View style={[styles.container, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <IconSymbol
-        name={Platform.OS === 'ios' ? 'magnifyingglass' : "search"}
+        name={'magnifyingglass'}
         size={20}
         color={colors.icon}
         style={styles.searchIcon}
@@ -28,7 +29,7 @@ export default function SearchBar({ value, onChangeText, onSearch }: SearchBarPr
         style={[styles.input, { color: colors.text }]}
         value={value}
         onChangeText={onChangeText}
-        placeholder={t(`common.searchPlaceholder`)}
+        placeholder={placeholder || t(`common.searchPlaceholder`)}
         placeholderTextColor={colors.icon}
         onSubmitEditing={onSearch}
         returnKeyType="search"
@@ -41,7 +42,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 2000,
+    borderRadius: AppRadii.control,
+    minHeight: 52,
     borderWidth: 1,
     paddingHorizontal: 16,
     paddingVertical: 12,

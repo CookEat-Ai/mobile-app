@@ -1,0 +1,36 @@
+Planning organization — 2026-10-01
+
+Implemented: dedicated Organize screen opened from PlanWeekContent; drag handles,
+scrolling drop zones and edge autoscroll, tap-to-choose fallback, swap or move,
+undo, unsaved-change guard, save-on-Done and server version conflict protection.
+Recipes keep their identity, portions, ingredients and weekly shopping list.
+Occupied days remain visible even outside the original generation preferences.
+New interface copy is available in the six existing locales.
+
+Observed in an isolated web harness rendering the production PlanningOrganizer:
+- French, cream theme, 390x844 and 320x568 viewports.
+- Monday lunch swapped with Wednesday lunch via destination picker.
+- Lunch dragged into empty dinner slot; release completed the move.
+- After scrolling, Wednesday lunch dragged into Thursday breakfast.
+- Daily calories changed and undo restored meals and locations.
+- Long recipe names wrapped; footer remained visible in the harness.
+The screenshot uses demonstration meals without recipe photographs.
+Temporary harness routes, entry point and HTML were removed after validation.
+
+Automated checks:
+- Mobile TypeScript and ESLint for modified screen/components/services.
+- Client move/swap/empty-slot/no-op/generation tests and planning-display tests.
+- API TypeScript build, placement-validation tests, mocked controller tests for
+  authorization, ownership, ended plans and atomic version conflicts.
+- Production Metro exports for iOS and Android.
+- Both repositories: git diff --check.
+
+Not observed: native drag behavior, full native navigation/discard sheet, actual
+MongoDB persistence or production endpoint. The computer-use tool could not bind
+Simulator, although simctl detected an installed app. Full-app web navigation
+was blocked by an existing ExpoTrackingTransparency import; the production
+organizer component was tested separately instead.
+
+Deployment: local implementation only. Deploy the API before distributing the
+mobile change; the old reorder endpoint does not understand placement requests.
+No production server restart, EAS update, Store submission or release performed.

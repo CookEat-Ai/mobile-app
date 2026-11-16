@@ -1,3 +1,4 @@
+import { MODAL_ROUTE_ANIMATION, PHOTO_CAPTURE_ROUTE_OPTIONS } from '../constants/ModalPresentation';
 import { PresentationModeControl } from '../components/PresentationModeControl';
 import { MotionPreferencesProvider } from '../contexts/MotionPreferences';
 import * as SplashScreen from 'expo-splash-screen';
@@ -7,7 +8,7 @@ import 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import { RecipeProvider } from '../contexts/RecipeContext';
 import { useEffect, useRef, useState } from 'react';
-import { Alert, Linking, Platform } from 'react-native';
+import { Alert, AppState, Linking, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Localization from 'expo-localization';
 import Constants from 'expo-constants';
@@ -37,6 +38,7 @@ import {
 import { resolveQuickActionTrial } from '../services/trialEligibility';
 import { APP_ENVIRONMENT } from '../config/env';
 import { DevOnboardingResetButton } from '../components/onboarding/DevOnboardingResetButton';
+import { useNotifications } from '../hooks/useNotifications';
 import { syncTrialReminderWithCustomerInfo } from '../services/trialReminder';
 import { resolveAppEntryRoute } from '../services/appEntryRoute';
 import { hydrateRecipePreferencesFromServer } from '../services/recipePreferences';
@@ -178,6 +180,7 @@ function QuickActionHandler({ revenueCatReady }: { revenueCatReady: boolean }) {
     };
 
     const customerInfoListener = (_customerInfo: CustomerInfo) => {
+      apiService.invalidateReadCache();
       void configure().catch((quickActionError) => {
         console.error('[QuickActions] Impossible d’actualiser l’offre:', quickActionError);
       });
@@ -256,6 +259,8 @@ function QuickActionHandler({ revenueCatReady }: { revenueCatReady: boolean }) {
   return null;
 }
 
+function NotificationLifecycle() { useNotifications(); return null; }
+
 function TrialReminderLifecycle({ revenueCatReady }: { revenueCatReady: boolean }) {
   useEffect(() => {
     if (!revenueCatReady) return;
@@ -327,15 +332,11 @@ function RootLayout() {
       const canonicalUserId = await analytics.init();
       analytics.track('app_opened');
 
-      // Utiliser dès le premier lancement l'identité d'installation commune,
-      // puis la fusionner avec l'identité serveur stable lorsqu'elle existe.
-      const storedUserId = await AsyncStorage.getItem('userId');
-      if (storedUserId) {
-        await revenueCatService.initialize(storedUserId);
-        analytics.identify(storedUserId);
-      } else {
-        await revenueCatService.initialize(canonicalUserId || undefined);
-      }
+      // RevenueCat reste anonyme tant que le serveur n'a pas fourni d'identité.
+      // Relire la valeur courante : l'onboarding peut l'avoir créée entre-temps.
+      const storedUserId = analytics.getCanonicalUserId() || canonicalUserId;
+      await revenueCatService.initialize(storedUserId || undefined);
+      if (storedUserId) await analytics.identify(storedUserId);
       setRevenueCatReady(true);
 
       // Récupérer le pays de l'utilisateur
@@ -356,13 +357,10 @@ function RootLayout() {
           // choix que l'utilisateur a déjà modifiés sur cet appareil.
           await hydrateRecipePreferencesFromServer(response.data);
 
-          // Toujours aligner RevenueCat sur l'identité serveur stable.
-          await revenueCatService.syncAppUserId(serverUserId);
-
           if (storedUserId !== serverUserId) {
             console.log('[Sync] userId corrigé:', storedUserId, '→', serverUserId);
             await AsyncStorage.setItem('userId', serverUserId);
-            analytics.identify(serverUserId);
+            await analytics.identify(serverUserId);
 
             try {
               if (storedUserId) await revenueCatService.restorePurchases();
@@ -396,6 +394,14 @@ function RootLayout() {
     }
   }, [loaded, error]);
 
+  // Revalidate personal responses when returning from the background.
+  useEffect(() => {
+    const listener = AppState.addEventListener('change', state => {
+      if (state === 'active') apiService.invalidateReadCache();
+    });
+    return () => listener.remove();
+  }, []);
+
   // Nettoyer Voice quand l'application se ferme
   useEffect(() => {
     recipeStorageService.cleanupOldRecipes();
@@ -423,6 +429,7 @@ function RootLayout() {
             <ShareIntentHandler />
             <QuickActionHandler revenueCatReady={revenueCatReady} />
             <TrialReminderLifecycle revenueCatReady={revenueCatReady} />
+            <NotificationLifecycle />
             <DevOnboardingResetButton />
             <PresentationModeControl />
             <Stack screenOptions={{ headerShown: false, statusBarStyle: 'dark', statusBarHidden: false }}>
@@ -431,11 +438,15 @@ function RootLayout() {
               <Stack.Screen name="(tabs)" options={{ headerShown: false, animation: 'none', statusBarStyle: 'dark', statusBarHidden: false }} />
               <Stack.Screen name="recipe-detail" options={{ headerShown: false }} />
               <Stack.Screen name="favorites-list" options={{ headerShown: false }} />
+              <Stack.Screen name="import-tutorial" options={{ headerShown: false, presentation: 'modal', animation: MODAL_ROUTE_ANIMATION, gestureEnabled: true }} />
               <Stack.Screen name="share-intent" options={{ headerShown: false, animation: 'fade' }} />
               <Stack.Screen name="recipe-loading" options={{ headerShown: false, animation: 'fade' }} />
-              <Stack.Screen name="recipe-loading-modal" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+              <Stack.Screen name="recipe-loading-modal" options={{ headerShown: false, presentation: 'modal', animation: MODAL_ROUTE_ANIMATION, gestureEnabled: false }} />
+              <Stack.Screen name="planning/ingredients" options={{ presentation: 'modal', animation: MODAL_ROUTE_ANIMATION, gestureEnabled: true }} />
               <Stack.Screen name="planning/loading" options={{ animation: 'none', gestureEnabled: false }} />
-              <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'modal', gestureEnabled: false }} />
+              <Stack.Screen name="tracking/manual" options={{ headerShown: false, presentation: 'modal', animation: MODAL_ROUTE_ANIMATION }} />
+              <Stack.Screen name="tracking/capture" options={PHOTO_CAPTURE_ROUTE_OPTIONS} />
+              <Stack.Screen name="camera" options={{ headerShown: false, presentation: 'modal', animation: MODAL_ROUTE_ANIMATION, gestureEnabled: false }} />
               {/* Tous les points d'entrée poussent cette route au-dessus d'un
                   écran valide, mais le contrat visuel reste plein écran : le
                   paywall final contient l'offre, la preuve sociale et toutes
@@ -446,6 +457,7 @@ function RootLayout() {
                 options={{
                   headerShown: false,
                   presentation: 'fullScreenModal',
+                  animation: MODAL_ROUTE_ANIMATION,
                   gestureEnabled: false,
                 }}
               />

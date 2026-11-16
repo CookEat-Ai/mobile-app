@@ -1,0 +1,11 @@
+{
+  "CFBundleIdentifier": "com.gokugen.cookeat",
+  "CFBundleShortVersionString": "1.7.2",
+  "CFBundleVersion": "22",
+  "MinimumOSVersion": "16.4",
+  "DTXcode": "2660",
+  "DTSDKName": "iphoneos26.5",
+  "NSCameraUsageDescription": "CookEat would like to access your camera to take photos of your ingredients.",
+  "NSMicrophoneUsageDescription": "This app uses the microphone for voice recognition to understand your available ingredients.",
+  "ITSAppUsesNonExemptEncryption": false
+}

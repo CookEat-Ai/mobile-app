@@ -1,0 +1,44 @@
+[
+  {
+    "file": "google-play-submission.jpg",
+    "dimensions": [
+      1512,
+      805
+    ],
+    "pixelsUnchanged": true,
+    "metadataRemoved": true,
+    "hostExtendedAttributes": [
+      "com.apple.provenance"
+    ],
+    "archiveExtendedAttributes": [],
+    "sha256": "f8f48d12f6a6f78ff6088d4500d69065d414f26807cd668a201839f027f02234"
+  },
+  {
+    "file": "android-excluded-days-editor.png",
+    "dimensions": [
+      1080,
+      2400
+    ],
+    "pixelsUnchanged": true,
+    "metadataRemoved": true,
+    "hostExtendedAttributes": [
+      "com.apple.provenance"
+    ],
+    "archiveExtendedAttributes": [],
+    "sha256": "9afb99dda2a275a7eda11903143130ea6fadf8b8386396639b9d791f039f29ba"
+  },
+  {
+    "file": "android10-plan.png",
+    "dimensions": [
+      1080,
+      2400
+    ],
+    "pixelsUnchanged": true,
+    "metadataRemoved": true,
+    "hostExtendedAttributes": [
+      "com.apple.provenance"
+    ],
+    "archiveExtendedAttributes": [],
+    "sha256": "3ba8094836ba8f0d3076d2e119b809bc967ce6b8e18df98b5f177c6f3ab11da4"
+  }
+]

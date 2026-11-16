@@ -1,8 +1,10 @@
+import { AppRefreshControl as RefreshControl } from '../components/ui/AppRefreshControl';
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { NavigationIconButton } from '../components/NavigationIconButton';
 import { router, useFocusEffect } from "expo-router";
 import React, { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, StyleSheet, Text, View, RefreshControl } from 'react-native';
+import { FlatList, StyleSheet, Text, View} from 'react-native';
 import Reanimated, { ReduceMotion, FadeInDown } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -40,10 +42,10 @@ export default function FavoritesListScreen() {
   const hasLoadedOnceRef = useRef(hasLoadedOnce);
   hasLoadedOnceRef.current = hasLoadedOnce;
 
-  const loadRecipes = useCallback(async (showLoader: boolean = false) => {
+  const loadRecipes = useCallback(async (showLoader: boolean = false, forceRefresh: boolean = false) => {
     try {
       if (showLoader) setLoading(true);
-      const favorites = await favoritesStorageService.getFavorites();
+      const favorites = await favoritesStorageService.getFavorites(forceRefresh);
       setRecipes(favorites || []);
     } catch (error) {
       console.error('Erreur lors du chargement des recettes:', error);
@@ -61,7 +63,7 @@ export default function FavoritesListScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadRecipes(false);
+    await loadRecipes(false, true);
     setRefreshing(false);
   }, [loadRecipes]);
 
@@ -146,8 +148,8 @@ const styles = StyleSheet.create({
   backButton: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: 'white',
+    borderRadius: AppRadii.card,
+    backgroundColor: designTheme.surface,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',

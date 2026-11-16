@@ -1,0 +1,164 @@
+{
+  "iphone-recipe": {
+    "imageSize": [
+      1206,
+      2622
+    ],
+    "cards": [
+      [
+        {
+          "x": 63,
+          "y": 1374,
+          "width": 340,
+          "height": 426
+        },
+        {
+          "x": 433,
+          "y": 1374,
+          "width": 340,
+          "height": 426
+        },
+        {
+          "x": 803,
+          "y": 1374,
+          "width": 340,
+          "height": 426
+        }
+      ],
+      [
+        {
+          "x": 63,
+          "y": 1836,
+          "width": 340,
+          "height": 426
+        },
+        {
+          "x": 433,
+          "y": 1836,
+          "width": 340,
+          "height": 426
+        },
+        {
+          "x": 803,
+          "y": 1836,
+          "width": 340,
+          "height": 426
+        }
+      ]
+    ],
+    "measuredPixelDifferences": {
+      "heightDelta": 0,
+      "widthDelta": 0,
+      "columnDelta": 0,
+      "rowTopDelta": 0
+    }
+  },
+  "ipad-recipe": {
+    "imageSize": [
+      1668,
+      2420
+    ],
+    "cards": [
+      [
+        {
+          "x": 42,
+          "y": 920,
+          "width": 515,
+          "height": 284
+        },
+        {
+          "x": 577,
+          "y": 920,
+          "width": 514,
+          "height": 284
+        },
+        {
+          "x": 1111,
+          "y": 920,
+          "width": 515,
+          "height": 284
+        }
+      ],
+      [
+        {
+          "x": 42,
+          "y": 1228,
+          "width": 515,
+          "height": 284
+        },
+        {
+          "x": 577,
+          "y": 1228,
+          "width": 514,
+          "height": 284
+        },
+        {
+          "x": 1111,
+          "y": 1228,
+          "width": 515,
+          "height": 284
+        }
+      ]
+    ],
+    "measuredPixelDifferences": {
+      "heightDelta": 0,
+      "widthDelta": 1,
+      "columnDelta": 0,
+      "rowTopDelta": 0
+    }
+  },
+  "android-recipe": {
+    "imageSize": [
+      1080,
+      2400
+    ],
+    "cards": [
+      [
+        {
+          "x": 56,
+          "y": 1251,
+          "width": 305,
+          "height": 372
+        },
+        {
+          "x": 388,
+          "y": 1251,
+          "width": 305,
+          "height": 372
+        },
+        {
+          "x": 720,
+          "y": 1251,
+          "width": 305,
+          "height": 372
+        }
+      ],
+      [
+        {
+          "x": 56,
+          "y": 1655,
+          "width": 305,
+          "height": 372
+        },
+        {
+          "x": 388,
+          "y": 1655,
+          "width": 305,
+          "height": 372
+        },
+        {
+          "x": 720,
+          "y": 1655,
+          "width": 305,
+          "height": 372
+        }
+      ]
+    ],
+    "measuredPixelDifferences": {
+      "heightDelta": 0,
+      "widthDelta": 0,
+      "columnDelta": 0,
+      "rowTopDelta": 0
+    }
+  }
+}

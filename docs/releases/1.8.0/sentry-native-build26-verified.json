@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-10-21T00:24:40.624Z",
+  "iosBuild": 26,
+  "executableDebugId": "593646af-82ac-3e8c-9048-865a7943414d",
+  "sentryMatch": true,
+  "files": [
+    {
+      "id": "1235882318",
+      "debugId": "593646af-82ac-3e8c-9048-865a7943414d",
+      "cpuName": "arm64",
+      "symbolType": "macho"
+    }
+  ],
+  "note": "Native executable unchanged across JS-only builds; symbol UUID matches previously uploaded dSYM. This does not by itself prove new JS symbolication."
+}

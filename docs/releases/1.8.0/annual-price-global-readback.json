@@ -1,0 +1,1862 @@
+{
+  "verifiedAt": "2026-10-21",
+  "experimentId": "exp46ca5ef93c",
+  "status": "DRAFT",
+  "priceOnly": true,
+  "nativePaywallUnchanged": true,
+  "hostedPaywallAssigned": false,
+  "existingDefaultOfferingsUnchanged": true,
+  "countriesInExperiment": [
+    "FRA",
+    "USA"
+  ],
+  "minimumAppVersion": "1.8.0",
+  "trialDays": 7,
+  "apple": {
+    "49": {
+      "id": "6824853609",
+      "productId": "com.gokugen.cookeat.Annual.PriceTest49",
+      "state": "READY_TO_SUBMIT",
+      "availableTerritories": 175,
+      "sevenDayTrialTerritories": 175,
+      "priceImport": {
+        "total": 175,
+        "created": 45,
+        "skipped": 130,
+        "failed": 0
+      },
+      "readback": [
+        {
+          "territory": "FRA",
+          "customerPrice": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "USA",
+          "customerPrice": "49.99",
+          "currency": "USD"
+        }
+      ],
+      "prices": [
+        {
+          "territory": "USA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "AFG",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "AGO",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "AIA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ALB",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ARE",
+          "price": "199.99",
+          "currency": "AED"
+        },
+        {
+          "territory": "ARG",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ARM",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ATG",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "AUS",
+          "price": "79.99",
+          "currency": "AUD"
+        },
+        {
+          "territory": "AUT",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "AZE",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BEL",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "BEN",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BFA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BGR",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "BHR",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BHS",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BIH",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "BLR",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BLZ",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BMU",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BOL",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BRA",
+          "price": "299.9",
+          "currency": "BRL"
+        },
+        {
+          "territory": "BRB",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BRN",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BTN",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BWA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "CAN",
+          "price": "69.99",
+          "currency": "CAD"
+        },
+        {
+          "territory": "CHE",
+          "price": "40.0",
+          "currency": "CHF"
+        },
+        {
+          "territory": "CHL",
+          "price": "59990",
+          "currency": "CLP"
+        },
+        {
+          "territory": "CHN",
+          "price": "328.0",
+          "currency": "CNY"
+        },
+        {
+          "territory": "CIV",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "CMR",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "COD",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "COG",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "COL",
+          "price": "229900.0",
+          "currency": "COP"
+        },
+        {
+          "territory": "CPV",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "CRI",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "CYM",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "CYP",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "CZE",
+          "price": "1290.0",
+          "currency": "CZK"
+        },
+        {
+          "territory": "DEU",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "DMA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "DNK",
+          "price": "399.0",
+          "currency": "DKK"
+        },
+        {
+          "territory": "DOM",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "DZA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ECU",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "EGY",
+          "price": "2499.99",
+          "currency": "EGP"
+        },
+        {
+          "territory": "ESP",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "EST",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "FIN",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "FJI",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "FRA",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "FSM",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GAB",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GBR",
+          "price": "49.99",
+          "currency": "GBP"
+        },
+        {
+          "territory": "GEO",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GHA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GMB",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GNB",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GRC",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "GRD",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GTM",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GUY",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "HKG",
+          "price": "388.0",
+          "currency": "HKD"
+        },
+        {
+          "territory": "HND",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "HRV",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "HUN",
+          "price": "22990",
+          "currency": "HUF"
+        },
+        {
+          "territory": "IDN",
+          "price": "999000",
+          "currency": "IDR"
+        },
+        {
+          "territory": "IND",
+          "price": "4999.0",
+          "currency": "INR"
+        },
+        {
+          "territory": "IRL",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "IRQ",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ISL",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ISR",
+          "price": "149.9",
+          "currency": "ILS"
+        },
+        {
+          "territory": "ITA",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "JAM",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "JOR",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "JPN",
+          "price": "8000",
+          "currency": "JPY"
+        },
+        {
+          "territory": "KAZ",
+          "price": "29990.0",
+          "currency": "KZT"
+        },
+        {
+          "territory": "KEN",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "KGZ",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "KHM",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "KNA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "KOR",
+          "price": "77000",
+          "currency": "KRW"
+        },
+        {
+          "territory": "KWT",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LAO",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LBN",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LBR",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LBY",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LCA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LKA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LTU",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "LUX",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "LVA",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "MAC",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MAR",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MDA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MDG",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MDV",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MEX",
+          "price": "999.0",
+          "currency": "MXN"
+        },
+        {
+          "territory": "MKD",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MLI",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MLT",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "MMR",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MNE",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "MNG",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MOZ",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MRT",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MSR",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MUS",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MWI",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MYS",
+          "price": "229.9",
+          "currency": "MYR"
+        },
+        {
+          "territory": "NAM",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "NER",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "NGA",
+          "price": "79900.0",
+          "currency": "NGN"
+        },
+        {
+          "territory": "NIC",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "NLD",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "NOR",
+          "price": "599.0",
+          "currency": "NOK"
+        },
+        {
+          "territory": "NPL",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "NRU",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "NZL",
+          "price": "99.99",
+          "currency": "NZD"
+        },
+        {
+          "territory": "OMN",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "PAK",
+          "price": "12900.0",
+          "currency": "PKR"
+        },
+        {
+          "territory": "PAN",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "PER",
+          "price": "229.9",
+          "currency": "PEN"
+        },
+        {
+          "territory": "PHL",
+          "price": "2990.0",
+          "currency": "PHP"
+        },
+        {
+          "territory": "PLW",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "PNG",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "POL",
+          "price": "229.99",
+          "currency": "PLN"
+        },
+        {
+          "territory": "PRT",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "PRY",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "QAT",
+          "price": "199.99",
+          "currency": "QAR"
+        },
+        {
+          "territory": "ROU",
+          "price": "299.99",
+          "currency": "RON"
+        },
+        {
+          "territory": "RUS",
+          "price": "4490.0",
+          "currency": "RUB"
+        },
+        {
+          "territory": "RWA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SAU",
+          "price": "199.99",
+          "currency": "SAR"
+        },
+        {
+          "territory": "SEN",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SGP",
+          "price": "69.98",
+          "currency": "SGD"
+        },
+        {
+          "territory": "SLB",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SLE",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SLV",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SRB",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "STP",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SUR",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SVK",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "SVN",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "SWE",
+          "price": "599.0",
+          "currency": "SEK"
+        },
+        {
+          "territory": "SWZ",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SYC",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TCA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TCD",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "THA",
+          "price": "1990.0",
+          "currency": "THB"
+        },
+        {
+          "territory": "TJK",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TKM",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TON",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TTO",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TUN",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TUR",
+          "price": "2499.99",
+          "currency": "TRY"
+        },
+        {
+          "territory": "TWN",
+          "price": "1490",
+          "currency": "TWD"
+        },
+        {
+          "territory": "TZA",
+          "price": "149900.0",
+          "currency": "TZS"
+        },
+        {
+          "territory": "UGA",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "UKR",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "URY",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "UZB",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "VCT",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "VEN",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "VGB",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "VNM",
+          "price": "1499000",
+          "currency": "VND"
+        },
+        {
+          "territory": "VUT",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "XKS",
+          "price": "49.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "YEM",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ZAF",
+          "price": "999.99",
+          "currency": "ZAR"
+        },
+        {
+          "territory": "ZMB",
+          "price": "49.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ZWE",
+          "price": "49.99",
+          "currency": "USD"
+        }
+      ]
+    },
+    "39": {
+      "id": "6824853554",
+      "productId": "com.gokugen.cookeat.Annual.PriceTest39",
+      "state": "READY_TO_SUBMIT",
+      "availableTerritories": 175,
+      "sevenDayTrialTerritories": 175,
+      "priceImport": {
+        "total": 175,
+        "created": 45,
+        "skipped": 130,
+        "failed": 0
+      },
+      "readback": [
+        {
+          "territory": "FRA",
+          "customerPrice": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "USA",
+          "customerPrice": "39.99",
+          "currency": "USD"
+        }
+      ],
+      "prices": [
+        {
+          "territory": "USA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "AFG",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "AGO",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "AIA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ALB",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ARE",
+          "price": "149.99",
+          "currency": "AED"
+        },
+        {
+          "territory": "ARG",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ARM",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ATG",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "AUS",
+          "price": "59.99",
+          "currency": "AUD"
+        },
+        {
+          "territory": "AUT",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "AZE",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BEL",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "BEN",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BFA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BGR",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "BHR",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BHS",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BIH",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "BLR",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BLZ",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BMU",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BOL",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BRA",
+          "price": "249.9",
+          "currency": "BRL"
+        },
+        {
+          "territory": "BRB",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BRN",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BTN",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "BWA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "CAN",
+          "price": "49.99",
+          "currency": "CAD"
+        },
+        {
+          "territory": "CHE",
+          "price": "35.0",
+          "currency": "CHF"
+        },
+        {
+          "territory": "CHL",
+          "price": "49990",
+          "currency": "CLP"
+        },
+        {
+          "territory": "CHN",
+          "price": "298.0",
+          "currency": "CNY"
+        },
+        {
+          "territory": "CIV",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "CMR",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "COD",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "COG",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "COL",
+          "price": "199900.0",
+          "currency": "COP"
+        },
+        {
+          "territory": "CPV",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "CRI",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "CYM",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "CYP",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "CZE",
+          "price": "999.0",
+          "currency": "CZK"
+        },
+        {
+          "territory": "DEU",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "DMA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "DNK",
+          "price": "349.0",
+          "currency": "DKK"
+        },
+        {
+          "territory": "DOM",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "DZA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ECU",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "EGY",
+          "price": "1999.99",
+          "currency": "EGP"
+        },
+        {
+          "territory": "ESP",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "EST",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "FIN",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "FJI",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "FRA",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "FSM",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GAB",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GBR",
+          "price": "39.99",
+          "currency": "GBP"
+        },
+        {
+          "territory": "GEO",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GHA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GMB",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GNB",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GRC",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "GRD",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GTM",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "GUY",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "HKG",
+          "price": "288.0",
+          "currency": "HKD"
+        },
+        {
+          "territory": "HND",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "HRV",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "HUN",
+          "price": "17990",
+          "currency": "HUF"
+        },
+        {
+          "territory": "IDN",
+          "price": "799000",
+          "currency": "IDR"
+        },
+        {
+          "territory": "IND",
+          "price": "3999.0",
+          "currency": "INR"
+        },
+        {
+          "territory": "IRL",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "IRQ",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ISL",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ISR",
+          "price": "119.9",
+          "currency": "ILS"
+        },
+        {
+          "territory": "ITA",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "JAM",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "JOR",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "JPN",
+          "price": "6000",
+          "currency": "JPY"
+        },
+        {
+          "territory": "KAZ",
+          "price": "22990.0",
+          "currency": "KZT"
+        },
+        {
+          "territory": "KEN",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "KGZ",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "KHM",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "KNA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "KOR",
+          "price": "66000",
+          "currency": "KRW"
+        },
+        {
+          "territory": "KWT",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LAO",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LBN",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LBR",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LBY",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LCA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LKA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "LTU",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "LUX",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "LVA",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "MAC",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MAR",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MDA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MDG",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MDV",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MEX",
+          "price": "899.0",
+          "currency": "MXN"
+        },
+        {
+          "territory": "MKD",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MLI",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MLT",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "MMR",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MNE",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "MNG",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MOZ",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MRT",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MSR",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MUS",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MWI",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "MYS",
+          "price": "199.9",
+          "currency": "MYR"
+        },
+        {
+          "territory": "NAM",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "NER",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "NGA",
+          "price": "69900.0",
+          "currency": "NGN"
+        },
+        {
+          "territory": "NIC",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "NLD",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "NOR",
+          "price": "499.0",
+          "currency": "NOK"
+        },
+        {
+          "territory": "NPL",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "NRU",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "NZL",
+          "price": "69.99",
+          "currency": "NZD"
+        },
+        {
+          "territory": "OMN",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "PAK",
+          "price": "9900.0",
+          "currency": "PKR"
+        },
+        {
+          "territory": "PAN",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "PER",
+          "price": "179.9",
+          "currency": "PEN"
+        },
+        {
+          "territory": "PHL",
+          "price": "2490.0",
+          "currency": "PHP"
+        },
+        {
+          "territory": "PLW",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "PNG",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "POL",
+          "price": "199.99",
+          "currency": "PLN"
+        },
+        {
+          "territory": "PRT",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "PRY",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "QAT",
+          "price": "149.99",
+          "currency": "QAR"
+        },
+        {
+          "territory": "ROU",
+          "price": "199.99",
+          "currency": "RON"
+        },
+        {
+          "territory": "RUS",
+          "price": "3490.0",
+          "currency": "RUB"
+        },
+        {
+          "territory": "RWA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SAU",
+          "price": "179.99",
+          "currency": "SAR"
+        },
+        {
+          "territory": "SEN",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SGP",
+          "price": "59.98",
+          "currency": "SGD"
+        },
+        {
+          "territory": "SLB",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SLE",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SLV",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SRB",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "STP",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SUR",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SVK",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "SVN",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "SWE",
+          "price": "499.0",
+          "currency": "SEK"
+        },
+        {
+          "territory": "SWZ",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "SYC",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TCA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TCD",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "THA",
+          "price": "1490.0",
+          "currency": "THB"
+        },
+        {
+          "territory": "TJK",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TKM",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TON",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TTO",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TUN",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "TUR",
+          "price": "1999.99",
+          "currency": "TRY"
+        },
+        {
+          "territory": "TWN",
+          "price": "1290",
+          "currency": "TWD"
+        },
+        {
+          "territory": "TZA",
+          "price": "99900.0",
+          "currency": "TZS"
+        },
+        {
+          "territory": "UGA",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "UKR",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "URY",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "UZB",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "VCT",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "VEN",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "VGB",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "VNM",
+          "price": "1199000",
+          "currency": "VND"
+        },
+        {
+          "territory": "VUT",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "XKS",
+          "price": "39.99",
+          "currency": "EUR"
+        },
+        {
+          "territory": "YEM",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ZAF",
+          "price": "799.99",
+          "currency": "ZAR"
+        },
+        {
+          "territory": "ZMB",
+          "price": "39.99",
+          "currency": "USD"
+        },
+        {
+          "territory": "ZWE",
+          "price": "39.99",
+          "currency": "USD"
+        }
+      ]
+    }
+  },
+  "google": {
+    "49": {
+      "productId": "annual_price_test_49",
+      "basePlanId": "annual",
+      "offerId": "trial7d",
+      "availableTerritories": 175,
+      "basePlanActive": true,
+      "offerActive": true,
+      "eligibility": "new customers who never subscribed to this app",
+      "eurUsdPricesVerified": true,
+      "priceRowsIncludingFutureRegions": 176,
+      "revenueCatProductId": "prod1ee71e3402",
+      "ProAttached": true
+    },
+    "39": {
+      "productId": "annual_price_test_39",
+      "basePlanId": "annual",
+      "offerId": "trial7d",
+      "availableTerritories": 175,
+      "basePlanActive": true,
+      "offerActive": true,
+      "eligibility": "new customers who never subscribed to this app",
+      "eurUsdPricesVerified": true,
+      "priceRowsIncludingFutureRegions": 176,
+      "revenueCatProductId": "prod39745f3aae",
+      "ProAttached": true
+    }
+  },
+  "entitlement": "Pro",
+  "offerings": {
+    "49InApp": "ofrngf00fec1c00",
+    "49Onboarding": "ofrng7ae6fdaa71",
+    "39InApp": "ofrng51e7b5b039",
+    "39Onboarding": "ofrngb7ea18de6b"
+  },
+  "activationPending": [
+    "Apple approval for both new subscriptions",
+    "Physical sandbox purchase and restore validation"
+  ],
+  "mobileBuildCreated": false,
+  "storeReviewSubmissionCreated": false
+}

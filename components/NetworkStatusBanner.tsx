@@ -1,3 +1,4 @@
+import { AppTheme as designTheme } from '../constants/AppTheme';
 import React, { useEffect, useState, useRef } from 'react';
 import { StyleSheet, Text, View, Animated, AppState } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FF9500',
   },
   text: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 16,
     fontFamily: 'Degular',
     textAlign: 'center',

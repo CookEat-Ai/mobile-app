@@ -3,10 +3,14 @@ import { markPlanningReveal } from './planningReveal';
 import { getAnonymousSessionToken, invalidateAnonymousSession } from './anonymousSession';
 import * as Localization from 'expo-localization';
 import { File } from 'expo-file-system';
+import { fetch as expoFetch } from 'expo/fetch';
+import { createMealPhotoStream } from './mealPhotoStream';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import EventSource from 'react-native-sse';
 import { API_BASE_URL, WS_URL } from '../config/api';
 import i18n, { resolveSupportedLanguage } from '../i18n';
+import { responseCache, responseCachePolicy, type ReadOptions } from './responseCache';
+import { personalMealPlan, writePersonalShoppingState } from './personalRecipe';
 
 function parsePartialJSON(text: string): any {
   if (!text || !text.trim()) return null;
@@ -73,6 +77,8 @@ function isCanceledFetchError(error: unknown) {
     || /FetchRequestCanceledException|fetch request has been cancel(?:ed|led)|operation (?:was )?aborted/i.test(message);
 }
 
+export type MealReminderTimes = { breakfast: number; lunch: number; dinner: number };
+
 export type RecipeFeasibilityResponse = {
   canGenerate: boolean;
   status: 'possible' | 'confirmed_impossible' | 'unchecked';
@@ -89,7 +95,22 @@ export type RecipeIdentity = {
   main_ingredients?: string[];
 };
 
+export type CostEstimate = {
+  status: 'estimated' | 'partial' | 'unavailable';
+  country: string; currency: string; servings: number;
+  amount: number | null; perServing: number | null; low: number | null; high: number | null;
+  knownAmount: number; coverage: number; missingIngredients: string[];
+  modelVersion: string; priceDate: string; exchangeRateDate: string; basis: 'consumed-ingredients';
+  countryBasis: 'food-index' | 'household-index-proxy' | 'us-retail-reference' | 'unavailable';
+  exchangeRateSource: 'ECB' | 'ExchangeRate-API';
+};
+
 export type MealPlanMeal = {
+  ingredientServings?: number;
+  ingredientScales?: number[];
+  artworkOnly?: boolean;
+  catalogVariant?: string;
+  estimatedCost?: CostEstimate;
   pantryOwned?: number;
   pantryRequired?: number;
   portionScale?: number;
@@ -116,7 +137,7 @@ export type MealPlanMeal = {
   proteins?: number;
   carbs?: number;
   fats?: number;
-  ingredients?: { name: string; quantity: string; icon?: string; tags?: string[] }[];
+  ingredients?: { name: string; quantity: string; icon?: string; tags?: string[]; indivisible?: boolean }[];
   steps?: { title: string; description: string }[];
   servings: number;
   locked: boolean;
@@ -130,8 +151,10 @@ export type CatalogCuisine = {
 };
 
 export type CatalogImageAttribution = {
-  provider: 'themealdb' | 'wikimedia-commons' | 'owned';
+  /** `video` : miniature de la vidéo importée (TikTok, Instagram…), nommée par `platform`. */
+  provider: 'themealdb' | 'wikimedia-commons' | 'owned' | 'video';
   sourceUrl: string;
+  platform?: string;
   creator?: string;
   license?: string;
   licenseUrl?: string;
@@ -141,6 +164,7 @@ export type CatalogImageAttribution = {
 export type CatalogMealCategory = 'breakfast' | 'main' | 'snack';
 
 export type CatalogRecipe = {
+  artworkOnly?: boolean;
   id: string;
   title: string;
   difficulty: 'EASY' | 'MEDIUM' | 'HARD';
@@ -154,7 +178,7 @@ export type CatalogRecipe = {
   carbs: string;
   chef_tip?: string;
   servings: number;
-  ingredients: Array<{ name: string; quantity: string; icon?: string; tags?: string[] }>;
+  ingredients: Array<{ name: string; quantity: string; icon?: string; tags?: string[]; indivisible?: boolean }>;
   steps: Array<{ title: string; description: string }>;
   mainIngredients: string[];
   language: string;
@@ -181,6 +205,7 @@ export type ShoppingListItem = {
 };
 
 export type MealPlan = {
+  estimatedCost?: CostEstimate;
   _id: string;
   userId: string;
   weekStart: string;
@@ -209,6 +234,7 @@ export type MealPlan = {
 };
 
 class ApiService {
+  private cacheUserId: string | null = null;
   private healthWs: WebSocket | null = null;
   private onHealthChange: ((isAvailable: boolean) => void) | null = null;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
@@ -229,6 +255,7 @@ class ApiService {
 
   /** Au retour au premier plan : reconnecte tout de suite au lieu d'attendre le délai de retry. */
   onAppForeground() {
+    this.invalidateReadCache();
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
@@ -313,22 +340,67 @@ class ApiService {
     return resolveSupportedLanguage(i18n.language);
   }
 
+  invalidateReadCache() {
+    responseCache.invalidatePersonal();
+  }
+
   private async request<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    timeoutMs: number = 60000,
+    readOptions: ReadOptions = {},
+  ): Promise<ApiResponse<T>> {
+    const method = (options.method || 'GET').toUpperCase();
+    const mutation = method !== 'GET' && /^(?:\/meal-plans(?:\/|$)|\/recipe(?:\/|$)|\/user\/(?:delete|init|onboarding|admin-access)$)/.test(endpoint);
+    if (mutation) {
+      this.invalidateReadCache();
+      try {
+        const response = await this.networkRequest<T>(endpoint, options, timeoutMs);
+        const data = response.data as any;
+        if (endpoint.startsWith('/meal-plans') && data?.plan) {
+          const userId = await AsyncStorage.getItem('userId').catch(()=>null);
+          if (userId) return {...response,data:{...data,plan:await personalMealPlan(data.plan,userId)}};
+        }
+        return response;
+      }
+      finally { this.invalidateReadCache(); }
+    }
+    const policy = method === 'GET' ? responseCachePolicy(endpoint) : null;
+    if (!policy) return this.networkRequest<T>(endpoint, options, timeoutMs);
+    let userId: string | null = null;
+    if (policy.group === 'personal') {
+      try { userId = await AsyncStorage.getItem('userId'); }
+      catch { return this.networkRequest<T>(endpoint, options, timeoutMs); }
+      if (userId !== this.cacheUserId) {
+        this.invalidateReadCache();
+        this.cacheUserId = userId;
+      }
+      if (!userId) return this.networkRequest<T>(endpoint, options, timeoutMs);
+    }
+    const key = JSON.stringify([API_BASE_URL, this.getCurrentLanguage(), userId, endpoint]);
+    return responseCache.read<T>(key, policy, () => this.networkRequest<T>(endpoint, options, timeoutMs), readOptions);
+  }
+
+  private async networkRequest<T>(
     endpoint: string,
     options: RequestInit = {},
     timeoutMs: number = 60000 // Repasser à un timeout plus long (30s) par défaut
   ): Promise<ApiResponse<T>> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+    const abort = () => controller.abort();
+    if(options.signal?.aborted)controller.abort();
+    options.signal?.addEventListener('abort',abort,{once:true});
 
     try {
       const url = `${API_BASE_URL}${endpoint}`;
 
       const headers: Record<string, string> = { ...this.getHeaders() } as Record<string, string>;
-      // Extraction routes are public and rate-limited on the API. A failed
-      // account/session registration must not prevent uploading an image.
-      const publicExtraction = /^\/recipe\/process-(?:image|video|voice)-ingredients$/.test(endpoint);
-      if (!publicExtraction && /^\/(?:meal-plans|user(?:s)?\/|recipe(?:\/|$)|promo-code\/(?:validate|mark-used))/.test(endpoint)) {
+      // Budget options and ingredient extraction are public API routes.
+      const path = endpoint.split('?')[0];
+      const publicRoute = (path === '/meal-plans/budget-options' && (options.method || 'GET').toUpperCase() === 'GET')
+        || /^\/recipe\/process-(?:image|video|voice)-ingredients$/.test(endpoint);
+      if (!publicRoute && /^\/(?:meal-plans|user(?:s)?\/|recipe(?:\/|$)|promo-code\/(?:validate|mark-used))/.test(endpoint)) {
         headers.Authorization = 'Bearer ' + await getAnonymousSessionToken();
       }
 
@@ -349,7 +421,10 @@ class ApiService {
       catch { return { error: i18n.t('common.requestError'), status: response.ok ? 502 : response.status }; }
 
       if (!response.ok) {
-        if (response.status === 401) invalidateAnonymousSession();
+        if (response.status === 401) {
+          invalidateAnonymousSession();
+          this.invalidateReadCache();
+        }
         return { error: response.status >= 500 ? i18n.t('common.requestError') : data.message || i18n.t('common.requestError'), status: response.status };
       }
 
@@ -364,7 +439,17 @@ class ApiService {
       return { error: i18n.t('common.networkError') };
     } finally {
       clearTimeout(timeoutId);
+      options.signal?.removeEventListener('abort',abort);
     }
+  }
+
+  async getAdminAccess() {
+    return this.request<{ active: boolean; expiresAt: string | null }>('/user/admin-access', {}, 8000);
+  }
+  async activateAdminAccess(code: string) {
+    return this.request<{ active: boolean; expiresAt: string | null }>('/user/admin-access', {
+      method: 'POST', body: JSON.stringify({ code }),
+    }, 8000);
   }
 
   // Utilisateur
@@ -423,6 +508,7 @@ class ApiService {
       onError: (message: string) => void;
     }
   ): { close: () => void } {
+    this.invalidateReadCache();
     const month = new Date().getMonth();
     const language = this.getCurrentLanguage();
     let ws: WebSocket | null = null;
@@ -480,7 +566,7 @@ class ApiService {
       pendingStepsAccumulated = null;
     };
 
-    AsyncStorage.getItem('userId').then((userId) => {
+    Promise.all([AsyncStorage.getItem('userId'), AsyncStorage.getItem('cookingLevel'), AsyncStorage.getItem('mealBudget')]).then(([userId, cookingLevel, mealBudget]) => {
       ws = new WebSocket(WS_URL);
 
       ws.onopen = () => {
@@ -489,7 +575,7 @@ class ApiService {
           payload: {
             ingredients, dishType, duration, servings, cuisineStyle, diet,
             goal, equipments, allergies, allowOtherIngredients, isSubscribed,
-            month, language, userId
+            month, language, userId, cookingLevel, mealBudget
           }
         }));
       };
@@ -525,11 +611,13 @@ class ApiService {
               break;
             case 'done':
               clearPreviewTimers();
+              this.invalidateReadCache();
               callbacks.onDone(msg.data);
               ws?.close();
               break;
             case 'error':
               clearPreviewTimers();
+              this.invalidateReadCache();
               callbacks.onError(msg.data.message || i18n.t('recipe_loading.generationError'));
               ws?.close();
               break;
@@ -540,11 +628,13 @@ class ApiService {
       };
 
       ws.onerror = (e) => {
+        this.invalidateReadCache();
         console.error('WS error:', e);
         callbacks.onError(i18n.t('recipe_loading.connectionError'));
       };
 
       ws.onclose = () => {
+        this.invalidateReadCache();
         clearPreviewTimers();
         ws = null;
       };
@@ -553,7 +643,7 @@ class ApiService {
     });
 
     return {
-      close: () => { clearPreviewTimers(); ws?.close(); ws = null; }
+      close: () => { this.invalidateReadCache(); clearPreviewTimers(); ws?.close(); ws = null; }
     };
   }
 
@@ -576,6 +666,61 @@ class ApiService {
         language: this.getCurrentLanguage()
       }),
     });
+  }
+
+  async analyzeTrackedMeal(uri: string, signal?: AbortSignal, onFood?: (item: import('./mealTracking').PhotoFood) => void, routePantry = false): Promise<ApiResponse<{analysis: import('./mealTracking').MealPhotoAnalysis}>> {
+    const controller = new AbortController(), abort = () => controller.abort();
+    const deadline = setTimeout(abort, 90000);
+    if (signal?.aborted) abort();
+    signal?.addEventListener('abort', abort, {once: true});
+    let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+    try {
+      const token = await new Promise<string>((resolve, reject) => {
+        const interrupted = () => { cleanup(); reject(new Error('photo_analysis_aborted')); };
+        const cleanup = () => controller.signal.removeEventListener('abort', interrupted);
+        if (controller.signal.aborted) { interrupted(); return; }
+        controller.signal.addEventListener('abort', interrupted, {once: true});
+        getAnonymousSessionToken().then(value => {cleanup(); resolve(value);}, error => {cleanup(); reject(error);});
+      });
+      if (controller.signal.aborted) return {error: i18n.t('tracking.analysisError')};
+      const form = new FormData(); form.append('image', new File(uri)); form.append('language', this.getCurrentLanguage());
+      if (routePantry) form.append('routePantry', 'true');
+      const response = await expoFetch(`${API_BASE_URL}/recipe/tracking/analyze`, {
+        method: 'POST', body: form, signal: controller.signal,
+        headers: {Authorization: 'Bearer ' + token, Accept: 'text/event-stream'},
+      });
+      if (!response.ok) {
+        if (response.status === 401) { invalidateAnonymousSession(); this.invalidateReadCache(); }
+        return {error: i18n.t('tracking.analysisError'), status: response.status};
+      }
+      // Keep compatibility while API and mobile versions roll out independently.
+      if (!response.headers.get('content-type')?.includes('text/event-stream')) return {data: await response.json()};
+      if (!response.body) throw new Error('missing_photo_stream');
+      reader = response.body.getReader();
+      const decoder = new TextDecoder(), stream = createMealPhotoStream(item => { if (!controller.signal.aborted) onFood?.(item); });
+      while (!stream.done) {
+        const {done, value} = await reader.read();
+        if (controller.signal.aborted) throw new Error('photo_stream_aborted');
+        if (done) { stream.push(decoder.decode()); break; }
+        stream.push(decoder.decode(value, {stream: true}));
+      }
+      return {data: {analysis: stream.finish()}};
+    } catch { return {error: i18n.t('tracking.analysisError')}; }
+    finally {
+      clearTimeout(deadline); signal?.removeEventListener('abort', abort);
+      if (reader) { try { await reader.cancel(); } catch { /* Already aborted. */ } }
+      controller.abort();
+    }
+  }
+
+  async confirmTrackedMeal(scanId:string,meal:{title:string;items:import('./mealTracking').PhotoFood[];mealType:string;nutritionOverride?:import('./mealTracking').FoodNutrition|null;shareWithCatalog?:boolean},photoUri?:string) {
+    const payload={...meal,language:this.getCurrentLanguage(),...(meal.shareWithCatalog?{referenceConsentVersion:'tracking-confirmation-v1'}:{})};
+    let body:FormData|string=JSON.stringify(payload);
+    if(meal.shareWithCatalog && photoUri){const form=new FormData();form.append('payload',JSON.stringify(payload));form.append('image',new File(photoUri));body=form;}
+    return this.request<{meal:{id:string;title:string;items:import('./mealTracking').PhotoFood[];nutrition:import('./mealTracking').FoodNutrition;mealType:'breakfast'|'lunch'|'snack'|'dinner';estimated:true};catalogue:{status:string;id:string|null}}>(`/recipe/tracking/${encodeURIComponent(scanId)}/confirm`,{method:'POST',body},30000);
+  }
+  async searchTrackingFoods(search:string) {
+    return this.request<{foods:{foodKey:string;name:string;description:string;sourceId:string;per100g:import('./mealTracking').FoodNutrition}[]}>(`/recipe/tracking/foods?search=${encodeURIComponent(search)}`,{},12000);
   }
 
   async processImageIngredients(imageUris: string[]) {
@@ -623,44 +768,65 @@ class ApiService {
     });
   }
 
-  async getCatalogCuisines() {
-    return this.request<{ success: boolean; cuisines: CatalogCuisine[] }>('/catalog/cuisines', { method: 'GET' }, 12000);
+  async getCatalogCuisines(readOptions: ReadOptions = {}) {
+    const response = await this.request<{ success: boolean; cuisines: CatalogCuisine[] }>('/catalog/cuisines', { method: 'GET' }, 12000, readOptions);
+    if (!response.data) return response;
+    // Older catalogues still include “/ fitness” in this category's display name.
+    return { ...response, data: { ...response.data, cuisines: response.data.cuisines.map(cuisine => cuisine.id === 'international'
+      ? { ...cuisine, names: cuisine.names.map(name => ({ ...name, value: name.value.replace(/\s*\/\s*fitness\s*$/i, '').trim() })) }
+      : cuisine) } };
   }
 
-  async getCatalogRecipe(recipeId: string) {
+  async getCatalogRecipe(recipeId: string, readOptions: ReadOptions = {}) {
     const params = new URLSearchParams({ language: this.getCurrentLanguage() });
-    return this.request<{ success: boolean; recipe: CatalogRecipe }>(`/catalog/recipes/${encodeURIComponent(recipeId)}?${params.toString()}`, { method: 'GET' }, 12000);
+    return this.request<{ success: boolean; recipe: CatalogRecipe }>(`/catalog/recipes/${encodeURIComponent(recipeId)}?${params.toString()}`, { method: 'GET' }, 12000, readOptions);
   }
 
   async getRecipeCatalog(options: {
+    search?: string;
     page?: number;
     limit?: number;
     cuisineId?: string;
     mealType?: CatalogMealCategory | 'lunch' | 'dinner';
     express?: boolean;
     highProtein?: boolean;
+    light?: boolean;
+    goal?: 'lose_weight' | 'gain_muscle' | 'maintain' | 'balanced';
+    dailyCalories?: number;
+    dailyProteinGrams?: number;
+    includeSnack?: boolean;
     diet?: string;
     maxMinutes?: number;
     allergies?: string[];
     excludedIngredients?: string[];
-  } = {}) {
+    pantryIngredients?: string[];
+  } = {}, readOptions: ReadOptions = {}) {
     const params = new URLSearchParams({
       language: this.getCurrentLanguage(),
       page: String(options.page || 1),
       limit: String(options.limit || 50),
     });
+    if (options.search?.trim()) params.set('search', options.search.trim());
     if (options.cuisineId && options.cuisineId !== 'all') params.set('cuisineId', options.cuisineId);
     if (options.mealType) params.set('mealType', options.mealType);
     if (options.express) params.set('express', 'true');
     if (options.highProtein) params.set('highProtein', 'true');
+    if (options.light) params.set('light', 'true');
+    if (options.goal && options.goal !== 'balanced' && Number.isFinite(options.dailyCalories)) {
+      params.set('goal', options.goal);
+      params.set('dailyCalories', String(options.dailyCalories));
+      if (Number.isFinite(options.dailyProteinGrams)) params.set('dailyProteinGrams', String(options.dailyProteinGrams));
+      params.set('includeSnack', String(options.includeSnack === true));
+    }
     if (options.diet && options.diet !== 'none') params.set('diet', options.diet);
     if (options.maxMinutes) params.set('maxMinutes', String(options.maxMinutes));
     if (options.allergies?.length) params.set('allergies', options.allergies.join(','));
     if (options.excludedIngredients?.length) params.set('excludedIngredients', options.excludedIngredients.join(','));
-    return this.request<{ success: boolean; recipes: CatalogRecipe[]; page: number; limit: number; total: number; pages: number }>(`/catalog/recipes?${params.toString()}`, { method: 'GET' }, 12000);
+    for (const ingredient of options.pantryIngredients || []) params.append('pantryIngredient', ingredient);
+    return this.request<{ success: boolean; pantryMatched?: boolean; recipes: CatalogRecipe[]; page: number; limit: number; total: number; pages: number }>(`/catalog/recipes?${params.toString()}`, { method: 'GET' }, 12000, readOptions);
   }
 
-  async getRecipeHistory(userId: string, page: number = 1, limit: number = 30, options?: { isImported?: boolean }) {
+  async getRecipeHistory(userId: string, page: number = 1, limit: number = 30, options?: { isImported?: boolean; forceRefresh?: boolean }) {
     const params = new URLSearchParams({
       page: String(page),
       limit: String(limit),
@@ -671,32 +837,68 @@ class ApiService {
     }
     return this.request<{ success: boolean; history: any[]; pagination?: { page: number; limit: number; total: number; hasMore: boolean } }>(`/recipe/history/${userId}?${params.toString()}`, {
       method: 'GET',
-    });
+    }, 60000, options);
   }
 
-  async getRecipeById(id: string) {
-    return this.request<{ success: boolean; recipe: any }>(`/recipe/detail/${id}?language=${encodeURIComponent(this.getCurrentLanguage())}`, {
+  async chatAboutTrackedMeal(input: { title: string; items: import('./mealTracking').PhotoFood[]; message: string; history: import('./personalRecipe').RecipeChatMessage[] }) {
+    return this.request<{ action: 'answer' | 'modify' | 'refuse'; reply: string; meal: {title: string; items: import('./mealTracking').PhotoFood[]; nutrition: import('./mealTracking').FoodNutrition | null; mealType?: import('./mealTracking').TrackedMeal['mealType'] | null} | null }>('/recipe/tracking/chat', {
+      method: 'POST', body: JSON.stringify({...input, language:this.getCurrentLanguage()}),
+    }, 90000);
+  }
+
+  async chatAboutRecipe(input: { recipe: any; message: string; history: import('./personalRecipe').RecipeChatMessage[] }) {
+    const locale = Localization.getLocales()[0];
+    return this.request<{ action: 'answer' | 'modify' | 'refuse'; reply: string; recipe: Record<string, any> | null }>('/recipe/chat', {
+      method: 'POST', body: JSON.stringify({ ...input, language: this.getCurrentLanguage(), country: input.recipe.estimatedCost?.country || locale?.regionCode || 'FR', currency: input.recipe.estimatedCost?.currency || locale?.currencyCode || 'EUR' }),
+    }, 90000);
+  }
+
+  async getRecipeById(id: string, readOptions: ReadOptions = {}) {
+    return this.request<{ success: boolean; recipe: any }>(`/recipe/detail/${encodeURIComponent(id)}?language=${encodeURIComponent(this.getCurrentLanguage())}`, {
       method: 'GET',
-    });
+    }, 12000, readOptions);
   }
 
-  async getMealPlan(userId: string, weekStart?: string, preview = false) {
-    const params = new URLSearchParams({ language: this.getCurrentLanguage() });
+  async getRecipeGoalFit(id: string, targets: { dailyCalories: number; dailyProteinGrams: number }) {
+    return this.request<{ success: boolean; goalFit: import('./recipeGoalFit').GoalFit }>(`/recipe/detail/${encodeURIComponent(id)}/goal-fit?language=${encodeURIComponent(this.getCurrentLanguage())}`, {
+      method: 'POST', body: JSON.stringify(targets),
+    }, 12000);
+  }
+
+  async getPlanningBudgetOptions(servings:number, days = 7) {
+    const locale=Localization.getLocales()[0];
+    return this.request<{country:string;currency:string;servings:number;minimum:number;maximum:number;step:number;defaultAmount:number;horizonDays:number}>(`/meal-plans/budget-options?servings=${servings}&days=${days}&country=${encodeURIComponent(locale?.regionCode||'FR')}&currency=${encodeURIComponent(locale?.currencyCode||'EUR')}`, {}, 8000);
+  }
+
+  async getMealPlan(userId: string, weekStart?: string, preview = false, readOptions: ReadOptions = {}) {
+    const params = new URLSearchParams({ language: this.getCurrentLanguage(), timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
     if (weekStart) params.set('weekStart', weekStart);
     if (preview) params.set('preview', 'true');
     const query = `?${params.toString()}`;
-    return this.request<{ success: boolean; plan: MealPlan | null }>(`/meal-plans/user/${userId}${query}`, { method: 'GET' }, 12000);
+    const response = await this.request<{ success: boolean; plan: MealPlan | null }>(`/meal-plans/user/${userId}${query}`, { method: 'GET' }, 12000, readOptions);
+    if (response.data) return {...response,data:{...response.data,plan:await personalMealPlan(response.data.plan,userId)}};
+    return response;
   }
 
-  async listMealPlans(userId: string) {
-    return this.request<{ success: boolean; plans: MealPlan[] }>(`/meal-plans/user/${userId}/all?language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000);
+  async listMealPlans(userId: string, readOptions: ReadOptions = {}) {
+    const response = await this.request<{ success: boolean; plans: MealPlan[] }>(`/meal-plans/user/${userId}/all?language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000, readOptions);
+    if (response.data) return {...response,data:{...response.data,plans:await Promise.all(response.data.plans.map(async plan=>(await personalMealPlan(plan,userId))!))}};
+    return response;
   }
 
-  async getMealPlanById(planId: string, userId: string) {
+  async getMealPlanById(planId: string, userId: string, readOptions: ReadOptions = {}, personal = true) {
     if (!planId || planId === 'undefined' || planId === 'null') {
       return { error: i18n.t('planning.errors.load'), status: 400 } as ApiResponse<{ success: boolean; plan: MealPlan }>;
     }
-    return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}?userId=${encodeURIComponent(userId)}&language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000);
+    const response = await this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}?userId=${encodeURIComponent(userId)}&language=${encodeURIComponent(this.getCurrentLanguage())}`, { method: 'GET' }, 12000, readOptions);
+    if (personal && response.data) return {...response,data:{...response.data,plan:(await personalMealPlan(response.data.plan,userId))!}};
+    return response;
+  }
+
+  async deleteMealPlan(planId: string, userId: string) {
+    return this.request<{ success: boolean; deletedPlanId: string }>(`/meal-plans/${encodeURIComponent(planId)}`, {
+      method: 'DELETE', body: JSON.stringify({ userId }),
+    }, 15000);
   }
 
   async createMealPlan(input: {
@@ -708,9 +910,12 @@ class ApiService {
     preview?: boolean;
     replaceExisting?: boolean;
   }) {
+    const locale = Localization.getLocales()?.[0];
+    const preferences = { ...input.preferences, country: input.preferences.country || locale?.regionCode || 'FR',
+      currency: input.preferences.currency || locale?.currencyCode || undefined };
     const response = await this.request<{ success: boolean; plan: MealPlan; restored?: boolean }>('/meal-plans/draft', {
       method: 'POST',
-      body: JSON.stringify({ ...input, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage() }),
+      body: JSON.stringify({ ...input, preferences, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage() }),
     }, 90000);
     if (response.data?.plan?._id && !response.data.restored) markPlanningReveal(response.data.plan._id);
     return response;
@@ -740,7 +945,7 @@ class ApiService {
     }, 90000);
   }
 
-  async updatePlannedMeal(planId: string, slotId: string, userId: string, patch: { locked?: boolean; servings?: number; image?: string }) {
+  async updatePlannedMeal(planId: string, slotId: string, userId: string, patch: { locked?: boolean; servings?: number; image?: string; preview?: boolean }) {
     return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/meals/${slotId}`, {
       method: 'PATCH', body: JSON.stringify({ timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, language: this.getCurrentLanguage(), userId, ...patch }),
     });
@@ -775,6 +980,12 @@ class ApiService {
   }
 
   async updateShoppingItem(planId: string, itemId: string, userId: string, patch: { checked?: boolean; excluded?: boolean }, preview = false) {
+    if (itemId.startsWith('personal:')) {
+      const response = await this.getMealPlanById(planId,userId,{},false);
+      if (!response.data?.plan) return response;
+      await writePersonalShoppingState(userId,planId,itemId,patch);
+      return {...response,data:{...response.data,plan:(await personalMealPlan(response.data.plan,userId))!}};
+    }
     return this.request<{ success: boolean; plan: MealPlan }>(`/meal-plans/${planId}/shopping-list/${itemId}`, {
       method: 'PATCH', body: JSON.stringify({ language: this.getCurrentLanguage(), userId, ...patch, preview }),
     });
@@ -870,75 +1081,69 @@ class ApiService {
     isSubscribed: boolean = false,
     callbacks?: {
       onProgress?: (progress: number, step?: string) => void;
+      signal?: AbortSignal;
     }
   ): Promise<ApiResponse<{ success: boolean; recipe: any }>> {
-    let token: string;
-    try { token = await getAnonymousSessionToken(); } catch { return { error: i18n.t('common.networkError') }; }
-    const userId = await AsyncStorage.getItem('userId');
-    const url = `${API_BASE_URL}/recipe/import-from-video`;
-
+    this.invalidateReadCache();
     return new Promise((resolve) => {
-      const es = new EventSource(url, {
-        method: 'POST',
-        headers: {
-          ...this.getHeaders() as any,
-          Authorization: 'Bearer ' + token,
-        },
-        body: JSON.stringify({
-          url: videoUrl,
-          userId,
-          isSubscribed,
-          language: this.getCurrentLanguage(),
-        }),
-      });
+      let settled = false;
+      let source: EventSource | null = null;
+      const signal = callbacks?.signal;
+      const finish = (response: ApiResponse<{ success: boolean; recipe: any }>) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(deadline);
+        signal?.removeEventListener('abort', onAbort);
+        source?.close();
+        this.invalidateReadCache();
+        resolve(response);
+      };
+      const onAbort = () => finish({ error: i18n.t('shareIntent.genericError') });
+      const deadline = setTimeout(() => finish({ error: i18n.t('shareIntent.timeout') }), 300000);
+      signal?.addEventListener('abort', onAbort, { once: true });
+      if (signal?.aborted) { onAbort(); return; }
 
-      let hasResolved = false;
-
-      (es as any).addEventListener('progress', (event: any) => {
+      void (async () => {
         try {
-          const data = JSON.parse(event.data);
-          callbacks?.onProgress?.(data.progress ?? 0, data.step);
-        } catch (e) {
-          console.error('[SSE] Parse progress error:', e);
-        }
-      });
-
-      (es as any).addEventListener('done', (event: any) => {
-        try {
-          const data = JSON.parse(event.data);
-          es.close();
-          if (!hasResolved) {
-            hasResolved = true;
-            resolve({ data: { success: data.success, recipe: data.recipe } });
-          }
-        } catch (e) {
-          console.error('[SSE] Parse done error:', e);
-          es.close();
-          if (!hasResolved) {
-            hasResolved = true;
-            resolve({ error: 'Erreur de réponse finale' });
-          }
-        }
-      });
-
-      es.addEventListener('error', (event: any) => {
-        console.error('[SSE] Error event:', event);
-        es.close();
-        if (!hasResolved) {
-          hasResolved = true;
-          const message = event.data ? JSON.parse(event.data).message : 'Erreur d\'import';
-          resolve({ error: message });
-        }
-      });
-
-      // Timeout de sécurité si rien ne se passe pendant 5 minutes
-      setTimeout(() => {
-        if (!hasResolved) {
-          es.close();
-          hasResolved = true;
-          resolve({ error: 'Délai d\'importation dépassé' });
-        }
-      }, 300000);
+          const token = await getAnonymousSessionToken();
+          const userId = await AsyncStorage.getItem('userId');
+          if (settled) return;
+          source = new EventSource(`${API_BASE_URL}/recipe/import-from-video`, {
+            method: 'POST',
+            headers: { ...this.getHeaders() as any, Authorization: 'Bearer ' + token },
+            body: JSON.stringify({ url: videoUrl, userId, isSubscribed, language: this.getCurrentLanguage() }),
+            // Reconnecting a POST would create another import and consume quota.
+            pollingInterval: 0,
+            lineEndingCharacter: '\n',
+          });
+          source.addEventListener('progress' as any, (event: any) => {
+            if (settled) return;
+            try {
+              const data = JSON.parse(event.data);
+              if (typeof data.progress === 'number' && Number.isFinite(data.progress))
+                callbacks?.onProgress?.(Math.max(0, Math.min(100, data.progress)), data.step);
+            } catch { /* Ignore a malformed progress frame, never the terminal response. */ }
+          });
+          source.addEventListener('done' as any, (event: any) => {
+            if (settled) return;
+            try {
+              const data = JSON.parse(event.data);
+              if (!data.success || !data.recipe?.id) throw new Error('invalid_import_response');
+              finish({ data: { success: true, recipe: data.recipe } });
+            } catch { finish({ error: i18n.t('shareIntent.genericError') }); }
+          });
+          source.addEventListener('error', (event: any) => {
+            let message = i18n.t('shareIntent.genericError');
+            // react-native-sse puts HTTP failures in message, SSE errors in data.
+            // Neither is guaranteed to contain JSON (e.g. an iOS network error).
+            try {
+              const parsed = JSON.parse(event.data || event.message || '{}');
+              if (typeof parsed.message === 'string' && parsed.message.trim()) message = parsed.message;
+            } catch { /* Use the localized fallback rather than throwing in the listener. */ }
+            finish({ error: message, status: event.xhrStatus || undefined });
+          });
+        } catch { finish({ error: i18n.t('common.networkError') }); }
+      })();
     });
   }
 
@@ -964,11 +1169,23 @@ class ApiService {
   }
 
   // Notifications
+  /** Pre-meal photo reminder times, in minutes after local midnight. */
+  async getMealReminders() {
+    return this.request<{ success: boolean; times: MealReminderTimes; defaults: MealReminderTimes; ranges: Record<keyof MealReminderTimes, [number, number]> }>('/user/meal-reminders', { method: 'GET' }, 12000);
+  }
+
+  async updateMealReminders(times: MealReminderTimes) {
+    return this.request<{ success: boolean; times: MealReminderTimes }>('/user/meal-reminders', {
+      method: 'POST',
+      body: JSON.stringify({ times }),
+    }, 12000);
+  }
+
   async updateNotificationToken(mobileId: string, notificationToken: string, timezone?: string) {
     const country = Localization.getLocales()?.[0]?.regionCode || undefined;
     return this.request<{ success: boolean; message: string }>('/user/notification-token', {
       method: 'POST',
-      body: JSON.stringify({ mobileId, notificationToken, timezone, country }),
+      body: JSON.stringify({ mobileId, notificationToken, timezone, country, language: this.getCurrentLanguage() }),
     });
   }
 
@@ -976,7 +1193,7 @@ class ApiService {
     const country = Localization.getLocales()?.[0]?.regionCode || undefined;
     return this.request<{ success: boolean; message: string }>('/user/activity', {
       method: 'POST',
-      body: JSON.stringify({ mobileId, timezone, country }),
+      body: JSON.stringify({ mobileId, timezone, country, language: this.getCurrentLanguage() }),
     });
   }
 
@@ -987,10 +1204,10 @@ class ApiService {
     });
   }
 
-  async getFavorites(userId: string) {
+  async getFavorites(userId: string, readOptions: ReadOptions = {}) {
     return this.request<{ success: boolean; recipes: any[] }>(`/recipe/favorites/${userId}?language=${encodeURIComponent(this.getCurrentLanguage())}`, {
       method: 'GET',
-    });
+    }, 60000, readOptions);
   }
 
   async addFavorite(userId: string, recipeId: string) {

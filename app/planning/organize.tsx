@@ -1,8 +1,10 @@
+import { AppSpinner as ActivityIndicator } from '../../components/ui/AppSpinner';
+import { AppModal as Modal } from '../../components/ui/AppModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { usePreventRemove } from 'expo-router/react-navigation';
 import { router, Stack, useLocalSearchParams, useNavigation } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NavigationIconButton } from '../../components/NavigationIconButton';
@@ -90,7 +92,7 @@ export default function OrganizePlanScreen() {
         {saving ? <ActivityIndicator color={theme.ink} /> : <Text style={appStyles.buttonText}>{t(plan ? 'planningOrganize.done' : 'mealLibrary.retry')}</Text>}
       </Pressable>
     </View>
-    <Modal visible={!!leaveAction} transparent animationType="fade" onRequestClose={() => setLeaveAction(null)}>
+    <Modal visible={!!leaveAction} transparent onRequestClose={() => setLeaveAction(null)}>
       <View style={styles.backdrop}><View style={styles.dialog}>
         <Text style={appStyles.section}>{t('planningOrganize.discardTitle')}</Text><Text style={appStyles.subtitle}>{t('planningOrganize.discardBody')}</Text>
         <Pressable style={appStyles.button} accessibilityRole="button" onPress={() => setLeaveAction(null)}><Text style={appStyles.buttonText}>{t('planningOrganize.keepEditing')}</Text></Pressable>
@@ -104,7 +106,7 @@ const styles = StyleSheet.create({
   body: { flex: 1, width: '100%' }, hint: { paddingHorizontal: 20 }, loader: { marginVertical: 40 },
   footer: { paddingTop: 12, borderTopWidth: 1, borderColor: theme.line }, disabled: { opacity: 0.6 },
   notice: { padding: 16, gap: 12, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: theme.yellowSoft },
-  backdrop: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, backgroundColor: 'rgba(8,26,16,0.35)' },
+  backdrop: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   dialog: { width: '100%', maxWidth: 480, backgroundColor: theme.background, borderRadius: theme.radius, padding: 24, gap: 18 },
   discard: { minHeight: 44, alignItems: 'center', justifyContent: 'center' },
 });

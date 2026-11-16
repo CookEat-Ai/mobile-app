@@ -1,0 +1,7 @@
+{
+  "keychainService": "codex-cookeat-review-1.7.2",
+  "keychainAccount": "review-access-code",
+  "codeHash": "110961b11f61eeef3ded93116ce78374c41cde5fc4013aff5d87bcaeba0b942a",
+  "expiresAt": "2026-11-13T00:34:50.655151Z",
+  "scope": "Own installation product access only; no administration"
+}

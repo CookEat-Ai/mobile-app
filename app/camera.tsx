@@ -1,8 +1,9 @@
-import { savePlanningGenerationSettings, type PlanningGenerationSettings } from '../services/weeklyPlanning';
-import { PresentationScanOverlay } from '../components/planning/PresentationScanOverlay';
-import { startPresentationScan, finishPresentationScan } from '../services/presentationScan';
-import { usePresentationMode } from '../services/presentationMode';
+import { CameraBrand } from '../components/CameraBrand';
+import { CameraFramingGuide } from '../components/CameraFramingGuide';
+import { CameraShutterButton } from '../components/CameraShutterButton';
+import { AppTheme as designTheme, AppRadii } from '../constants/AppTheme';
 import { createPantryScanHandoff, PANTRY_SCAN_HANDOFF_KEY } from '../services/pantryScanHandoff';
+import { PlanningFlowHeader } from '../components/planning/PlanningFlowHeader';
 import { PantryScanView } from '../components/planning/PantryScanView';
 import { NavigationIconButton } from '../components/NavigationIconButton';
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
@@ -18,6 +19,7 @@ import {
   GestureResponderEvent,
   Alert,
   Linking,
+  AppState,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -25,16 +27,18 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import Svg, { Circle } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../components/ui/IconSymbol';
-import { Stack, router, useGlobalSearchParams, useNavigation } from 'expo-router';
+import { Stack, router, useGlobalSearchParams, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Colors } from '../constants/Colors';
 import { rw } from '../constants/Layout';
 import { contentColumn } from '../hooks/useResponsive';
 import { feedback } from '../services/haptics';
 import apiService from '../services/api';
 import analytics from '../services/analytics';
+import { isPresentationModeEnabled } from '../services/presentationMode';
 import { useTranslation } from 'react-i18next';
+import { mergePantryRecipeIngredients, readPantryRecipeIngredients } from '../services/pantryRecipeIngredients';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const MAX_PHOTOS = 30;
@@ -48,18 +52,25 @@ type CameraTransitionNavigation = {
 };
 
 export default function CameraScreen() {
+  // A sheet has its own safe area; the root screen's insets include its offset.
+  return <SafeAreaProvider><CameraContent /></SafeAreaProvider>;
+}
+
+function CameraContent() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const params = useGlobalSearchParams();
+  const recipeParams = useLocalSearchParams<{ recipePantry?: string; recipeIngredients?: string }>();
   const navigation = useNavigation<CameraTransitionNavigation>();
-  const presentationMode = usePresentationMode();
   const isOnboarding = params.isOnboarding === 'true';
-  const [permission, requestPermission] = useCameraPermissions();
+  const recipePantry = !isOnboarding && recipeParams.recipePantry === 'true';
+  const pantryScan = recipePantry || params.planningPantry === 'true';
+  const [permission, requestPermission, getPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<'back' | 'front'>('back');
   const [mode, setMode] = useState<'photo' | 'video'>('photo');
 
   useEffect(() => {
-    if (params.initialMode) {
+    if (!recipePantry && params.initialMode) {
       setMode(params.initialMode as 'photo' | 'video');
     }
   }, []);
@@ -69,6 +80,10 @@ export default function CameraScreen() {
   const [isLoading, setIsLoading] = useState(params.planningPantry === 'true' && params.skipCapture === 'true');
   const [scanResult, setScanResult] = useState<string[] | null>(params.planningPantry === 'true' && params.skipCapture === 'true' ? [] : null);
   const [scanSaving, setScanSaving] = useState(false);
+  const scanSavingRef = useRef(false);
+  const scanAttempt = useRef(0);
+  const scanInFlight = useRef(false);
+  useEffect(() => () => { scanAttempt.current += 1; }, []);
   const [isCapturing, setIsCapturing] = useState(false);
   const [zoom, setZoom] = useState(0);
   const [focusPulsePoint, setFocusPulsePoint] = useState<{ x: number; y: number } | null>(null);
@@ -190,6 +205,13 @@ export default function CameraScreen() {
     }
   }, [permission, requestPermission, isLoading]);
 
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', state => {
+      if (state === 'active') void getPermission().catch(() => {});
+    });
+    return () => subscription.remove();
+  }, [getPermission]);
+
   // Ce rappel s'affiche à chaque ouverture de la caméra, pas une seule fois :
   // savoir quoi cadrer reste utile même après plusieurs utilisations.
   const showOnboarding = useCallback(async () => {
@@ -202,7 +224,7 @@ export default function CameraScreen() {
   }, [mode, t]);
 
   const handleRequestPermission = async () => {
-    if (permission && !permission.granted) {
+    if (permission && !permission.granted && !permission.canAskAgain) {
       Linking.openSettings();
       return;
     }
@@ -253,15 +275,25 @@ export default function CameraScreen() {
     if (
       !hasPresentationFinished
       || !permission?.granted
+      || isLoading
+      || recipePantry
       || hasShownAutomaticHelp.current
     ) return;
 
-    hasShownAutomaticHelp.current = true;
-    // Un frame supplémentaire laisse React appliquer l'état final reçu du
-    // native stack avant d'ouvrir la fenêtre système de l'alerte.
-    const frame = requestAnimationFrame(showOnboarding);
-    return () => cancelAnimationFrame(frame);
-  }, [hasPresentationFinished, permission?.granted, showOnboarding]);
+    let active = true;
+    let frame: number | undefined;
+    // Wait for the persisted mode before deciding: its initial in-memory value
+    // can still be false while a demo camera is opening.
+    void isPresentationModeEnabled().then(presentation => {
+      if (!active || presentation) return;
+      frame = requestAnimationFrame(() => {
+        if (!active) return;
+        hasShownAutomaticHelp.current = true;
+        void showOnboarding();
+      });
+    }).catch(() => undefined);
+    return () => { active = false; if (frame !== undefined) cancelAnimationFrame(frame); };
+  }, [hasPresentationFinished, permission?.granted, isLoading, recipePantry, showOnboarding]);
 
   useEffect(() => {
     if (isLoading) {
@@ -322,21 +354,31 @@ export default function CameraScreen() {
     }
   }, [isLoading, loadingMessages.length, loadingProgress, loadingTextOpacity, scaleAnim]);
 
-  if (isLoading && presentationMode && params.planningPantry === 'true' && mode === 'photo') {
-    return <View style={{ flex: 1 }}><PresentationScanOverlay /></View>;
-  }
-  if (isLoading && params.planningPantry === 'true') {
+  if (isLoading && pantryScan) {
     return <PantryScanView photoUris={capturedImages} ingredients={scanResult} saving={scanSaving}
-      onRetake={() => { setScanResult(null); setIsLoading(false); }}
+      confirmLabel={recipePantry ? t('tracking.pantryRecipes.find') : undefined}
+      onBack={() => { if (scanSavingRef.current) return; scanAttempt.current += 1; router.back(); }}
+      onRetake={() => {
+        if (scanSavingRef.current) return;
+        scanAttempt.current += 1;
+        scanInFlight.current = false;
+        setScanResult(null); setCapturedImages([]); setRecordedVideoUri(null); setIsLoading(false);
+      }}
       onConfirm={async names => {
-        if (scanSaving) return;
-        setScanSaving(true);
+        if (scanSavingRef.current) return;
+        scanSavingRef.current = true; setScanSaving(true);
+        if (recipePantry) {
+          const previous = readPantryRecipeIngredients(recipeParams.recipeIngredients);
+          const ingredients = mergePantryRecipeIngredients(previous, names);
+          router.dismissTo({ pathname: '/tracking/pantry-recipes', params: { ingredients: JSON.stringify(ingredients) } });
+          return;
+        }
         try {
-          await AsyncStorage.setItem(PANTRY_SCAN_HANDOFF_KEY, createPantryScanHandoff(names, params.pantryMode === 'strict' ? 'strict' : 'priority'));
+          await AsyncStorage.setItem(PANTRY_SCAN_HANDOFF_KEY, createPantryScanHandoff(names));
           router.back();
         } catch {
           Alert.alert(t('camera.errorTitle'), t('planningPantry.saveError'));
-        } finally { setScanSaving(false); }
+        } finally { scanSavingRef.current = false; setScanSaving(false); }
       }} />;
   }
 
@@ -344,6 +386,7 @@ export default function CameraScreen() {
     return (
       <View style={styles.container}>
         <Stack.Screen options={{ statusBarStyle: 'dark' }} />
+        {params.planningPantry === 'true' && <PlanningFlowHeader />}
       </View>
     );
   }
@@ -352,12 +395,13 @@ export default function CameraScreen() {
     return (
       <View style={styles.container}>
         <Stack.Screen options={{ statusBarStyle: 'dark' }} />
+        {params.planningPantry === 'true' && <PlanningFlowHeader onBack={() => router.back()} />}
         <View style={styles.permissionContainer}>
           <Text style={styles.message}>{t('camera.permissionMessage')}</Text>
           <TouchableOpacity onPress={handleRequestPermission} style={styles.permissionButton}>
             <Text style={styles.permissionButtonText}>{t('camera.grantPermission')}</Text>
           </TouchableOpacity>
-          {!isOnboarding && (
+          {!isOnboarding && !recipePantry && (
             <TouchableOpacity onPress={handleSkipCapture} style={styles.skipButton}>
               <Text style={styles.skipButtonText}>{t('camera.skip')}</Text>
             </TouchableOpacity>
@@ -516,11 +560,13 @@ export default function CameraScreen() {
   };
 
   const finishCapture = async () => {
+    if (scanInFlight.current || isLoading || isCapturing) return;
     if (mode === 'photo' && capturedImages.length === 0) return;
     if (mode === 'video' && !recordedVideoUri) return;
 
+    const attempt = ++scanAttempt.current;
+    scanInFlight.current = true;
     setScanResult(null);
-    if (presentationMode && params.planningPantry === 'true' && mode === 'photo') startPresentationScan(capturedImages);
     setIsLoading(true);
     feedback.confirm();
 
@@ -546,23 +592,10 @@ export default function CameraScreen() {
         response = await apiService.processVideoIngredients(recordedVideoUri!);
       }
 
+      if (attempt !== scanAttempt.current) return;
       if (response.data?.ingredients) {
-        if (params.planningPantry === 'true') {
+        if (pantryScan) {
           const names = response.data.ingredients.map((item: { name: string }) => item.name).filter((name: unknown) => typeof name === 'string' && name.trim());
-          if (presentationMode && names.length) {
-            if (typeof params.presentationConfig === 'string') {
-              const config = { ...JSON.parse(params.presentationConfig), pantryIngredients: names, pantryMode: 'priority' } as PlanningGenerationSettings;
-              await savePlanningGenerationSettings(config);
-              await AsyncStorage.setItem('cookeat_planning_pantry_v1', JSON.stringify({ pantryIngredients: names, pantryMode: 'priority' }));
-              await AsyncStorage.removeItem(PANTRY_SCAN_HANDOFF_KEY);
-              router.replace({ pathname: '/planning/loading', params: { config: JSON.stringify(config), replace: params.presentationReplace === 'true' ? 'true' : 'false' } });
-              return;
-            }
-            await AsyncStorage.setItem(PANTRY_SCAN_HANDOFF_KEY, createPantryScanHandoff(names, 'priority', true));
-            router.back();
-            return;
-          }
-          finishPresentationScan();
           setScanResult(names);
           feedback.success();
           return;
@@ -603,14 +636,18 @@ export default function CameraScreen() {
         throw new Error(response.error || t('camera.extractionError'));
       }
     } catch (error) {
-      finishPresentationScan();
+      if (attempt !== scanAttempt.current) return;
       console.error('Erreur extraction ingrédients:', error);
-      setIsLoading(false);
+      // Keep the full-screen analysis mounted while presenting the error alert.
+      // Dismissing it first would race two native modal transitions on iOS.
+      if (!pantryScan) setIsLoading(false);
       Alert.alert(
         t('camera.errorTitle'),
         error instanceof Error && error.message ? error.message : t('camera.errorDescription'),
-        [{ text: t('common.ok') }]
+        [{ text: t('common.ok'), onPress: () => { if (pantryScan) setIsLoading(false); } }]
       );
+    } finally {
+      if (attempt === scanAttempt.current) scanInFlight.current = false;
     }
   };
 
@@ -667,7 +704,7 @@ export default function CameraScreen() {
       <Animated.View
         style={[
           StyleSheet.absoluteFill,
-          { backgroundColor: 'white', opacity: flashOpacity, zIndex: 100 }
+          { backgroundColor: designTheme.surface, opacity: flashOpacity, zIndex: 100 }
         ]}
         pointerEvents="none"
       />
@@ -682,6 +719,7 @@ export default function CameraScreen() {
       )}
 
       <View style={styles.overlay} {...panResponder.panHandlers} onTouchEnd={handleTapToFocus}>
+        {mode === 'photo' && !recordedVideoUri && <CameraFramingGuide />}
         {focusPulsePoint && (
           <Animated.View
             pointerEvents="none"
@@ -696,22 +734,17 @@ export default function CameraScreen() {
             ]}
           />
         )}
-        <View style={{ ...styles.topBar, paddingTop: Platform.OS === 'android' ? insets.top + 10 : 20 }}>
+        <View style={[styles.topBar, { paddingTop: insets.top + 12, paddingLeft: 20 + insets.left, paddingRight: 20 + insets.right }]}>
           {!isRecording && (
             <>
-              <NavigationIconButton kind="close" style={styles.closeButton} onPress={handleClose} />
-              <View style={styles.headerLogo} pointerEvents="none">
-                <Text style={styles.headerText}>CookEat</Text>
-                <Image source={require('../assets/images/mascot.png')} style={styles.headerMascot} contentFit="contain" accessible={false} />
-              </View>
-              <TouchableOpacity style={styles.helpButton} onPress={showOnboarding}>
-                <IconSymbol name="help" size={30} color="white" />
-              </TouchableOpacity>
+              <NavigationIconButton kind="close" tone="overlay" style={styles.closeButton} onPress={handleClose} />
+              <CameraBrand />
+              <NavigationIconButton icon="help" tone="overlay" accessibilityLabel={t('tracking.captureHelp')} onPress={showOnboarding} style={styles.helpButton} />
             </>
           )}
         </View>
 
-        <View style={[styles.bottomSection, { paddingBottom: Math.max(insets.bottom, 25) + 25 }]}>
+        <View style={[styles.bottomSection, { paddingBottom: Math.max(insets.bottom, 25) + 25, paddingLeft: insets.left, paddingRight: insets.right }]}>
           {/* {!isRecording && capturedImages.length === 0 && !recordedVideoUri && (
             <View style={styles.modeSwitcher}>
               <TouchableOpacity
@@ -744,14 +777,19 @@ export default function CameraScreen() {
                 <Animated.View
                   style={{ transform: [{ scale: shutterScale }] }}
                 >
-                  <TouchableOpacity
+                  {mode === 'photo' ? <CameraShutterButton
+                    accessibilityLabel={t('camera.takePhoto')}
+                    onPress={takePicture}
+                    busy={isCapturing}
+                    disabled={capturedImages.length >= MAX_PHOTOS}
+                  /> : <TouchableOpacity
                     style={[
                       styles.captureButton,
                       mode === 'video' && isRecording && styles.captureButtonRecording,
-                      (isCapturing || (mode === 'photo' && capturedImages.length >= MAX_PHOTOS)) && styles.captureButtonDisabled
+                      isCapturing && styles.captureButtonDisabled
                     ]}
-                    onPress={mode === 'photo' ? takePicture : handleVideoCapture}
-                    activeOpacity={(isCapturing || (mode === 'photo' && capturedImages.length >= MAX_PHOTOS)) ? 1 : 0.7}
+                    onPress={handleVideoCapture}
+                    activeOpacity={isCapturing ? 1 : 0.7}
                     disabled={isCapturing}
                   >
                     {mode === 'video' && isRecording && (
@@ -779,14 +817,8 @@ export default function CameraScreen() {
                       mode === 'video' && styles.captureButtonInnerVideo,
                       mode === 'video' && isRecording && styles.captureButtonInnerRecording
                     ]}>
-                      {mode === 'photo' && capturedImages.length > 0 && capturedImages.length < MAX_PHOTOS && (
-                        <IconSymbol name="plus" size={40} color={Colors.light.button} weight="bold" />
-                      )}
-                      {mode === 'photo' && capturedImages.length >= MAX_PHOTOS && (
-                        <IconSymbol name="checkmark" size={40} color={Colors.light.button} weight="bold" />
-                      )}
                     </View>
-                  </TouchableOpacity>
+                  </TouchableOpacity>}
                 </Animated.View>
               )}
               {mode === 'photo' && capturedImages.length >= MAX_PHOTOS && (
@@ -817,12 +849,12 @@ export default function CameraScreen() {
 
           {((mode === 'photo' && capturedImages.length > 0) || (mode === 'video' && recordedVideoUri)) && (
             <TouchableOpacity style={styles.finishButton} onPress={finishCapture}>
-              <Text style={styles.finishButtonText}>{t('camera.finishButton')}</Text>
-              <IconSymbol name="chevron-forward" size={20} color="white" weight="bold" />
+              <Text style={styles.finishButtonText}>{t(pantryScan ? 'pantryReview.analyzePhotos' : 'camera.finishButton')}</Text>
+              <IconSymbol name="chevron-forward" size={20} color={designTheme.onPrimary} weight="bold" />
             </TouchableOpacity>
           )}
 
-          {!isOnboarding && capturedImages.length === 0 && !recordedVideoUri && !isRecording && (
+          {!isOnboarding && !recipePantry && capturedImages.length === 0 && !recordedVideoUri && !isRecording && (
             <TouchableOpacity
               style={styles.skipButton}
               onPress={handleSkipCapture}
@@ -859,7 +891,7 @@ const styles = StyleSheet.create({
   closeButton: {
     padding: 10,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 25,
+    borderRadius: AppRadii.card,
     width: 50,
     height: 50,
     justifyContent: 'center',
@@ -869,7 +901,7 @@ const styles = StyleSheet.create({
   helpButton: {
     padding: 10,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 25,
+    borderRadius: AppRadii.card,
     width: 50,
     height: 50,
     justifyContent: 'center',
@@ -889,7 +921,7 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '20deg' }],
   },
   headerText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 22,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 1 },
@@ -915,17 +947,17 @@ const styles = StyleSheet.create({
   captureButton: {
     width: 85,
     height: 85,
-    borderRadius: 42.5,
+    borderRadius: AppRadii.pill,
     borderWidth: 5,
-    borderColor: 'white',
+    borderColor: designTheme.onPrimary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   captureButtonInner: {
     width: 68,
     height: 68,
-    borderRadius: 34,
-    backgroundColor: 'white',
+    borderRadius: AppRadii.sheet,
+    backgroundColor: designTheme.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -933,7 +965,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.5)',
   },
   limitText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 12,
     fontFamily: 'CronosProBold',
     marginTop: 8,
@@ -946,9 +978,9 @@ const styles = StyleSheet.create({
   thumbnailImageContainer: {
     width: '100%',
     height: '100%',
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
     borderWidth: 2,
-    borderColor: 'white',
+    borderColor: designTheme.onPrimary,
     overflow: 'hidden',
   },
   thumbnail: {
@@ -962,15 +994,15 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.button,
     width: 24,
     height: 24,
-    borderRadius: 12,
+    borderRadius: AppRadii.chip,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: 'white',
+    borderColor: designTheme.onPrimary,
     zIndex: 10,
   },
   badgeText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 12,
     fontWeight: 'bold',
   },
@@ -978,7 +1010,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.button,
     marginHorizontal: 40,
     height: 56,
-    borderRadius: 28,
+    borderRadius: AppRadii.sheet,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -990,7 +1022,7 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   finishButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 20,
     fontFamily: 'CronosProBold',
   },
@@ -1003,7 +1035,7 @@ const styles = StyleSheet.create({
   message: {
     textAlign: 'center',
     paddingBottom: 20,
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 18,
     fontFamily: 'CronosPro',
   },
@@ -1011,11 +1043,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.button,
     paddingHorizontal: 30,
     paddingVertical: 15,
-    borderRadius: 30,
+    borderRadius: AppRadii.sheet,
     marginBottom: 20,
   },
   permissionButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 16,
     fontFamily: 'CronosProBold',
   },
@@ -1023,7 +1055,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   backButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 16,
     fontFamily: 'CronosPro',
   },
@@ -1035,7 +1067,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   skipButtonText: {
-    color: 'white',
+    color: designTheme.onPrimary,
     fontSize: 17,
     fontFamily: 'CronosProBold',
     textDecorationLine: 'underline',
@@ -1054,7 +1086,7 @@ const styles = StyleSheet.create({
   modeButton: {
     paddingVertical: 8,
     paddingHorizontal: 16,
-    borderRadius: 20,
+    borderRadius: AppRadii.card,
   },
   modeButtonActive: {
     backgroundColor: 'rgba(255,255,255,0.2)',
@@ -1066,7 +1098,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   modeTextActive: {
-    color: 'white',
+    color: designTheme.onPrimary,
   },
   // Video Preview
   videoPreviewContainer: {
@@ -1081,17 +1113,17 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,0,0,0.5)',
   },
   captureButtonInnerVideo: {
-    backgroundColor: 'white',
+    backgroundColor: designTheme.surface,
   },
   captureButtonInnerRecording: {
     backgroundColor: '#FF3B30',
     width: 34,
     height: 34,
-    borderRadius: 6,
+    borderRadius: AppRadii.small,
   },
   // Loading Styles
   loadingContainer: {
-    backgroundColor: "#FDF9E2",
+    backgroundColor: designTheme.background,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 40,
@@ -1121,22 +1153,22 @@ const styles = StyleSheet.create({
   loadingBarTrack: {
     width: '100%',
     height: 10,
-    backgroundColor: '#F1EACB',
-    borderRadius: 5,
+    backgroundColor: designTheme.soft,
+    borderRadius: AppRadii.small,
     overflow: 'hidden',
   },
   loadingBarFill: {
     height: '100%',
     backgroundColor: Colors.light.button,
-    borderRadius: 5,
+    borderRadius: AppRadii.small,
   },
   focusPulse: {
     position: 'absolute',
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: AppRadii.card,
     borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderColor: designTheme.onPrimary,
     backgroundColor: 'rgba(255,255,255,0.12)',
     zIndex: 120,
   },

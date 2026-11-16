@@ -1,0 +1,1257 @@
+googleProductId,countryCode,countryName,applePrice,appleCurrency,googleBillingCurrency,method
+monthly,ZA,Afrique du Sud,299.99,ZAR,ZAR,exact
+monthly,DZ,Algérie,14.99,USD,DZD,Google conversion requested by user
+monthly,DE,Allemagne,12.99,EUR,EUR,exact
+monthly,SA,Arabie saoudite,59.99,SAR,SAR,exact
+monthly,AR,Argentine,14.99,USD,ARS,Google conversion requested by user
+monthly,AU,Australie,22.99,AUD,AUD,exact
+monthly,AT,Autriche,12.99,EUR,EUR,exact
+monthly,AZ,Azerbaïdjan,17.99,USD,AZN,Google conversion requested by user
+monthly,BH,Bahreïn,14.99,USD,USD,exact
+monthly,BE,Belgique,12.99,EUR,EUR,exact
+monthly,BM,Bermudes,14.99,USD,USD,exact
+monthly,BO,Bolivie,14.99,USD,BOB,Google conversion requested by user
+monthly,BR,Brésil,99.9,BRL,BRL,exact
+monthly,BG,Bulgarie,12.99,EUR,EUR,exact
+monthly,KH,Cambodge,14.99,USD,USD,exact
+monthly,CM,Cameroun,17.99,USD,XAF,Google conversion requested by user
+monthly,CA,Canada,19.99,CAD,CAD,exact
+monthly,CL,Chili,17990,CLP,CLP,exact
+monthly,CY,Chypre,12.99,EUR,EUR,exact
+monthly,CO,Colombie,69900.0,COP,COP,exact
+monthly,KR,Corée du Sud,25000,KRW,KRW,exact
+monthly,CR,Costa Rica,14.99,USD,CRC,Google conversion requested by user
+monthly,HR,Croatie,12.99,EUR,EUR,exact
+monthly,CI,Côte d’Ivoire,17.99,USD,XOF,Google conversion requested by user
+monthly,DK,Danemark,129.0,DKK,DKK,exact
+monthly,ES,Espagne,12.99,EUR,EUR,exact
+monthly,EE,Estonie,12.99,EUR,EUR,exact
+monthly,FI,Finlande,12.99,EUR,EUR,exact
+monthly,FR,France,12.99,EUR,EUR,exact
+monthly,GH,Ghana,17.99,USD,GHS,Google conversion requested by user
+monthly,GR,Grèce,12.99,EUR,EUR,exact
+monthly,GE,Géorgie,17.99,USD,GEL,Google conversion requested by user
+monthly,HK,Hong Kong,118.0,HKD,HKD,exact
+monthly,HU,Hongrie,6990,HUF,HUF,exact
+monthly,IN,Inde,1499.0,INR,INR,exact
+monthly,ID,Indonésie,249000,IDR,IDR,exact
+monthly,IQ,Irak,14.99,USD,IQD,Google conversion requested by user
+monthly,IE,Irlande,12.99,EUR,EUR,exact
+monthly,IL,Israël,49.9,ILS,ILS,exact
+monthly,IT,Italie,12.99,EUR,EUR,exact
+monthly,JP,Japon,2500,JPY,JPY,exact
+monthly,JO,Jordanie,14.99,USD,JOD,Google conversion requested by user
+monthly,KZ,Kazakhstan,8990.0,KZT,KZT,exact
+monthly,KE,Kenya,17.99,USD,KES,Google conversion requested by user
+monthly,KW,Koweït,14.99,USD,USD,exact
+monthly,LV,Lettonie,12.99,EUR,EUR,exact
+monthly,LT,Lituanie,12.99,EUR,EUR,exact
+monthly,LU,Luxembourg,12.99,EUR,EUR,exact
+monthly,MO,Macao,14.99,USD,MOP,Google conversion requested by user
+monthly,MY,Malaisie,69.9,MYR,MYR,exact
+monthly,MA,Maroc,14.99,USD,MAD,Google conversion requested by user
+monthly,MX,Mexique,299.0,MXN,MXN,exact
+monthly,FM,Micronésie,14.99,USD,USD,exact
+monthly,MN,Mongolie,14.99,USD,MNT,Google conversion requested by user
+monthly,MM,Myanmar (Birmanie),14.99,USD,MMK,Google conversion requested by user
+monthly,NG,Nigeria,24900.0,NGN,NGN,exact
+monthly,NO,Norvège,199.0,NOK,NOK,exact
+monthly,NZ,Nouvelle-Zélande,29.99,NZD,NZD,exact
+monthly,OM,Oman,14.99,USD,USD,exact
+monthly,UZ,Ouzbékistan,14.99,USD,UZS,Google conversion requested by user
+monthly,PK,Pakistan,3900.0,PKR,PKR,exact
+monthly,PA,Panama,14.99,USD,USD,exact
+monthly,PY,Paraguay,14.99,USD,PYG,Google conversion requested by user
+monthly,NL,Pays-Bas,12.99,EUR,EUR,exact
+monthly,PH,Philippines,999.0,PHP,PHP,exact
+monthly,PL,Pologne,69.99,PLN,PLN,exact
+monthly,PT,Portugal,12.99,EUR,EUR,exact
+monthly,PE,Pérou,69.9,PEN,PEN,exact
+monthly,QA,Qatar,49.99,QAR,QAR,exact
+monthly,RO,Roumanie,79.99,RON,RON,exact
+monthly,GB,Royaume-Uni,14.99,GBP,GBP,exact
+monthly,RU,Russie,1290.0,RUB,RUB,exact
+monthly,SV,Salvador,14.99,USD,USD,exact
+monthly,RS,Serbie,12.99,EUR,RSD,Google conversion requested by user
+monthly,SG,Singapour,19.98,SGD,SGD,exact
+monthly,SK,Slovaquie,12.99,EUR,EUR,exact
+monthly,SI,Slovénie,12.99,EUR,EUR,exact
+monthly,LK,Sri Lanka,14.99,USD,LKR,Google conversion requested by user
+monthly,CH,Suisse,14.0,CHF,CHF,exact
+monthly,SE,Suède,199.0,SEK,SEK,exact
+monthly,SN,Sénégal,17.99,USD,XOF,Google conversion requested by user
+monthly,TZ,Tanzanie,39900.0,TZS,TZS,exact
+monthly,TW,Taïwan,490,TWD,TWD,exact
+monthly,CZ,Tchéquie,399.0,CZK,CZK,exact
+monthly,TH,Thaïlande,499.0,THB,THB,exact
+monthly,TR,Turquie,799.99,TRY,TRY,exact
+monthly,UA,Ukraine,17.99,USD,UAH,Google conversion requested by user
+monthly,VN,Viêt Nam,499000,VND,VND,exact
+monthly,EG,Égypte,799.99,EGP,EGP,exact
+monthly,AE,Émirats arabes unis,59.99,AED,AED,exact
+monthly,EC,Équateur,14.99,USD,USD,exact
+monthly,US,États-Unis,14.99,USD,USD,exact
+monthly,KY,Îles Caïmans,14.99,USD,USD,exact
+monthly,TC,Îles Turques-et-Caïques,14.99,USD,USD,exact
+monthly,VG,Îles Vierges britanniques,14.99,USD,USD,exact
+monthly,AL,Albanie,17.99,USD,USD,exact
+monthly,AO,Angola,14.99,USD,USD,exact
+monthly,AG,Antigua-et-Barbuda,14.99,USD,USD,exact
+monthly,AM,Arménie,17.99,USD,USD,exact
+monthly,BS,Bahamas,14.99,USD,USD,exact
+monthly,BZ,Belize,14.99,USD,USD,exact
+monthly,BY,Biélorussie,17.99,USD,USD,exact
+monthly,BA,Bosnie-Herzégovine,12.99,EUR,USD,Google conversion requested by user
+monthly,BW,Botswana,14.99,USD,USD,exact
+monthly,CV,Cap-Vert,14.99,USD,USD,exact
+monthly,CG,Congo-Brazzaville,14.99,USD,USD,exact
+monthly,CD,Congo-Kinshasa,14.99,USD,USD,exact
+monthly,DM,Dominique,14.99,USD,USD,exact
+monthly,FJ,Fidji,14.99,USD,USD,exact
+monthly,GM,Gambie,14.99,USD,USD,exact
+monthly,GD,Grenade,14.99,USD,USD,exact
+monthly,GT,Guatemala,14.99,USD,USD,exact
+monthly,HN,Honduras,14.99,USD,USD,exact
+monthly,JM,Jamaïque,14.99,USD,USD,exact
+monthly,KG,Kirghizstan,14.99,USD,USD,exact
+monthly,LA,Laos,14.99,USD,USD,exact
+monthly,LB,Liban,14.99,USD,USD,exact
+monthly,LR,Liberia,14.99,USD,USD,exact
+monthly,LY,Libye,14.99,USD,USD,exact
+monthly,MK,Macédoine du Nord,14.99,USD,USD,exact
+monthly,MV,Maldives,14.99,USD,USD,exact
+monthly,MU,Maurice,17.99,USD,USD,exact
+monthly,MD,Moldavie,17.99,USD,USD,exact
+monthly,MZ,Mozambique,14.99,USD,USD,exact
+monthly,NA,Namibie,14.99,USD,USD,exact
+monthly,NI,Nicaragua,14.99,USD,USD,exact
+monthly,NP,Népal,17.99,USD,USD,exact
+monthly,UG,Ouganda,17.99,USD,USD,exact
+monthly,PG,Papouasie-Nouvelle-Guinée,14.99,USD,USD,exact
+monthly,RW,Rwanda,14.99,USD,USD,exact
+monthly,DO,République dominicaine,14.99,USD,USD,exact
+monthly,KN,Saint-Christophe-et-Niévès,14.99,USD,USD,exact
+monthly,LC,Sainte-Lucie,14.99,USD,USD,exact
+monthly,SC,Seychelles,14.99,USD,USD,exact
+monthly,SL,Sierra Leone,14.99,USD,USD,exact
+monthly,SR,Suriname,14.99,USD,USD,exact
+monthly,TJ,Tadjikistan,14.99,USD,USD,exact
+monthly,TD,Tchad,14.99,USD,USD,exact
+monthly,TO,Tonga,14.99,USD,USD,exact
+monthly,TT,Trinité-et-Tobago,14.99,USD,USD,exact
+monthly,TN,Tunisie,14.99,USD,USD,exact
+monthly,TM,Turkménistan,14.99,USD,USD,exact
+monthly,UY,Uruguay,14.99,USD,USD,exact
+monthly,VU,Vanuatu,14.99,USD,USD,exact
+monthly,VE,Venezuela,14.99,USD,USD,exact
+monthly,YE,Yémen,14.99,USD,USD,exact
+monthly,ZM,Zambie,17.99,USD,USD,exact
+monthly,ZW,Zimbabwe,17.99,USD,USD,exact
+monthly,SB,Îles Salomon,14.99,USD,USD,exact
+monthly,BF,Burkina Faso,14.99,USD,EUR,Google conversion requested by user
+monthly,BJ,Bénin,17.99,USD,EUR,Google conversion requested by user
+monthly,GA,Gabon,14.99,USD,EUR,Google conversion requested by user
+monthly,GW,Guinée-Bissau,14.99,USD,EUR,Google conversion requested by user
+monthly,IS,Islande,17.99,USD,EUR,Google conversion requested by user
+monthly,ML,Mali,14.99,USD,EUR,Google conversion requested by user
+monthly,MT,Malte,12.99,EUR,EUR,exact
+monthly,NE,Niger,14.99,USD,EUR,Google conversion requested by user
+annual_discount_25,ZA,Afrique du Sud,749.99,ZAR,ZAR,exact
+annual_discount_25,DZ,Algérie,33.49,USD,DZD,Google conversion requested by user
+annual_discount_25,DE,Allemagne,33.49,EUR,EUR,exact
+annual_discount_25,SA,Arabie saoudite,149.99,SAR,SAR,exact
+annual_discount_25,AR,Argentine,33.49,USD,ARS,Google conversion requested by user
+annual_discount_25,AU,Australie,52.0,AUD,AUD,exact
+annual_discount_25,AT,Autriche,33.49,EUR,EUR,exact
+annual_discount_25,AZ,Azerbaïdjan,37.49,USD,AZN,Google conversion requested by user
+annual_discount_25,BH,Bahreïn,37.49,USD,USD,exact
+annual_discount_25,BE,Belgique,33.49,EUR,EUR,exact
+annual_discount_25,BM,Bermudes,33.49,USD,USD,exact
+annual_discount_25,BO,Bolivie,33.49,USD,BOB,Google conversion requested by user
+annual_discount_25,BR,Brésil,224.9,BRL,BRL,exact
+annual_discount_25,BG,Bulgarie,33.49,EUR,EUR,exact
+annual_discount_25,KH,Cambodge,37.49,USD,USD,exact
+annual_discount_25,CM,Cameroun,37.49,USD,XAF,Google conversion requested by user
+annual_discount_25,CA,Canada,44.99,CAD,CAD,exact
+annual_discount_25,CL,Chili,37490,CLP,CLP,exact
+annual_discount_25,CY,Chypre,33.49,EUR,EUR,exact
+annual_discount_25,CO,Colombie,149900.0,COP,COP,exact
+annual_discount_25,KR,Corée du Sud,57500,KRW,KRW,exact
+annual_discount_25,CR,Costa Rica,33.49,USD,CRC,Google conversion requested by user
+annual_discount_25,HR,Croatie,33.49,EUR,EUR,exact
+annual_discount_25,CI,Côte d’Ivoire,37.49,USD,XOF,Google conversion requested by user
+annual_discount_25,DK,Danemark,299.0,DKK,DKK,exact
+annual_discount_25,ES,Espagne,33.49,EUR,EUR,exact
+annual_discount_25,EE,Estonie,33.49,EUR,EUR,exact
+annual_discount_25,FI,Finlande,33.49,EUR,EUR,exact
+annual_discount_25,FR,France,33.49,EUR,EUR,exact
+annual_discount_25,GH,Ghana,37.49,USD,GHS,Google conversion requested by user
+annual_discount_25,GR,Grèce,33.49,EUR,EUR,exact
+annual_discount_25,GE,Géorgie,37.49,USD,GEL,Google conversion requested by user
+annual_discount_25,HK,Hong Kong,273.0,HKD,HKD,exact
+annual_discount_25,HU,Hongrie,14990,HUF,HUF,exact
+annual_discount_25,IN,Inde,3749.0,INR,INR,exact
+annual_discount_25,ID,Indonésie,599000,IDR,IDR,exact
+annual_discount_25,IQ,Irak,33.49,USD,IQD,Google conversion requested by user
+annual_discount_25,IE,Irlande,33.49,EUR,EUR,exact
+annual_discount_25,IL,Israël,111.9,ILS,ILS,exact
+annual_discount_25,IT,Italie,33.49,EUR,EUR,exact
+annual_discount_25,JP,Japon,5200,JPY,JPY,exact
+annual_discount_25,JO,Jordanie,33.49,USD,JOD,Google conversion requested by user
+annual_discount_25,KZ,Kazakhstan,18690.0,KZT,KZT,exact
+annual_discount_25,KE,Kenya,37.49,USD,KES,Google conversion requested by user
+annual_discount_25,KW,Koweït,33.49,USD,USD,exact
+annual_discount_25,LV,Lettonie,33.49,EUR,EUR,exact
+annual_discount_25,LT,Lituanie,33.49,EUR,EUR,exact
+annual_discount_25,LU,Luxembourg,33.49,EUR,EUR,exact
+annual_discount_25,MO,Macao,33.49,USD,MOP,Google conversion requested by user
+annual_discount_25,MY,Malaisie,149.9,MYR,MYR,exact
+annual_discount_25,MA,Maroc,33.49,USD,MAD,Google conversion requested by user
+annual_discount_25,MX,Mexique,749.0,MXN,MXN,exact
+annual_discount_25,FM,Micronésie,33.49,USD,USD,exact
+annual_discount_25,MN,Mongolie,33.49,USD,MNT,Google conversion requested by user
+annual_discount_25,MM,Myanmar (Birmanie),33.49,USD,MMK,Google conversion requested by user
+annual_discount_25,NG,Nigeria,51900.0,NGN,NGN,exact
+annual_discount_25,NO,Norvège,449.0,NOK,NOK,exact
+annual_discount_25,NZ,Nouvelle-Zélande,59.99,NZD,NZD,exact
+annual_discount_25,OM,Oman,33.49,USD,USD,exact
+annual_discount_25,UZ,Ouzbékistan,37.49,USD,UZS,Google conversion requested by user
+annual_discount_25,PK,Pakistan,8900.0,PKR,PKR,exact
+annual_discount_25,PA,Panama,33.49,USD,USD,exact
+annual_discount_25,PY,Paraguay,33.49,USD,PYG,Google conversion requested by user
+annual_discount_25,NL,Pays-Bas,33.49,EUR,EUR,exact
+annual_discount_25,PH,Philippines,2200.0,PHP,PHP,exact
+annual_discount_25,PL,Pologne,149.99,PLN,PLN,exact
+annual_discount_25,PT,Portugal,33.49,EUR,EUR,exact
+annual_discount_25,PE,Pérou,149.9,PEN,PEN,exact
+annual_discount_25,QA,Qatar,111.99,QAR,QAR,exact
+annual_discount_25,RO,Roumanie,186.99,RON,RON,exact
+annual_discount_25,GB,Royaume-Uni,33.49,GBP,GBP,exact
+annual_discount_25,RU,Russie,2990.0,RUB,RUB,exact
+annual_discount_25,SV,Salvador,33.49,USD,USD,exact
+annual_discount_25,RS,Serbie,33.49,EUR,RSD,Google conversion requested by user
+annual_discount_25,SG,Singapour,44.98,SGD,SGD,exact
+annual_discount_25,SK,Slovaquie,33.49,EUR,EUR,exact
+annual_discount_25,SI,Slovénie,33.49,EUR,EUR,exact
+annual_discount_25,LK,Sri Lanka,33.49,USD,LKR,Google conversion requested by user
+annual_discount_25,CH,Suisse,30.0,CHF,CHF,exact
+annual_discount_25,SE,Suède,449.0,SEK,SEK,exact
+annual_discount_25,SN,Sénégal,37.49,USD,XOF,Google conversion requested by user
+annual_discount_25,TZ,Tanzanie,96900.0,TZS,TZS,exact
+annual_discount_25,TW,Taïwan,1110,TWD,TWD,exact
+annual_discount_25,CZ,Tchéquie,890.0,CZK,CZK,exact
+annual_discount_25,TH,Thaïlande,1110.0,THB,THB,exact
+annual_discount_25,TR,Turquie,1869.99,TRY,TRY,exact
+annual_discount_25,UA,Ukraine,37.49,USD,UAH,Google conversion requested by user
+annual_discount_25,VN,Viêt Nam,970000,VND,VND,exact
+annual_discount_25,EG,Égypte,1869.99,EGP,EGP,exact
+annual_discount_25,AE,Émirats arabes unis,134.99,AED,AED,exact
+annual_discount_25,EC,Équateur,33.49,USD,USD,exact
+annual_discount_25,US,États-Unis,33.49,USD,USD,exact
+annual_discount_25,KY,Îles Caïmans,33.49,USD,USD,exact
+annual_discount_25,TC,Îles Turques-et-Caïques,33.49,USD,USD,exact
+annual_discount_25,VG,Îles Vierges britanniques,33.49,USD,USD,exact
+annual_discount_25,AL,Albanie,37.49,USD,USD,exact
+annual_discount_25,AO,Angola,33.49,USD,USD,exact
+annual_discount_25,AG,Antigua-et-Barbuda,33.49,USD,USD,exact
+annual_discount_25,AM,Arménie,37.49,USD,USD,exact
+annual_discount_25,BS,Bahamas,37.49,USD,USD,exact
+annual_discount_25,BZ,Belize,33.49,USD,USD,exact
+annual_discount_25,BY,Biélorussie,37.49,USD,USD,exact
+annual_discount_25,BA,Bosnie-Herzégovine,33.49,EUR,USD,Google conversion requested by user
+annual_discount_25,BW,Botswana,33.49,USD,USD,exact
+annual_discount_25,CV,Cap-Vert,33.49,USD,USD,exact
+annual_discount_25,CG,Congo-Brazzaville,33.49,USD,USD,exact
+annual_discount_25,CD,Congo-Kinshasa,33.49,USD,USD,exact
+annual_discount_25,DM,Dominique,33.49,USD,USD,exact
+annual_discount_25,FJ,Fidji,33.49,USD,USD,exact
+annual_discount_25,GM,Gambie,33.49,USD,USD,exact
+annual_discount_25,GD,Grenade,33.49,USD,USD,exact
+annual_discount_25,GT,Guatemala,33.49,USD,USD,exact
+annual_discount_25,HN,Honduras,33.49,USD,USD,exact
+annual_discount_25,JM,Jamaïque,33.49,USD,USD,exact
+annual_discount_25,KG,Kirghizstan,37.49,USD,USD,exact
+annual_discount_25,LA,Laos,37.49,USD,USD,exact
+annual_discount_25,LB,Liban,33.49,USD,USD,exact
+annual_discount_25,LR,Liberia,33.49,USD,USD,exact
+annual_discount_25,LY,Libye,33.49,USD,USD,exact
+annual_discount_25,MK,Macédoine du Nord,33.49,USD,USD,exact
+annual_discount_25,MV,Maldives,33.49,USD,USD,exact
+annual_discount_25,MU,Maurice,37.49,USD,USD,exact
+annual_discount_25,MD,Moldavie,37.49,USD,USD,exact
+annual_discount_25,MZ,Mozambique,33.49,USD,USD,exact
+annual_discount_25,NA,Namibie,33.49,USD,USD,exact
+annual_discount_25,NI,Nicaragua,33.49,USD,USD,exact
+annual_discount_25,NP,Népal,37.49,USD,USD,exact
+annual_discount_25,UG,Ouganda,37.49,USD,USD,exact
+annual_discount_25,PG,Papouasie-Nouvelle-Guinée,33.49,USD,USD,exact
+annual_discount_25,RW,Rwanda,33.49,USD,USD,exact
+annual_discount_25,DO,République dominicaine,33.49,USD,USD,exact
+annual_discount_25,KN,Saint-Christophe-et-Niévès,33.49,USD,USD,exact
+annual_discount_25,LC,Sainte-Lucie,33.49,USD,USD,exact
+annual_discount_25,SC,Seychelles,33.49,USD,USD,exact
+annual_discount_25,SL,Sierra Leone,33.49,USD,USD,exact
+annual_discount_25,SR,Suriname,37.49,USD,USD,exact
+annual_discount_25,TJ,Tadjikistan,37.49,USD,USD,exact
+annual_discount_25,TD,Tchad,33.49,USD,USD,exact
+annual_discount_25,TO,Tonga,33.49,USD,USD,exact
+annual_discount_25,TT,Trinité-et-Tobago,33.49,USD,USD,exact
+annual_discount_25,TN,Tunisie,33.49,USD,USD,exact
+annual_discount_25,TM,Turkménistan,33.49,USD,USD,exact
+annual_discount_25,UY,Uruguay,33.49,USD,USD,exact
+annual_discount_25,VU,Vanuatu,33.49,USD,USD,exact
+annual_discount_25,VE,Venezuela,33.49,USD,USD,exact
+annual_discount_25,YE,Yémen,33.49,USD,USD,exact
+annual_discount_25,ZM,Zambie,37.49,USD,USD,exact
+annual_discount_25,ZW,Zimbabwe,37.49,USD,USD,exact
+annual_discount_25,SB,Îles Salomon,33.49,USD,USD,exact
+annual_discount_25,BF,Burkina Faso,33.49,USD,EUR,Google conversion requested by user
+annual_discount_25,BJ,Bénin,37.49,USD,EUR,Google conversion requested by user
+annual_discount_25,GA,Gabon,33.49,USD,EUR,Google conversion requested by user
+annual_discount_25,GW,Guinée-Bissau,33.49,USD,EUR,Google conversion requested by user
+annual_discount_25,IS,Islande,37.49,USD,EUR,Google conversion requested by user
+annual_discount_25,ML,Mali,33.49,USD,EUR,Google conversion requested by user
+annual_discount_25,MT,Malte,33.49,EUR,EUR,exact
+annual_discount_25,NE,Niger,33.49,USD,EUR,Google conversion requested by user
+annual,ZA,Afrique du Sud,999.99,ZAR,ZAR,exact
+annual,DZ,Algérie,44.99,USD,DZD,Google conversion requested by user
+annual,DE,Allemagne,44.99,EUR,EUR,exact
+annual,SA,Arabie saoudite,199.99,SAR,SAR,exact
+annual,AR,Argentine,44.99,USD,ARS,Google conversion requested by user
+annual,AU,Australie,69.99,AUD,AUD,exact
+annual,AT,Autriche,44.99,EUR,EUR,exact
+annual,AZ,Azerbaïdjan,49.99,USD,AZN,Google conversion requested by user
+annual,BH,Bahreïn,49.99,USD,USD,exact
+annual,BE,Belgique,44.99,EUR,EUR,exact
+annual,BM,Bermudes,44.99,USD,USD,exact
+annual,BO,Bolivie,44.99,USD,BOB,Google conversion requested by user
+annual,BR,Brésil,299.9,BRL,BRL,exact
+annual,BG,Bulgarie,44.99,EUR,EUR,exact
+annual,KH,Cambodge,49.99,USD,USD,exact
+annual,CM,Cameroun,49.99,USD,XAF,Google conversion requested by user
+annual,CA,Canada,59.99,CAD,CAD,exact
+annual,CL,Chili,49990,CLP,CLP,exact
+annual,CY,Chypre,44.99,EUR,EUR,exact
+annual,CO,Colombie,199900.0,COP,COP,exact
+annual,KR,Corée du Sud,77000,KRW,KRW,exact
+annual,CR,Costa Rica,44.99,USD,CRC,Google conversion requested by user
+annual,HR,Croatie,44.99,EUR,EUR,exact
+annual,CI,Côte d’Ivoire,49.99,USD,XOF,Google conversion requested by user
+annual,DK,Danemark,399.0,DKK,DKK,exact
+annual,ES,Espagne,44.99,EUR,EUR,exact
+annual,EE,Estonie,44.99,EUR,EUR,exact
+annual,FI,Finlande,44.99,EUR,EUR,exact
+annual,FR,France,49.99,EUR,EUR,exact
+annual,GH,Ghana,49.99,USD,GHS,Google conversion requested by user
+annual,GR,Grèce,44.99,EUR,EUR,exact
+annual,GE,Géorgie,49.99,USD,GEL,Google conversion requested by user
+annual,HK,Hong Kong,368.0,HKD,HKD,exact
+annual,HU,Hongrie,19990,HUF,HUF,exact
+annual,IN,Inde,4999.0,INR,INR,exact
+annual,ID,Indonésie,799000,IDR,IDR,exact
+annual,IQ,Irak,44.99,USD,IQD,Google conversion requested by user
+annual,IE,Irlande,44.99,EUR,EUR,exact
+annual,IL,Israël,149.9,ILS,ILS,exact
+annual,IT,Italie,44.99,EUR,EUR,exact
+annual,JP,Japon,7000,JPY,JPY,exact
+annual,JO,Jordanie,44.99,USD,JOD,Google conversion requested by user
+annual,KZ,Kazakhstan,24990.0,KZT,KZT,exact
+annual,KE,Kenya,49.99,USD,KES,Google conversion requested by user
+annual,KW,Koweït,44.99,USD,USD,exact
+annual,LV,Lettonie,44.99,EUR,EUR,exact
+annual,LT,Lituanie,44.99,EUR,EUR,exact
+annual,LU,Luxembourg,44.99,EUR,EUR,exact
+annual,MO,Macao,44.99,USD,MOP,Google conversion requested by user
+annual,MY,Malaisie,199.9,MYR,MYR,exact
+annual,MA,Maroc,44.99,USD,MAD,Google conversion requested by user
+annual,MX,Mexique,999.0,MXN,MXN,exact
+annual,FM,Micronésie,44.99,USD,USD,exact
+annual,MN,Mongolie,44.99,USD,MNT,Google conversion requested by user
+annual,MM,Myanmar (Birmanie),44.99,USD,MMK,Google conversion requested by user
+annual,NG,Nigeria,69900.0,NGN,NGN,exact
+annual,NO,Norvège,599.0,NOK,NOK,exact
+annual,NZ,Nouvelle-Zélande,79.99,NZD,NZD,exact
+annual,OM,Oman,44.99,USD,USD,exact
+annual,UZ,Ouzbékistan,49.99,USD,UZS,Google conversion requested by user
+annual,PK,Pakistan,11900.0,PKR,PKR,exact
+annual,PA,Panama,44.99,USD,USD,exact
+annual,PY,Paraguay,44.99,USD,PYG,Google conversion requested by user
+annual,NL,Pays-Bas,44.99,EUR,EUR,exact
+annual,PH,Philippines,2990.0,PHP,PHP,exact
+annual,PL,Pologne,199.99,PLN,PLN,exact
+annual,PT,Portugal,44.99,EUR,EUR,exact
+annual,PE,Pérou,199.9,PEN,PEN,exact
+annual,QA,Qatar,149.99,QAR,QAR,exact
+annual,RO,Roumanie,249.99,RON,RON,exact
+annual,GB,Royaume-Uni,44.99,GBP,GBP,exact
+annual,RU,Russie,3990.0,RUB,RUB,exact
+annual,SV,Salvador,44.99,USD,USD,exact
+annual,RS,Serbie,44.99,EUR,RSD,Google conversion requested by user
+annual,SG,Singapour,59.98,SGD,SGD,exact
+annual,SK,Slovaquie,44.99,EUR,EUR,exact
+annual,SI,Slovénie,44.99,EUR,EUR,exact
+annual,LK,Sri Lanka,44.99,USD,LKR,Google conversion requested by user
+annual,CH,Suisse,40.0,CHF,CHF,exact
+annual,SE,Suède,599.0,SEK,SEK,exact
+annual,SN,Sénégal,49.99,USD,XOF,Google conversion requested by user
+annual,TZ,Tanzanie,129900.0,TZS,TZS,exact
+annual,TW,Taïwan,1490,TWD,TWD,exact
+annual,CZ,Tchéquie,1190.0,CZK,CZK,exact
+annual,TH,Thaïlande,1490.0,THB,THB,exact
+annual,TR,Turquie,2499.99,TRY,TRY,exact
+annual,UA,Ukraine,49.99,USD,UAH,Google conversion requested by user
+annual,VN,Viêt Nam,1299000,VND,VND,exact
+annual,EG,Égypte,2499.99,EGP,EGP,exact
+annual,AE,Émirats arabes unis,179.99,AED,AED,exact
+annual,EC,Équateur,44.99,USD,USD,exact
+annual,US,États-Unis,44.99,USD,USD,exact
+annual,KY,Îles Caïmans,44.99,USD,USD,exact
+annual,TC,Îles Turques-et-Caïques,44.99,USD,USD,exact
+annual,VG,Îles Vierges britanniques,44.99,USD,USD,exact
+annual,AL,Albanie,49.99,USD,USD,exact
+annual,AO,Angola,44.99,USD,USD,exact
+annual,AG,Antigua-et-Barbuda,44.99,USD,USD,exact
+annual,AM,Arménie,49.99,USD,USD,exact
+annual,BS,Bahamas,49.99,USD,USD,exact
+annual,BZ,Belize,44.99,USD,USD,exact
+annual,BY,Biélorussie,49.99,USD,USD,exact
+annual,BA,Bosnie-Herzégovine,44.99,EUR,USD,Google conversion requested by user
+annual,BW,Botswana,44.99,USD,USD,exact
+annual,CV,Cap-Vert,44.99,USD,USD,exact
+annual,CG,Congo-Brazzaville,44.99,USD,USD,exact
+annual,CD,Congo-Kinshasa,44.99,USD,USD,exact
+annual,DM,Dominique,44.99,USD,USD,exact
+annual,FJ,Fidji,44.99,USD,USD,exact
+annual,GM,Gambie,44.99,USD,USD,exact
+annual,GD,Grenade,44.99,USD,USD,exact
+annual,GT,Guatemala,44.99,USD,USD,exact
+annual,HN,Honduras,44.99,USD,USD,exact
+annual,JM,Jamaïque,44.99,USD,USD,exact
+annual,KG,Kirghizstan,49.99,USD,USD,exact
+annual,LA,Laos,49.99,USD,USD,exact
+annual,LB,Liban,44.99,USD,USD,exact
+annual,LR,Liberia,44.99,USD,USD,exact
+annual,LY,Libye,44.99,USD,USD,exact
+annual,MK,Macédoine du Nord,44.99,USD,USD,exact
+annual,MV,Maldives,44.99,USD,USD,exact
+annual,MU,Maurice,49.99,USD,USD,exact
+annual,MD,Moldavie,49.99,USD,USD,exact
+annual,MZ,Mozambique,44.99,USD,USD,exact
+annual,NA,Namibie,44.99,USD,USD,exact
+annual,NI,Nicaragua,44.99,USD,USD,exact
+annual,NP,Népal,49.99,USD,USD,exact
+annual,UG,Ouganda,49.99,USD,USD,exact
+annual,PG,Papouasie-Nouvelle-Guinée,44.99,USD,USD,exact
+annual,RW,Rwanda,44.99,USD,USD,exact
+annual,DO,République dominicaine,44.99,USD,USD,exact
+annual,KN,Saint-Christophe-et-Niévès,44.99,USD,USD,exact
+annual,LC,Sainte-Lucie,44.99,USD,USD,exact
+annual,SC,Seychelles,44.99,USD,USD,exact
+annual,SL,Sierra Leone,44.99,USD,USD,exact
+annual,SR,Suriname,49.99,USD,USD,exact
+annual,TJ,Tadjikistan,49.99,USD,USD,exact
+annual,TD,Tchad,44.99,USD,USD,exact
+annual,TO,Tonga,44.99,USD,USD,exact
+annual,TT,Trinité-et-Tobago,44.99,USD,USD,exact
+annual,TN,Tunisie,44.99,USD,USD,exact
+annual,TM,Turkménistan,44.99,USD,USD,exact
+annual,UY,Uruguay,44.99,USD,USD,exact
+annual,VU,Vanuatu,44.99,USD,USD,exact
+annual,VE,Venezuela,44.99,USD,USD,exact
+annual,YE,Yémen,44.99,USD,USD,exact
+annual,ZM,Zambie,49.99,USD,USD,exact
+annual,ZW,Zimbabwe,49.99,USD,USD,exact
+annual,SB,Îles Salomon,44.99,USD,USD,exact
+annual,BF,Burkina Faso,44.99,USD,EUR,Google conversion requested by user
+annual,BJ,Bénin,49.99,USD,EUR,Google conversion requested by user
+annual,GA,Gabon,44.99,USD,EUR,Google conversion requested by user
+annual,GW,Guinée-Bissau,44.99,USD,EUR,Google conversion requested by user
+annual,IS,Islande,49.99,USD,EUR,Google conversion requested by user
+annual,ML,Mali,44.99,USD,EUR,Google conversion requested by user
+annual,MT,Malte,44.99,EUR,EUR,exact
+annual,NE,Niger,44.99,USD,EUR,Google conversion requested by user
+annual_discount,ZA,Afrique du Sud,669.99,ZAR,ZAR,exact
+annual_discount,DZ,Algérie,30.0,USD,DZD,Google conversion requested by user
+annual_discount,DE,Allemagne,29.99,EUR,EUR,exact
+annual_discount,SA,Arabie saoudite,133.99,SAR,SAR,exact
+annual_discount,AR,Argentine,30.0,USD,ARS,Google conversion requested by user
+annual_discount,AU,Australie,46.49,AUD,AUD,exact
+annual_discount,AT,Autriche,29.99,EUR,EUR,exact
+annual_discount,AZ,Azerbaïdjan,33.49,USD,AZN,Google conversion requested by user
+annual_discount,BH,Bahreïn,33.49,USD,USD,exact
+annual_discount,BE,Belgique,29.99,EUR,EUR,exact
+annual_discount,BM,Bermudes,30.0,USD,USD,exact
+annual_discount,BO,Bolivie,30.0,USD,BOB,Google conversion requested by user
+annual_discount,BR,Brésil,200.0,BRL,BRL,exact
+annual_discount,BG,Bulgarie,29.99,EUR,EUR,exact
+annual_discount,KH,Cambodge,33.49,USD,USD,exact
+annual_discount,CM,Cameroun,33.49,USD,XAF,Google conversion requested by user
+annual_discount,CA,Canada,40.0,CAD,CAD,exact
+annual_discount,CL,Chili,33490,CLP,CLP,exact
+annual_discount,CY,Chypre,29.99,EUR,EUR,exact
+annual_discount,CO,Colombie,133900.0,COP,COP,exact
+annual_discount,KR,Corée du Sud,51500,KRW,KRW,exact
+annual_discount,CR,Costa Rica,30.0,USD,CRC,Google conversion requested by user
+annual_discount,HR,Croatie,29.99,EUR,EUR,exact
+annual_discount,CI,Côte d’Ivoire,33.49,USD,XOF,Google conversion requested by user
+annual_discount,DK,Danemark,265.0,DKK,DKK,exact
+annual_discount,ES,Espagne,29.99,EUR,EUR,exact
+annual_discount,EE,Estonie,29.99,EUR,EUR,exact
+annual_discount,FI,Finlande,29.99,EUR,EUR,exact
+annual_discount,FR,France,29.99,EUR,EUR,exact
+annual_discount,GH,Ghana,33.49,USD,GHS,Google conversion requested by user
+annual_discount,GR,Grèce,29.99,EUR,EUR,exact
+annual_discount,GE,Géorgie,33.49,USD,GEL,Google conversion requested by user
+annual_discount,HK,Hong Kong,243.0,HKD,HKD,exact
+annual_discount,HU,Hongrie,13390,HUF,HUF,exact
+annual_discount,IN,Inde,3349.0,INR,INR,exact
+annual_discount,ID,Indonésie,535000,IDR,IDR,exact
+annual_discount,IQ,Irak,30.0,USD,IQD,Google conversion requested by user
+annual_discount,IE,Irlande,29.99,EUR,EUR,exact
+annual_discount,IL,Israël,100.0,ILS,ILS,exact
+annual_discount,IT,Italie,29.99,EUR,EUR,exact
+annual_discount,JP,Japon,4690,JPY,JPY,exact
+annual_discount,JO,Jordanie,30.0,USD,JOD,Google conversion requested by user
+annual_discount,KZ,Kazakhstan,16690.0,KZT,KZT,exact
+annual_discount,KE,Kenya,33.49,USD,KES,Google conversion requested by user
+annual_discount,KW,Koweït,30.0,USD,USD,exact
+annual_discount,LV,Lettonie,29.99,EUR,EUR,exact
+annual_discount,LT,Lituanie,29.99,EUR,EUR,exact
+annual_discount,LU,Luxembourg,29.99,EUR,EUR,exact
+annual_discount,MO,Macao,30.0,USD,MOP,Google conversion requested by user
+annual_discount,MY,Malaisie,133.9,MYR,MYR,exact
+annual_discount,MA,Maroc,30.0,USD,MAD,Google conversion requested by user
+annual_discount,MX,Mexique,669.0,MXN,MXN,exact
+annual_discount,FM,Micronésie,30.0,USD,USD,exact
+annual_discount,MN,Mongolie,30.0,USD,MNT,Google conversion requested by user
+annual_discount,MM,Myanmar (Birmanie),30.0,USD,MMK,Google conversion requested by user
+annual_discount,NG,Nigeria,46500.0,NGN,NGN,exact
+annual_discount,NO,Norvège,400.0,NOK,NOK,exact
+annual_discount,NZ,Nouvelle-Zélande,53.0,NZD,NZD,exact
+annual_discount,OM,Oman,30.0,USD,USD,exact
+annual_discount,UZ,Ouzbékistan,33.49,USD,UZS,Google conversion requested by user
+annual_discount,PK,Pakistan,7900.0,PKR,PKR,exact
+annual_discount,PA,Panama,30.0,USD,USD,exact
+annual_discount,PY,Paraguay,30.0,USD,PYG,Google conversion requested by user
+annual_discount,NL,Pays-Bas,29.99,EUR,EUR,exact
+annual_discount,PH,Philippines,2000.0,PHP,PHP,exact
+annual_discount,PL,Pologne,133.99,PLN,PLN,exact
+annual_discount,PT,Portugal,29.99,EUR,EUR,exact
+annual_discount,PE,Pérou,133.9,PEN,PEN,exact
+annual_discount,QA,Qatar,100.0,QAR,QAR,exact
+annual_discount,RO,Roumanie,166.99,RON,RON,exact
+annual_discount,GB,Royaume-Uni,30.0,GBP,GBP,exact
+annual_discount,RU,Russie,2650.0,RUB,RUB,exact
+annual_discount,SV,Salvador,30.0,USD,USD,exact
+annual_discount,RS,Serbie,29.99,EUR,RSD,Google conversion requested by user
+annual_discount,SG,Singapour,40.0,SGD,SGD,exact
+annual_discount,SK,Slovaquie,29.99,EUR,EUR,exact
+annual_discount,SI,Slovénie,29.99,EUR,EUR,exact
+annual_discount,LK,Sri Lanka,30.0,USD,LKR,Google conversion requested by user
+annual_discount,CH,Suisse,26.5,CHF,CHF,exact
+annual_discount,SE,Suède,400.0,SEK,SEK,exact
+annual_discount,SN,Sénégal,33.49,USD,XOF,Google conversion requested by user
+annual_discount,TZ,Tanzanie,86900.0,TZS,TZS,exact
+annual_discount,TW,Taïwan,990,TWD,TWD,exact
+annual_discount,CZ,Tchéquie,790.0,CZK,CZK,exact
+annual_discount,TH,Thaïlande,990.0,THB,THB,exact
+annual_discount,TR,Turquie,1669.99,TRY,TRY,exact
+annual_discount,UA,Ukraine,33.49,USD,UAH,Google conversion requested by user
+annual_discount,VN,Viêt Nam,870000,VND,VND,exact
+annual_discount,EG,Égypte,1669.99,EGP,EGP,exact
+annual_discount,AE,Émirats arabes unis,119.99,AED,AED,exact
+annual_discount,EC,Équateur,30.0,USD,USD,exact
+annual_discount,US,États-Unis,29.99,USD,USD,exact
+annual_discount,KY,Îles Caïmans,30.0,USD,USD,exact
+annual_discount,TC,Îles Turques-et-Caïques,30.0,USD,USD,exact
+annual_discount,VG,Îles Vierges britanniques,30.0,USD,USD,exact
+annual_discount,AL,Albanie,33.49,USD,USD,exact
+annual_discount,AO,Angola,30.0,USD,USD,exact
+annual_discount,AG,Antigua-et-Barbuda,30.0,USD,USD,exact
+annual_discount,AM,Arménie,33.49,USD,USD,exact
+annual_discount,BS,Bahamas,33.49,USD,USD,exact
+annual_discount,BZ,Belize,30.0,USD,USD,exact
+annual_discount,BY,Biélorussie,33.49,USD,USD,exact
+annual_discount,BA,Bosnie-Herzégovine,29.99,EUR,USD,Google conversion requested by user
+annual_discount,BW,Botswana,30.0,USD,USD,exact
+annual_discount,CV,Cap-Vert,30.0,USD,USD,exact
+annual_discount,CG,Congo-Brazzaville,30.0,USD,USD,exact
+annual_discount,CD,Congo-Kinshasa,30.0,USD,USD,exact
+annual_discount,DM,Dominique,30.0,USD,USD,exact
+annual_discount,FJ,Fidji,30.0,USD,USD,exact
+annual_discount,GM,Gambie,30.0,USD,USD,exact
+annual_discount,GD,Grenade,30.0,USD,USD,exact
+annual_discount,GT,Guatemala,30.0,USD,USD,exact
+annual_discount,HN,Honduras,30.0,USD,USD,exact
+annual_discount,JM,Jamaïque,30.0,USD,USD,exact
+annual_discount,KG,Kirghizstan,33.49,USD,USD,exact
+annual_discount,LA,Laos,33.49,USD,USD,exact
+annual_discount,LB,Liban,30.0,USD,USD,exact
+annual_discount,LR,Liberia,30.0,USD,USD,exact
+annual_discount,LY,Libye,30.0,USD,USD,exact
+annual_discount,MK,Macédoine du Nord,30.0,USD,USD,exact
+annual_discount,MV,Maldives,30.0,USD,USD,exact
+annual_discount,MU,Maurice,33.49,USD,USD,exact
+annual_discount,MD,Moldavie,33.49,USD,USD,exact
+annual_discount,MZ,Mozambique,30.0,USD,USD,exact
+annual_discount,NA,Namibie,30.0,USD,USD,exact
+annual_discount,NI,Nicaragua,30.0,USD,USD,exact
+annual_discount,NP,Népal,33.49,USD,USD,exact
+annual_discount,UG,Ouganda,33.49,USD,USD,exact
+annual_discount,PG,Papouasie-Nouvelle-Guinée,30.0,USD,USD,exact
+annual_discount,RW,Rwanda,30.0,USD,USD,exact
+annual_discount,DO,République dominicaine,30.0,USD,USD,exact
+annual_discount,KN,Saint-Christophe-et-Niévès,30.0,USD,USD,exact
+annual_discount,LC,Sainte-Lucie,30.0,USD,USD,exact
+annual_discount,SC,Seychelles,30.0,USD,USD,exact
+annual_discount,SL,Sierra Leone,30.0,USD,USD,exact
+annual_discount,SR,Suriname,33.49,USD,USD,exact
+annual_discount,TJ,Tadjikistan,33.49,USD,USD,exact
+annual_discount,TD,Tchad,30.0,USD,USD,exact
+annual_discount,TO,Tonga,30.0,USD,USD,exact
+annual_discount,TT,Trinité-et-Tobago,30.0,USD,USD,exact
+annual_discount,TN,Tunisie,30.0,USD,USD,exact
+annual_discount,TM,Turkménistan,30.0,USD,USD,exact
+annual_discount,UY,Uruguay,30.0,USD,USD,exact
+annual_discount,VU,Vanuatu,30.0,USD,USD,exact
+annual_discount,VE,Venezuela,30.0,USD,USD,exact
+annual_discount,YE,Yémen,30.0,USD,USD,exact
+annual_discount,ZM,Zambie,33.49,USD,USD,exact
+annual_discount,ZW,Zimbabwe,33.49,USD,USD,exact
+annual_discount,SB,Îles Salomon,30.0,USD,USD,exact
+annual_discount,BF,Burkina Faso,30.0,USD,EUR,Google conversion requested by user
+annual_discount,BJ,Bénin,33.49,USD,EUR,Google conversion requested by user
+annual_discount,GA,Gabon,30.0,USD,EUR,Google conversion requested by user
+annual_discount,GW,Guinée-Bissau,30.0,USD,EUR,Google conversion requested by user
+annual_discount,IS,Islande,33.49,USD,EUR,Google conversion requested by user
+annual_discount,ML,Mali,30.0,USD,EUR,Google conversion requested by user
+annual_discount,MT,Malte,29.99,EUR,EUR,exact
+annual_discount,NE,Niger,30.0,USD,EUR,Google conversion requested by user
+annual_discount_15,ZA,Afrique du Sud,849.99,ZAR,ZAR,exact
+annual_discount_15,DZ,Algérie,38.0,USD,DZD,Google conversion requested by user
+annual_discount_15,DE,Allemagne,37.99,EUR,EUR,exact
+annual_discount_15,SA,Arabie saoudite,169.99,SAR,SAR,exact
+annual_discount_15,AR,Argentine,38.0,USD,ARS,Google conversion requested by user
+annual_discount_15,AU,Australie,59.0,AUD,AUD,exact
+annual_discount_15,AT,Autriche,37.99,EUR,EUR,exact
+annual_discount_15,AZ,Azerbaïdjan,42.49,USD,AZN,Google conversion requested by user
+annual_discount_15,BH,Bahreïn,42.49,USD,USD,exact
+annual_discount_15,BE,Belgique,37.99,EUR,EUR,exact
+annual_discount_15,BM,Bermudes,38.0,USD,USD,exact
+annual_discount_15,BO,Bolivie,38.0,USD,BOB,Google conversion requested by user
+annual_discount_15,BR,Brésil,254.9,BRL,BRL,exact
+annual_discount_15,BG,Bulgarie,37.99,EUR,EUR,exact
+annual_discount_15,KH,Cambodge,42.49,USD,USD,exact
+annual_discount_15,CM,Cameroun,42.49,USD,XAF,Google conversion requested by user
+annual_discount_15,CA,Canada,50.99,CAD,CAD,exact
+annual_discount_15,CL,Chili,42490,CLP,CLP,exact
+annual_discount_15,CY,Chypre,37.99,EUR,EUR,exact
+annual_discount_15,CO,Colombie,169900.0,COP,COP,exact
+annual_discount_15,KR,Corée du Sud,65000,KRW,KRW,exact
+annual_discount_15,CR,Costa Rica,38.0,USD,CRC,Google conversion requested by user
+annual_discount_15,HR,Croatie,37.99,EUR,EUR,exact
+annual_discount_15,CI,Côte d’Ivoire,42.49,USD,XOF,Google conversion requested by user
+annual_discount_15,DK,Danemark,339.0,DKK,DKK,exact
+annual_discount_15,ES,Espagne,37.99,EUR,EUR,exact
+annual_discount_15,EE,Estonie,37.99,EUR,EUR,exact
+annual_discount_15,FI,Finlande,37.99,EUR,EUR,exact
+annual_discount_15,FR,France,37.99,EUR,EUR,exact
+annual_discount_15,GH,Ghana,42.49,USD,GHS,Google conversion requested by user
+annual_discount_15,GR,Grèce,37.99,EUR,EUR,exact
+annual_discount_15,GE,Géorgie,42.49,USD,GEL,Google conversion requested by user
+annual_discount_15,HK,Hong Kong,310.0,HKD,HKD,exact
+annual_discount_15,HU,Hongrie,16990,HUF,HUF,exact
+annual_discount_15,IN,Inde,4249.0,INR,INR,exact
+annual_discount_15,ID,Indonésie,679000,IDR,IDR,exact
+annual_discount_15,IQ,Irak,38.0,USD,IQD,Google conversion requested by user
+annual_discount_15,IE,Irlande,37.99,EUR,EUR,exact
+annual_discount_15,IL,Israël,126.9,ILS,ILS,exact
+annual_discount_15,IT,Italie,37.99,EUR,EUR,exact
+annual_discount_15,JP,Japon,5900,JPY,JPY,exact
+annual_discount_15,JO,Jordanie,38.0,USD,JOD,Google conversion requested by user
+annual_discount_15,KZ,Kazakhstan,21000.0,KZT,KZT,exact
+annual_discount_15,KE,Kenya,42.49,USD,KES,Google conversion requested by user
+annual_discount_15,KW,Koweït,38.0,USD,USD,exact
+annual_discount_15,LV,Lettonie,37.99,EUR,EUR,exact
+annual_discount_15,LT,Lituanie,37.99,EUR,EUR,exact
+annual_discount_15,LU,Luxembourg,37.99,EUR,EUR,exact
+annual_discount_15,MO,Macao,38.0,USD,MOP,Google conversion requested by user
+annual_discount_15,MY,Malaisie,169.9,MYR,MYR,exact
+annual_discount_15,MA,Maroc,38.0,USD,MAD,Google conversion requested by user
+annual_discount_15,MX,Mexique,849.0,MXN,MXN,exact
+annual_discount_15,FM,Micronésie,38.0,USD,USD,exact
+annual_discount_15,MN,Mongolie,38.0,USD,MNT,Google conversion requested by user
+annual_discount_15,MM,Myanmar (Birmanie),38.0,USD,MMK,Google conversion requested by user
+annual_discount_15,NG,Nigeria,59000.0,NGN,NGN,exact
+annual_discount_15,NO,Norvège,509.0,NOK,NOK,exact
+annual_discount_15,NZ,Nouvelle-Zélande,67.99,NZD,NZD,exact
+annual_discount_15,OM,Oman,38.0,USD,USD,exact
+annual_discount_15,UZ,Ouzbékistan,42.49,USD,UZS,Google conversion requested by user
+annual_discount_15,PK,Pakistan,10100.0,PKR,PKR,exact
+annual_discount_15,PA,Panama,38.0,USD,USD,exact
+annual_discount_15,PY,Paraguay,38.0,USD,PYG,Google conversion requested by user
+annual_discount_15,NL,Pays-Bas,37.99,EUR,EUR,exact
+annual_discount_15,PH,Philippines,2500.0,PHP,PHP,exact
+annual_discount_15,PL,Pologne,169.99,PLN,PLN,exact
+annual_discount_15,PT,Portugal,37.99,EUR,EUR,exact
+annual_discount_15,PE,Pérou,169.9,PEN,PEN,exact
+annual_discount_15,QA,Qatar,126.99,QAR,QAR,exact
+annual_discount_15,RO,Roumanie,209.99,RON,RON,exact
+annual_discount_15,GB,Royaume-Uni,38.0,GBP,GBP,exact
+annual_discount_15,RU,Russie,3390.0,RUB,RUB,exact
+annual_discount_15,SV,Salvador,38.0,USD,USD,exact
+annual_discount_15,RS,Serbie,37.99,EUR,RSD,Google conversion requested by user
+annual_discount_15,SG,Singapour,50.98,SGD,SGD,exact
+annual_discount_15,SK,Slovaquie,37.99,EUR,EUR,exact
+annual_discount_15,SI,Slovénie,37.99,EUR,EUR,exact
+annual_discount_15,LK,Sri Lanka,38.0,USD,LKR,Google conversion requested by user
+annual_discount_15,CH,Suisse,34.0,CHF,CHF,exact
+annual_discount_15,SE,Suède,509.0,SEK,SEK,exact
+annual_discount_15,SN,Sénégal,42.49,USD,XOF,Google conversion requested by user
+annual_discount_15,TZ,Tanzanie,110000.0,TZS,TZS,exact
+annual_discount_15,TW,Taïwan,1260,TWD,TWD,exact
+annual_discount_15,CZ,Tchéquie,1010.0,CZK,CZK,exact
+annual_discount_15,TH,Thaïlande,1260.0,THB,THB,exact
+annual_discount_15,TR,Turquie,2099.99,TRY,TRY,exact
+annual_discount_15,UA,Ukraine,42.49,USD,UAH,Google conversion requested by user
+annual_discount_15,VN,Viêt Nam,1100000,VND,VND,exact
+annual_discount_15,EG,Égypte,2099.99,EGP,EGP,exact
+annual_discount_15,AE,Émirats arabes unis,152.99,AED,AED,exact
+annual_discount_15,EC,Équateur,38.0,USD,USD,exact
+annual_discount_15,US,États-Unis,37.99,USD,USD,exact
+annual_discount_15,KY,Îles Caïmans,38.0,USD,USD,exact
+annual_discount_15,TC,Îles Turques-et-Caïques,38.0,USD,USD,exact
+annual_discount_15,VG,Îles Vierges britanniques,38.0,USD,USD,exact
+annual_discount_15,AL,Albanie,42.49,USD,USD,exact
+annual_discount_15,AO,Angola,38.0,USD,USD,exact
+annual_discount_15,AG,Antigua-et-Barbuda,38.0,USD,USD,exact
+annual_discount_15,AM,Arménie,42.49,USD,USD,exact
+annual_discount_15,BS,Bahamas,42.49,USD,USD,exact
+annual_discount_15,BZ,Belize,38.0,USD,USD,exact
+annual_discount_15,BY,Biélorussie,42.49,USD,USD,exact
+annual_discount_15,BA,Bosnie-Herzégovine,37.99,EUR,USD,Google conversion requested by user
+annual_discount_15,BW,Botswana,38.0,USD,USD,exact
+annual_discount_15,CV,Cap-Vert,38.0,USD,USD,exact
+annual_discount_15,CG,Congo-Brazzaville,38.0,USD,USD,exact
+annual_discount_15,CD,Congo-Kinshasa,38.0,USD,USD,exact
+annual_discount_15,DM,Dominique,38.0,USD,USD,exact
+annual_discount_15,FJ,Fidji,38.0,USD,USD,exact
+annual_discount_15,GM,Gambie,38.0,USD,USD,exact
+annual_discount_15,GD,Grenade,38.0,USD,USD,exact
+annual_discount_15,GT,Guatemala,38.0,USD,USD,exact
+annual_discount_15,HN,Honduras,38.0,USD,USD,exact
+annual_discount_15,JM,Jamaïque,38.0,USD,USD,exact
+annual_discount_15,KG,Kirghizstan,42.49,USD,USD,exact
+annual_discount_15,LA,Laos,42.49,USD,USD,exact
+annual_discount_15,LB,Liban,38.0,USD,USD,exact
+annual_discount_15,LR,Liberia,38.0,USD,USD,exact
+annual_discount_15,LY,Libye,38.0,USD,USD,exact
+annual_discount_15,MK,Macédoine du Nord,38.0,USD,USD,exact
+annual_discount_15,MV,Maldives,38.0,USD,USD,exact
+annual_discount_15,MU,Maurice,42.49,USD,USD,exact
+annual_discount_15,MD,Moldavie,42.49,USD,USD,exact
+annual_discount_15,MZ,Mozambique,38.0,USD,USD,exact
+annual_discount_15,NA,Namibie,38.0,USD,USD,exact
+annual_discount_15,NI,Nicaragua,38.0,USD,USD,exact
+annual_discount_15,NP,Népal,42.49,USD,USD,exact
+annual_discount_15,UG,Ouganda,42.49,USD,USD,exact
+annual_discount_15,PG,Papouasie-Nouvelle-Guinée,38.0,USD,USD,exact
+annual_discount_15,RW,Rwanda,38.0,USD,USD,exact
+annual_discount_15,DO,République dominicaine,38.0,USD,USD,exact
+annual_discount_15,KN,Saint-Christophe-et-Niévès,38.0,USD,USD,exact
+annual_discount_15,LC,Sainte-Lucie,38.0,USD,USD,exact
+annual_discount_15,SC,Seychelles,38.0,USD,USD,exact
+annual_discount_15,SL,Sierra Leone,38.0,USD,USD,exact
+annual_discount_15,SR,Suriname,42.49,USD,USD,exact
+annual_discount_15,TJ,Tadjikistan,42.49,USD,USD,exact
+annual_discount_15,TD,Tchad,38.0,USD,USD,exact
+annual_discount_15,TO,Tonga,38.0,USD,USD,exact
+annual_discount_15,TT,Trinité-et-Tobago,38.0,USD,USD,exact
+annual_discount_15,TN,Tunisie,38.0,USD,USD,exact
+annual_discount_15,TM,Turkménistan,38.0,USD,USD,exact
+annual_discount_15,UY,Uruguay,38.0,USD,USD,exact
+annual_discount_15,VU,Vanuatu,38.0,USD,USD,exact
+annual_discount_15,VE,Venezuela,38.0,USD,USD,exact
+annual_discount_15,YE,Yémen,38.0,USD,USD,exact
+annual_discount_15,ZM,Zambie,42.49,USD,USD,exact
+annual_discount_15,ZW,Zimbabwe,42.49,USD,USD,exact
+annual_discount_15,SB,Îles Salomon,38.0,USD,USD,exact
+annual_discount_15,BF,Burkina Faso,38.0,USD,EUR,Google conversion requested by user
+annual_discount_15,BJ,Bénin,42.49,USD,EUR,Google conversion requested by user
+annual_discount_15,GA,Gabon,38.0,USD,EUR,Google conversion requested by user
+annual_discount_15,GW,Guinée-Bissau,38.0,USD,EUR,Google conversion requested by user
+annual_discount_15,IS,Islande,42.49,USD,EUR,Google conversion requested by user
+annual_discount_15,ML,Mali,38.0,USD,EUR,Google conversion requested by user
+annual_discount_15,MT,Malte,37.99,EUR,EUR,exact
+annual_discount_15,NE,Niger,38.0,USD,EUR,Google conversion requested by user
+annual_discount_20,ZA,Afrique du Sud,799.99,ZAR,ZAR,exact
+annual_discount_20,DZ,Algérie,35.99,USD,DZD,Google conversion requested by user
+annual_discount_20,DE,Allemagne,35.99,EUR,EUR,exact
+annual_discount_20,SA,Arabie saoudite,159.99,SAR,SAR,exact
+annual_discount_20,AR,Argentine,35.99,USD,ARS,Google conversion requested by user
+annual_discount_20,AU,Australie,55.99,AUD,AUD,exact
+annual_discount_20,AT,Autriche,35.99,EUR,EUR,exact
+annual_discount_20,AZ,Azerbaïdjan,39.99,USD,AZN,Google conversion requested by user
+annual_discount_20,BH,Bahreïn,39.99,USD,USD,exact
+annual_discount_20,BE,Belgique,35.99,EUR,EUR,exact
+annual_discount_20,BM,Bermudes,35.99,USD,USD,exact
+annual_discount_20,BO,Bolivie,35.99,USD,BOB,Google conversion requested by user
+annual_discount_20,BR,Brésil,239.9,BRL,BRL,exact
+annual_discount_20,BG,Bulgarie,35.99,EUR,EUR,exact
+annual_discount_20,KH,Cambodge,39.99,USD,USD,exact
+annual_discount_20,CM,Cameroun,39.99,USD,XAF,Google conversion requested by user
+annual_discount_20,CA,Canada,47.99,CAD,CAD,exact
+annual_discount_20,CL,Chili,39990,CLP,CLP,exact
+annual_discount_20,CY,Chypre,35.99,EUR,EUR,exact
+annual_discount_20,CO,Colombie,159900.0,COP,COP,exact
+annual_discount_20,KR,Corée du Sud,61500,KRW,KRW,exact
+annual_discount_20,CR,Costa Rica,35.99,USD,CRC,Google conversion requested by user
+annual_discount_20,HR,Croatie,35.99,EUR,EUR,exact
+annual_discount_20,CI,Côte d’Ivoire,39.99,USD,XOF,Google conversion requested by user
+annual_discount_20,DK,Danemark,319.0,DKK,DKK,exact
+annual_discount_20,ES,Espagne,35.99,EUR,EUR,exact
+annual_discount_20,EE,Estonie,35.99,EUR,EUR,exact
+annual_discount_20,FI,Finlande,35.99,EUR,EUR,exact
+annual_discount_20,FR,France,35.99,EUR,EUR,exact
+annual_discount_20,GH,Ghana,39.99,USD,GHS,Google conversion requested by user
+annual_discount_20,GR,Grèce,35.99,EUR,EUR,exact
+annual_discount_20,GE,Géorgie,39.99,USD,GEL,Google conversion requested by user
+annual_discount_20,HK,Hong Kong,293.0,HKD,HKD,exact
+annual_discount_20,HU,Hongrie,15990,HUF,HUF,exact
+annual_discount_20,IN,Inde,3999.0,INR,INR,exact
+annual_discount_20,ID,Indonésie,639000,IDR,IDR,exact
+annual_discount_20,IQ,Irak,35.99,USD,IQD,Google conversion requested by user
+annual_discount_20,IE,Irlande,35.99,EUR,EUR,exact
+annual_discount_20,IL,Israël,119.9,ILS,ILS,exact
+annual_discount_20,IT,Italie,35.99,EUR,EUR,exact
+annual_discount_20,JP,Japon,5600,JPY,JPY,exact
+annual_discount_20,JO,Jordanie,35.99,USD,JOD,Google conversion requested by user
+annual_discount_20,KZ,Kazakhstan,19990.0,KZT,KZT,exact
+annual_discount_20,KE,Kenya,39.99,USD,KES,Google conversion requested by user
+annual_discount_20,KW,Koweït,35.99,USD,USD,exact
+annual_discount_20,LV,Lettonie,35.99,EUR,EUR,exact
+annual_discount_20,LT,Lituanie,35.99,EUR,EUR,exact
+annual_discount_20,LU,Luxembourg,35.99,EUR,EUR,exact
+annual_discount_20,MO,Macao,35.99,USD,MOP,Google conversion requested by user
+annual_discount_20,MY,Malaisie,159.9,MYR,MYR,exact
+annual_discount_20,MA,Maroc,35.99,USD,MAD,Google conversion requested by user
+annual_discount_20,MX,Mexique,799.0,MXN,MXN,exact
+annual_discount_20,FM,Micronésie,35.99,USD,USD,exact
+annual_discount_20,MN,Mongolie,35.99,USD,MNT,Google conversion requested by user
+annual_discount_20,MM,Myanmar (Birmanie),35.99,USD,MMK,Google conversion requested by user
+annual_discount_20,NG,Nigeria,55900.0,NGN,NGN,exact
+annual_discount_20,NO,Norvège,479.0,NOK,NOK,exact
+annual_discount_20,NZ,Nouvelle-Zélande,63.99,NZD,NZD,exact
+annual_discount_20,OM,Oman,35.99,USD,USD,exact
+annual_discount_20,UZ,Ouzbékistan,39.99,USD,UZS,Google conversion requested by user
+annual_discount_20,PK,Pakistan,9500.0,PKR,PKR,exact
+annual_discount_20,PA,Panama,35.99,USD,USD,exact
+annual_discount_20,PY,Paraguay,35.99,USD,PYG,Google conversion requested by user
+annual_discount_20,NL,Pays-Bas,35.99,EUR,EUR,exact
+annual_discount_20,PH,Philippines,2390.0,PHP,PHP,exact
+annual_discount_20,PL,Pologne,159.99,PLN,PLN,exact
+annual_discount_20,PT,Portugal,35.99,EUR,EUR,exact
+annual_discount_20,PE,Pérou,159.9,PEN,PEN,exact
+annual_discount_20,QA,Qatar,119.99,QAR,QAR,exact
+annual_discount_20,RO,Roumanie,199.99,RON,RON,exact
+annual_discount_20,GB,Royaume-Uni,35.99,GBP,GBP,exact
+annual_discount_20,RU,Russie,3190.0,RUB,RUB,exact
+annual_discount_20,SV,Salvador,35.99,USD,USD,exact
+annual_discount_20,RS,Serbie,35.99,EUR,RSD,Google conversion requested by user
+annual_discount_20,SG,Singapour,47.98,SGD,SGD,exact
+annual_discount_20,SK,Slovaquie,35.99,EUR,EUR,exact
+annual_discount_20,SI,Slovénie,35.99,EUR,EUR,exact
+annual_discount_20,LK,Sri Lanka,35.99,USD,LKR,Google conversion requested by user
+annual_discount_20,CH,Suisse,32.0,CHF,CHF,exact
+annual_discount_20,SE,Suède,479.0,SEK,SEK,exact
+annual_discount_20,SN,Sénégal,39.99,USD,XOF,Google conversion requested by user
+annual_discount_20,TZ,Tanzanie,103900.0,TZS,TZS,exact
+annual_discount_20,TW,Taïwan,1190,TWD,TWD,exact
+annual_discount_20,CZ,Tchéquie,950.0,CZK,CZK,exact
+annual_discount_20,TH,Thaïlande,1190.0,THB,THB,exact
+annual_discount_20,TR,Turquie,1999.99,TRY,TRY,exact
+annual_discount_20,UA,Ukraine,39.99,USD,UAH,Google conversion requested by user
+annual_discount_20,VN,Viêt Nam,1039000,VND,VND,exact
+annual_discount_20,EG,Égypte,1999.99,EGP,EGP,exact
+annual_discount_20,AE,Émirats arabes unis,143.99,AED,AED,exact
+annual_discount_20,EC,Équateur,35.99,USD,USD,exact
+annual_discount_20,US,États-Unis,35.99,USD,USD,exact
+annual_discount_20,KY,Îles Caïmans,35.99,USD,USD,exact
+annual_discount_20,TC,Îles Turques-et-Caïques,35.99,USD,USD,exact
+annual_discount_20,VG,Îles Vierges britanniques,35.99,USD,USD,exact
+annual_discount_20,AL,Albanie,39.99,USD,USD,exact
+annual_discount_20,AO,Angola,35.99,USD,USD,exact
+annual_discount_20,AG,Antigua-et-Barbuda,35.99,USD,USD,exact
+annual_discount_20,AM,Arménie,39.99,USD,USD,exact
+annual_discount_20,BS,Bahamas,39.99,USD,USD,exact
+annual_discount_20,BZ,Belize,35.99,USD,USD,exact
+annual_discount_20,BY,Biélorussie,39.99,USD,USD,exact
+annual_discount_20,BA,Bosnie-Herzégovine,35.99,EUR,USD,Google conversion requested by user
+annual_discount_20,BW,Botswana,35.99,USD,USD,exact
+annual_discount_20,CV,Cap-Vert,35.99,USD,USD,exact
+annual_discount_20,CG,Congo-Brazzaville,35.99,USD,USD,exact
+annual_discount_20,CD,Congo-Kinshasa,35.99,USD,USD,exact
+annual_discount_20,DM,Dominique,35.99,USD,USD,exact
+annual_discount_20,FJ,Fidji,35.99,USD,USD,exact
+annual_discount_20,GM,Gambie,35.99,USD,USD,exact
+annual_discount_20,GD,Grenade,35.99,USD,USD,exact
+annual_discount_20,GT,Guatemala,35.99,USD,USD,exact
+annual_discount_20,HN,Honduras,35.99,USD,USD,exact
+annual_discount_20,JM,Jamaïque,35.99,USD,USD,exact
+annual_discount_20,KG,Kirghizstan,39.99,USD,USD,exact
+annual_discount_20,LA,Laos,39.99,USD,USD,exact
+annual_discount_20,LB,Liban,35.99,USD,USD,exact
+annual_discount_20,LR,Liberia,35.99,USD,USD,exact
+annual_discount_20,LY,Libye,35.99,USD,USD,exact
+annual_discount_20,MK,Macédoine du Nord,35.99,USD,USD,exact
+annual_discount_20,MV,Maldives,35.99,USD,USD,exact
+annual_discount_20,MU,Maurice,39.99,USD,USD,exact
+annual_discount_20,MD,Moldavie,39.99,USD,USD,exact
+annual_discount_20,MZ,Mozambique,35.99,USD,USD,exact
+annual_discount_20,NA,Namibie,35.99,USD,USD,exact
+annual_discount_20,NI,Nicaragua,35.99,USD,USD,exact
+annual_discount_20,NP,Népal,39.99,USD,USD,exact
+annual_discount_20,UG,Ouganda,39.99,USD,USD,exact
+annual_discount_20,PG,Papouasie-Nouvelle-Guinée,35.99,USD,USD,exact
+annual_discount_20,RW,Rwanda,35.99,USD,USD,exact
+annual_discount_20,DO,République dominicaine,35.99,USD,USD,exact
+annual_discount_20,KN,Saint-Christophe-et-Niévès,35.99,USD,USD,exact
+annual_discount_20,LC,Sainte-Lucie,35.99,USD,USD,exact
+annual_discount_20,SC,Seychelles,35.99,USD,USD,exact
+annual_discount_20,SL,Sierra Leone,35.99,USD,USD,exact
+annual_discount_20,SR,Suriname,39.99,USD,USD,exact
+annual_discount_20,TJ,Tadjikistan,39.99,USD,USD,exact
+annual_discount_20,TD,Tchad,35.99,USD,USD,exact
+annual_discount_20,TO,Tonga,35.99,USD,USD,exact
+annual_discount_20,TT,Trinité-et-Tobago,35.99,USD,USD,exact
+annual_discount_20,TN,Tunisie,35.99,USD,USD,exact
+annual_discount_20,TM,Turkménistan,35.99,USD,USD,exact
+annual_discount_20,UY,Uruguay,35.99,USD,USD,exact
+annual_discount_20,VU,Vanuatu,35.99,USD,USD,exact
+annual_discount_20,VE,Venezuela,35.99,USD,USD,exact
+annual_discount_20,YE,Yémen,35.99,USD,USD,exact
+annual_discount_20,ZM,Zambie,39.99,USD,USD,exact
+annual_discount_20,ZW,Zimbabwe,39.99,USD,USD,exact
+annual_discount_20,SB,Îles Salomon,35.99,USD,USD,exact
+annual_discount_20,BF,Burkina Faso,35.99,USD,EUR,Google conversion requested by user
+annual_discount_20,BJ,Bénin,39.99,USD,EUR,Google conversion requested by user
+annual_discount_20,GA,Gabon,35.99,USD,EUR,Google conversion requested by user
+annual_discount_20,GW,Guinée-Bissau,35.99,USD,EUR,Google conversion requested by user
+annual_discount_20,IS,Islande,39.99,USD,EUR,Google conversion requested by user
+annual_discount_20,ML,Mali,35.99,USD,EUR,Google conversion requested by user
+annual_discount_20,MT,Malte,35.99,EUR,EUR,exact
+annual_discount_20,NE,Niger,35.99,USD,EUR,Google conversion requested by user
+weekly,ZA,Afrique du Sud,199.99,ZAR,ZAR,exact
+weekly,DZ,Algérie,9.99,USD,DZD,Google conversion requested by user
+weekly,DE,Allemagne,7.99,EUR,EUR,exact
+weekly,SA,Arabie saoudite,39.99,SAR,SAR,exact
+weekly,AR,Argentine,9.99,USD,ARS,Google conversion requested by user
+weekly,AU,Australie,14.99,AUD,AUD,exact
+weekly,AT,Autriche,7.99,EUR,EUR,exact
+weekly,AZ,Azerbaïdjan,11.99,USD,AZN,Google conversion requested by user
+weekly,BH,Bahreïn,9.99,USD,USD,exact
+weekly,BE,Belgique,7.99,EUR,EUR,exact
+weekly,BM,Bermudes,9.99,USD,USD,exact
+weekly,BO,Bolivie,9.99,USD,BOB,Google conversion requested by user
+weekly,BR,Brésil,59.9,BRL,BRL,exact
+weekly,BG,Bulgarie,7.99,EUR,EUR,exact
+weekly,KH,Cambodge,9.99,USD,USD,exact
+weekly,CM,Cameroun,11.99,USD,XAF,Google conversion requested by user
+weekly,CA,Canada,12.99,CAD,CAD,exact
+weekly,CL,Chili,9990,CLP,CLP,exact
+weekly,CY,Chypre,7.99,EUR,EUR,exact
+weekly,CO,Colombie,49900.0,COP,COP,exact
+weekly,KR,Corée du Sud,17000,KRW,KRW,exact
+weekly,CR,Costa Rica,9.99,USD,CRC,Google conversion requested by user
+weekly,HR,Croatie,7.99,EUR,EUR,exact
+weekly,CI,Côte d’Ivoire,11.99,USD,XOF,Google conversion requested by user
+weekly,DK,Danemark,89.0,DKK,DKK,exact
+weekly,ES,Espagne,7.99,EUR,EUR,exact
+weekly,EE,Estonie,7.99,EUR,EUR,exact
+weekly,FI,Finlande,7.99,EUR,EUR,exact
+weekly,FR,France,7.99,EUR,EUR,exact
+weekly,GH,Ghana,11.99,USD,GHS,Google conversion requested by user
+weekly,GR,Grèce,7.99,EUR,EUR,exact
+weekly,GE,Géorgie,11.99,USD,GEL,Google conversion requested by user
+weekly,HK,Hong Kong,88.0,HKD,HKD,exact
+weekly,HU,Hongrie,4490,HUF,HUF,exact
+weekly,IN,Inde,999.0,INR,INR,exact
+weekly,ID,Indonésie,169000,IDR,IDR,exact
+weekly,IQ,Irak,9.99,USD,IQD,Google conversion requested by user
+weekly,IE,Irlande,7.99,EUR,EUR,exact
+weekly,IL,Israël,34.9,ILS,ILS,exact
+weekly,IT,Italie,7.99,EUR,EUR,exact
+weekly,JP,Japon,1500,JPY,JPY,exact
+weekly,JO,Jordanie,9.99,USD,JOD,Google conversion requested by user
+weekly,KZ,Kazakhstan,5990.0,KZT,KZT,exact
+weekly,KE,Kenya,11.99,USD,KES,Google conversion requested by user
+weekly,KW,Koweït,9.99,USD,USD,exact
+weekly,LV,Lettonie,7.99,EUR,EUR,exact
+weekly,LT,Lituanie,7.99,EUR,EUR,exact
+weekly,LU,Luxembourg,7.99,EUR,EUR,exact
+weekly,MO,Macao,9.99,USD,MOP,Google conversion requested by user
+weekly,MY,Malaisie,49.9,MYR,MYR,exact
+weekly,MA,Maroc,9.99,USD,MAD,Google conversion requested by user
+weekly,MX,Mexique,199.0,MXN,MXN,exact
+weekly,FM,Micronésie,9.99,USD,USD,exact
+weekly,MN,Mongolie,9.99,USD,MNT,Google conversion requested by user
+weekly,MM,Myanmar (Birmanie),9.99,USD,MMK,Google conversion requested by user
+weekly,NG,Nigeria,14900.0,NGN,NGN,exact
+weekly,NO,Norvège,129.0,NOK,NOK,exact
+weekly,NZ,Nouvelle-Zélande,19.99,NZD,NZD,exact
+weekly,OM,Oman,9.99,USD,USD,exact
+weekly,UZ,Ouzbékistan,9.99,USD,UZS,Google conversion requested by user
+weekly,PK,Pakistan,2900.0,PKR,PKR,exact
+weekly,PA,Panama,9.99,USD,USD,exact
+weekly,PY,Paraguay,9.99,USD,PYG,Google conversion requested by user
+weekly,NL,Pays-Bas,7.99,EUR,EUR,exact
+weekly,PH,Philippines,599.0,PHP,PHP,exact
+weekly,PL,Pologne,49.99,PLN,PLN,exact
+weekly,PT,Portugal,7.99,EUR,EUR,exact
+weekly,PE,Pérou,44.9,PEN,PEN,exact
+weekly,QA,Qatar,39.99,QAR,QAR,exact
+weekly,RO,Roumanie,49.99,RON,RON,exact
+weekly,GB,Royaume-Uni,9.99,GBP,GBP,exact
+weekly,RU,Russie,899.0,RUB,RUB,exact
+weekly,SV,Salvador,9.99,USD,USD,exact
+weekly,RS,Serbie,7.99,EUR,RSD,Google conversion requested by user
+weekly,SG,Singapour,14.98,SGD,SGD,exact
+weekly,SK,Slovaquie,7.99,EUR,EUR,exact
+weekly,SI,Slovénie,7.99,EUR,EUR,exact
+weekly,LK,Sri Lanka,9.99,USD,LKR,Google conversion requested by user
+weekly,CH,Suisse,9.0,CHF,CHF,exact
+weekly,SE,Suède,129.0,SEK,SEK,exact
+weekly,SN,Sénégal,11.99,USD,XOF,Google conversion requested by user
+weekly,TZ,Tanzanie,29900.0,TZS,TZS,exact
+weekly,TW,Taïwan,320,TWD,TWD,exact
+weekly,CZ,Tchéquie,249.0,CZK,CZK,exact
+weekly,TH,Thaïlande,399.0,THB,THB,exact
+weekly,TR,Turquie,499.99,TRY,TRY,exact
+weekly,UA,Ukraine,11.99,USD,UAH,Google conversion requested by user
+weekly,VN,Viêt Nam,299000,VND,VND,exact
+weekly,EG,Égypte,499.99,EGP,EGP,exact
+weekly,AE,Émirats arabes unis,39.99,AED,AED,exact
+weekly,EC,Équateur,9.99,USD,USD,exact
+weekly,US,États-Unis,9.99,USD,USD,exact
+weekly,KY,Îles Caïmans,9.99,USD,USD,exact
+weekly,TC,Îles Turques-et-Caïques,9.99,USD,USD,exact
+weekly,VG,Îles Vierges britanniques,9.99,USD,USD,exact
+weekly,AL,Albanie,11.99,USD,USD,exact
+weekly,AO,Angola,9.99,USD,USD,exact
+weekly,AG,Antigua-et-Barbuda,9.99,USD,USD,exact
+weekly,AM,Arménie,11.99,USD,USD,exact
+weekly,BS,Bahamas,9.99,USD,USD,exact
+weekly,BZ,Belize,9.99,USD,USD,exact
+weekly,BY,Biélorussie,11.99,USD,USD,exact
+weekly,BA,Bosnie-Herzégovine,7.99,EUR,USD,Google conversion requested by user
+weekly,BW,Botswana,9.99,USD,USD,exact
+weekly,CV,Cap-Vert,9.99,USD,USD,exact
+weekly,CG,Congo-Brazzaville,9.99,USD,USD,exact
+weekly,CD,Congo-Kinshasa,9.99,USD,USD,exact
+weekly,DM,Dominique,9.99,USD,USD,exact
+weekly,FJ,Fidji,9.99,USD,USD,exact
+weekly,GM,Gambie,9.99,USD,USD,exact
+weekly,GD,Grenade,9.99,USD,USD,exact
+weekly,GT,Guatemala,9.99,USD,USD,exact
+weekly,HN,Honduras,9.99,USD,USD,exact
+weekly,JM,Jamaïque,9.99,USD,USD,exact
+weekly,KG,Kirghizstan,9.99,USD,USD,exact
+weekly,LA,Laos,9.99,USD,USD,exact
+weekly,LB,Liban,9.99,USD,USD,exact
+weekly,LR,Liberia,9.99,USD,USD,exact
+weekly,LY,Libye,9.99,USD,USD,exact
+weekly,MK,Macédoine du Nord,9.99,USD,USD,exact
+weekly,MV,Maldives,9.99,USD,USD,exact
+weekly,MU,Maurice,11.99,USD,USD,exact
+weekly,MD,Moldavie,11.99,USD,USD,exact
+weekly,MZ,Mozambique,9.99,USD,USD,exact
+weekly,NA,Namibie,9.99,USD,USD,exact
+weekly,NI,Nicaragua,9.99,USD,USD,exact
+weekly,NP,Népal,11.99,USD,USD,exact
+weekly,UG,Ouganda,11.99,USD,USD,exact
+weekly,PG,Papouasie-Nouvelle-Guinée,9.99,USD,USD,exact
+weekly,RW,Rwanda,9.99,USD,USD,exact
+weekly,DO,République dominicaine,9.99,USD,USD,exact
+weekly,KN,Saint-Christophe-et-Niévès,9.99,USD,USD,exact
+weekly,LC,Sainte-Lucie,9.99,USD,USD,exact
+weekly,SC,Seychelles,9.99,USD,USD,exact
+weekly,SL,Sierra Leone,9.99,USD,USD,exact
+weekly,SR,Suriname,9.99,USD,USD,exact
+weekly,TJ,Tadjikistan,9.99,USD,USD,exact
+weekly,TD,Tchad,9.99,USD,USD,exact
+weekly,TO,Tonga,9.99,USD,USD,exact
+weekly,TT,Trinité-et-Tobago,9.99,USD,USD,exact
+weekly,TN,Tunisie,9.99,USD,USD,exact
+weekly,TM,Turkménistan,9.99,USD,USD,exact
+weekly,UY,Uruguay,9.99,USD,USD,exact
+weekly,VU,Vanuatu,9.99,USD,USD,exact
+weekly,VE,Venezuela,9.99,USD,USD,exact
+weekly,YE,Yémen,9.99,USD,USD,exact
+weekly,ZM,Zambie,11.99,USD,USD,exact
+weekly,ZW,Zimbabwe,11.99,USD,USD,exact
+weekly,SB,Îles Salomon,9.99,USD,USD,exact
+weekly,BF,Burkina Faso,9.99,USD,EUR,Google conversion requested by user
+weekly,BJ,Bénin,11.99,USD,EUR,Google conversion requested by user
+weekly,GA,Gabon,9.99,USD,EUR,Google conversion requested by user
+weekly,GW,Guinée-Bissau,9.99,USD,EUR,Google conversion requested by user
+weekly,IS,Islande,11.99,USD,EUR,Google conversion requested by user
+weekly,ML,Mali,9.99,USD,EUR,Google conversion requested by user
+weekly,MT,Malte,7.99,EUR,EUR,exact
+weekly,NE,Niger,9.99,USD,EUR,Google conversion requested by user
+annual_discount_80,ZA,Afrique du Sud,719.0,ZAR,ZAR,exact
+annual_discount_80,DZ,Algérie,35.95,USD,DZD,Google conversion requested by user
+annual_discount_80,DE,Allemagne,30.99,EUR,EUR,exact
+annual_discount_80,SA,Arabie saoudite,142.99,SAR,SAR,exact
+annual_discount_80,AR,Argentine,35.95,USD,ARS,Google conversion requested by user
+annual_discount_80,AU,Australie,55.0,AUD,AUD,exact
+annual_discount_80,AT,Autriche,30.99,EUR,EUR,exact
+annual_discount_80,AZ,Azerbaïdjan,43.0,USD,AZN,Google conversion requested by user
+annual_discount_80,BH,Bahreïn,35.95,USD,USD,exact
+annual_discount_80,BE,Belgique,30.99,EUR,EUR,exact
+annual_discount_80,BM,Bermudes,35.95,USD,USD,exact
+annual_discount_80,BO,Bolivie,35.95,USD,BOB,Google conversion requested by user
+annual_discount_80,BR,Brésil,239.0,BRL,BRL,exact
+annual_discount_80,BG,Bulgarie,30.99,EUR,EUR,exact
+annual_discount_80,KH,Cambodge,35.95,USD,USD,exact
+annual_discount_80,CM,Cameroun,43.0,USD,XAF,Google conversion requested by user
+annual_discount_80,CA,Canada,47.95,CAD,CAD,exact
+annual_discount_80,CL,Chili,43000,CLP,CLP,exact
+annual_discount_80,CY,Chypre,30.99,EUR,EUR,exact
+annual_discount_80,CO,Colombie,166900.0,COP,COP,exact
+annual_discount_80,KR,Corée du Sud,60000,KRW,KRW,exact
+annual_discount_80,CR,Costa Rica,35.95,USD,CRC,Google conversion requested by user
+annual_discount_80,HR,Croatie,30.99,EUR,EUR,exact
+annual_discount_80,CI,Côte d’Ivoire,43.0,USD,XOF,Google conversion requested by user
+annual_discount_80,DK,Danemark,309.0,DKK,DKK,exact
+annual_discount_80,ES,Espagne,30.99,EUR,EUR,exact
+annual_discount_80,EE,Estonie,30.99,EUR,EUR,exact
+annual_discount_80,FI,Finlande,30.99,EUR,EUR,exact
+annual_discount_80,FR,France,30.99,EUR,EUR,exact
+annual_discount_80,GH,Ghana,43.0,USD,GHS,Google conversion requested by user
+annual_discount_80,GR,Grèce,30.99,EUR,EUR,exact
+annual_discount_80,GE,Géorgie,43.0,USD,GEL,Google conversion requested by user
+annual_discount_80,HK,Hong Kong,283.0,HKD,HKD,exact
+annual_discount_80,HU,Hongrie,16690,HUF,HUF,exact
+annual_discount_80,IN,Inde,3549.0,INR,INR,exact
+annual_discount_80,ID,Indonésie,595000,IDR,IDR,exact
+annual_discount_80,IQ,Irak,35.95,USD,IQD,Google conversion requested by user
+annual_discount_80,IE,Irlande,30.99,EUR,EUR,exact
+annual_discount_80,IL,Israël,119.0,ILS,ILS,exact
+annual_discount_80,IT,Italie,30.99,EUR,EUR,exact
+annual_discount_80,JP,Japon,6000,JPY,JPY,exact
+annual_discount_80,JO,Jordanie,35.95,USD,JOD,Google conversion requested by user
+annual_discount_80,KZ,Kazakhstan,21490.0,KZT,KZT,exact
+annual_discount_80,KE,Kenya,43.0,USD,KES,Google conversion requested by user
+annual_discount_80,KW,Koweït,35.95,USD,USD,exact
+annual_discount_80,LV,Lettonie,30.99,EUR,EUR,exact
+annual_discount_80,LT,Lituanie,30.99,EUR,EUR,exact
+annual_discount_80,LU,Luxembourg,30.99,EUR,EUR,exact
+annual_discount_80,MO,Macao,35.95,USD,MOP,Google conversion requested by user
+annual_discount_80,MY,Malaisie,166.9,MYR,MYR,exact
+annual_discount_80,MA,Maroc,35.95,USD,MAD,Google conversion requested by user
+annual_discount_80,MX,Mexique,710.0,MXN,MXN,exact
+annual_discount_80,FM,Micronésie,35.95,USD,USD,exact
+annual_discount_80,MN,Mongolie,35.95,USD,MNT,Google conversion requested by user
+annual_discount_80,MM,Myanmar (Birmanie),35.95,USD,MMK,Google conversion requested by user
+annual_discount_80,NG,Nigeria,59500.0,NGN,NGN,exact
+annual_discount_80,NO,Norvège,475.0,NOK,NOK,exact
+annual_discount_80,NZ,Nouvelle-Zélande,71.95,NZD,NZD,exact
+annual_discount_80,OM,Oman,35.95,USD,USD,exact
+annual_discount_80,UZ,Ouzbékistan,35.95,USD,UZS,Google conversion requested by user
+annual_discount_80,PK,Pakistan,9300.0,PKR,PKR,exact
+annual_discount_80,PA,Panama,35.95,USD,USD,exact
+annual_discount_80,PY,Paraguay,35.95,USD,PYG,Google conversion requested by user
+annual_discount_80,NL,Pays-Bas,30.99,EUR,EUR,exact
+annual_discount_80,PH,Philippines,2390.0,PHP,PHP,exact
+annual_discount_80,PL,Pologne,166.99,PLN,PLN,exact
+annual_discount_80,PT,Portugal,30.99,EUR,EUR,exact
+annual_discount_80,PE,Pérou,166.9,PEN,PEN,exact
+annual_discount_80,QA,Qatar,119.0,QAR,QAR,exact
+annual_discount_80,RO,Roumanie,190.99,RON,RON,exact
+annual_discount_80,GB,Royaume-Uni,35.95,GBP,GBP,exact
+annual_discount_80,RU,Russie,3090.0,RUB,RUB,exact
+annual_discount_80,SV,Salvador,35.95,USD,USD,exact
+annual_discount_80,RS,Serbie,30.99,EUR,RSD,Google conversion requested by user
+annual_discount_80,SG,Singapour,47.95,SGD,SGD,exact
+annual_discount_80,SK,Slovaquie,30.99,EUR,EUR,exact
+annual_discount_80,SI,Slovénie,30.99,EUR,EUR,exact
+annual_discount_80,LK,Sri Lanka,35.95,USD,LKR,Google conversion requested by user
+annual_discount_80,CH,Suisse,33.5,CHF,CHF,exact
+annual_discount_80,SE,Suède,475.0,SEK,SEK,exact
+annual_discount_80,SN,Sénégal,43.0,USD,XOF,Google conversion requested by user
+annual_discount_80,TZ,Tanzanie,95000.0,TZS,TZS,exact
+annual_discount_80,TW,Taïwan,1175,TWD,TWD,exact
+annual_discount_80,CZ,Tchéquie,950.0,CZK,CZK,exact
+annual_discount_80,TH,Thaïlande,1190.0,THB,THB,exact
+annual_discount_80,TR,Turquie,1909.99,TRY,TRY,exact
+annual_discount_80,UA,Ukraine,43.0,USD,UAH,Google conversion requested by user
+annual_discount_80,VN,Viêt Nam,1195000,VND,VND,exact
+annual_discount_80,EG,Égypte,1909.99,EGP,EGP,exact
+annual_discount_80,AE,Émirats arabes unis,142.99,AED,AED,exact
+annual_discount_80,EC,Équateur,35.95,USD,USD,exact
+annual_discount_80,US,États-Unis,35.99,USD,USD,exact
+annual_discount_80,KY,Îles Caïmans,35.95,USD,USD,exact
+annual_discount_80,TC,Îles Turques-et-Caïques,35.95,USD,USD,exact
+annual_discount_80,VG,Îles Vierges britanniques,35.95,USD,USD,exact
+annual_discount_80,AL,Albanie,43.0,USD,USD,exact
+annual_discount_80,AO,Angola,35.95,USD,USD,exact
+annual_discount_80,AG,Antigua-et-Barbuda,35.95,USD,USD,exact
+annual_discount_80,AM,Arménie,43.0,USD,USD,exact
+annual_discount_80,BS,Bahamas,35.95,USD,USD,exact
+annual_discount_80,BZ,Belize,35.95,USD,USD,exact
+annual_discount_80,BY,Biélorussie,43.0,USD,USD,exact
+annual_discount_80,BA,Bosnie-Herzégovine,30.99,EUR,USD,Google conversion requested by user
+annual_discount_80,BW,Botswana,35.95,USD,USD,exact
+annual_discount_80,CV,Cap-Vert,35.95,USD,USD,exact
+annual_discount_80,CG,Congo-Brazzaville,35.95,USD,USD,exact
+annual_discount_80,CD,Congo-Kinshasa,35.95,USD,USD,exact
+annual_discount_80,DM,Dominique,35.95,USD,USD,exact
+annual_discount_80,FJ,Fidji,35.95,USD,USD,exact
+annual_discount_80,GM,Gambie,35.95,USD,USD,exact
+annual_discount_80,GD,Grenade,35.95,USD,USD,exact
+annual_discount_80,GT,Guatemala,35.95,USD,USD,exact
+annual_discount_80,HN,Honduras,35.95,USD,USD,exact
+annual_discount_80,JM,Jamaïque,35.95,USD,USD,exact
+annual_discount_80,KG,Kirghizstan,35.95,USD,USD,exact
+annual_discount_80,LA,Laos,35.95,USD,USD,exact
+annual_discount_80,LB,Liban,35.95,USD,USD,exact
+annual_discount_80,LR,Liberia,35.95,USD,USD,exact
+annual_discount_80,LY,Libye,35.95,USD,USD,exact
+annual_discount_80,MK,Macédoine du Nord,35.95,USD,USD,exact
+annual_discount_80,MV,Maldives,35.95,USD,USD,exact
+annual_discount_80,MU,Maurice,43.0,USD,USD,exact
+annual_discount_80,MD,Moldavie,43.0,USD,USD,exact
+annual_discount_80,MZ,Mozambique,35.95,USD,USD,exact
+annual_discount_80,NA,Namibie,35.95,USD,USD,exact
+annual_discount_80,NI,Nicaragua,35.95,USD,USD,exact
+annual_discount_80,NP,Népal,43.0,USD,USD,exact
+annual_discount_80,UG,Ouganda,43.0,USD,USD,exact
+annual_discount_80,PG,Papouasie-Nouvelle-Guinée,35.95,USD,USD,exact
+annual_discount_80,RW,Rwanda,35.95,USD,USD,exact
+annual_discount_80,DO,République dominicaine,35.95,USD,USD,exact
+annual_discount_80,KN,Saint-Christophe-et-Niévès,35.95,USD,USD,exact
+annual_discount_80,LC,Sainte-Lucie,35.95,USD,USD,exact
+annual_discount_80,SC,Seychelles,35.95,USD,USD,exact
+annual_discount_80,SL,Sierra Leone,35.95,USD,USD,exact
+annual_discount_80,SR,Suriname,35.95,USD,USD,exact
+annual_discount_80,TJ,Tadjikistan,35.95,USD,USD,exact
+annual_discount_80,TD,Tchad,35.95,USD,USD,exact
+annual_discount_80,TO,Tonga,35.95,USD,USD,exact
+annual_discount_80,TT,Trinité-et-Tobago,35.95,USD,USD,exact
+annual_discount_80,TN,Tunisie,35.95,USD,USD,exact
+annual_discount_80,TM,Turkménistan,35.95,USD,USD,exact
+annual_discount_80,UY,Uruguay,35.95,USD,USD,exact
+annual_discount_80,VU,Vanuatu,35.95,USD,USD,exact
+annual_discount_80,VE,Venezuela,35.95,USD,USD,exact
+annual_discount_80,YE,Yémen,35.95,USD,USD,exact
+annual_discount_80,ZM,Zambie,43.0,USD,USD,exact
+annual_discount_80,ZW,Zimbabwe,43.0,USD,USD,exact
+annual_discount_80,SB,Îles Salomon,35.95,USD,USD,exact
+annual_discount_80,BF,Burkina Faso,35.95,USD,EUR,Google conversion requested by user
+annual_discount_80,BJ,Bénin,43.0,USD,EUR,Google conversion requested by user
+annual_discount_80,GA,Gabon,35.95,USD,EUR,Google conversion requested by user
+annual_discount_80,GW,Guinée-Bissau,35.95,USD,EUR,Google conversion requested by user
+annual_discount_80,IS,Islande,43.0,USD,EUR,Google conversion requested by user
+annual_discount_80,ML,Mali,35.95,USD,EUR,Google conversion requested by user
+annual_discount_80,MT,Malte,30.99,EUR,EUR,exact
+annual_discount_80,NE,Niger,35.95,USD,EUR,Google conversion requested by user

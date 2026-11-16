@@ -1,0 +1,171 @@
+{
+  "nativeChecks": [
+    {
+      "snapshot": 7,
+      "passed": true
+    },
+    {
+      "snapshot": 8,
+      "passed": true
+    },
+    {
+      "snapshot": 15,
+      "passed": true
+    },
+    {
+      "snapshot": 16,
+      "passed": true
+    },
+    {
+      "snapshot": 17,
+      "passed": true
+    },
+    {
+      "snapshot": 19,
+      "passed": true
+    },
+    {
+      "snapshot": 21,
+      "passed": true
+    },
+    {
+      "snapshot": 22,
+      "passed": true
+    },
+    {
+      "snapshot": 29,
+      "passed": true
+    }
+  ],
+  "captures": [
+    {
+      "file": "days.png",
+      "pixelDataPreserved": true,
+      "chunks": [
+        "IHDR",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IEND"
+      ],
+      "remainingAttributes": [
+        "com.apple.provenance"
+      ]
+    },
+    {
+      "file": "duration.png",
+      "pixelDataPreserved": true,
+      "chunks": [
+        "IHDR",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IEND"
+      ],
+      "remainingAttributes": [
+        "com.apple.provenance"
+      ]
+    },
+    {
+      "file": "diet.png",
+      "pixelDataPreserved": true,
+      "chunks": [
+        "IHDR",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IEND"
+      ],
+      "remainingAttributes": [
+        "com.apple.provenance"
+      ]
+    },
+    {
+      "file": "goal.png",
+      "pixelDataPreserved": true,
+      "chunks": [
+        "IHDR",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IDAT",
+        "IEND"
+      ],
+      "remainingAttributes": [
+        "com.apple.provenance"
+      ]
+    }
+  ]
+}

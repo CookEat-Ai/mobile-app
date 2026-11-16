@@ -1,0 +1,33 @@
+Attributes: Application, 0x111fb2e40, pid: 15397, label: 'CookEat'
+Element subtree:
+ →Application, 0x111fb2e40, pid: 15397, label: 'CookEat'
+    Window (Main), 0x111fb2d00, {{0.0, 0.0}, {466.0, 678.0}}
+      Other, 0x111fb1a40, {{0.0, 0.0}, {466.0, 678.0}}
+        Other, 0x111fb1b80, {{0.0, 0.0}, {466.0, 678.0}}
+      Other, 0x111fb2a80, {{0.0, 0.0}, {466.0, 678.0}}
+        Other, 0x111fb2bc0, {{0.0, 0.0}, {466.0, 678.0}}
+          Other, 0x111fb2800, {{0.0, 0.0}, {466.0, 678.0}}
+            Other, 0x111fb2940, {{0.0, 0.0}, {466.0, 678.0}}
+              Other, 0x111fb08c0, {{0.0, 0.0}, {466.0, 678.0}}
+              Other, 0x111fb0a00, {{0.0, 0.0}, {466.0, 678.0}}
+              Other, 0x111fb2f80, {{0.0, 0.0}, {466.0, 678.0}}
+                Button, 0x111fb30c0, {{20.0, 24.0}, {44.0, 44.0}}, label: 'Fermer'
+                Other, 0x111fb3200, {{76.0, 20.0}, {308.0, 52.0}}
+                  Other, 0x111fb0b40, {{238.3, 12.7}, {66.6, 66.6}}
+                    Image, 0x111fb0c80, {{238.3, 12.7}, {66.6, 66.6}}
+                  StaticText, 0x111fb0dc0, {{162.3, 31.3}, {79.3, 29.3}}, label: 'CookEat'
+                    StaticText, 0x111fb2580, {{162.3, 31.3}, {79.3, 29.3}}, label: 'CookEat'
+                Other, 0x111fb26c0, {{396.0, 21.0}, {50.0, 50.0}}, label: 'Point d’interrogation dans un cercle'
+                Other, 0x111fb2300, {{190.7, 470.0}, {85.0, 85.0}}
+                  Other, 0x111fb2440, {{190.7, 470.0}, {85.0, 85.0}}
+                Other, 0x111fb1cc0, {{150.7, 575.0}, {165.0, 44.0}}, label: 'Passer cette étape'
+          Other, 0x111fb1e00, {{0.0, 0.0}, {466.0, 678.0}}
+            Other, 0x111fb2080, {{0.0, 0.0}, {466.0, 678.0}}
+              Other, 0x111fb21c0, {{0.0, 0.0}, {466.0, 678.0}}
+Path to element:
+ →Application, 0x111fb2e40, pid: 15397, label: 'CookEat'
+Query chain:
+ →Find: Application 'com.gokugen.cookeat'
+  Output: {
+    Application, 0x111fb0000, pid: 15397, label: 'CookEat'
+  }

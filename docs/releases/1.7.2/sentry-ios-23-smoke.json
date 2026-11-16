@@ -1,0 +1,19 @@
+{
+  "eventId": "946bb7f688484bc790906edc92cc2d02",
+  "platform": "ios",
+  "build": "23",
+  "debugId": "cbf5e26a-f8f0-4e6a-86a1-61026fe8b932",
+  "kind": "controlled informational envelope event, not a real device crash",
+  "ingested": true,
+  "symbolicated": true,
+  "frames": [
+    {
+      "filename": "/node_modules/react-native/Libraries/Blob/FileReader.js",
+      "function": "FileReader",
+      "lineNo": 34,
+      "colNo": 1,
+      "absPath": "app:///node_modules/react-native/Libraries/Blob/FileReader.js"
+    }
+  ],
+  "processingErrors": []
+}

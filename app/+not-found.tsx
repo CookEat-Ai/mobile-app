@@ -1,3 +1,4 @@
+import { AppTheme as designTheme } from '../constants/AppTheme';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { View } from 'react-native';
@@ -12,5 +13,5 @@ export default function NotFoundScreen() {
     return () => clearTimeout(timeout);
   }, [router]);
 
-  return <View style={{ flex: 1, backgroundColor: '#FDF9E2' }} />;
+  return <View style={{ flex: 1, backgroundColor: designTheme.background }} />;
 }

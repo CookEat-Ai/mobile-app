@@ -14,7 +14,7 @@ export function useResponsive(): ResponsiveInfo {
 
 /**
  * Style d'une colonne de contenu : pleine largeur sur téléphone, largeur
- * plafonnée et centrée sur tablette.
+ * étendue sur tablette, puis centrée uniquement sur les très grandes fenêtres.
  */
 export const contentColumn = (maxWidth: number = CONTENT_MAX_WIDTH) =>
   ({

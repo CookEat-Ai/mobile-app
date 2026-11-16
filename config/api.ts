@@ -44,7 +44,11 @@ const getApiBaseUrl = (): string => {
     if (!PUBLIC_ENV.apiUrl) {
       throw new Error('[config] EXPO_PUBLIC_API_URL est obligatoire hors développement.');
     }
-    return PUBLIC_ENV.apiUrl.replace(/\/+$/, '');
+    const productionUrl = PUBLIC_ENV.apiUrl.replace(/\/+$/, '');
+    if (PUBLIC_ENV.appEnvironment === 'production' && productionUrl !== 'https://cookeat.info/api') {
+      throw new Error('[config] Une release CookEat doit utiliser https://cookeat.info/api.');
+    }
+    return productionUrl;
   }
 
   // Échappatoire manuelle (fichier .env, non versionné). Volontairement ignorée

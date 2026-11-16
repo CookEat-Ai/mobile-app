@@ -6,7 +6,7 @@ export type MealCardRecipe = Pick<CatalogRecipe, 'id' | 'title' | 'image' | 'ing
 export function catalogMealCardData(recipe: MealCardRecipe, preferredType?: CatalogMealCategory | MealPlanMeal['mealType']) {
   const quantity = (value: string) => {
     const parsed = Number.parseFloat(String(value).replace(',', '.'));
-    return Number.isFinite(parsed) ? parsed : 0;
+    return Number.isFinite(parsed) ? parsed : undefined;
   };
   const mealTypes = recipe.mealTypes || [];
   const slot = preferredType === 'main' ? 'lunch' : preferredType;

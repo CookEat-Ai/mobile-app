@@ -1,0 +1,58 @@
+[
+  {
+    "file": "google-annual-fr-price.jpg",
+    "dimensions": [
+      1512,
+      805
+    ],
+    "pixelsUnchanged": true,
+    "embeddedMetadataRemoved": true,
+    "hostExtendedAttributes": [
+      "com.apple.provenance"
+    ],
+    "archiveExtendedAttributes": [],
+    "sha256": "2e0851dc5591bb86569ca61c23ad2289e0c338028d21cfc77dce1390b80c7835"
+  },
+  {
+    "file": "google-annual_discount_80-fr-price.jpg",
+    "dimensions": [
+      1512,
+      805
+    ],
+    "pixelsUnchanged": true,
+    "embeddedMetadataRemoved": true,
+    "hostExtendedAttributes": [
+      "com.apple.provenance"
+    ],
+    "archiveExtendedAttributes": [],
+    "sha256": "9d51bca8baf542f18f48202054d09f6fd0b3b0fab1248f20a63ce3371939c355"
+  },
+  {
+    "file": "google-monthly-fr-price.jpg",
+    "dimensions": [
+      1512,
+      893
+    ],
+    "pixelsUnchanged": true,
+    "embeddedMetadataRemoved": true,
+    "hostExtendedAttributes": [
+      "com.apple.provenance"
+    ],
+    "archiveExtendedAttributes": [],
+    "sha256": "f07ccca4dcc6a5cbe4eb6d6898640f8dac53dc9f955298de82c0675003150fb6"
+  },
+  {
+    "file": "google-weekly-fr-price.jpg",
+    "dimensions": [
+      1512,
+      893
+    ],
+    "pixelsUnchanged": true,
+    "embeddedMetadataRemoved": true,
+    "hostExtendedAttributes": [
+      "com.apple.provenance"
+    ],
+    "archiveExtendedAttributes": [],
+    "sha256": "404aa36434dc427109149740c3fe27bcd8e58d710894582e67d017d02ca989d9"
+  }
+]

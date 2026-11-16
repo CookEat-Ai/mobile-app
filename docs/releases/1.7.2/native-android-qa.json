@@ -1,0 +1,32 @@
+{
+  "testedAt": "2026-10-14T02:04:42.991631+00:00",
+  "artifact": "Android 1.7.2 (9), APK derived from EAS AAB, test re-sign only",
+  "environment": "fresh read-only Android API36 emulator clone; production API 1.9.8",
+  "checks": {
+    "freshOnboarding": true,
+    "productionGeneration": true,
+    "rollingSevenDays": "2026-10-14 to 2026-10-20",
+    "selectedDaysOnly": [
+      "Wednesday 14",
+      "Friday 16"
+    ],
+    "reviewerGestureTopRightTwoSeconds": true,
+    "dedicatedReviewerActivation": true,
+    "landsOnPlan": true,
+    "notificationsDenied": true,
+    "offerUnavailableRecoverable": true,
+    "excludedDayInEditorGrey": true,
+    "mealsCatalogueLoads": true,
+    "restartRetainsPlan": true,
+    "android10UpgradeRetainsAccess": true
+  },
+  "unrun": [
+    "Google Play Billing purchase/restore: emulator image has no Play Store",
+    "iOS physical installation and sandbox purchases"
+  ],
+  "releaseFixesFound": [
+    "Remove unused ACTIVITY_RECOGNITION permission inherited from expo-sensors",
+    "Replace obsolete Monday\u2013Sunday copy in six languages"
+  ],
+  "replacementArtifacts": "iOS23 / Android10 finished and inspected"
+}

@@ -25,7 +25,7 @@ class NotificationService {
   /**
  * Demande les permissions pour les notifications et récupère le token
  */
-  async registerForPushNotificationsAsync(): Promise<string | null> {
+  async registerForPushNotificationsAsync(requestPermission = true): Promise<string | null> {
     let token = null;
 
     if (Device.isDevice) {
@@ -33,6 +33,7 @@ class NotificationService {
       let finalStatus = existingStatus;
 
       if (existingStatus !== 'granted') {
+        if (!requestPermission) return null;
         // Demander les permissions système
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
@@ -95,7 +96,7 @@ class NotificationService {
   private async sendTokenToServer(token: string): Promise<void> {
     try {
       const mobileId = await this.getMobileId();
-      const timezone = Localization.getCalendars()[0].timeZone || undefined;
+      const timezone = Localization.getCalendars()?.[0]?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || undefined;
       if (mobileId) {
         await apiService.updateNotificationToken(mobileId, token, timezone);
         console.log('✅ Token envoyé au serveur avec succès');
@@ -123,7 +124,7 @@ class NotificationService {
   async updateUserActivity(): Promise<void> {
     try {
       const mobileId = await this.getMobileId();
-      const timezone = Localization.getCalendars()[0].timeZone || undefined;
+      const timezone = Localization.getCalendars()?.[0]?.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone || undefined;
       if (mobileId) {
         await apiService.updateUserActivity(mobileId, timezone);
         console.log('✅ Activité utilisateur mise à jour');

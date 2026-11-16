@@ -3,12 +3,14 @@ const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
 const ts = require('typescript');
+const timeRules = { exports: {} };
+vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '../services/planning-time.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: timeRules.exports, Date, Intl });
 const display = { exports: {} };
-vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '../services/planningDisplay.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: display.exports, Date, Intl });
+vm.runInNewContext(ts.transpileModule(fs.readFileSync(path.join(__dirname, '../services/planningDisplay.ts'), 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS } }).outputText, { exports: display.exports, Date, Intl, require: () => timeRules.exports });
 const mod = { exports: {} };
 const source = fs.readFileSync(path.join(__dirname, '../services/planningOrganization.ts'), 'utf8');
 vm.runInNewContext(ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText, { exports: mod.exports, Date, require: () => display.exports });
-const { movePlanningMeal, planningPlacements } = mod.exports;
+const { movePlanningMeal, planningPlacements, planningEditableDays } = mod.exports;
 const meals = [
   { slotId: 'monday', dayIndex: 0, mealType: 'lunch', position: 0, status: 'ready', servings: 2, calories: 600, ingredients: [{ name: 'rice', quantity: '100g' }] },
   { slotId: 'wednesday', dayIndex: 2, mealType: 'lunch', position: 1, status: 'ready', servings: 3, calories: 800 },
@@ -41,3 +43,12 @@ assert.equal(movePlanningMeal(meals, 'monday', { dayIndex: 2, mealType: 'breakfa
 assert.equal(movePlanningMeal(meals, "monday", { dayIndex: 2, mealType: "lunch" }, "2020-01-06"), meals);
 
 assert.notEqual(movePlanningMeal(breakfasts, "monday", { dayIndex: 2, mealType: "snack" }, "2026-12-28"), breakfasts);
+
+assert.equal(planningEditableDays({ preferences: { cookingDays: [0, 2, 4, 4, -1, 7, '1'] }, meals }).join(','), '0,2,4');
+assert.equal(planningEditableDays({ preferences: {}, meals }).join(','), '0,2', 'legacy plans use original meal days');
+assert.equal(planningEditableDays({ preferences: { cookingDays: [] }, meals }).length, 0, 'an explicit empty choice is authoritative');
+const editable = planningEditableDays({ preferences: { cookingDays: [0, 2, 4] }, meals });
+assert.equal(movePlanningMeal(meals, 'monday', { dayIndex: 1, mealType: 'lunch' }, '2026-12-28', editable), meals, 'excluded days reject moves');
+assert.notEqual(movePlanningMeal(meals, 'monday', { dayIndex: 4, mealType: 'lunch' }, '2026-12-28', editable), meals, 'selected empty days remain available');
+assert.equal(movePlanningMeal(meals, 'wednesday', { dayIndex: 0, mealType: 'lunch' }, '2026-12-28', [0]), meals, 'excluded source days are locked');
+console.log('Selected day organization passed: inactive destinations locked and selected empty days retained.');

@@ -1,3 +1,4 @@
+import { AppTheme as theme, AppRadii } from '../constants/AppTheme';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -16,7 +17,7 @@ import { useResponsive } from '../hooks/useResponsive';
 import { IconSymbol } from "./ui/IconSymbol";
 import { useVoice, resetVoiceCompletely } from '../hooks/useVoice';
 import { ExpoSpeechRecognitionModule } from 'expo-speech-recognition';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Ionicons } from '@expo/vector-icons';
 import { feedback } from '../services/haptics';
 
 
@@ -372,7 +373,7 @@ export default function Micro({
                   handleStartRecording();
               }}
             >
-              <FontAwesome name="microphone" size={24} color={colors.background} />
+              <Ionicons name="mic-outline" size={24} color={theme.onPrimary} />
             </TouchableOpacity>
           </Animated.View>
         </View>
@@ -444,14 +445,14 @@ const styles = StyleSheet.create({
   microphoneButton: {
     width: 80,
     height: 80,
-    borderRadius: 40,
+    borderRadius: AppRadii.pill,
     justifyContent: 'center',
     alignItems: 'center',
   },
   microphoneInner: {
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: AppRadii.sheet,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -459,7 +460,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 100,
     height: 100,
-    borderRadius: 50,
+    borderRadius: AppRadii.pill,
     borderWidth: 2,
     borderColor: '#e3e3e3',
     top: 5,
@@ -469,7 +470,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 120,
     height: 120,
-    borderRadius: 60,
+    borderRadius: AppRadii.pill,
     borderWidth: 2,
     borderColor: '#e3e3e3',
     top: -5,
@@ -486,7 +487,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.light.button,
     width: 60,
     height: 60,
-    borderRadius: 30,
+    borderRadius: AppRadii.sheet,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',

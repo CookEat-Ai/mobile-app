@@ -1,0 +1,47 @@
+Attributes: Application, 0x111b72f80, pid: 15397, label: 'CookEat'
+Element subtree:
+ →Application, 0x111b72f80, pid: 15397, label: 'CookEat'
+    Window (Main), 0x111b73c00, {{0.0, 0.0}, {466.0, 678.0}}
+      Other, 0x111b73480, {{0.0, 0.0}, {466.0, 678.0}}
+        Other, 0x111b72080, {{0.0, 0.0}, {466.0, 678.0}}
+      Other, 0x111b72300, {{0.0, 0.0}, {466.0, 678.0}}
+        Other, 0x111b70dc0, {{0.0, 0.0}, {466.0, 678.0}}
+          Other, 0x111b71e00, {{0.0, 0.0}, {466.0, 678.0}}
+            Other, 0x111b73d40, {{0.0, 0.0}, {466.0, 678.0}}
+              Other, 0x111b70a00, {{0.0, 0.0}, {466.0, 678.0}}
+                Other, 0x111b730c0, {{0.0, 0.0}, {466.0, 96.0}}
+                Other, 0x111b73980, {{0.0, 0.0}, {466.0, 678.0}}
+                Other, 0x111b717c0, {{189.3, 0.7}, {66.6, 66.6}}
+                  Image, 0x111b71180, {{189.3, 0.7}, {66.6, 66.6}}
+                Button, 0x111b70000, {{20.0, 12.0}, {44.0, 44.0}}, label: 'Retour'
+                StaticText, 0x111b73840, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'
+                  StaticText, 0x111c1db80, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'
+                Other, 0x111c1fac0, {{20.0, 70.0}, {342.0, 12.0}}, value: 38 %
+                  Other, 0x111c1f980, {{20.0, 70.0}, {128.3, 12.0}}
+                Other, 0x111c1dcc0, {{0.0, 96.0}, {382.0, 436.0}}
+                  ScrollView, 0x111c1f840, {{0.0, 96.0}, {382.0, 436.0}}
+                    Other, 0x111c1d540, {{0.0, 96.0}, {382.0, 82.0}}
+                      Other, 0x111c1d900, {{0.0, 96.0}, {382.0, 82.0}}
+                        Button, 0x111c1e440, {{271.7, 108.0}, {98.3, 44.0}}, label: 'Ajouter'
+                        StaticText, 0x111c1d400, {{12.0, 116.0}, {247.7, 28.0}}, label: 'Tes ingrédients'
+                          StaticText, 0x111c1df40, {{12.0, 116.0}, {247.7, 28.0}}, label: 'Tes ingrédients'
+                    Other, 0x111c1cc80, {{349.0, 96.0}, {30.0, 436.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                      Other, 0x1057aee40, {{376.0, 453.0}, {3.0, 76.0}}
+                    Other, 0x1057ae580, {{0.0, 499.0}, {382.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                      Other, 0x1057ae080, {{3.0, 526.0}, {376.0, 3.0}}
+                    Other, 0x1057ad040, {{349.0, 96.0}, {30.0, 436.0}}, label: 'Barre de défilement verticale, 1 page', value: 0 %
+                      Other, 0x1057adcc0, {{376.0, 453.0}, {3.0, 76.0}}
+                    Other, 0x1057aef80, {{0.0, 499.0}, {382.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                      Other, 0x1057ad7c0, {{3.0, 526.0}, {376.0, 3.0}}
+                Button, 0x1057ad2c0, {{12.0, 544.0}, {358.0, 56.0}}, label: 'Utiliser ces ingrédients, '
+                Button, 0x111a057c0, {{12.0, 600.0}, {358.0, 44.0}}, label: 'Reprendre une photo'
+          Other, 0x111fb0000, {{0.0, 0.0}, {466.0, 678.0}}
+            Other, 0x111fb0140, {{0.0, 0.0}, {466.0, 678.0}}
+              Other, 0x111fb0280, {{0.0, 0.0}, {466.0, 678.0}}
+Path to element:
+ →Application, 0x111b72f80, pid: 15397, label: 'CookEat'
+Query chain:
+ →Find: Application 'com.gokugen.cookeat'
+  Output: {
+    Application, 0x111fb03c0, pid: 15397, label: 'CookEat'
+  }

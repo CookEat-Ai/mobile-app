@@ -2,7 +2,7 @@
 const naturallyEndingInS = new Set(['couscous', 'mais', 'pois', 'reis']);
 
 export function pantryIngredientKey(name: string): string {
-  return name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  return name.replace(/œ/gi, 'oe').replace(/æ/gi, 'ae').replace(/ß/g, 'ss').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
     .replace(/[-_]/g, ' ').trim().replace(/\s+/g, ' ')
     .split(' ').map(word => word.length > 4 && word.endsWith('s') && !word.endsWith('ss') && !naturallyEndingInS.has(word) ? word.slice(0, -1) : word).join(' ');
 }

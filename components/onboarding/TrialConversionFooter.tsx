@@ -1,14 +1,14 @@
+import { AppSpinner as ActivityIndicator } from '../ui/AppSpinner';
+import { AppTheme as designTheme, AppRadii } from '../../constants/AppTheme';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   AccessibilityInfo,
-  ActivityIndicator,
   Animated,
   Easing,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-} from 'react-native';
+  View} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/Colors';
 import { ONBOARDING_CTA_BOTTOM_GAP } from '../../constants/Layout';
@@ -91,11 +91,11 @@ export function AnimatedChevron() {
       pointerEvents="none"
       style={[styles.primaryChevron, { transform: [{ translateX }] }]}
     >
-      <Ionicons name="chevron-forward-sharp" size={25} color="white" style={styles.chevronLayer} />
+      <Ionicons name="chevron-forward-sharp" size={25} color={designTheme.onPrimary} style={styles.chevronLayer} />
       <Ionicons
         name="chevron-forward-sharp"
         size={25}
-        color="white"
+        color={designTheme.onPrimary}
         style={[styles.chevronLayer, styles.chevronBoldLayer]}
       />
     </Animated.View>
@@ -142,7 +142,7 @@ export function TrialConversionFooter({
         disabled={isDisabled}
       >
         {loading ? (
-          <ActivityIndicator color="white" />
+          <ActivityIndicator color={designTheme.onPrimary} />
         ) : (
           <View
             style={[
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   reassuranceRow: {
-    height: 30,
+    minHeight: 30,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     height: 62,
     marginTop: 10,
     paddingHorizontal: PAYWALL_CTA_HORIZONTAL_INSET,
-    borderRadius: 100,
+    borderRadius: AppRadii.pill,
     backgroundColor: Colors.light.button,
     alignItems: 'center',
     justifyContent: 'center',
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   },
   primaryLabel: {
     flexShrink: 1,
-    color: 'white',
+    color: designTheme.onPrimary,
     fontFamily: 'Degular',
     fontSize: 21,
     lineHeight: 25,
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     right: -2,
     width: 34,
     height: 34,
-    borderRadius: 17,
+    borderRadius: AppRadii.control,
     backgroundColor: 'rgba(255,255,255,0.18)',
     alignItems: 'center',
     justifyContent: 'center',

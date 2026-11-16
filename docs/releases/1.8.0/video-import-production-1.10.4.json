@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-10-21T00:19:50.668Z",
+  "apiVersion": "1.10.4",
+  "apiCommit": "dac5e50d7e7a61c31d585f2eaa4cdcc7456982fa",
+  "realProductionQueue": true,
+  "postStreamCompleted": true,
+  "durationSeconds": 20,
+  "progressEvents": 7,
+  "doneEvents": 1,
+  "recipePresent": true,
+  "photoPresent": true,
+  "ingredients": 11,
+  "steps": 8,
+  "reviewCredentialNeverPrintedOrPersisted": true
+}
