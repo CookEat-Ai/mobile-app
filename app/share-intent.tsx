@@ -234,6 +234,7 @@ export default function ShareIntentScreen() {
         ready={status === 'success'}
         onComplete={handleProgressComplete}
         messageKey={`shareIntent.progressStep.${status === 'success' ? 'done' : progressStep}`}
+        showBrand
       />
     );
   }

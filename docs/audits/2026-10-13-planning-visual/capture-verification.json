@@ -1,0 +1,172 @@
+[
+  {
+    "file": "01-goal.png",
+    "dimensions": [
+      1398,
+      2034
+    ],
+    "pixelDataUnchanged": true,
+    "idatSha256": "48e243cfe867e8fc0cc9737162fc7ede1dc9511814d867eae9df80e4abe0ca80",
+    "retainedChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "remainingProtectedAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "02-days.png",
+    "dimensions": [
+      1398,
+      2034
+    ],
+    "pixelDataUnchanged": true,
+    "idatSha256": "477f4abab68cd2e66545150905a884af487510f7f19516a427d0e05efb2023c9",
+    "retainedChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "remainingProtectedAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "03-ingredients.png",
+    "dimensions": [
+      1398,
+      2034
+    ],
+    "pixelDataUnchanged": true,
+    "idatSha256": "61d9f4debca9cb2bb702742d85c3ed4db5d3bea680e6ecb6d40a5f13d34b4dcc",
+    "retainedChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "remainingProtectedAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "04-duration.png",
+    "dimensions": [
+      1398,
+      2034
+    ],
+    "pixelDataUnchanged": true,
+    "idatSha256": "407568b7f8742d0aae0258726b0eba63b21844262164d5388117b8583ab236f7",
+    "retainedChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "remainingProtectedAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "05-cuisines.png",
+    "dimensions": [
+      1398,
+      2034
+    ],
+    "pixelDataUnchanged": true,
+    "idatSha256": "82c75493d8e5b08f56b8a8dfe40db3504142f83180b3035ee7fff86cabb83828",
+    "retainedChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "remainingProtectedAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "06-diet.png",
+    "dimensions": [
+      1398,
+      2034
+    ],
+    "pixelDataUnchanged": true,
+    "idatSha256": "05b84e56e5bf6601331ce07b81d402bf4254f98b3875b9fbb469a6a15389575b",
+    "retainedChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "remainingProtectedAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "07-exclusions.png",
+    "dimensions": [
+      1398,
+      2034
+    ],
+    "pixelDataUnchanged": true,
+    "idatSha256": "dea3bad1e559c4a0bd22e3c83fce57ad7ad3fcf64c44609065a2cee5b63ba289",
+    "retainedChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "remainingProtectedAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "08-servings.png",
+    "dimensions": [
+      1398,
+      2034
+    ],
+    "pixelDataUnchanged": true,
+    "idatSha256": "dc1edf366682362402c310844bdd6d18f32673007444b2a5583b11f133ddba4f",
+    "retainedChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "remainingProtectedAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "09-goal-open.png",
+    "dimensions": [
+      2853,
+      2007
+    ],
+    "pixelDataUnchanged": true,
+    "idatSha256": "1509f7c6b05b69f020c6578d6b6ce0d78c967b6e45a53815f3daa562c6a4ae9b",
+    "retainedChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "remainingProtectedAttributes": [
+      "com.apple.provenance"
+    ]
+  },
+  {
+    "file": "10-pantry-safe.png",
+    "dimensions": [
+      1398,
+      2034
+    ],
+    "pixelDataUnchanged": true,
+    "idatSha256": "43f28de646f65b2e66f3ab061b6e65be183db4f25516e550184bf704452e7010",
+    "retainedChunks": [
+      "IDAT",
+      "IEND",
+      "IHDR"
+    ],
+    "remainingProtectedAttributes": [
+      "com.apple.provenance"
+    ]
+  }
+]

@@ -1,0 +1,6 @@
+{
+  "aabUploadCertificateMatchesEAS": true,
+  "sha256": "E9:2E:31:CB:B1:81:54:54:28:42:44:9D:E8:05:52:EB:2C:B8:DB:95:11:59:C2:77:85:BE:A3:16:53:47:E9:51",
+  "localTestApkResignedWithDevelopmentKey": true,
+  "storeAabUnmodified": true
+}

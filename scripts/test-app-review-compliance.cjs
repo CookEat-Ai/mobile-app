@@ -51,18 +51,19 @@ for (const dev of [true, false]) {
   await assert.rejects(serverAccess.activateReviewerAccess('1234'), /offline/);
   console.log(`${dev ? 'Development' : 'Release'} client: server activation, revocation and offline denial verified`);
 }
-let requested=0, timer=null;
+let requested=0, timer=null, delay=0;
 const values=new Map();
 const review=load('services/planningReview.ts',{
  '@react-native-async-storage/async-storage':{__esModule:true,default:{getItem:async k=>values.get(k)}},
  'react-native':{AppState:{currentState:'active'}},
  'expo-store-review':{hasAction:async()=>true,requestReview:async()=>requested++},
  './analytics':{__esModule:true,default:{track:()=>{}}}
-},{setTimeout:(fn,ms)=>{assert.equal(ms,5000);timer=fn;return 1;},clearTimeout:()=>{timer=null;}});
+},{setTimeout:(fn,ms)=>{delay=ms;timer=fn;return 1;},clearTimeout:()=>{timer=null;}});
 review.schedulePlanningReview('onboarding',true);assert.equal(timer,null);
 review.schedulePlanningReview('unflagged-onboarding');await timer();assert.equal(requested,0);
 values.set('onboarding_completed','true');
-review.schedulePlanningReview('first-post-onboarding');await timer();assert.equal(requested,1);
+review.schedulePlanningReview('first-post-onboarding');assert.equal(delay,5000);await timer();assert.equal(requested,1);
+review.scheduleMealScanReview('scan');assert.equal(delay,3000);await timer();assert.equal(requested,2);
 review.schedulePlanningReview('pending-plan');review.schedulePlanningReview('onboarding',true);assert.equal(timer,null);
-console.log('Rating: onboarding blocked; usual five-second request restored after onboarding');
+console.log('Rating: onboarding blocked; five-second plan and three-second scan requests after onboarding');
 })().catch(e=>{console.error(e);process.exitCode=1});

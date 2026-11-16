@@ -1,0 +1,15 @@
+{
+  "goal": "lose_weight",
+  "nutritionGoal": "lose_weight",
+  "pantry": [],
+  "diet": "halal",
+  "cuisines": [
+    "african",
+    "american"
+  ],
+  "excluded": [
+    "porc"
+  ],
+  "servings": 3,
+  "mealCount": 8
+}

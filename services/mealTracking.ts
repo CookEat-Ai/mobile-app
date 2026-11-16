@@ -39,6 +39,7 @@ export type MealPhotoAnalysis = {
     nutrition: FoodNutrition | null;
     estimated: true;
     proposal?: unknown;
+    pantry?: { source: 'fridge' | 'ingredient_list' | 'receipt'; ingredients: string[] };
 };
 export type TrackedMeal = {
     id: string;

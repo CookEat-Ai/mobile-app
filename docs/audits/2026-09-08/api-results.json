@@ -1,0 +1,82 @@
+[
+  {
+    "name": "non-subscriber request rejected",
+    "pass": true,
+    "status": 403
+  },
+  {
+    "name": "create five selected dinners",
+    "pass": true,
+    "status": 201,
+    "ms": 40
+  },
+  {
+    "name": "diet and exclusions respected",
+    "pass": true
+  },
+  {
+    "name": "no duplicate recipes",
+    "pass": true
+  },
+  {
+    "name": "same week restored",
+    "pass": true
+  },
+  {
+    "name": "history returns new week",
+    "pass": true
+  },
+  {
+    "name": "catalog recipe detail",
+    "pass": true
+  },
+  {
+    "name": "recipe image loads",
+    "pass": true,
+    "status": 200
+  },
+  {
+    "name": "shopping list generated",
+    "pass": true
+  },
+  {
+    "name": "shopping item checked",
+    "pass": true
+  },
+  {
+    "name": "shopping check preserved after regeneration",
+    "pass": true
+  },
+  {
+    "name": "replace returns a different recipe",
+    "pass": false,
+    "before": "catalog-owned-local-v3-italian-galettes-express-de-pois-chiches-citron-et-capres-pain-complet-et-epinards",
+    "after": "catalog-owned-local-v3-italian-galettes-express-de-pois-chiches-citron-et-capres-pain-complet-et-epinards"
+  },
+  {
+    "name": "insert imported recipe",
+    "pass": true
+  },
+  {
+    "name": "imported two-serving ingredients scaled to one",
+    "pass": false,
+    "quantity": [
+      {
+        "amount": 200,
+        "unit": "g",
+        "display": "200 g"
+      }
+    ]
+  },
+  {
+    "name": "invalid calendar date returns 400",
+    "pass": false,
+    "status": 201,
+    "weekStart": "NaN-NaN-NaN"
+  },
+  {
+    "name": "plan read requires authenticated identity",
+    "pass": false,
+    "status": 200
+  }
+]

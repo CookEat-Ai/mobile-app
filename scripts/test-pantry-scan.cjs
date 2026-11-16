@@ -136,28 +136,32 @@ searchTree = searchRender();
 nodes(searchTree).find(node => node.type === 'Pressable' && text(node).includes('pantryReview.done')).props.onPress();
 assert.equal(searchCloses, 1, 'Done returns to the existing review');
 
-function camera() {
-  let back = 0, calls = 0, resolve; const writes = [];
+const pantryNormalization = harness('services/planningPantry.ts').render(mod => mod);
+const recipeIngredients = harness('services/pantryRecipeIngredients.ts', { './planningPantry': pantryNormalization }).render(mod => mod);
+
+function camera(recipeParams = {}) {
+  let back = 0, calls = 0, resolve, photo = 0; const writes = [], destinations = [], uploads = [];
   const alerts = [];
   const pending = new Promise(done => { resolve = done; });
   const feedback = new Proxy({}, { get: () => () => Promise.resolve() });
   const c = harness('app/camera.tsx', {
     'expo-camera': { CameraView: 'CameraView', useCameraPermissions: () => [{ granted: true }, () => {}, () => Promise.resolve()] },
-    'expo-router': { Stack: { Screen: 'StackScreen' }, router: { back: () => { back++; }, push: () => { throw new Error('must not stack another camera'); } }, useGlobalSearchParams: () => ({ planningPantry: 'true' }), useNavigation: () => ({ addListener: () => () => {} }) },
+    'expo-router': { Stack: { Screen: 'StackScreen' }, router: { back: () => { back++; }, push: () => { throw new Error('must not stack another camera'); }, dismissTo: target => destinations.push(target) }, useGlobalSearchParams: () => recipeParams.recipePantry ? {} : { planningPantry: 'true' }, useLocalSearchParams: () => recipeParams, useNavigation: () => ({ addListener: () => () => {} }) },
     'expo-video': { useVideoPlayer: () => null }, 'react-native-svg': { Circle: 'Circle' },
     'react-native-safe-area-context': { SafeAreaProvider: 'SafeAreaProvider', useSafeAreaInsets: () => ({ top: 62, bottom: 34, left: 7, right: 9 }) },
     '../constants/Colors': { Colors: { light: {} } }, '../constants/Layout': { rw: value => value },
     '../hooks/useResponsive': { contentColumn: () => ({}) },
     'expo-image-manipulator': { manipulateAsync: async uri => ({ uri }), SaveFormat: { JPEG: 'jpeg' } },
-    '../services/haptics': { feedback }, '../services/api': { __esModule: true, default: { processImageIngredients: () => { calls++; return pending; } } },
+    '../services/haptics': { feedback }, '../services/api': { __esModule: true, default: { processImageIngredients: photos => { calls++; uploads.push([...photos]); return pending; } } },
     '../components/planning/PantryScanView': { PantryScanView: 'PantryScanView' },
     '../components/CameraShutterButton': { CameraShutterButton: 'TouchableOpacity' },
+    '../services/pantryRecipeIngredients': recipeIngredients,
     '../services/pantryScanHandoff': { PANTRY_SCAN_HANDOFF_KEY: 'handoff', createPantryScanHandoff: (names, mode) => JSON.stringify({ ingredients: names, pantryMode: mode }) },
     '@react-native-async-storage/async-storage': { __esModule: true, default: { setItem: async (key, value) => { writes.push({ key, value }); } } },
   });
   c.native.Alert = { alert: (...args) => alerts.push(args) };
   let tree;
-  const render = () => { tree = c.render(mod => { const provider = mod.default(); const child = provider.props.children[0]; return child.type(child.props); }); const view = nodes(tree).find(node => node.type === 'CameraView'); if (view) view.props.ref.current = { takePictureAsync: async () => ({ uri: 'file:///fridge.jpg' }) }; return tree; };
+  const render = () => { tree = c.render(mod => { const provider = mod.default(); const child = provider.props.children[0]; return child.type(child.props); }); const view = nodes(tree).find(node => node.type === 'CameraView'); if (view) view.props.ref.current = { takePictureAsync: async () => ({ uri: 'file:///pantry-' + ++photo + '.jpg' }) }; return tree; };
   const capture = () => nodes(tree).find(node => node.type === 'TouchableOpacity' && typeof node.props.disabled === 'boolean').props.onPress();
   const finish = () => nodes(tree).find(node => node.type === 'TouchableOpacity' && text(node).includes('pantryReview.analyzePhotos')).props.onPress();
   const initial = render();
@@ -165,7 +169,7 @@ function camera() {
   assert(topBar, 'camera header clears the actual top safe area');
   assert.equal(topBar.props.style[1].paddingLeft, 27);
   assert.equal(topBar.props.style[1].paddingRight, 29);
-  return { render, capture, finish, resolve, writes, alerts, get back() { return back; }, get calls() { return calls; } };
+  return { render, capture, finish, resolve, writes, alerts, destinations, uploads, get back() { return back; }, get calls() { return calls; } };
 }
 (async () => {
   const confirmed = camera(); await confirmed.capture(); confirmed.render();
@@ -217,6 +221,22 @@ function camera() {
   const recovered = failed.render();
   assert(nodes(recovered).some(node => node.type === 'CameraView'), 'dismissing the error returns to capture');
   assert(nodes(recovered).some(node => text(node).includes('pantryReview.analyzePhotos')), 'failed analysis keeps photos for retry');
+
+  const recipes = camera({ recipePantry: 'true', recipeIngredients: JSON.stringify(['Tomate', 'Œufs']) });
+  await recipes.capture(); recipes.render(); await recipes.capture(); recipes.render();
+  assert.equal(recipes.calls, 0, 'the shutter adds photos without analysing each photo separately');
+  const recipeExtraction = recipes.finish(); await recipes.finish(); await tick();
+  assert.equal(recipes.calls, 1);
+  assert.deepEqual(recipes.uploads, [['file:///pantry-1.jpg', 'file:///pantry-2.jpg']]);
+  recipes.resolve({ data: { ingredients: [{ name: 'tomates' }, { name: 'riz' }] } }); await recipeExtraction;
+  const recipeReview = recipes.render();
+  assert.equal(recipeReview.props.confirmLabel, 'tracking.pantryRecipes.find');
+  await Promise.all([recipeReview.props.onConfirm(['tomates', 'riz']), recipeReview.props.onConfirm(['riz'])]);
+  assert.equal(recipes.writes.length, 0, 'recipe scan does not save a planning handoff');
+  assert.equal(recipes.destinations.length, 1);
+  assert.equal(recipes.destinations[0].pathname, '/tracking/pantry-recipes');
+  assert.deepEqual(JSON.parse(recipes.destinations[0].params.ingredients), ['Tomate', 'Œufs', 'riz']);
+  assert.deepEqual(Array.from(recipeIngredients.readPantryRecipeIngredients('malformed')), []);
 
   const configureTranslation = key => key;
   const configureHarness = harness('app/planning/configure.tsx', {

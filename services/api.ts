@@ -396,10 +396,11 @@ class ApiService {
       const url = `${API_BASE_URL}${endpoint}`;
 
       const headers: Record<string, string> = { ...this.getHeaders() } as Record<string, string>;
-      // Extraction routes are public and rate-limited on the API. A failed
-      // account/session registration must not prevent uploading an image.
-      const publicExtraction = /^\/recipe\/process-(?:image|video|voice)-ingredients$/.test(endpoint);
-      if (!publicExtraction && /^\/(?:meal-plans|user(?:s)?\/|recipe(?:\/|$)|promo-code\/(?:validate|mark-used))/.test(endpoint)) {
+      // Budget options and ingredient extraction are public API routes.
+      const path = endpoint.split('?')[0];
+      const publicRoute = (path === '/meal-plans/budget-options' && (options.method || 'GET').toUpperCase() === 'GET')
+        || /^\/recipe\/process-(?:image|video|voice)-ingredients$/.test(endpoint);
+      if (!publicRoute && /^\/(?:meal-plans|user(?:s)?\/|recipe(?:\/|$)|promo-code\/(?:validate|mark-used))/.test(endpoint)) {
         headers.Authorization = 'Bearer ' + await getAnonymousSessionToken();
       }
 
@@ -667,7 +668,7 @@ class ApiService {
     });
   }
 
-  async analyzeTrackedMeal(uri: string, signal?: AbortSignal, onFood?: (item: import('./mealTracking').PhotoFood) => void): Promise<ApiResponse<{analysis: import('./mealTracking').MealPhotoAnalysis}>> {
+  async analyzeTrackedMeal(uri: string, signal?: AbortSignal, onFood?: (item: import('./mealTracking').PhotoFood) => void, routePantry = false): Promise<ApiResponse<{analysis: import('./mealTracking').MealPhotoAnalysis}>> {
     const controller = new AbortController(), abort = () => controller.abort();
     const deadline = setTimeout(abort, 90000);
     if (signal?.aborted) abort();
@@ -683,6 +684,7 @@ class ApiService {
       });
       if (controller.signal.aborted) return {error: i18n.t('tracking.analysisError')};
       const form = new FormData(); form.append('image', new File(uri)); form.append('language', this.getCurrentLanguage());
+      if (routePantry) form.append('routePantry', 'true');
       const response = await expoFetch(`${API_BASE_URL}/recipe/tracking/analyze`, {
         method: 'POST', body: form, signal: controller.signal,
         headers: {Authorization: 'Bearer ' + token, Accept: 'text/event-stream'},
@@ -797,6 +799,7 @@ class ApiService {
     maxMinutes?: number;
     allergies?: string[];
     excludedIngredients?: string[];
+    pantryIngredients?: string[];
   } = {}, readOptions: ReadOptions = {}) {
     const params = new URLSearchParams({
       language: this.getCurrentLanguage(),
@@ -819,7 +822,8 @@ class ApiService {
     if (options.maxMinutes) params.set('maxMinutes', String(options.maxMinutes));
     if (options.allergies?.length) params.set('allergies', options.allergies.join(','));
     if (options.excludedIngredients?.length) params.set('excludedIngredients', options.excludedIngredients.join(','));
-    return this.request<{ success: boolean; recipes: CatalogRecipe[]; page: number; limit: number; total: number; pages: number }>(`/catalog/recipes?${params.toString()}`, { method: 'GET' }, 12000, readOptions);
+    for (const ingredient of options.pantryIngredients || []) params.append('pantryIngredient', ingredient);
+    return this.request<{ success: boolean; pantryMatched?: boolean; recipes: CatalogRecipe[]; page: number; limit: number; total: number; pages: number }>(`/catalog/recipes?${params.toString()}`, { method: 'GET' }, 12000, readOptions);
   }
 
   async getRecipeHistory(userId: string, page: number = 1, limit: number = 30, options?: { isImported?: boolean; forceRefresh?: boolean }) {
@@ -855,9 +859,15 @@ class ApiService {
     }, 12000, readOptions);
   }
 
+  async getRecipeGoalFit(id: string, targets: { dailyCalories: number; dailyProteinGrams: number }) {
+    return this.request<{ success: boolean; goalFit: import('./recipeGoalFit').GoalFit }>(`/recipe/detail/${encodeURIComponent(id)}/goal-fit?language=${encodeURIComponent(this.getCurrentLanguage())}`, {
+      method: 'POST', body: JSON.stringify(targets),
+    }, 12000);
+  }
+
   async getPlanningBudgetOptions(servings:number, days = 7) {
     const locale=Localization.getLocales()[0];
-    return this.request<{country:string;currency:string;servings:number;minimum:number;maximum:number;step:number;defaultAmount:number;horizonDays:number}>(`/meal-plans/budget-options?servings=${servings}&days=${days}&country=${encodeURIComponent(locale?.regionCode||'FR')}&currency=${encodeURIComponent(locale?.currencyCode||'EUR')}`);
+    return this.request<{country:string;currency:string;servings:number;minimum:number;maximum:number;step:number;defaultAmount:number;horizonDays:number}>(`/meal-plans/budget-options?servings=${servings}&days=${days}&country=${encodeURIComponent(locale?.regionCode||'FR')}&currency=${encodeURIComponent(locale?.currencyCode||'EUR')}`, {}, 8000);
   }
 
   async getMealPlan(userId: string, weekStart?: string, preview = false, readOptions: ReadOptions = {}) {

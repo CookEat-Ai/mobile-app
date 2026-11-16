@@ -160,6 +160,14 @@ const tick = async target => {
     hook.reset(); assert.equal(readyValues.at(-1), false, 'retry resets bar');
     cleanup();
   }
+  now = 1200; timers = []; readyValues = [];
+  const demoHook = hookModule.usePlanningLoading();
+  const demo = demoHook.finish(0, true);
+  assert.equal(readyValues.at(-1), true, 'demo finishes the bar as soon as the plan is ready');
+  assert.equal(timers.length, 0);
+  demoHook.onComplete(); assert.equal(await demo, true);
+  cleanup();
+
   now = 10000; timers = []; readyValues = [];
   const cancelledHook = hookModule.usePlanningLoading();
   const cancelled = cancelledHook.finish(0);

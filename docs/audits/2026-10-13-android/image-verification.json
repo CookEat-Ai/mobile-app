@@ -1,0 +1,142 @@
+[
+  {
+    "file": "camera-permission-denied.png",
+    "dimensions": [
+      1080,
+      2400
+    ],
+    "pixels_and_dimensions_preserved": true,
+    "required_png_chunks_only": true,
+    "extended_attributes": [
+      "com.apple.provenance"
+    ],
+    "sha256": "5165167ff061729f9cc7060f471223e39749fbd3915efe848daf7e2bc96e78f4",
+    "archive_entry_has_extended_attributes": false
+  },
+  {
+    "file": "scan-manual-rice.png",
+    "dimensions": [
+      1080,
+      2400
+    ],
+    "pixels_and_dimensions_preserved": true,
+    "required_png_chunks_only": true,
+    "extended_attributes": [
+      "com.apple.provenance"
+    ],
+    "sha256": "b8285afdccb57ef2c36f521d8f96f3e64858573c88c3d10070027b60405fbef9",
+    "archive_entry_has_extended_attributes": false
+  },
+  {
+    "file": "android-back-fixed.png",
+    "dimensions": [
+      1080,
+      2400
+    ],
+    "pixels_and_dimensions_preserved": true,
+    "required_png_chunks_only": true,
+    "extended_attributes": [
+      "com.apple.provenance"
+    ],
+    "sha256": "09874ca37093ef5f0ae5847da44df948516fe6fa7ce0fc49db72304282aee53d",
+    "archive_entry_has_extended_attributes": false
+  },
+  {
+    "file": "catalog-cuisines.png",
+    "dimensions": [
+      1080,
+      2400
+    ],
+    "pixels_and_dimensions_preserved": true,
+    "required_png_chunks_only": true,
+    "extended_attributes": [
+      "com.apple.provenance"
+    ],
+    "sha256": "507023c244f3583f1451ff3b3da6598b49c3042f7ea709970c61ea758b1a4eca",
+    "archive_entry_has_extended_attributes": false
+  },
+  {
+    "file": "recipe-two-servings.png",
+    "dimensions": [
+      1080,
+      2400
+    ],
+    "pixels_and_dimensions_preserved": true,
+    "required_png_chunks_only": true,
+    "extended_attributes": [
+      "com.apple.provenance"
+    ],
+    "sha256": "381aa70e58d142992a9ecceac5938a279b49c5e19ea973490e67729c49eedbb9",
+    "archive_entry_has_extended_attributes": false
+  },
+  {
+    "file": "catalog-french.png",
+    "dimensions": [
+      1080,
+      2400
+    ],
+    "pixels_and_dimensions_preserved": true,
+    "required_png_chunks_only": true,
+    "extended_attributes": [
+      "com.apple.provenance"
+    ],
+    "sha256": "8b3833632431a6c1a9306257ee184dba883873a64426d40ec71472c989ac9265",
+    "archive_entry_has_extended_attributes": false
+  },
+  {
+    "file": "google-play-unavailable.png",
+    "dimensions": [
+      1080,
+      2400
+    ],
+    "pixels_and_dimensions_preserved": true,
+    "required_png_chunks_only": true,
+    "extended_attributes": [
+      "com.apple.provenance"
+    ],
+    "sha256": "267693e3fc5934b9788c8079fb6f2d63ba8b04a5999615fcc990f16493d524bc",
+    "archive_entry_has_extended_attributes": false
+  },
+  {
+    "file": "planning-final-step.png",
+    "dimensions": [
+      1080,
+      2400
+    ],
+    "pixels_and_dimensions_preserved": true,
+    "required_png_chunks_only": true,
+    "extended_attributes": [
+      "com.apple.provenance"
+    ],
+    "sha256": "303f91e0dbbadcbf7a6d88958b5f316d53999c490b13035883dc66160d61328a",
+    "archive_entry_has_extended_attributes": false
+  },
+  {
+    "file": "planning-two-people.png",
+    "dimensions": [
+      1080,
+      2400
+    ],
+    "pixels_and_dimensions_preserved": true,
+    "required_png_chunks_only": true,
+    "extended_attributes": [
+      "com.apple.provenance"
+    ],
+    "sha256": "fb89563e37b4bcdfc1b54f700f7725a00c61b535573f4ec92c6523b87f8ad9de",
+    "archive_entry_has_extended_attributes": false
+  },
+  {
+    "file": "planning-small-phone.png",
+    "dimensions": [
+      720,
+      1280
+    ],
+    "pixels_and_dimensions_preserved": true,
+    "required_png_chunks_only": true,
+    "extended_attributes": [
+      "com.apple.provenance"
+    ],
+    "sha256": "53cdc18c3da3d9eb23461a41523790a4070c7f987697d7b867d24124b2d518fa",
+    "archive_entry_has_extended_attributes": false
+  }
+]

@@ -15,6 +15,7 @@ import { CameraFramingGuide } from '../CameraFramingGuide';
 
 type PantryScanProps = {
   photoUris: string[]; ingredients: string[] | null; saving: boolean;
+  confirmLabel?: string;
   onConfirm: (names: string[]) => void; onRetake: () => void; onBack: () => void;
 };
 
@@ -26,7 +27,7 @@ export function PantryScanView(props: PantryScanProps) {
     : content;
 }
 
-function PantryScanContent({ photoUris, ingredients, saving, onConfirm, onRetake, onBack }: PantryScanProps) {
+function PantryScanContent({ photoUris, ingredients, saving, confirmLabel, onConfirm, onRetake, onBack }: PantryScanProps) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const motion = useMotionAllowed();
@@ -45,7 +46,7 @@ function PantryScanContent({ photoUris, ingredients, saving, onConfirm, onRetake
   }, [done, motion, sweep]);
   if (done) return <View style={styles.root}>
     <Stack.Screen options={{ statusBarStyle: 'dark', gestureEnabled: !saving }} />
-    <PantryIngredientReview ingredients={ingredients} saving={saving} recognized={photoUris.length > 0} onConfirm={onConfirm} onBack={onBack} onRetake={onRetake} />
+    <PantryIngredientReview ingredients={ingredients} saving={saving} recognized={photoUris.length > 0} confirmLabel={confirmLabel} onConfirm={onConfirm} onBack={onBack} onRetake={onRetake} />
   </View>;
   // The grid is a scanning effect, never a claim about detected food locations.
   return <View style={[styles.root, {

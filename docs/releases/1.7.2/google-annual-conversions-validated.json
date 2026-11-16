@@ -1,0 +1,308 @@
+{
+  "source": "Google Play Console",
+  "basis": "Apple price converted by Google after removing the Google inclusive VAT from the source amount",
+  "countryCurrenciesAndAmountsVerified": true,
+  "exact127RemainVerified": true,
+  "changes": [
+    {
+      "name": "Algérie",
+      "googlePrice": "6 050,00 DZD",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "DZD",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Argentine",
+      "googlePrice": "68 100,00 ARS",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "ARS",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Bolivie",
+      "googlePrice": "529,99 BOB",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "BOB",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Costa Rica",
+      "googlePrice": "20 300,00 CRC",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "CRC",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Irak",
+      "googlePrice": "67 900 IQD",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "IQD",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Jordanie",
+      "googlePrice": "31,900 JOD",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "JOD",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Macao",
+      "googlePrice": "368,00 MOP",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "MOP",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Mongolie",
+      "googlePrice": "161 600,00 MNT",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "MNT",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Myanmar (Birmanie)",
+      "googlePrice": "95 000 MMK",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "MMK",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Paraguay",
+      "googlePrice": "250 000 PYG",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "PYG",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Sri Lanka",
+      "googlePrice": "14 750,00 LKR",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "LKR",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Burkina Faso",
+      "googlePrice": "40,14 EUR",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "EUR",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Gabon",
+      "googlePrice": "40,14 EUR",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "EUR",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Guinée-Bissau",
+      "googlePrice": "40,14 EUR",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "EUR",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Mali",
+      "googlePrice": "40,14 EUR",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "EUR",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Niger",
+      "googlePrice": "40,14 EUR",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "EUR",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Azerbaïdjan",
+      "googlePrice": "84,99 AZN",
+      "inputCurrency": "USD",
+      "inputNetPrice": "49.99",
+      "applePrice": "49.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "AZN",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Bénin",
+      "googlePrice": "44,60 EUR",
+      "inputCurrency": "USD",
+      "inputNetPrice": "49.99",
+      "applePrice": "49.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "EUR",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Cameroun",
+      "googlePrice": "29 300 XAF",
+      "inputCurrency": "USD",
+      "inputNetPrice": "41.92",
+      "applePrice": "49.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "XAF",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Côte d’Ivoire",
+      "googlePrice": "29 300 XOF",
+      "inputCurrency": "USD",
+      "inputNetPrice": "42.36",
+      "applePrice": "49.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "XOF",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Géorgie",
+      "googlePrice": "124,00 GEL",
+      "inputCurrency": "USD",
+      "inputNetPrice": "42.36",
+      "applePrice": "49.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "GEL",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Sénégal",
+      "googlePrice": "29 300 XOF",
+      "inputCurrency": "USD",
+      "inputNetPrice": "42.36",
+      "applePrice": "49.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "XOF",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Ghana",
+      "googlePrice": "580,00 GHS",
+      "inputCurrency": "USD",
+      "inputNetPrice": "41.66",
+      "applePrice": "49.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "GHS",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Ukraine",
+      "googlePrice": "2 249,99 UAH",
+      "inputCurrency": "USD",
+      "inputNetPrice": "41.66",
+      "applePrice": "49.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "UAH",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Kenya",
+      "googlePrice": "6 500,00 KES",
+      "inputCurrency": "USD",
+      "inputNetPrice": "43.09",
+      "applePrice": "49.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "KES",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Maroc",
+      "googlePrice": "439,99 MAD",
+      "inputCurrency": "USD",
+      "inputNetPrice": "37.49",
+      "applePrice": "44.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "MAD",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Ouzbékistan",
+      "googlePrice": "595 500,00 UZS",
+      "inputCurrency": "USD",
+      "inputNetPrice": "44.63",
+      "applePrice": "49.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "UZS",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Serbie",
+      "googlePrice": "5 499 RSD",
+      "inputCurrency": "EUR",
+      "inputNetPrice": "37.49",
+      "applePrice": "44.99",
+      "appleCurrency": "EUR",
+      "googleCurrency": "RSD",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Bosnie-Herzégovine",
+      "googlePrice": "50,43 USD",
+      "inputCurrency": "EUR",
+      "inputNetPrice": "44.99",
+      "applePrice": "44.99",
+      "appleCurrency": "EUR",
+      "googleCurrency": "USD",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    },
+    {
+      "name": "Islande",
+      "googlePrice": "44,59 EUR",
+      "inputCurrency": "USD",
+      "inputNetPrice": "40.31",
+      "applePrice": "49.99",
+      "appleCurrency": "USD",
+      "googleCurrency": "EUR",
+      "conversionSource": "Google Play Console live exchange rate and local rounding"
+    }
+  ]
+}

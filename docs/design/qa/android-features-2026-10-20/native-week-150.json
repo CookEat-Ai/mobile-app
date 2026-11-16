@@ -1,0 +1,109 @@
+{
+  "localOnly": true,
+  "observedEstimateEUR": 30.89,
+  "plans": [
+    {
+      "id": "6ad6ad352486a951d04ccb95",
+      "preferences": {
+        "country": "FR",
+        "currency": "EUR",
+        "dishType": "all",
+        "duration": "fast",
+        "servings": 1,
+        "cuisineStyle": [],
+        "diet": "none",
+        "allowOtherIngredients": true,
+        "pantryIngredients": [
+          "Riz",
+          "Poulet",
+          "Courgette",
+          "Flocons d'avoine",
+          "Banane",
+          "Lait"
+        ],
+        "pantryMode": "priority",
+        "allergies": [],
+        "excludedIngredients": [],
+        "goal": "maintain",
+        "equipments": [
+          "standard-kitchen"
+        ],
+        "cookingLevel": "beginner",
+        "mealBudget": "budget_large",
+        "weeklyBudget": 150,
+        "includeSnack": true,
+        "cookingDays": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "mealsByDay": {
+          "0": [
+            "breakfast",
+            "lunch",
+            "snack",
+            "dinner"
+          ],
+          "1": [
+            "breakfast",
+            "lunch",
+            "snack",
+            "dinner"
+          ],
+          "2": [
+            "breakfast",
+            "lunch",
+            "snack",
+            "dinner"
+          ],
+          "3": [
+            "breakfast",
+            "lunch",
+            "snack",
+            "dinner"
+          ],
+          "4": [
+            "breakfast",
+            "lunch",
+            "snack",
+            "dinner"
+          ],
+          "5": [
+            "breakfast",
+            "lunch",
+            "snack",
+            "dinner"
+          ],
+          "6": [
+            "breakfast",
+            "lunch",
+            "snack",
+            "dinner"
+          ]
+        },
+        "partialStartDay": false,
+        "nutritionProfile": {
+          "goal": "maintain",
+          "sex": "male",
+          "age": 23,
+          "heightCm": 175,
+          "currentWeightKg": 70,
+          "targetChangeKg": 0,
+          "durationWeeks": 0,
+          "activityLevel": "moderate",
+          "trainingDays": 3,
+          "trainingDurationMinutes": 45,
+          "nutritionWeightKg": 70,
+          "targetWeightKg": null,
+          "dailyCalorieAdjustment": 0
+        }
+      },
+      "mealCount": 28,
+      "microwave": []
+    }
+  ]
+}

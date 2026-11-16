@@ -1,0 +1,16 @@
+{
+  "date": "2026-10-21",
+  "component": "Production PaywallView",
+  "sourceCommit": "88043fe3c5f4dbf051d271292f7e37bdd01beced",
+  "componentSha256": "3bf452d6a022861dc6682041f23be2d6ea63ce2d6fa5975fe5a373d80ae6419d",
+  "paywallCopySha256": "33253c67c47255d1940f048535299ec01cddeabb4d8220349f98f8ceae8fb03f",
+  "capture": "Existing compatible native QA binary, temporary iPhone 18 Pro / iOS 27.0 simulator, catalog fixture",
+  "catalogSource": "Apple verified annual USD44.99 / ONE_YEAR and 7-day free trial; monthly14.99,weekly9.99",
+  "dimensions": [
+    1206,
+    2622
+  ],
+  "imageSha256": "22b799aeeddd8f269cfaf3df9ad86f60d5c6c6122c3d2df86b2466869d92f3ce",
+  "metadata": {},
+  "limitations": "Reference screenshot, not evidence of Store purchase/restore or live customer eligibility. No app source change or new native build."
+}

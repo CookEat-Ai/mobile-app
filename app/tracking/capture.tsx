@@ -18,6 +18,7 @@ import { createPhotoMealSaver, type PhotoMealSaveInput } from '../../services/ph
 import { persistTrackingPhoto } from '../../services/trackingPhotos';
 import { feedback } from '../../services/haptics';
 import analytics from '../../services/analytics';
+import { scheduleMealScanReview } from '../../services/planningReview';
 const trackStage = (stage: string, properties: Record<string, string | number | boolean> = {}) => { void analytics.track(`meal_tracking_${stage}`, properties).catch(() => undefined); };
 export default function TrackingCaptureScreen() {
     const { t } = useTranslation(), params = useLocalSearchParams<{
@@ -26,6 +27,7 @@ export default function TrackingCaptureScreen() {
         isOnboarding?: string;
     }>();
     const isOnboarding = params.isOnboarding === 'true';
+    const routePantry = !isOnboarding && !params.entryId;
     const [permission, requestPermission] = useCameraPermissions(), [cameraError, setCameraError] = useState(false), [cameraReady, setCameraReady] = useState(false);
     const [foreground, setForeground] = useState(AppState.currentState === 'active');
     const [phase, setPhase] = useState<'capture' | 'result'>('capture');
@@ -67,6 +69,8 @@ export default function TrackingCaptureScreen() {
     useEffect(() => { const subscription = AppState.addEventListener('change', state => setForeground(state === 'active')); return () => subscription.remove(); }, []);
     useEffect(() => { active.current = true; return () => { active.current = false; version.current++; controller.current?.abort(); }; }, []);
     useEffect(() => { trackStage('opened', { editing: !!params.entryId }); }, [params.entryId]);
+    const reviewScanId = recognitionReady && !params.entryId && !isOnboarding && !error && analysis?.kind !== 'not_food' ? analysis?.scanId : undefined;
+    useEffect(() => { if (reviewScanId) scheduleMealScanReview(reviewScanId); }, [reviewScanId]);
     useFocusEffect(useCallback(() => () => { version.current++; controller.current?.abort(); }, []));
     useEffect(() => {
         if (!params.entryId)
@@ -124,7 +128,7 @@ export default function TrackingCaptureScreen() {
             if (!active.current || attempt !== version.current || abort.signal.aborted) return;
             if (firstFoodAt === null) { firstFoodAt = Date.now(); trackStage('first_food', {duration_ms: firstFoodAt - startedAt}); }
             setProgressItems(previous => previous.some(food => food.id === item.id) ? previous.map(food => food.id === item.id ? item : food) : [...previous, item]);
-        })
+        }, routePantry)
             .catch(() => ({ data: undefined, error: t('tracking.analysisError') }));
         if (!active.current || attempt !== version.current)
             return;
@@ -134,6 +138,11 @@ export default function TrackingCaptureScreen() {
             return;
         }
         const detected = result.data.analysis;
+        if (routePantry && detected.kind === 'not_food' && detected.pantry) {
+            trackStage('pantry_detected', { source: detected.pantry.source, ingredient_count: detected.pantry.ingredients.length });
+            dismissCapture(() => router.replace({ pathname: '/tracking/pantry-recipes', params: { ingredients: JSON.stringify(detected.pantry!.ingredients) } }));
+            return;
+        }
         try {
             const userId = await getAnonymousUserId();
             const [defaults, journal] = await Promise.all([loadFoodDefaults(userId), loadTrackedMeals(userId)]);
@@ -265,7 +274,8 @@ export default function TrackingCaptureScreen() {
     let content: React.ReactNode;
     if (loadingEntry) content = <View style={[appStyles.screen, {justifyContent:'center'}]}><ActivityIndicator color={theme.yellow}/></View>;
     else if (phase === 'result' && photo) content = <PhotoMealReveal key={`${photo.uri}:${scanAttempt}`} photo={photo} analysis={analysis} progressItems={progressItems} title={title} items={items} onTitle={setTitle} onItems={changeItems} mealType={mealType} onMealType={setMealType} nutritionOverride={nutritionOverride} onNutritionOverride={setNutritionOverride} onSave={()=>{void done();}} saveActionLabel={t(error ? 'common.retry' : 'tracking.viewDay')} autoSaved={!!saved} onExpand={()=>setExpanded(true)} onComplete={()=>setRecognitionReady(true)} onBack={close} onRetry={()=>{void analyze(photo);}} onRetake={retake} saving={saving} error={error} editing={!!params.entryId} processing={!error}/>;
-    else content = <MealPhotoCapture cameraRef={camera} granted={!!permission?.granted} cameraError={cameraError} canAskAgain={permission?.canAskAgain !== false} active={foreground && visible} ready={cameraReady} busy={busy} error={error} onClose={close} onAllow={() => { if (permission?.canAskAgain === false) void Linking.openSettings(); else void requestPermission(); }} onReady={() => setCameraReady(true)} onCameraError={() => setCameraError(true)} onTake={() => { void take(); }} onPick={() => { void pick(); }} onManual={isOnboarding ? undefined : () => dismissCapture(() => router.replace({ pathname: '/tracking/manual', params: { date: params.date || trackingDateKey() } }))}/>;
+    else content = <MealPhotoCapture cameraRef={camera} granted={!!permission?.granted} cameraError={cameraError} canAskAgain={permission?.canAskAgain !== false} active={foreground && visible} ready={cameraReady} busy={busy} error={error} onClose={close} onAllow={() => { if (permission?.canAskAgain === false) void Linking.openSettings(); else void requestPermission(); }} onReady={() => setCameraReady(true)} onCameraError={() => setCameraError(true)} onTake={() => { void take(); }} onPick={() => { void pick(); }} onManual={isOnboarding ? undefined : () => dismissCapture(() => router.replace({ pathname: '/tracking/manual', params: { date: params.date || trackingDateKey() } }))}
+      onScanIngredients={routePantry ? () => dismissCapture(() => router.replace({ pathname: '/camera', params: { recipePantry: 'true' } })) : undefined} />;
     return <TrackingCaptureSurface expanded={expanded} visible={visible} onRequestClose={close} onDismiss={finishDismiss}><Stack.Screen options={{headerShown:false,gestureEnabled:false,statusBarStyle:expanded?'dark':'light',contentStyle:{backgroundColor:'transparent'}}}/>{content}</TrackingCaptureSurface>;
 
 }

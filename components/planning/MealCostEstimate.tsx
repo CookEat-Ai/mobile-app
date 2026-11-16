@@ -16,7 +16,8 @@ export function MealCostEstimate({ cost, compact = false, total = false, budget,
   const amount = complete ? cost.amount!
     : cost.status === 'partial' ? cost.knownAmount : null;
   const cap = total && Number.isFinite(budget) && budget! > 0 ? budget! : null;
-  const over = cap !== null && complete && cost.amount! > cap;
+  const warningTolerance = cost.currency === 'EUR' ? 1 : 0;
+  const over = cap !== null && complete && cost.amount! > cap + warningTolerance;
   const hasRange = complete && cost.low !== null && cost.high !== null && Number.isFinite(cost.low) && Number.isFinite(cost.high) && cost.high > cost.low;
   const progressAmount = complete ? cost.amount : cost.status === 'partial' ? cost.knownAmount : null;
   // Without a target, show the estimate within its actual price range. Do not

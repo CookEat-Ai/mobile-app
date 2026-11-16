@@ -22,8 +22,8 @@ export function usePlanningLoading() {
   }, []);
   const reset = useCallback(() => { barCompleted.current = false; setReady(false); }, []);
   const onComplete = useCallback(() => { barCompleted.current = true; resolveCompletion.current?.(true); resolveCompletion.current = null; }, []);
-  const finish = useCallback(async (startedAt: number): Promise<boolean> => {
-    await waitForPlanningMinimumDuration(startedAt);
+  const finish = useCallback(async (startedAt: number, skipMinimum = false): Promise<boolean> => {
+    if (!skipMinimum) await waitForPlanningMinimumDuration(startedAt);
     if (!mounted.current) return false;
     if (barCompleted.current) return true;
     resolveCompletion.current?.(false);

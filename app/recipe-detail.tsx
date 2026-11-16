@@ -2,6 +2,8 @@ import { importedMealsRoute } from '../services/importedMealNavigation';
 import { AppBackground } from '../components/ui/AppBackground';
 import { AppSpinner as ActivityIndicator } from '../components/ui/AppSpinner';
 import { RecipeMetricCard } from '../components/RecipeMetricCard';
+import { RecipeGoalFitCard } from '../components/RecipeGoalFitCard';
+import { goalFitTargets, recipeWithGoalFit, type GoalFit } from '../services/recipeGoalFit';
 import { AppModal as Modal } from '../components/ui/AppModal';
 import { AppRadii, AppTheme as designTheme, appStyles } from '../constants/AppTheme';
 
@@ -102,6 +104,7 @@ interface Recipe {
   }[];
   language?: string;
   videoUrl?: string;
+  quantitiesEstimated?: boolean;
   imageAttribution?: CatalogImageAttribution | null;
 }
 
@@ -161,7 +164,7 @@ export default function RecipeDetailScreen() {
   const mealPlanId = typeof params.mealPlanId === 'string' ? params.mealPlanId : null;
   const mealSlotId = typeof params.mealSlotId === 'string' ? params.mealSlotId : null;
   const isPlannedMeal = isPlannedMealContext(params);
-  const isMealLibrary = params.source === 'meal_library';
+  const isMealLibrary = params.source === 'meal_library' || params.source === 'pantry_photo';
   const selectionPlanId = typeof params.selectionPlanId === 'string' ? params.selectionPlanId : null;
   const selectionSlotId = typeof params.selectionSlotId === 'string' ? params.selectionSlotId : null;
   const isMealSelectionPreview = params.selectForPlan === 'true' && isMealLibrary && !!selectionPlanId;
@@ -678,6 +681,41 @@ export default function RecipeDetailScreen() {
       .finally(() => { clearTimeout(timeout); });
     return () => { active = false; clearTimeout(timeout); };
   }, [recipeIdParam, isStreaming, i18n.language, isMealLibrary, isPlannedMeal, mealPlanId, mealSlotId, t, recipeLoadAttempt]);
+
+  // Imported recipes come back adapted to the user's goal; the original stays one tap away.
+  const [goalFit, setGoalFit] = useState<Extract<GoalFit, { status: 'adapted' }> | null>(null);
+  const [goalFitApplied, setGoalFitApplied] = useState(false);
+  const goalFitVersions = useRef<{ original: Recipe; adapted: Recipe } | null>(null);
+  const goalFitRecipeId = useRef<string | null>(null);
+  const showGoalFitVersion = useCallback((adapted: boolean) => {
+    const versions = goalFitVersions.current;
+    if (!versions) return;
+    const base = adapted ? versions.adapted : versions.original;
+    servingsBaseRef.current = base;
+    setRecipe(current => current.servings && current.servings !== base.servings ? recipeForServings(base, current.servings) : base);
+    setGoalFitApplied(adapted);
+  }, []);
+  useEffect(() => {
+    if (loadingRecipe || recipeLoadError || isStreaming || isPlannedMeal || isMealLibrary || !recipe.videoUrl || !recipe.id || recipe._localPersonal) return;
+    if (goalFitRecipeId.current === recipe.id) return;
+    goalFitRecipeId.current = recipe.id;
+    let active = true, done = false;
+    void (async () => {
+      const targets = await goalFitTargets();
+      if (!targets || !active) return;
+      const fit = (await apiService.getRecipeGoalFit(recipe.id, targets)).data?.goalFit;
+      if (!fit || !active) return;
+      done = true;
+      void analytics.track('recipe_goal_fit_shown', { status: fit.status, swaps: fit.status === 'adapted' ? fit.changes.filter(change => change.kind === 'swap').length : 0,
+        calorie_delta: fit.status === 'adapted' ? fit.after.calories - fit.before.calories : 0 });
+      const original = servingsBaseRef.current;
+      if (fit.status !== 'adapted' || !original) return;
+      goalFitVersions.current = { original, adapted: recipeWithGoalFit(original, fit) };
+      setGoalFit(fit);
+      showGoalFitVersion(true);
+    })().catch(() => undefined);
+    return () => { active = false; if (!done) goalFitRecipeId.current = null; };
+  }, [recipe.id, recipe.videoUrl, recipe._localPersonal, loadingRecipe, recipeLoadError, isStreaming, isPlannedMeal, isMealLibrary, showGoalFitVersion]);
 
   useEffect(() => {
     if (params.showGenerateButton === 'false')
@@ -1490,12 +1528,21 @@ export default function RecipeDetailScreen() {
               setRecipe(personalRecipe);
             }} />}
 
+          {goalFit && !recipe._localPersonal && <RecipeGoalFitCard fit={goalFit} adapted={goalFitApplied} nutritionLocked={!canViewNutrition} onLockedPress={handleCaloriesPress}
+            onToggle={adapted => { void analytics.track('recipe_goal_fit_toggled', { version: adapted ? 'adapted' : 'original' }); showGoalFitVersion(adapted); }} />}
+
           {/* Section Ingrédients */}
           <View style={styles.ingredientsSection}>
             <View style={styles.sectionTitleRow}>
               <Text style={styles.ingredientsTitle}>{t('recipeDetail.ingredients')} {!streamingTitleAndIngredients && recipe.ingredients?.length ? `(${recipe.ingredients.length})` : ''}</Text>
               {streamingTitleAndIngredients && <ActivityIndicator size="small" color={Colors.light.button} />}
             </View>
+            {recipe.quantitiesEstimated && (
+              <View style={styles.estimatedQuantities}>
+                <Ionicons name="information-circle-outline" size={16} color={designTheme.muted} />
+                <Text style={styles.estimatedQuantitiesText}>{t('recipeDetail.estimatedQuantities')}</Text>
+              </View>
+            )}
 
             {(isModalActive || !recipe.ingredients || recipe.ingredients.length === 0) ? <IngredientItemSkeleton /> :
               <>
@@ -1832,6 +1879,18 @@ const styles = StyleSheet.create({
     fontSize: font(20),
     color: designTheme.ink,
     fontFamily: 'Degular'
+  },
+  estimatedQuantities: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: -8,
+    marginBottom: 14,
+  },
+  estimatedQuantitiesText: {
+    flex: 1,
+    fontSize: font(13),
+    color: designTheme.muted,
   },
   ingredientItem: {
     flexDirection: 'row',

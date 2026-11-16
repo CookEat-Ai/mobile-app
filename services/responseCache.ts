@@ -15,15 +15,20 @@ type Entry = { key: string; body: string; writtenAt: number; group: Group };
 // Only these reads may be cached. Health, config, credentials and access checks
 // always reach the server. All query parameters are retained in the cache key.
 export function responseCachePolicy(endpoint: string): CachePolicy | null {
-  const path = endpoint.split('?')[0];
+  const [path, query] = endpoint.split('?');
   if (path === '/catalog/cuisines') return { group: 'catalog', ttl: 24 * 60 * 60 * 1000 };
   if (/^\/catalog\/recipes\/[^/]+$/.test(path)) return { group: 'catalog', ttl: 30 * 60 * 1000 };
-  if (path === '/catalog/recipes') return { group: 'catalog', ttl: 5 * 60 * 1000 };
+  if (path === '/catalog/recipes') {
+    // Photo-derived ingredient searches are never cached. React Native's
+    // URLSearchParams lacks has(), so match the raw query string instead.
+    if (/(?:^|&)pantryIngredient=/.test(query || '')) return null;
+    return { group: 'catalog', ttl: 5 * 60 * 1000 };
+  }
   if (path === '/recipe' || /^\/recipe\/(?:detail|history)\/[^/]+$/.test(path)
       || /^\/recipe\/favorites\/[^/]+(?:\/check\/[^/]+)?$/.test(path)) {
     return { group: 'personal', ttl: 30 * 1000 };
   }
-  if (/^\/meal-plans\/(?:user\/[^/]+(?:\/all)?|[^/]+)$/.test(path)) {
+  if (path !== '/meal-plans/budget-options' && /^\/meal-plans\/(?:user\/[^/]+(?:\/all)?|[^/]+)$/.test(path)) {
     return { group: 'personal', ttl: 15 * 1000 };
   }
   return null;

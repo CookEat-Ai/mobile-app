@@ -1,0 +1,302 @@
+[
+  {
+    "name": "Algérie",
+    "googlePrice": "1 350,00 DZD",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Argentine",
+    "googlePrice": "15 100,00 ARS",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Azerbaïdjan",
+    "googlePrice": "19,99 AZN",
+    "inputCurrency": "USD",
+    "inputNetPrice": "11.99",
+    "applePrice": "11.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Bolivie",
+    "googlePrice": "114,99 BOB",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Cameroun",
+    "googlePrice": "7 000 XAF",
+    "inputCurrency": "USD",
+    "inputNetPrice": "10.05",
+    "applePrice": "11.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Costa Rica",
+    "googlePrice": "4 500,00 CRC",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Côte d’Ivoire",
+    "googlePrice": "7 000 XOF",
+    "inputCurrency": "USD",
+    "inputNetPrice": "10.16",
+    "applePrice": "11.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Ghana",
+    "googlePrice": "140,00 GHS",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "11.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Géorgie",
+    "googlePrice": "29,00 GEL",
+    "inputCurrency": "USD",
+    "inputNetPrice": "10.16",
+    "applePrice": "11.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Irak",
+    "googlePrice": "15 100 IQD",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Jordanie",
+    "googlePrice": "7,100 JOD",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Kenya",
+    "googlePrice": "1 600,00 KES",
+    "inputCurrency": "USD",
+    "inputNetPrice": "10.34",
+    "applePrice": "11.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Macao",
+    "googlePrice": "80,88 MOP",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Maroc",
+    "googlePrice": "97,99 MAD",
+    "inputCurrency": "USD",
+    "inputNetPrice": "8.33",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Mongolie",
+    "googlePrice": "35 900,00 MNT",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Myanmar (Birmanie)",
+    "googlePrice": "21 000 MMK",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Ouzbékistan",
+    "googlePrice": "119 000,00 UZS",
+    "inputCurrency": "USD",
+    "inputNetPrice": "8.92",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Paraguay",
+    "googlePrice": "60 000 PYG",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Serbie",
+    "googlePrice": "949 RSD",
+    "inputCurrency": "EUR",
+    "inputNetPrice": "6.66",
+    "applePrice": "7.99",
+    "appleCurrency": "EUR",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Sri Lanka",
+    "googlePrice": "3 300,00 LKR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Sénégal",
+    "googlePrice": "7 000 XOF",
+    "inputCurrency": "USD",
+    "inputNetPrice": "10.16",
+    "applePrice": "11.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Ukraine",
+    "googlePrice": "539,99 UAH",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "11.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Bosnie-Herzégovine",
+    "googlePrice": "8,96 USD",
+    "inputCurrency": "EUR",
+    "inputNetPrice": "7.99",
+    "applePrice": "7.99",
+    "appleCurrency": "EUR",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Burkina Faso",
+    "googlePrice": "8,91 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Bénin",
+    "googlePrice": "10,70 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "11.99",
+    "applePrice": "11.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Gabon",
+    "googlePrice": "8,91 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Guinée-Bissau",
+    "googlePrice": "8,91 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Islande",
+    "googlePrice": "10,70 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.67",
+    "applePrice": "11.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Mali",
+    "googlePrice": "8,91 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  },
+  {
+    "name": "Niger",
+    "googlePrice": "8,91 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "9.99",
+    "applePrice": "9.99",
+    "appleCurrency": "USD",
+    "basisVerifiedAgainstApple": true,
+    "savedPriceVerified": true
+  }
+]

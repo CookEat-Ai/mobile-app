@@ -367,15 +367,19 @@ export default function PaywallScreen() {
     return () => spinValue.removeListener(listenerId);
   }, []);
 
+  // Envoyé une fois l'offering chargé (ou en échec), pour savoir quel offering
+  // a été vu : c'est lui qui porte le bras du test de prix RevenueCat.
+  const viewedOfferingId = offering?.identifier ?? null;
   useEffect(() => {
-    if (!isPersonalizationResolved) return;
+    if (!isPersonalizationResolved || loading) return;
     analytics.track('paywall_viewed', {
       ...paywallAnalyticsProperties,
       initial_state: viewState,
       is_onboarding: isFromOnboarding,
       is_discounted: viewState === 'DISCOUNTED' || viewState === 'PROMO_DISCOUNTED',
+      offering_id: viewedOfferingId,
     });
-  }, [isFromOnboarding, isPersonalizationResolved, paywallAnalyticsProperties, viewState]);
+  }, [isFromOnboarding, isPersonalizationResolved, loading, paywallAnalyticsProperties, viewState, viewedOfferingId]);
 
   useEffect(() => {
     const loadOfferings = async () => {

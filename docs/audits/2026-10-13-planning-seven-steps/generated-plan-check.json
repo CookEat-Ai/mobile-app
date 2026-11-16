@@ -1,0 +1,12 @@
+{
+  "diet": "halal",
+  "cuisines": [
+    "african",
+    "american"
+  ],
+  "excluded": [
+    "porc"
+  ],
+  "servings": 3,
+  "mealCount": 8
+}

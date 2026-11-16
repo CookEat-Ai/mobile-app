@@ -303,7 +303,19 @@
         "cuisine_middle_eastern": "Nahöstlich",
         "cuisine_indian": "Indisch",
         "cuisine_asian": "Asiatisch"
+      },
+      "source": {
+        "tiktok": "TikTok",
+        "instagram": "Instagram",
+        "store_search": "{{store}}",
+        "friend": "Durch Freunde",
+        "other": "Anderes"
       }
+    },
+    "source": {
+      "title": "Wie hast du von uns erfahren?",
+      "subtitle": "So wissen wir, wo wir über CookEat sprechen sollten.",
+      "otherPlaceholder": "Wo genau? (optional)"
     }
   },
   "quickActions": {
@@ -1912,6 +1924,17 @@
     "requiredMessage": "CookEat benötigt Zugriff auf dein Mikrofon, um deine Stimme aufzunehmen und deine Zutaten zu verstehen. Erlaube den Mikrofonzugriff bitte in den Einstellungen."
   },
   "recipeDetail": {
+    "estimatedQuantities": "Mengen aus dem Video geschätzt, da es keine angibt",
+    "goalFit": {
+      "title": "An dein Ziel angepasst",
+      "original": "Video: {{calories}} kcal · {{proteins}} g Eiweiß",
+      "yours": "Deine Version: {{calories}} kcal · {{proteins}} g",
+      "locked": "Schalte die Kalorien frei, um den Unterschied zu sehen",
+      "swap": "{{from}} → {{to}}",
+      "quantity": "{{name}}: {{from}} → {{to}}",
+      "showYours": "Meine Version",
+      "showOriginal": "Originalrezept"
+    },
     "viewPhoto": "Foto in voller Größe anzeigen",
     "share": "Teilen",
     "removeFromFavorites": "Aus Favoriten entfernen",
@@ -2133,8 +2156,8 @@
       "extracting_transcript": "Untertitel werden gelesen…",
       "downloading_audio": "Video wird angehört…",
       "transcribing": "Anleitung wird transkribiert…",
-      "creating_recipe": "Rezept wird erstellt...",
-      "saving": "Wird gespeichert...",
+      "creating_recipe": ["Rezept wird erstellt...", "Wird an dein Ziel angepasst..."],
+      "saving": "Wird an dein Ziel angepasst...",
       "done": "Rezept fertig!"
     },
     "success": "Rezept importiert!",
@@ -2519,6 +2542,17 @@
     "addBottle": "Flasche {{ml}} ml"
   },
   "tracking": {
+    "pantryRecipes": {
+      "title": "Passende Rezepte",
+      "detected": "Erkannte Zutaten ({{count}})",
+      "loading": "Passende Rezepte werden gesucht…",
+      "noMatch": "Kein Rezept im Katalog passt zu den verfügbaren Zutaten.",
+      "unreadable": "Keine lesbaren Zutaten. Versuche es mit einem schärferen Foto.",
+      "error": "Die Suche konnte nicht abgeschlossen werden. Versuche es erneut.",
+      "scan": "Zutaten scannen",
+      "addPhotos": "Fotos hinzufügen",
+      "find": "Rezepte suchen"
+    },
     "mealPhoto": "Foto der Mahlzeit",
     "createFood": "Lebensmittel erstellen",
     "foodName": "Name des Lebensmittels",

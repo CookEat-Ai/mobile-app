@@ -1,0 +1,83 @@
+{
+  "action": "modify",
+  "reply": "J’ai corrigé la quantité de pâtes à 200 g et identifié la sauce comme 40 g de crème légère. Les autres éléments sont inchangés.",
+  "meal": {
+    "title": "Pâtes crémeuses au poulet et aux champignons",
+    "items": [
+      {
+        "id": "food-0",
+        "name": "Pâtes cuites",
+        "foodKey": "cookedPasta",
+        "grams": 200,
+        "confidence": 0,
+        "visible": false,
+        "box": null,
+        "icon": "🍽️",
+        "sourceId": "169737",
+        "per100g": {
+          "calories": 158,
+          "proteins": 5.8,
+          "fats": 0.93,
+          "carbs": 30.86
+        }
+      },
+      {
+        "id": "food-1",
+        "name": "Poulet cuit",
+        "foodKey": "cookedChicken",
+        "grams": 130,
+        "confidence": 0,
+        "visible": false,
+        "box": null,
+        "icon": "🍽️",
+        "sourceId": "171477",
+        "per100g": {
+          "calories": 165,
+          "proteins": 31.02,
+          "fats": 3.57,
+          "carbs": 0
+        }
+      },
+      {
+        "id": "food-2",
+        "name": "Champignons cuits",
+        "foodKey": "cookedMushroom",
+        "grams": 100,
+        "confidence": 0,
+        "visible": false,
+        "box": null,
+        "icon": "🍽️",
+        "sourceId": "169252",
+        "per100g": {
+          "calories": 28,
+          "proteins": 2.17,
+          "fats": 0.47,
+          "carbs": 5.29
+        }
+      },
+      {
+        "id": "food-3",
+        "name": "Crème légère",
+        "foodKey": "lightCream",
+        "grams": 40,
+        "confidence": 0,
+        "visible": false,
+        "box": null,
+        "icon": "🍽️",
+        "sourceId": "170857",
+        "per100g": {
+          "calories": 195,
+          "proteins": 2.96,
+          "fats": 19.1,
+          "carbs": 3.66
+        }
+      }
+    ],
+    "nutrition": {
+      "calories": 636.5,
+      "proteins": 55.3,
+      "carbs": 68.5,
+      "fats": 14.6
+    }
+  }
+}

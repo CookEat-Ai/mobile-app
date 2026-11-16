@@ -1,0 +1,73 @@
+Attributes: Application, 0x110ca6d00, pid: 94186, label: 'CookEat'
+Element subtree:
+ →Application, 0x110ca6d00, pid: 94186, label: 'CookEat'
+    Window (Main), 0x110ca6800, {{0.0, 0.0}, {466.0, 678.0}}
+      Other, 0x110ca57c0, {{0.0, 0.0}, {466.0, 678.0}}
+        Other, 0x110ca5e00, {{0.0, 0.0}, {466.0, 678.0}}
+          Other, 0x110ca6940, {{0.0, 0.0}, {466.0, 678.0}}
+            Other, 0x110ca4dc0, {{0.0, 0.0}, {466.0, 678.0}}
+              Other, 0x110ca6f80, {{0.0, 0.0}, {466.0, 678.0}}
+                Other, 0x111053e80, {{0.0, 0.0}, {466.0, 678.0}}
+                  Other, 0x1110530c0, {{0.0, 0.0}, {466.0, 678.0}}
+                    Other, 0x111052e40, {{0.0, 0.0}, {466.0, 678.0}}
+                      Other, 0x111052a80, {{0.0, -30.0}, {466.0, 30.0}}
+                        StaticText, 0x1110535c0, {{112.3, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'
+                          StaticText, 0x111052f80, {{112.3, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'
+                      Other, 0x104a54c80, {{0.0, 0.0}, {466.0, 678.0}}
+                        Other, 0x104a57340, {{0.0, 0.0}, {466.0, 678.0}}
+                          Other, 0x104a57200, {{0.0, 0.0}, {466.0, 678.0}}
+                            Other, 0x104a57e80, {{0.0, 0.0}, {466.0, 678.0}}
+                              Other, 0x104a575c0, {{0.0, 0.0}, {466.0, 678.0}}
+                                Other, 0x104a57d40, {{0.0, 0.0}, {466.0, 678.0}}
+                                  Other, 0x104a54b40, {{0.0, 0.0}, {466.0, 678.0}}
+                                    Other, 0x104a57480, {{0.0, 0.0}, {466.0, 96.0}}
+                                    Other, 0x104a570c0, {{0.0, 0.0}, {466.0, 678.0}}
+                                    Other, 0x11124a940, {{189.3, 0.7}, {66.6, 66.6}}
+                                      Image, 0x11124a580, {{189.3, 0.7}, {66.6, 66.6}}
+                                    Button, 0x11124a800, {{20.0, 12.0}, {44.0, 44.0}}, label: 'Retour'
+                                    StaticText, 0x111248280, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'
+                                      StaticText, 0x111248500, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'
+                                    StaticText, 0x111248140, {{338.3, 27.3}, {23.7, 13.0}}, label: '5 / 8'
+                                      StaticText, 0x1112483c0, {{338.3, 27.3}, {23.7, 13.0}}, label: '5 / 8'
+                                    Other, 0x111248780, {{20.0, 70.0}, {342.0, 12.0}}, value: 63 %
+                                      Other, 0x111248000, {{20.0, 70.0}, {213.7, 12.0}}
+                                    StaticText, 0x11124a1c0, {{0.0, 96.0}, {466.0, 34.3}}, label: '📉 Objectif : Perdre du poids'
+                                      StaticText, 0x11124a080, {{0.0, 96.0}, {466.0, 34.3}}, label: '📉 Objectif : Perdre du poids'
+                                    Other, 0x11124a300, {{0.0, 130.3}, {382.0, 445.7}}
+                                      ScrollView, 0x11124a6c0, {{0.0, 130.3}, {382.0, 445.7}}
+                                        Other, 0x111249f40, {{0.0, 130.3}, {382.0, 1367.7}}
+                                          Other, 0x111249e00, {{0.0, 130.3}, {382.0, 1367.7}}
+                                            StaticText, 0x111248f00, {{86.0, 144.3}, {276.0, 68.0}}, label: 'Quelles cuisines te font envie ?'
+                                              StaticText, 0x11124aa80, {{86.0, 144.3}, {276.0, 68.0}}, label: 'Quelles cuisines te font envie ?'
+                                            StaticText, 0x11124a440, {{20.0, 154.3}, {52.0, 48.0}}, label: '🍽️'
+                                            Other, 0x111248dc0, {{20.0, 236.3}, {342.0, 70.0}}, label: 'Toutes les cuisines', value: radio button, unch...
+                                            Other, 0x111248b40, {{20.0, 316.3}, {164.0, 182.3}}, label: 'Africaine', value: checkbox, checked
+                                            Other, 0x1112492c0, {{198.0, 316.3}, {164.0, 182.3}}, label: 'Américaine', value: checkbox, checked
+                                            Other, 0x111249180, {{20.0, 510.7}, {164.0, 182.3}}, label: 'Chinoise', value: checkbox, unchecked
+                                            Other, 0x111248a00, {{198.0, 510.7}, {164.0, 182.3}}, label: 'Française', value: checkbox, unchecked
+                                            Other, 0x111249040, {{20.0, 705.0}, {164.0, 182.0}}, label: 'Indienne', value: checkbox, unchecked
+                                            Other, 0x1112488c0, {{198.0, 705.0}, {164.0, 182.0}}, label: 'Internationale', value: checkbox, unchecked
+                                            Other, 0x111248640, {{20.0, 899.0}, {164.0, 182.3}}, label: 'Italienne', value: checkbox, unchecked
+                                            Other, 0x104ba9540, {{198.0, 899.0}, {164.0, 182.3}}, label: 'Japonaise', value: checkbox, unchecked
+                                            Other, 0x104ba8c80, {{20.0, 1093.3}, {164.0, 182.3}}, label: 'Méditerranéenne', value: checkbox, unchecked
+                                            Other, 0x104ba9040, {{198.0, 1093.3}, {164.0, 182.3}}, label: 'Mexicaine', value: checkbox, unchecked
+                                            Other, 0x104ba9180, {{20.0, 1287.7}, {164.0, 182.3}}, label: 'Moyen-Orient', value: checkbox, unchecked
+                                            Other, 0x104ba8280, {{198.0, 1287.7}, {164.0, 182.3}}, label: 'Thaïlandaise', value: checkbox, unchecked
+                                        Other, 0x104ba92c0, {{0.0, 543.0}, {382.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                          Other, 0x104ba9e00, {{11.0, 570.0}, {365.0, 3.0}}
+                                        Other, 0x104ba9680, {{0.0, 543.0}, {382.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                          Other, 0x1114b8000, {{11.0, 570.0}, {365.0, 3.0}}
+                                    Other, 0x1114b8140, {{0.0, 576.0}, {466.0, 102.0}}
+                                    Button, 0x1114b8280, {{20.0, 588.0}, {426.0, 56.0}}, label: 'Continuer, '
+                          Toolbar, 0x1114b83c0, {{0.0, 0.0}, {466.0, 678.0}}, identifier: 'Toolbar', label: 'Barre d’outils'
+                            Other, 0x1114b8500, {{0.0, 0.0}, {466.0, 678.0}}
+                Other, 0x1114b8640, {{0.0, 0.0}, {466.0, 678.0}}
+                  Other, 0x1114b8780, {{0.0, 0.0}, {466.0, 678.0}}
+                    Other, 0x1114b88c0, {{0.0, 0.0}, {466.0, 678.0}}
+Path to element:
+ →Application, 0x110ca6d00, pid: 94186, label: 'CookEat'
+Query chain:
+ →Find: Application 'com.gokugen.cookeat'
+  Output: {
+    Application, 0x1114b8a00, pid: 94186, label: 'CookEat'
+  }

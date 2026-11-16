@@ -1,0 +1,86 @@
+{
+  "passed": true,
+  "historyWeeks": 3,
+  "currentWeek": "2026-09-07",
+  "meals": 28,
+  "uniqueAcrossFourWeeks": 112,
+  "preferences": {
+    "dishType": "all",
+    "duration": "fast",
+    "servings": 1,
+    "cuisineStyle": [
+      "italian"
+    ],
+    "diet": "vegan",
+    "allowOtherIngredients": true,
+    "allergies": [],
+    "excludedIngredients": [],
+    "goal": "balanced",
+    "equipments": [],
+    "includeSnack": true,
+    "cookingDays": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "mealsByDay": {
+      "0": [
+        "breakfast",
+        "lunch",
+        "snack",
+        "dinner"
+      ],
+      "1": [
+        "breakfast",
+        "lunch",
+        "snack",
+        "dinner"
+      ],
+      "2": [
+        "breakfast",
+        "lunch",
+        "snack",
+        "dinner"
+      ],
+      "3": [
+        "breakfast",
+        "lunch",
+        "snack",
+        "dinner"
+      ],
+      "4": [
+        "breakfast",
+        "lunch",
+        "snack",
+        "dinner"
+      ],
+      "5": [
+        "breakfast",
+        "lunch",
+        "snack",
+        "dinner"
+      ],
+      "6": [
+        "breakfast",
+        "lunch",
+        "snack",
+        "dinner"
+      ]
+    },
+    "nutritionProfile": {
+      "goal": "balanced",
+      "sex": "unspecified",
+      "age": 30,
+      "heightCm": 180,
+      "currentWeightKg": 80,
+      "targetChangeKg": 0,
+      "durationWeeks": 12,
+      "activityLevel": "moderate",
+      "trainingDays": 3
+    }
+  }
+}

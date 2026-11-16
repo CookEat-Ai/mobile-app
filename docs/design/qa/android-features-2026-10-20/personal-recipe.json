@@ -1,0 +1,128 @@
+{
+  "localOnly": true,
+  "androidStorageRead": true,
+  "records": [
+    {
+      "key": "personal_recipe_v1:6ad6a988be70384a72c864bd:catalog-source-wikibooks-en-308380:plan%3A6ad6ad352486a951d04ccb95%3Ae3e3625c-d31a-4252-8021-4cbeef36a5ad",
+      "patchTitle": "Spaghetti aglio e olio",
+      "ingredients": [
+        {
+          "name": "pâtes sèches",
+          "quantity": "150 g",
+          "ingredientId": "pasta",
+          "grams": 150,
+          "per100g": {
+            "calories": 371,
+            "proteins": 13.04,
+            "fats": 1.51,
+            "carbs": 74.67
+          },
+          "foodCompositionId": "169736",
+          "icon": "🥣",
+          "tags": []
+        },
+        {
+          "name": "oignon",
+          "quantity": "7 g",
+          "ingredientId": "onion",
+          "grams": 7,
+          "per100g": {
+            "calories": 40,
+            "proteins": 1.1,
+            "fats": 0.1,
+            "carbs": 9.34
+          },
+          "foodCompositionId": "170000",
+          "icon": "🥣",
+          "tags": []
+        },
+        {
+          "name": "huile d’olive",
+          "quantity": "20 g",
+          "ingredientId": "oliveOil",
+          "grams": 20,
+          "per100g": {
+            "calories": 884,
+            "proteins": 0,
+            "fats": 100,
+            "carbs": 0
+          },
+          "foodCompositionId": "171413",
+          "icon": "🥣",
+          "tags": []
+        },
+        {
+          "name": "poivre noir",
+          "quantity": "1 g",
+          "ingredientId": "blackPepper",
+          "grams": 1,
+          "per100g": {
+            "calories": 251,
+            "proteins": 10.39,
+            "fats": 3.26,
+            "carbs": 63.95
+          },
+          "foodCompositionId": "170931",
+          "icon": "🥣",
+          "tags": []
+        },
+        {
+          "name": "persil frais",
+          "quantity": "7 g",
+          "ingredientId": "parsley",
+          "grams": 7,
+          "per100g": {
+            "calories": 36,
+            "proteins": 2.97,
+            "fats": 0.79,
+            "carbs": 6.33
+          },
+          "foodCompositionId": "170416",
+          "icon": "🥣",
+          "tags": []
+        },
+        {
+          "name": "sel",
+          "quantity": "1 g",
+          "ingredientId": "salt",
+          "grams": 1,
+          "per100g": {
+            "calories": 0,
+            "proteins": 0,
+            "carbs": 0,
+            "fats": 0
+          },
+          "foodCompositionId": "zero-energy-salt",
+          "icon": "🥣",
+          "tags": []
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "text": "Puis-je faire cette recette sans"
+        },
+        {
+          "role": "assistant",
+          "text": "Sans quel ingrédient souhaitez-vous préparer les spaghetti aglio e olio ?"
+        },
+        {
+          "role": "user",
+          "text": "L'ail est-il obligatoire ?"
+        },
+        {
+          "role": "assistant",
+          "text": "Non, l’ail n’est pas obligatoire. Vous pouvez le supprimer, mais le plat perdra sa saveur caractéristique d’aglio e olio. Faites simplement chauffer l’huile d’olive, puis mélangez-la aux spaghetti avec le poivre et le persil."
+        },
+        {
+          "role": "user",
+          "text": "Remplace l'ail par de l'oignon."
+        },
+        {
+          "role": "assistant",
+          "text": "L’ail est remplacé par de l’oignon. Émincez-le finement et faites-le revenir doucement dans l’huile d’olive jusqu’à ce qu’il soit tendre et légèrement doré."
+        }
+      ]
+    }
+  ]
+}

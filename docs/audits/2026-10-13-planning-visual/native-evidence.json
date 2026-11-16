@@ -1,0 +1,47 @@
+[
+  {
+    "snapshot": 45,
+    "check": "new_demo_unselected",
+    "passed": true
+  },
+  {
+    "snapshot": 5,
+    "check": "goal_selected",
+    "passed": true
+  },
+  {
+    "snapshot": 6,
+    "check": "goal_visible_days",
+    "passed": true
+  },
+  {
+    "snapshot": 16,
+    "check": "skip_after_manual_pantry",
+    "passed": true
+  },
+  {
+    "snapshot": 20,
+    "check": "exclusions_chip_updates_input",
+    "passed": true
+  },
+  {
+    "snapshot": 22,
+    "check": "direct_generation_last_step",
+    "passed": true
+  },
+  {
+    "snapshot": 33,
+    "check": "inner_goal_unselected",
+    "passed": true
+  },
+  {
+    "snapshot": 38,
+    "check": "modal_close_safe_area",
+    "passed": true
+  },
+  {
+    "snapshot": 39,
+    "check": "modal_closed",
+    "passed": true
+  }
+]

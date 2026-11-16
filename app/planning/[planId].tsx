@@ -59,7 +59,7 @@ export default function PlanDetailScreen() {
   return <View style={appStyles.screen}>
     <View style={[styles.topBar, { paddingTop: insets.top + 8, paddingHorizontal: gutter }]}>
       <NavigationIconButton style={appStyles.iconButton} onPress={() => router.back()} accessibilityRole="button" accessibilityLabel={t('common.back')} />
-      <Text style={[appStyles.headerTitle, { fontSize: font(29) }]}>{t('tabs.planning')}</Text><View style={{ width: 44 }} />
+      <Text style={[appStyles.headerTitle, appStyles.backHeaderLeadingTitle, { fontSize: font(29) }]}>{t('tabs.planning')}</Text>
     </View>
     <ScrollView ref={scrollRef} scrollEventThrottle={16} onScroll={event => { scrollOffset.current = event.nativeEvent.contentOffset.y; }} contentContainerStyle={{ ...contentColumn(), paddingHorizontal: gutter, paddingBottom: 32 + insets.bottom }} showsVerticalScrollIndicator={false}>
       {loading && <ActivityIndicator style={styles.loader} color={theme.ink} />}

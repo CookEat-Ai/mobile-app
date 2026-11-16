@@ -1,0 +1,45 @@
+{
+  "captures": [
+    {
+      "file": "entry.png",
+      "pixelsPreserved": true,
+      "remainingAttributes": [
+        "com.apple.provenance"
+      ]
+    },
+    {
+      "file": "manual.png",
+      "pixelsPreserved": true,
+      "remainingAttributes": [
+        "com.apple.provenance"
+      ]
+    },
+    {
+      "file": "result.png",
+      "pixelsPreserved": true,
+      "remainingAttributes": [
+        "com.apple.provenance"
+      ]
+    },
+    {
+      "file": "result-open.png",
+      "pixelsPreserved": true,
+      "remainingAttributes": [
+        "com.apple.provenance"
+      ]
+    }
+  ],
+  "assertedSnapshots": [
+    8,
+    13,
+    14,
+    15,
+    17,
+    21,
+    23,
+    24,
+    25,
+    27,
+    28
+  ]
+}

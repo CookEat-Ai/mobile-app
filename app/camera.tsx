@@ -29,7 +29,7 @@ import Svg, { Circle } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '../components/ui/IconSymbol';
-import { Stack, router, useGlobalSearchParams, useNavigation } from 'expo-router';
+import { Stack, router, useGlobalSearchParams, useLocalSearchParams, useNavigation } from 'expo-router';
 import { Colors } from '../constants/Colors';
 import { rw } from '../constants/Layout';
 import { contentColumn } from '../hooks/useResponsive';
@@ -38,6 +38,7 @@ import apiService from '../services/api';
 import analytics from '../services/analytics';
 import { isPresentationModeEnabled } from '../services/presentationMode';
 import { useTranslation } from 'react-i18next';
+import { mergePantryRecipeIngredients, readPantryRecipeIngredients } from '../services/pantryRecipeIngredients';
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const MAX_PHOTOS = 30;
@@ -59,14 +60,17 @@ function CameraContent() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const params = useGlobalSearchParams();
+  const recipeParams = useLocalSearchParams<{ recipePantry?: string; recipeIngredients?: string }>();
   const navigation = useNavigation<CameraTransitionNavigation>();
   const isOnboarding = params.isOnboarding === 'true';
+  const recipePantry = !isOnboarding && recipeParams.recipePantry === 'true';
+  const pantryScan = recipePantry || params.planningPantry === 'true';
   const [permission, requestPermission, getPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<'back' | 'front'>('back');
   const [mode, setMode] = useState<'photo' | 'video'>('photo');
 
   useEffect(() => {
-    if (params.initialMode) {
+    if (!recipePantry && params.initialMode) {
       setMode(params.initialMode as 'photo' | 'video');
     }
   }, []);
@@ -78,6 +82,7 @@ function CameraContent() {
   const [scanSaving, setScanSaving] = useState(false);
   const scanSavingRef = useRef(false);
   const scanAttempt = useRef(0);
+  const scanInFlight = useRef(false);
   useEffect(() => () => { scanAttempt.current += 1; }, []);
   const [isCapturing, setIsCapturing] = useState(false);
   const [zoom, setZoom] = useState(0);
@@ -271,6 +276,7 @@ function CameraContent() {
       !hasPresentationFinished
       || !permission?.granted
       || isLoading
+      || recipePantry
       || hasShownAutomaticHelp.current
     ) return;
 
@@ -287,7 +293,7 @@ function CameraContent() {
       });
     }).catch(() => undefined);
     return () => { active = false; if (frame !== undefined) cancelAnimationFrame(frame); };
-  }, [hasPresentationFinished, permission?.granted, isLoading, showOnboarding]);
+  }, [hasPresentationFinished, permission?.granted, isLoading, recipePantry, showOnboarding]);
 
   useEffect(() => {
     if (isLoading) {
@@ -348,17 +354,25 @@ function CameraContent() {
     }
   }, [isLoading, loadingMessages.length, loadingProgress, loadingTextOpacity, scaleAnim]);
 
-  if (isLoading && params.planningPantry === 'true') {
+  if (isLoading && pantryScan) {
     return <PantryScanView photoUris={capturedImages} ingredients={scanResult} saving={scanSaving}
+      confirmLabel={recipePantry ? t('tracking.pantryRecipes.find') : undefined}
       onBack={() => { if (scanSavingRef.current) return; scanAttempt.current += 1; router.back(); }}
       onRetake={() => {
         if (scanSavingRef.current) return;
         scanAttempt.current += 1;
+        scanInFlight.current = false;
         setScanResult(null); setCapturedImages([]); setRecordedVideoUri(null); setIsLoading(false);
       }}
       onConfirm={async names => {
         if (scanSavingRef.current) return;
         scanSavingRef.current = true; setScanSaving(true);
+        if (recipePantry) {
+          const previous = readPantryRecipeIngredients(recipeParams.recipeIngredients);
+          const ingredients = mergePantryRecipeIngredients(previous, names);
+          router.dismissTo({ pathname: '/tracking/pantry-recipes', params: { ingredients: JSON.stringify(ingredients) } });
+          return;
+        }
         try {
           await AsyncStorage.setItem(PANTRY_SCAN_HANDOFF_KEY, createPantryScanHandoff(names));
           router.back();
@@ -387,7 +401,7 @@ function CameraContent() {
           <TouchableOpacity onPress={handleRequestPermission} style={styles.permissionButton}>
             <Text style={styles.permissionButtonText}>{t('camera.grantPermission')}</Text>
           </TouchableOpacity>
-          {!isOnboarding && (
+          {!isOnboarding && !recipePantry && (
             <TouchableOpacity onPress={handleSkipCapture} style={styles.skipButton}>
               <Text style={styles.skipButtonText}>{t('camera.skip')}</Text>
             </TouchableOpacity>
@@ -546,10 +560,12 @@ function CameraContent() {
   };
 
   const finishCapture = async () => {
+    if (scanInFlight.current || isLoading || isCapturing) return;
     if (mode === 'photo' && capturedImages.length === 0) return;
     if (mode === 'video' && !recordedVideoUri) return;
 
     const attempt = ++scanAttempt.current;
+    scanInFlight.current = true;
     setScanResult(null);
     setIsLoading(true);
     feedback.confirm();
@@ -578,7 +594,7 @@ function CameraContent() {
 
       if (attempt !== scanAttempt.current) return;
       if (response.data?.ingredients) {
-        if (params.planningPantry === 'true') {
+        if (pantryScan) {
           const names = response.data.ingredients.map((item: { name: string }) => item.name).filter((name: unknown) => typeof name === 'string' && name.trim());
           setScanResult(names);
           feedback.success();
@@ -622,15 +638,16 @@ function CameraContent() {
     } catch (error) {
       if (attempt !== scanAttempt.current) return;
       console.error('Erreur extraction ingrédients:', error);
-      const planningScan = params.planningPantry === 'true';
       // Keep the full-screen analysis mounted while presenting the error alert.
       // Dismissing it first would race two native modal transitions on iOS.
-      if (!planningScan) setIsLoading(false);
+      if (!pantryScan) setIsLoading(false);
       Alert.alert(
         t('camera.errorTitle'),
         error instanceof Error && error.message ? error.message : t('camera.errorDescription'),
-        [{ text: t('common.ok'), onPress: () => { if (planningScan) setIsLoading(false); } }]
+        [{ text: t('common.ok'), onPress: () => { if (pantryScan) setIsLoading(false); } }]
       );
+    } finally {
+      if (attempt === scanAttempt.current) scanInFlight.current = false;
     }
   };
 
@@ -832,12 +849,12 @@ function CameraContent() {
 
           {((mode === 'photo' && capturedImages.length > 0) || (mode === 'video' && recordedVideoUri)) && (
             <TouchableOpacity style={styles.finishButton} onPress={finishCapture}>
-              <Text style={styles.finishButtonText}>{t(params.planningPantry === 'true' ? 'pantryReview.analyzePhotos' : 'camera.finishButton')}</Text>
+              <Text style={styles.finishButtonText}>{t(pantryScan ? 'pantryReview.analyzePhotos' : 'camera.finishButton')}</Text>
               <IconSymbol name="chevron-forward" size={20} color={designTheme.onPrimary} weight="bold" />
             </TouchableOpacity>
           )}
 
-          {!isOnboarding && capturedImages.length === 0 && !recordedVideoUri && !isRecording && (
+          {!isOnboarding && !recipePantry && capturedImages.length === 0 && !recordedVideoUri && !isRecording && (
             <TouchableOpacity
               style={styles.skipButton}
               onPress={handleSkipCapture}

@@ -1,0 +1,10 @@
+{
+  "version": "1.7.2",
+  "build": "23",
+  "buildId": "570dc2a6-e7e2-4e52-8927-bce0a616effc",
+  "gitCommit": "6ab28c3f0d8e25a18efdd0d4e3f2342483b1596d",
+  "runtime": "0b8c1bce3abe6ebfef797d50bdab8c412b5a1a61",
+  "javascriptDebugId": "cbf5e26a-f8f0-4e6a-86a1-61026fe8b932",
+  "debugIdFoundInActualBinary": true,
+  "matchingSourceMapUploadReport": true
+}

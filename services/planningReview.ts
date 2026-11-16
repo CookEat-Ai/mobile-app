@@ -5,11 +5,15 @@ import analytics from './analytics';
 
 let pendingReview: ReturnType<typeof setTimeout> | null = null;
 
-// Keep the delay alive when the generation screen navigates to the finished plan.
-export function schedulePlanningReview(planId: string, duringOnboarding = false) {
+function cancelReview() {
   if (pendingReview) clearTimeout(pendingReview);
   pendingReview = null;
-  if (__DEV__ || duringOnboarding) return;
+}
+
+// A module-level timer outlives the screen that scheduled it, so navigation does not cancel it.
+function scheduleReview(event: string, properties: Record<string, string | boolean>, delay: number) {
+  cancelReview();
+  if (__DEV__) return;
 
   pendingReview = setTimeout(async () => {
     pendingReview = null;
@@ -17,14 +21,20 @@ export function schedulePlanningReview(planId: string, duringOnboarding = false)
       // Also guard callers without an explicit onboarding flag.
       if (await AsyncStorage.getItem('onboarding_completed') !== 'true') return;
       if (AppState.currentState !== 'active' || !await StoreReview.hasAction()) return;
-      if (AppState.currentState !== 'active') return;
-      analytics.track('meal_plan_review_requested', {
-        plan_id: planId,
-        during_onboarding: false,
-      });
+      analytics.track(event, properties);
       await StoreReview.requestReview();
     } catch (error) {
       console.warn('Store review request skipped:', error);
     }
-  }, 5000);
+  }, delay);
+}
+
+export function schedulePlanningReview(planId: string, duringOnboarding = false) {
+  if (duringOnboarding) return cancelReview();
+  scheduleReview('meal_plan_review_requested', { plan_id: planId, during_onboarding: false }, 5000);
+}
+
+// Asked once the scanned meal's details have finished appearing in the modal.
+export function scheduleMealScanReview(scanId: string) {
+  scheduleReview('meal_scan_review_requested', { scan_id: scanId }, 3000);
 }

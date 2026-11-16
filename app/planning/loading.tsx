@@ -42,7 +42,7 @@ export default function PlanningLoadingScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const { ready: loadingReady, reset: resetLoadingBar, finish: finishLoadingBar, onComplete: completeLoadingBar } = usePlanningLoading();
-  const { config: rawConfig, replace } = useLocalSearchParams<{ config?: string; replace?: string }>();
+  const { config: rawConfig, replace, presentation } = useLocalSearchParams<{ config?: string; replace?: string; presentation?: string }>();
   const { subscriptionStatus, isLoading: subscriptionLoading } = useSubscription();
   const [error, setError] = useState<string | null>(null);
   const started = useRef(false);
@@ -94,7 +94,7 @@ export default function PlanningLoadingScreen() {
         }
         invalidatePlanning();
         analytics.track('meal_plan_created', { plan_id: response.data.plan._id, meal_count: response.data.plan.meals.length, cooking_days: cookingDays.join(',') });
-        if (!await finishLoadingBar(generationStartedAt)) return;
+        if (!await finishLoadingBar(generationStartedAt, presentation === 'true')) return;
         await feedback.success();
         router.dismissTo('/(tabs)');
           schedulePlanningReview(response.data.plan._id);
@@ -103,7 +103,7 @@ export default function PlanningLoadingScreen() {
         await feedback.error();
       }
     })();
-  }, [allowShopping, rawConfig, replace, subscriptionLoading, subscriptionStatus.isSubscribed, t, finishLoadingBar, resetLoadingBar]);
+  }, [allowShopping, rawConfig, replace, presentation, subscriptionLoading, subscriptionStatus.isSubscribed, t, finishLoadingBar, resetLoadingBar]);
 
   if (!error) return <View style={{ flex: 1 }}><PlanningFlowHeader /><View style={{ flex: 1 }}><PlanningLoadingView ready={loadingReady} onComplete={completeLoadingBar} /></View></View>;
 

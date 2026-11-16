@@ -1,0 +1,211 @@
+{
+  "observedAt": "2026-10-14T02:40:19.294061+00:00",
+  "appVersion": "1.7.2",
+  "mobile": {
+    "gitRemote": "git@github.com:CookEat-Ai/mobile-app.git",
+    "branch": "release/light-meals-1.7.1",
+    "sha": "6ab28c3f0d8e25a18efdd0d4e3f2342483b1596d"
+  },
+  "api": {
+    "version": "1.9.8",
+    "gitRemote": "git@github.com:CookEat-Ai/api.git",
+    "branch": "release/light-meals-1.9.3",
+    "sha": "4f66f848f23f9f48eb2ec1c53127ff333b123f51",
+    "image": "cookeat-api-prod:1.9.8",
+    "imageDigest": "sha256:aa16e4b998eaad62651f15b1419543e3701a0d5b920294fe897ae7de183713ea",
+    "publicHealthHTTP": 200,
+    "rollbackDirectory": "/root/cookeat-store-release-20261014/"
+  },
+  "apple": {
+    "appId": "6748924011",
+    "versionId": "78ac8957-c1ca-4bb1-b525-0ec6837332b8",
+    "buildNumber": "23",
+    "buildId": "3f5bdf15-aff2-413f-b2f5-851083cd6aba",
+    "easBuildId": "570dc2a6-e7e2-4e52-8927-bce0a616effc",
+    "runtime": "0b8c1bce3abe6ebfef797d50bdab8c412b5a1a61",
+    "submissionId": "d3ff41f9-92d2-4064-94c5-c150d4a82d59",
+    "state": "WAITING_FOR_REVIEW",
+    "submittedDate": "2026-10-14T02:29:36.239Z",
+    "releaseMode": "MANUAL",
+    "locales": [
+      "en-US",
+      "en-GB",
+      "en-AU",
+      "en-CA",
+      "fr-FR",
+      "es-ES",
+      "es-MX",
+      "de-DE",
+      "pt-BR"
+    ],
+    "privacyPublished": true,
+    "privacyTypes": 14,
+    "validationBlockingErrors": 0
+  },
+  "google": {
+    "developerId": "6313512285751153514",
+    "appId": "4973467919982365362",
+    "packageName": "com.gokugen.cookeat",
+    "track": "production",
+    "trackId": "4697520641352129114",
+    "releaseId": "2",
+    "versionCode": 10,
+    "easBuildId": "a65f3c58-c8d7-432e-bca4-f5c9eb616e8c",
+    "runtime": "6e0f6c6ec60e2e0714518b86aa410c3121d7291b",
+    "state": "IN_REVIEW",
+    "uiState": "Vos modifications sont en cours d’examen",
+    "managedPublishing": true,
+    "targetedCountriesUnchanged": true,
+    "existingCountryCount": 177,
+    "rolloutPercentAfterManualPublication": 100,
+    "submittedChanges": [
+      "production 1.7.2 (10)",
+      "privacy policy URL",
+      "Data safety",
+      "health app declaration"
+    ],
+    "reviewAccessInstructionsVerified": true,
+    "validationBlockingErrors": 0,
+    "warnings": [
+      "increased APK size",
+      "no ProGuard deobfuscation file (not a blocking error)"
+    ],
+    "preReviewChecksCompleted": true
+  },
+  "reviewAccess": {
+    "apple": {
+      "method": "App Review StoreKit sandbox",
+      "bypassMentionForbidden": true,
+      "bypassInstructionsRemoved": true,
+      "credentialRemoved": true,
+      "exactReadbackVerified": true,
+      "updatedAt": "2026-10-14T02:43:27.383016+00:00"
+    },
+    "google": {
+      "source": "existing production PREMIUM_CODE explicitly requested by user",
+      "fullProductAccess": true,
+      "expires": null,
+      "grantsAdministrationPrivileges": false,
+      "nativeActivationVerified": true,
+      "credentialsExcludedFromReport": true
+    }
+  },
+  "verification": {
+    "frozenYarn": true,
+    "typeScript": true,
+    "lintErrors": 0,
+    "existingLintWarnings": 55,
+    "testScriptsPassed": 36,
+    "expoDoctor": "21/21",
+    "productionMetroExports": [
+      "ios",
+      "android"
+    ],
+    "apiTestsPassed": true,
+    "iosSourceMapControlledEventSymbolicated": true,
+    "androidSourceMapControlledEventSymbolicated": true,
+    "androidFreshReleaseLikeInstall": true,
+    "android10UpgradeRetainsPlanAndAccess": true,
+    "excludedDaysGreyInEditor": true,
+    "unrun": [
+      "real Google Play Billing purchase/restore",
+      "physical iOS installation and sandbox purchase/restore",
+      "native crash symbolication"
+    ]
+  },
+  "refundSafetyGate": {
+    "status": "PASS WITH PREREQUISITES",
+    "prerequisites": [
+      "physical Store sandbox purchase and restore before manual public release"
+    ],
+    "paidScalingAuthorized": false
+  },
+  "supersededArtifacts": {
+    "iosBuild22": true,
+    "androidCode9": true
+  },
+  "publiclyReleased": false,
+  "priceAlignment": {
+    "status": "COMPLETE",
+    "verifiedAt": "2026-10-14T08:29:04.443644+00:00",
+    "products": [
+      {
+        "product": "monthly",
+        "exactCountries": 127,
+        "convertedCountries": 30,
+        "unsupportedCountriesPreserved": 17,
+        "newCountryDefaultPricesPreserved": true,
+        "france": "12,99 EUR",
+        "observedAt": "2026-10-14T08:27:34.535Z"
+      },
+      {
+        "product": "annual_discount_25",
+        "exactCountries": 127,
+        "convertedCountries": 30,
+        "unsupportedCountriesPreserved": 17,
+        "newCountryDefaultPricesPreserved": true,
+        "france": "33,49 EUR",
+        "observedAt": "2026-10-14T08:28:17.895Z"
+      },
+      {
+        "product": "annual",
+        "exactCountries": 127,
+        "convertedCountries": 30,
+        "unsupportedCountriesPreserved": 17,
+        "newCountryDefaultPricesPreserved": true,
+        "france": "49,99 EUR",
+        "observedAt": "2026-10-14T08:27:28.172Z"
+      },
+      {
+        "product": "annual_discount",
+        "exactCountries": 127,
+        "convertedCountries": 30,
+        "unsupportedCountriesPreserved": 17,
+        "newCountryDefaultPricesPreserved": true,
+        "france": "29,99 EUR",
+        "observedAt": "2026-10-14T08:27:44.074Z"
+      },
+      {
+        "product": "annual_discount_15",
+        "exactCountries": 127,
+        "convertedCountries": 30,
+        "unsupportedCountriesPreserved": 17,
+        "newCountryDefaultPricesPreserved": true,
+        "france": "37,99 EUR",
+        "observedAt": "2026-10-14T08:27:48.578Z"
+      },
+      {
+        "product": "annual_discount_20",
+        "exactCountries": 127,
+        "convertedCountries": 30,
+        "unsupportedCountriesPreserved": 17,
+        "newCountryDefaultPricesPreserved": true,
+        "france": "35,99 EUR",
+        "observedAt": "2026-10-14T08:28:13.640Z"
+      },
+      {
+        "product": "weekly",
+        "exactCountries": 127,
+        "convertedCountries": 30,
+        "unsupportedCountriesPreserved": 17,
+        "newCountryDefaultPricesPreserved": true,
+        "france": "7,99 EUR",
+        "observedAt": "2026-10-14T08:27:39.388Z"
+      },
+      {
+        "product": "annual_discount_80",
+        "exactCountries": 127,
+        "convertedCountries": 30,
+        "unsupportedCountriesPreserved": 17,
+        "newCountryDefaultPricesPreserved": true,
+        "france": "30,99 EUR",
+        "observedAt": "2026-10-14T08:28:22.177Z"
+      }
+    ],
+    "source": "Apple App Store Connect effective prices",
+    "googleConversionApproved": true,
+    "applePricesUnchanged": true,
+    "existingSubscribersMigrated": false,
+    "allSavedPricesLiveVerified": true
+  }
+}

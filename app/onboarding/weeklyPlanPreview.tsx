@@ -105,7 +105,7 @@ export default function WeeklyPlanPreviewScreen() {
           duration: profilePreferences.duration === 'fast' || profilePreferences.duration === 'medium' ? profilePreferences.duration : 'all',
         }),
       ]);
-      if (!await finishLoadingBar(generationStartedAt)) return;
+      if (!await finishLoadingBar(generationStartedAt, true)) return;
       feedback.success();
       setPlan(nextPlan);
       const restoredDays = normalizeCookingDays(nextPlan.preferences?.cookingDays);

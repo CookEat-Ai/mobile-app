@@ -1,0 +1,73 @@
+Attributes: Application, 0x112f2c140, pid: 40014, label: 'CookEat'
+Element subtree:
+ →Application, 0x112f2c140, pid: 40014, label: 'CookEat'
+    Window, 0x112f2c280, {{0.0, -0.0}, {951.0, 669.0}}
+      Other, 0x112f2c3c0, {{0.0, -0.0}, {951.0, 669.0}}
+        Other, 0x112f2c500, {{0.0, -0.0}, {951.0, 669.0}}
+          Other, 0x112f2c640, {{0.0, -0.0}, {951.0, 669.0}}
+            Other, 0x112f2c780, {{0.0, -0.0}, {951.0, 669.0}}
+              Other, 0x112f2c8c0, {{0.0, -0.0}, {951.0, 669.0}}
+                Other, 0x112f2fe80, {{0.0, -0.0}, {951.0, 669.0}}
+                  Other, 0x112f2ca00, {{0.0, -0.0}, {951.0, 669.0}}
+                    Other, 0x112f2cb40, {{0.0, -0.0}, {951.0, 669.0}}
+                      Other, 0x112f2cc80, {{0.0, -30.0}, {951.0, 30.0}}
+                        StaticText, 0x112f2d180, {{354.7, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'
+                          StaticText, 0x112f2d2c0, {{354.7, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'
+                      Other, 0x112f2fc00, {{0.0, -0.0}, {951.0, 669.0}}
+                        Other, 0x112f2fd40, {{0.0, -0.0}, {951.0, 669.0}}
+                          Other, 0x112f2d400, {{0.0, -0.0}, {951.0, 669.0}}
+                            Other, 0x112f2d540, {{0.0, -0.0}, {951.0, 669.0}}
+                              Other, 0x112f2d680, {{0.0, -0.0}, {951.0, 669.0}}
+                                Other, 0x112f2d7c0, {{0.0, -0.0}, {951.0, 669.0}}
+                                  Other, 0x112f2d900, {{0.0, -0.0}, {951.0, 669.0}}
+                                    Other, 0x112f2ea80, {{0.0, -0.0}, {951.0, 96.0}}
+                                    Other, 0x112f2ebc0, {{0.0, -0.0}, {951.0, 669.0}}
+                                    Other, 0x112f2f980, {{189.3, 0.7}, {66.6, 66.6}}
+                                      Image, 0x112f2fac0, {{189.3, 0.7}, {66.6, 66.6}}
+                                    Button, 0x112f2f700, {{20.0, 12.0}, {44.0, 44.0}}, label: 'Retour'
+                                    StaticText, 0x112f2f840, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'
+                                      StaticText, 0x112f2ed00, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'
+                                    StaticText, 0x112f2ee40, {{823.3, 27.3}, {23.7, 13.0}}, label: '3 / 8'
+                                      StaticText, 0x112f2f5c0, {{823.3, 27.3}, {23.7, 13.0}}, label: '3 / 8'
+                                    Other, 0x112f2f480, {{20.0, 70.0}, {827.0, 12.0}}, value: 38 %
+                                      Other, 0x112f2f340, {{20.0, 70.0}, {325.3, 12.0}}
+                                    StaticText, 0x112f2f0c0, {{0.0, 96.0}, {951.0, 34.3}}, label: '💪 Objectif : Prendre du muscle'
+                                      StaticText, 0x112f2f200, {{0.0, 96.0}, {951.0, 34.3}}, label: '💪 Objectif : Prendre du muscle'
+                                    Other, 0x112f2ef80, {{0.0, 130.3}, {867.0, 260.7}}
+                                      ScrollView, 0x112f2e800, {{0.0, 130.3}, {867.0, 260.7}}
+                                        Other, 0x112f2e940, {{0.0, 130.3}, {713.7, 292.0}}
+                                          Other, 0x112f2e580, {{153.7, 130.3}, {560.0, 292.0}}
+                                            Button, 0x112f2e6c0, {{583.3, 144.3}, {98.3, 44.0}}, label: 'Ajouter'
+                                            StaticText, 0x112f2e300, {{185.7, 152.3}, {385.7, 28.0}}, label: 'Tes ingrédients'
+                                              StaticText, 0x112f2e440, {{185.7, 152.3}, {385.7, 28.0}}, label: 'Tes ingrédients'
+                                            Other, 0x112f2e080, {{185.7, 202.3}, {496.0, 134.0}}
+                                            Button, 0x112f2e1c0, {{620.7, 219.3}, {44.0, 44.0}}, label: 'Ajouter: Légumes'
+                                            StaticText, 0x112f2df40, {{202.7, 227.3}, {410.0, 27.7}}, label: '🥬 Légumes'
+                                              StaticText, 0x112f2dcc0, {{202.7, 227.3}, {410.0, 27.7}}, label: '🥬 Légumes'
+                                            Other, 0x112f2de00, {{202.7, 275.3}, {99.3, 44.0}}, label: 'Tomate', value: checkbox, checked
+                                            Button, 0x112f2db80, {{185.7, 350.3}, {496.0, 44.0}}, label: '📸 Scanner mon frigo'
+                                        Other, 0x112f2da40, {{0.0, 358.0}, {867.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                          Other, 0x112f2cdc0, {{211.3, 385.0}, {649.7, 3.0}}
+                                        Other, 0x112f2cf00, {{0.0, 358.0}, {867.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                          Other, 0x112f2d040, {{211.3, 385.0}, {649.7, 3.0}}
+                                    Other, 0x113776d00, {{0.0, 391.0}, {951.0, 278.0}}
+                                    StaticText, 0x113777340, {{215.7, 403.0}, {520.0, 26.0}}, label: 'On peut ajouter ce qu’il manque ?'
+                                      StaticText, 0x113776940, {{215.7, 403.0}, {520.0, 26.0}}, label: 'On peut ajouter ce qu’il manque ?'
+                                    Other, 0x113774280, {{215.7, 441.0}, {520.0, 66.0}}, label: 'Oui, je peux faire des courses', value: radio button, unch...
+                                    Other, 0x113777d40, {{215.7, 517.0}, {520.0, 66.0}}, label: 'Non, seulement ce que j’ai', value: radio button, unch...
+                                    Button, 0x113774dc0, {{32.0, 583.0}, {887.0, 44.0}}, label: 'Passer'
+                          Toolbar, 0x113775f40, {{0.0, -0.0}, {951.0, 669.0}}, identifier: 'Toolbar', label: 'Barre d’outils'
+                            Other, 0x1137748c0, {{0.0, -0.0}, {951.0, 669.0}}
+                Other, 0x113776a80, {{0.0, -0.0}, {951.0, 669.0}}
+                  Other, 0x113777200, {{0.0, -0.0}, {951.0, 669.0}}
+                    Other, 0x113775e00, {{0.0, -0.0}, {951.0, 669.0}}
+    Window, 0x113777840, {{0.0, -0.0}, {951.0, 669.0}}
+      Other, 0x113775180, {{0.0, -0.0}, {951.0, 669.0}}
+        Other, 0x113777980, {{0.0, -0.0}, {951.0, 669.0}}
+Path to element:
+ →Application, 0x112f2c140, pid: 40014, label: 'CookEat'
+Query chain:
+ →Find: Application 'com.gokugen.cookeat'
+  Output: {
+    Application, 0x113774000, pid: 40014, label: 'CookEat'
+  }

@@ -13,7 +13,7 @@ const deferred = () => {
 };
 const ok = data => ({ ok: true, status: 200, json: async () => data });
 const bad = status => ({ ok: false, status, json: async () => ({ message: 'rejected' }) });
-function harness(storage = new Map([['userId', 'alice']]), base = 'https://example.test/api') {
+function harness(storage = new Map([['userId', 'alice']]), base = 'https://example.test/api', getAnonymousSessionToken = async () => 'test-token') {
   let now = 1000000, failStorage = false, transport = async () => ok({ success: true, recipes: [], recipe: { id: 'a' }, plans: [], plan: null, history: [] });
   const calls = [], sockets = [], sources = [];
   const i18n = { language: 'fr', t: key => key };
@@ -26,13 +26,13 @@ function harness(storage = new Map([['userId', 'alice']]), base = 'https://examp
     '../config/api': { API_BASE_URL: base, WS_URL: 'wss://example.test/ws' },
     '../i18n': { __esModule: true, default: i18n, resolveSupportedLanguage: value => value },
     '../config/storeCompliance': { CREATOR_PROMO_CODES_ENABLED: false },
-    './anonymousSession': { getAnonymousSessionToken: async () => 'test-token', invalidateAnonymousSession() {} },
+    './anonymousSession': { getAnonymousSessionToken, invalidateAnonymousSession() {} },
     './planningReveal': { markPlanningReveal() {} },
     './personalRecipe': { personalMealPlan: async plan=>plan, writePersonalShoppingState: async()=>{} },
     'expo-localization': { getLocales: () => [] },
-    'expo/fetch': { fetch: (...args) => context.fetch(...args) },
-    './mealPhotoStream': { createMealPhotoStream() { throw Error('Unexpected photo stream in cache test'); } },
     'expo-file-system': { File: class {} },
+    'expo/fetch': { fetch: (...args) => context.fetch(...args) },
+    './mealPhotoStream': {},
     'react-native-sse': { __esModule: true, default: class {
       constructor() { this.listeners = {}; sources.push(this); }
       addEventListener(event, cb) { this.listeners[event] = cb; }
@@ -86,6 +86,31 @@ function harness(storage = new Map([['userId', 'alice']]), base = 'https://examp
   const otherServer = harness(h.storage, 'https://other.test/api'); otherServer.i18n.language = 'en';
   await otherServer.api.getRecipeCatalog();
   assert.equal(otherServer.calls.length, 1, 'server environments stay isolated');
+
+  const pantry = harness();
+  await pantry.api.getRecipeCatalog({ pantryIngredients: ['Œufs', 'Tomates'] });
+  await pantry.api.getRecipeCatalog({ pantryIngredients: ['Œufs', 'Tomates'] });
+  assert.equal(pantry.calls.length, 2, 'photo-derived ingredients never use a cached catalogue response');
+  assert.deepEqual(new URL(pantry.calls[0][0]).searchParams.getAll('pantryIngredient'), ['Œufs', 'Tomates']);
+  assert.equal(pantry.storage.size, 1, 'the only stored value is the user ID');
+
+  let sessionCalls = 0;
+  const budget = harness(undefined, undefined, async () => {
+    sessionCalls++;
+    throw Error('session unavailable');
+  });
+  budget.failStorage();
+  budget.transport(async (url, { headers }) => {
+    assert.equal(headers.Authorization, undefined);
+    assert.equal(new URL(url).pathname, '/api/meal-plans/budget-options');
+    return ok({ currency: 'EUR', minimum: 15 });
+  });
+  assert.equal((await budget.api.getPlanningBudgetOptions(1, 3)).data.minimum, 15);
+  assert.equal(budget.cacheModule.responseCachePolicy('/meal-plans/budget-options?days=3'), null);
+  assert.equal(sessionCalls, 0, 'budget options do not wait for an anonymous session');
+  assert((await budget.api.getMealPlanById('plan', 'alice')).error, 'plan details still require a session');
+  assert.equal(sessionCalls, 1);
+  assert.equal(budget.calls.length, 1);
 
   const personal = harness();
   await personal.api.getFavorites('alice'); await personal.api.getFavorites('alice');

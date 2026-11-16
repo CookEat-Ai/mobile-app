@@ -1,0 +1,67 @@
+Attributes: Application, 0x110ca6800, pid: 94186, label: 'CookEat'
+Element subtree:
+ →Application, 0x110ca6800, pid: 94186, label: 'CookEat'
+    Window (Main), 0x110ca6940, {{0.0, 0.0}, {466.0, 678.0}}
+      Other, 0x110ca5e00, {{0.0, 0.0}, {466.0, 678.0}}
+        Other, 0x110ca6f80, {{0.0, 0.0}, {466.0, 678.0}}
+          Other, 0x110ca4dc0, {{0.0, 0.0}, {466.0, 678.0}}
+            Other, 0x110ca6d00, {{0.0, 0.0}, {466.0, 678.0}}
+              Other, 0x110ca57c0, {{0.0, 0.0}, {466.0, 678.0}}
+                Other, 0x110ca4b40, {{0.0, 0.0}, {466.0, 678.0}}
+                  Other, 0x110ca4c80, {{0.0, 0.0}, {466.0, 678.0}}
+                    Other, 0x110ca4780, {{0.0, 0.0}, {466.0, 678.0}}
+                      Other, 0x110ca5cc0, {{0.0, -30.0}, {466.0, 30.0}}
+                        StaticText, 0x110ca5a40, {{112.3, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'
+                          StaticText, 0x110ca52c0, {{112.3, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'
+                      Other, 0x110ca66c0, {{0.0, 0.0}, {466.0, 678.0}}
+                        Other, 0x110ca5b80, {{0.0, 0.0}, {466.0, 678.0}}
+                          Other, 0x1106dd900, {{0.0, 0.0}, {466.0, 678.0}}
+                            Other, 0x1106def80, {{0.0, 0.0}, {466.0, 678.0}}
+                              Other, 0x1106dd540, {{0.0, 0.0}, {466.0, 678.0}}
+                                Other, 0x1106dc3c0, {{0.0, 0.0}, {466.0, 678.0}}
+                                  Other, 0x1106dee40, {{0.0, 0.0}, {466.0, 678.0}}
+                                    Other, 0x1106df0c0, {{0.0, 0.0}, {466.0, 96.0}}
+                                    Other, 0x1106ddb80, {{0.0, 0.0}, {466.0, 678.0}}
+                                    Other, 0x1106dfd40, {{189.3, 0.7}, {66.6, 66.6}}
+                                      Image, 0x1106dc780, {{189.3, 0.7}, {66.6, 66.6}}
+                                    Button, 0x1106dca00, {{20.0, 12.0}, {44.0, 44.0}}, label: 'Retour'
+                                    StaticText, 0x1106dd680, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'
+                                      StaticText, 0x1106dcf00, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'
+                                    StaticText, 0x1106dd2c0, {{338.3, 27.3}, {23.7, 13.0}}, label: '7 / 8'
+                                      StaticText, 0x1106df340, {{338.3, 27.3}, {23.7, 13.0}}, label: '7 / 8'
+                                    Other, 0x1114b8000, {{20.0, 70.0}, {342.0, 12.0}}, value: 88 %
+                                      Other, 0x1114b88c0, {{20.0, 70.0}, {292.0, 12.0}}
+                                    StaticText, 0x1114b8140, {{0.0, 96.0}, {466.0, 34.3}}, label: '📉 Objectif : Perdre du poids'
+                                      StaticText, 0x1114b8280, {{0.0, 96.0}, {466.0, 34.3}}, label: '📉 Objectif : Perdre du poids'
+                                    Other, 0x1114b8640, {{0.0, 130.3}, {382.0, 445.7}}
+                                      ScrollView, 0x1114b8500, {{0.0, 130.3}, {382.0, 445.7}}
+                                        Other, 0x1114b8780, {{0.0, 130.3}, {382.0, 418.0}}
+                                          Other, 0x1114b83c0, {{0.0, 130.3}, {382.0, 418.0}}
+                                            StaticText, 0x1114ba940, {{86.0, 144.3}, {276.0, 68.0}}, label: 'Des ingrédients à éviter ?'
+                                              StaticText, 0x104a57480, {{86.0, 144.3}, {276.0, 68.0}}, label: 'Des ingrédients à éviter ?'
+                                            StaticText, 0x111052a80, {{20.0, 154.3}, {52.0, 48.0}}, label: '🚫'
+                                            Other, 0x1110535c0, {{20.0, 236.3}, {142.0, 64.0}}, label: 'Oignon', value: checkbox, unchecked
+                                            Other, 0x111053e80, {{172.0, 236.3}, {175.3, 64.0}}, label: 'Champignon', value: checkbox, unchecked
+                                            Other, 0x1110530c0, {{20.0, 310.3}, {123.7, 64.0}}, label: 'Porc', value: checkbox, checked
+                                            Other, 0x111052e40, {{153.7, 310.3}, {146.3, 64.0}}, label: 'Saumon', value: checkbox, unchecked
+                                            Other, 0x111052f80, {{20.0, 384.3}, {119.7, 64.0}}, label: 'Lait', value: checkbox, unchecked
+                                            Other, 0x104ba9680, {{20.0, 466.3}, {342.0, 54.0}}
+                                              TextField, 0x104ba92c0, {{21.0, 467.3}, {340.0, 52.0}}, label: 'Ingrédients à exclure', placeholderValue: 'Ex. porc, cacahuète, coriandre', value: porc
+                                        Other, 0x104ba9540, {{0.0, 543.0}, {382.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                          Other, 0x104ba9040, {{11.0, 570.0}, {368.0, 3.0}}
+                                        Other, 0x104ba9180, {{0.0, 543.0}, {382.0, 30.0}}, label: 'Barre de défilement horizontale, 1 page', value: 0 %
+                                          Other, 0x104ba8c80, {{11.0, 570.0}, {368.0, 3.0}}
+                                    Other, 0x104ba9e00, {{0.0, 576.0}, {466.0, 102.0}}
+                                    Button, 0x104ba8280, {{20.0, 588.0}, {426.0, 56.0}}, label: 'Continuer, '
+                          Toolbar, 0x111244000, {{0.0, 0.0}, {466.0, 678.0}}, identifier: 'Toolbar', label: 'Barre d’outils'
+                            Other, 0x111244140, {{0.0, 0.0}, {466.0, 678.0}}
+                Other, 0x111244280, {{0.0, 0.0}, {466.0, 678.0}}
+                  Other, 0x1112443c0, {{0.0, 0.0}, {466.0, 678.0}}
+                    Other, 0x111244500, {{0.0, 0.0}, {466.0, 678.0}}
+Path to element:
+ →Application, 0x110ca6800, pid: 94186, label: 'CookEat'
+Query chain:
+ →Find: Application 'com.gokugen.cookeat'
+  Output: {
+    Application, 0x111244640, pid: 94186, label: 'CookEat'
+  }

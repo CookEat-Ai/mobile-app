@@ -1,0 +1,82 @@
+{
+  "status": "COMPLETE",
+  "verifiedAt": "2026-10-14T08:29:04.443644+00:00",
+  "totalExact": 1016,
+  "totalConverted": 240,
+  "products": [
+    {
+      "product": "monthly",
+      "exactCountries": 127,
+      "convertedCountries": 30,
+      "unsupportedCountriesPreserved": 17,
+      "newCountryDefaultPricesPreserved": true,
+      "france": "12,99 EUR",
+      "observedAt": "2026-10-14T08:27:34.535Z"
+    },
+    {
+      "product": "annual_discount_25",
+      "exactCountries": 127,
+      "convertedCountries": 30,
+      "unsupportedCountriesPreserved": 17,
+      "newCountryDefaultPricesPreserved": true,
+      "france": "33,49 EUR",
+      "observedAt": "2026-10-14T08:28:17.895Z"
+    },
+    {
+      "product": "annual",
+      "exactCountries": 127,
+      "convertedCountries": 30,
+      "unsupportedCountriesPreserved": 17,
+      "newCountryDefaultPricesPreserved": true,
+      "france": "49,99 EUR",
+      "observedAt": "2026-10-14T08:27:28.172Z"
+    },
+    {
+      "product": "annual_discount",
+      "exactCountries": 127,
+      "convertedCountries": 30,
+      "unsupportedCountriesPreserved": 17,
+      "newCountryDefaultPricesPreserved": true,
+      "france": "29,99 EUR",
+      "observedAt": "2026-10-14T08:27:44.074Z"
+    },
+    {
+      "product": "annual_discount_15",
+      "exactCountries": 127,
+      "convertedCountries": 30,
+      "unsupportedCountriesPreserved": 17,
+      "newCountryDefaultPricesPreserved": true,
+      "france": "37,99 EUR",
+      "observedAt": "2026-10-14T08:27:48.578Z"
+    },
+    {
+      "product": "annual_discount_20",
+      "exactCountries": 127,
+      "convertedCountries": 30,
+      "unsupportedCountriesPreserved": 17,
+      "newCountryDefaultPricesPreserved": true,
+      "france": "35,99 EUR",
+      "observedAt": "2026-10-14T08:28:13.640Z"
+    },
+    {
+      "product": "weekly",
+      "exactCountries": 127,
+      "convertedCountries": 30,
+      "unsupportedCountriesPreserved": 17,
+      "newCountryDefaultPricesPreserved": true,
+      "france": "7,99 EUR",
+      "observedAt": "2026-10-14T08:27:39.388Z"
+    },
+    {
+      "product": "annual_discount_80",
+      "exactCountries": 127,
+      "convertedCountries": 30,
+      "unsupportedCountriesPreserved": 17,
+      "newCountryDefaultPricesPreserved": true,
+      "france": "30,99 EUR",
+      "observedAt": "2026-10-14T08:28:22.177Z"
+    }
+  ],
+  "conversionBasisVerified": true,
+  "existingSubscribersMigrated": false
+}

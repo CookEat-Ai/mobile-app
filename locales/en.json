@@ -303,7 +303,19 @@
         "cuisine_middle_eastern": "Middle Eastern",
         "cuisine_indian": "Indian",
         "cuisine_asian": "Asian"
+      },
+      "source": {
+        "tiktok": "TikTok",
+        "instagram": "Instagram",
+        "store_search": "{{store}}",
+        "friend": "A friend",
+        "other": "Other"
       }
+    },
+    "source": {
+      "title": "Where did you hear about us?",
+      "subtitle": "It helps us know where to talk about CookEat.",
+      "otherPlaceholder": "Tell us where (optional)"
     }
   },
   "quickActions": {
@@ -1910,6 +1922,17 @@
     "requiredMessage": "CookEat needs access to the microphone to record your voice and understand your ingredients. Please allow microphone access in settings."
   },
   "recipeDetail": {
+    "estimatedQuantities": "Quantities estimated from the video, which doesn't give them",
+    "goalFit": {
+      "title": "Adapted to your goal",
+      "original": "Video: {{calories}} kcal · {{proteins}} g protein",
+      "yours": "Your version: {{calories}} kcal · {{proteins}} g",
+      "locked": "Unlock calories to see the difference",
+      "swap": "{{from}} → {{to}}",
+      "quantity": "{{name}}: {{from}} → {{to}}",
+      "showYours": "My version",
+      "showOriginal": "Original recipe"
+    },
     "viewPhoto": "View full-size photo",
     "share": "Share",
     "removeFromFavorites": "Remove from favorites",
@@ -2131,8 +2154,8 @@
       "extracting_transcript": "Reading the subtitles…",
       "downloading_audio": "Listening to the video…",
       "transcribing": "Transcribing the instructions…",
-      "creating_recipe": "Creating recipe...",
-      "saving": "Saving...",
+      "creating_recipe": ["Creating recipe...", "Adapting it to your goal..."],
+      "saving": "Adapting it to your goal...",
       "done": "Recipe ready!"
     },
     "success": "Recipe imported!",
@@ -2517,6 +2540,17 @@
     "addBottle": "Bottle {{ml}} ml"
   },
   "tracking": {
+    "pantryRecipes": {
+      "title": "Matching recipes",
+      "detected": "Detected ingredients ({{count}})",
+      "loading": "Finding matching recipes…",
+      "noMatch": "No recipe in the catalog matches the available ingredients.",
+      "unreadable": "No readable ingredients. Try a clearer photo.",
+      "error": "The search could not be completed. Please try again.",
+      "scan": "Scan ingredients",
+      "addPhotos": "Add photos",
+      "find": "Find recipes"
+    },
     "mealPhoto": "Meal photo",
     "createFood": "Create a food",
     "foodName": "Food name",

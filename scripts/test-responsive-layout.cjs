@@ -45,6 +45,11 @@ assert(JSON.stringify(prominentPrice.props.children).includes('7,20'),'the promi
 assert(household.some(node=>node.type==='Text' && JSON.stringify(node.props.children).includes('3,60')),'per-person cost stays available as secondary copy');
 const budgetSummary=walk(MealCostEstimate({cost,total:true,budget:30}));
 assert(budgetSummary.some(n=>JSON.stringify(n.props.children).includes('mealCost.remaining')), 'a defined budget shows its remaining amount rather than an expandable range');
+for (const [amount, expected] of [[30.40, 'mealCost.remaining'], [31, 'mealCost.remaining'], [31.01, 'planningBudget.over']]) {
+ const nodes = walk(MealCostEstimate({ cost: { ...cost, amount }, total: true, budget: 30 }));
+ const progress = nodes.find(node => node.props.testID === 'budget-progress');
+ assert(progress.props.accessibilityValue.text.startsWith(expected), `Budget warning at ${amount} EUR`);
+}
 for (const [width, scale, expected] of [[664,1,1],[754,1,2],[936,1,2],[754,1.3,1],[507,1,1]]) {
  assert.equal(layout.getOverviewColumns(width,scale),expected,'pair cards only when actual content and font size fit');
 }

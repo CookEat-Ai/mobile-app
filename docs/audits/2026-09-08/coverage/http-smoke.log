@@ -1,0 +1,55 @@
+yarn run v1.22.22
+$ /Users/hadjadji/work/perso/cookeat/api/node_modules/.bin/ts-node --transpile-only scripts/smoke-local-catalog.ts
+(node:5824) [MONGOOSE] DeprecationWarning: Mongoose: the `strictQuery` option will be switched back to `false` by default in Mongoose 7. Use `mongoose.set('strictQuery', false);` if you want to prepare for this change. Or use `mongoose.set('strictQuery', true);` to suppress this warning.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+{
+  "plans": 15,
+  "slotsPerPlan": [
+    20,
+    20,
+    20,
+    28,
+    28,
+    20,
+    20,
+    20,
+    28,
+    28,
+    20,
+    20,
+    20,
+    28,
+    28
+  ],
+  "detailsChecked": 60,
+  "diets": [
+    "standard",
+    "vegetarian",
+    "vegan"
+  ],
+  "excluded": "chicken",
+  "fullWeeksWithoutPeanut": 6,
+  "expressWeeksWithMultipleExclusions": 3,
+  "imagesHTTP200": 1412,
+  "generationMs": [
+    102,
+    104,
+    95,
+    166,
+    34,
+    65,
+    63,
+    63,
+    88,
+    30,
+    38,
+    43,
+    45,
+    63,
+    32
+  ],
+  "minMs": 30,
+  "maxMs": 166,
+  "meanMs": 69
+}
+Done in 3.17s.

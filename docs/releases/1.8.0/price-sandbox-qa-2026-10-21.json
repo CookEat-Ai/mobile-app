@@ -1,0 +1,628 @@
+{
+  "verifiedAt": "2026-10-21",
+  "environment": "Apple sandbox, real StoreKit products",
+  "device": "iPhone 15 Pro",
+  "os": "iOS 18.7.3",
+  "nativeBinary": "1.7.0 (1), existing development-signed app",
+  "javascript": "Current local 1.8.0 worktree sources through temporary QA entry; Metro dev=false. Not a new production binary.",
+  "sourceHashes": {
+    "components/PaywallView.tsx": "3bf452d6a022861dc6682041f23be2d6ea63ce2d6fa5975fe5a373d80ae6419d",
+    "services/trialEligibility.ts": "e2f0a49d1b823b0eca9ffa00d644e561db3c622e402741152c4f08b0392bbb4b",
+    "qaPriceSandboxEntry.tsx": "c7d16f2e3566c79346998cda749fcfc73109c2c631c0bf6eeb1d2b34d3bc3ce1"
+  },
+  "experiment": {
+    "id": "exp46ca5ef93c",
+    "status": "DRAFT",
+    "started": false,
+    "worldwide": true,
+    "configuredAllocation": "1/3 each",
+    "randomAssignmentExercised": false,
+    "method": "Explicit real package selection plus customer-scoped RevenueCat offering overrides; no production targeting/default changes"
+  },
+  "catalog": [
+    {
+      "name": "annual_price_49_in_app",
+      "packages": [
+        {
+          "package": "$rc_annual",
+          "product": "com.gokugen.cookeat.Annual.PriceTest49",
+          "price": 49.989999999999995,
+          "formattedPrice": "49,99 €",
+          "currency": "EUR",
+          "period": "P1Y",
+          "intro": {
+            "price": 0,
+            "unit": "WEEK",
+            "units": 1
+          }
+        },
+        {
+          "package": "$rc_monthly",
+          "product": "com.gokugen.cookeat.Monthly",
+          "price": 12.99,
+          "formattedPrice": "12,99 €",
+          "currency": "EUR",
+          "period": "P1M",
+          "intro": null
+        },
+        {
+          "package": "$rc_weekly",
+          "product": "com.gokugen.cookeat.Weekly",
+          "price": 7.99,
+          "formattedPrice": "7,99 €",
+          "currency": "EUR",
+          "period": "P1W",
+          "intro": null
+        }
+      ]
+    },
+    {
+      "name": "annual_price_49_onboarding",
+      "packages": [
+        {
+          "package": "$rc_monthly",
+          "product": "com.gokugen.cookeat.Monthly",
+          "price": 12.99,
+          "formattedPrice": "12,99 €",
+          "currency": "EUR",
+          "period": "P1M",
+          "intro": null
+        },
+        {
+          "package": "$rc_annual",
+          "product": "com.gokugen.cookeat.Annual.PriceTest49",
+          "price": 49.989999999999995,
+          "formattedPrice": "49,99 €",
+          "currency": "EUR",
+          "period": "P1Y",
+          "intro": {
+            "price": 0,
+            "unit": "WEEK",
+            "units": 1
+          }
+        },
+        {
+          "package": "$rc_weekly",
+          "product": "com.gokugen.cookeat.Weekly",
+          "price": 7.99,
+          "formattedPrice": "7,99 €",
+          "currency": "EUR",
+          "period": "P1W",
+          "intro": null
+        }
+      ]
+    },
+    {
+      "name": "annual_price_39_in_app",
+      "packages": [
+        {
+          "package": "$rc_annual",
+          "product": "com.gokugen.cookeat.Annual.PriceTest39",
+          "price": 39.989999999999995,
+          "formattedPrice": "39,99 €",
+          "currency": "EUR",
+          "period": "P1Y",
+          "intro": {
+            "price": 0,
+            "unit": "WEEK",
+            "units": 1
+          }
+        },
+        {
+          "package": "$rc_monthly",
+          "product": "com.gokugen.cookeat.Monthly",
+          "price": 12.99,
+          "formattedPrice": "12,99 €",
+          "currency": "EUR",
+          "period": "P1M",
+          "intro": null
+        },
+        {
+          "package": "$rc_weekly",
+          "product": "com.gokugen.cookeat.Weekly",
+          "price": 7.99,
+          "formattedPrice": "7,99 €",
+          "currency": "EUR",
+          "period": "P1W",
+          "intro": null
+        }
+      ]
+    },
+    {
+      "name": "annual_price_39_onboarding",
+      "packages": [
+        {
+          "package": "$rc_monthly",
+          "product": "com.gokugen.cookeat.Monthly",
+          "price": 12.99,
+          "formattedPrice": "12,99 €",
+          "currency": "EUR",
+          "period": "P1M",
+          "intro": null
+        },
+        {
+          "package": "$rc_annual",
+          "product": "com.gokugen.cookeat.Annual.PriceTest39",
+          "price": 39.989999999999995,
+          "formattedPrice": "39,99 €",
+          "currency": "EUR",
+          "period": "P1Y",
+          "intro": {
+            "price": 0,
+            "unit": "WEEK",
+            "units": 1
+          }
+        },
+        {
+          "package": "$rc_weekly",
+          "product": "com.gokugen.cookeat.Weekly",
+          "price": 7.99,
+          "formattedPrice": "7,99 €",
+          "currency": "EUR",
+          "period": "P1W",
+          "intro": null
+        }
+      ]
+    },
+    {
+      "name": "annual_price_44_in_app",
+      "packages": [
+        {
+          "package": "$rc_annual",
+          "product": "com.gokugen.cookeat.Annual.PriceTest44",
+          "price": 44.989999999999995,
+          "formattedPrice": "44,99 €",
+          "currency": "EUR",
+          "period": "P1Y",
+          "intro": {
+            "price": 0,
+            "unit": "WEEK",
+            "units": 1
+          }
+        },
+        {
+          "package": "$rc_monthly",
+          "product": "com.gokugen.cookeat.Monthly",
+          "price": 12.99,
+          "formattedPrice": "12,99 €",
+          "currency": "EUR",
+          "period": "P1M",
+          "intro": null
+        },
+        {
+          "package": "$rc_weekly",
+          "product": "com.gokugen.cookeat.Weekly",
+          "price": 7.99,
+          "formattedPrice": "7,99 €",
+          "currency": "EUR",
+          "period": "P1W",
+          "intro": null
+        }
+      ]
+    },
+    {
+      "name": "annual_price_44_onboarding",
+      "packages": [
+        {
+          "package": "$rc_monthly",
+          "product": "com.gokugen.cookeat.Monthly",
+          "price": 12.99,
+          "formattedPrice": "12,99 €",
+          "currency": "EUR",
+          "period": "P1M",
+          "intro": null
+        },
+        {
+          "package": "$rc_annual",
+          "product": "com.gokugen.cookeat.Annual.PriceTest44",
+          "price": 44.989999999999995,
+          "formattedPrice": "44,99 €",
+          "currency": "EUR",
+          "period": "P1Y",
+          "intro": {
+            "price": 0,
+            "unit": "WEEK",
+            "units": 1
+          }
+        },
+        {
+          "package": "$rc_weekly",
+          "product": "com.gokugen.cookeat.Weekly",
+          "price": 7.99,
+          "formattedPrice": "7,99 €",
+          "currency": "EUR",
+          "period": "P1W",
+          "intro": null
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "event": "configured",
+      "details": {
+        "sdkUserId": "cookeat-sandbox-price-qa-20261021-ios-01"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:36:22.651Z"
+    },
+    {
+      "event": "eligibility",
+      "details": {
+        "com.gokugen.cookeat.Annual.PriceTest49": {
+          "description": "Not eligible for trial or introductory price.",
+          "status": 1
+        },
+        "com.gokugen.cookeat.Annual.PriceTest39": {
+          "status": 1,
+          "description": "Not eligible for trial or introductory price."
+        },
+        "com.gokugen.cookeat.Annual.PriceTest44": {
+          "description": "Not eligible for trial or introductory price.",
+          "status": 1
+        }
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:36:26.637Z"
+    },
+    {
+      "event": "draft_placement",
+      "details": {
+        "placement": "in_app_paywall",
+        "offering": "in_app"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:36:26.648Z"
+    },
+    {
+      "event": "draft_placement",
+      "details": {
+        "placement": "onboarding_paywall",
+        "offering": "default"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:36:26.662Z"
+    },
+    {
+      "event": "initial_entitlement",
+      "details": {
+        "active": false,
+        "product": null,
+        "isSandbox": null,
+        "periodType": null,
+        "expirationDate": null
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:36:26.676Z"
+    },
+    {
+      "event": "purchase_started",
+      "details": {
+        "offering": "annual_price_49_in_app",
+        "product": "com.gokugen.cookeat.Annual.PriceTest49",
+        "price": 49.989999999999995,
+        "currency": "EUR"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:37:06.170Z"
+    },
+    {
+      "event": "purchase_completed",
+      "details": {
+        "active": true,
+        "product": "com.gokugen.cookeat.Annual.PriceTest49",
+        "isSandbox": true,
+        "periodType": "NORMAL",
+        "expirationDate": "2026-10-21T23:37:45Z"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:37:53.443Z"
+    },
+    {
+      "event": "restore_completed",
+      "details": {
+        "active": true,
+        "product": "com.gokugen.cookeat.Annual.PriceTest49",
+        "isSandbox": true,
+        "periodType": "NORMAL",
+        "expirationDate": "2026-10-21T23:37:45Z"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:40:05.360Z"
+    },
+    {
+      "event": "show",
+      "details": {
+        "offering": "annual_price_39_in_app",
+        "annualProduct": "com.gokugen.cookeat.Annual.PriceTest39"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:40:48.217Z"
+    },
+    {
+      "event": "configured",
+      "details": {
+        "sdkUserId": "cookeat-sandbox-price-qa-20261021-ios-01"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:41:08.717Z"
+    },
+    {
+      "event": "eligibility",
+      "details": {
+        "com.gokugen.cookeat.Annual.PriceTest39": {
+          "description": "Not eligible for trial or introductory price.",
+          "status": 1
+        },
+        "com.gokugen.cookeat.Annual.PriceTest44": {
+          "status": 1,
+          "description": "Not eligible for trial or introductory price."
+        },
+        "com.gokugen.cookeat.Annual.PriceTest49": {
+          "status": 1,
+          "description": "Not eligible for trial or introductory price."
+        }
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:41:09.335Z"
+    },
+    {
+      "event": "draft_placement",
+      "details": {
+        "placement": "in_app_paywall"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:41:09.349Z"
+    },
+    {
+      "event": "draft_placement",
+      "details": {
+        "placement": "onboarding_paywall"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:41:09.356Z"
+    },
+    {
+      "event": "initial_entitlement",
+      "details": {
+        "active": true,
+        "product": "com.gokugen.cookeat.Annual.PriceTest49",
+        "isSandbox": true,
+        "periodType": "NORMAL",
+        "expirationDate": "2026-10-21T23:37:45Z"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:41:09.365Z"
+    },
+    {
+      "event": "show",
+      "details": {
+        "offering": "annual_price_39_in_app",
+        "annualProduct": "com.gokugen.cookeat.Annual.PriceTest39"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:41:10.241Z"
+    },
+    {
+      "event": "purchase_started",
+      "details": {
+        "offering": "annual_price_39_in_app",
+        "product": "com.gokugen.cookeat.Annual.PriceTest39",
+        "price": 39.989999999999995,
+        "currency": "EUR"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:41:26.742Z"
+    },
+    {
+      "event": "purchase_completed",
+      "details": {
+        "active": true,
+        "product": "com.gokugen.cookeat.Annual.PriceTest39",
+        "isSandbox": true,
+        "periodType": "NORMAL",
+        "expirationDate": "2026-10-21T23:41:51Z"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:41:55.349Z"
+    },
+    {
+      "event": "restore_completed",
+      "details": {
+        "active": true,
+        "product": "com.gokugen.cookeat.Annual.PriceTest39",
+        "isSandbox": true,
+        "periodType": "NORMAL",
+        "expirationDate": "2026-10-21T23:41:51Z"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:42:21.373Z"
+    },
+    {
+      "event": "show",
+      "details": {
+        "offering": "annual_price_44_in_app",
+        "annualProduct": "com.gokugen.cookeat.Annual.PriceTest44"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:42:52.262Z"
+    },
+    {
+      "event": "configured",
+      "details": {
+        "sdkUserId": "cookeat-sandbox-price-qa-20261021-ios-01"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:42:59.862Z"
+    },
+    {
+      "event": "sdk_font_warning",
+      "details": {
+        "level": "ERROR",
+        "fontRegistrationWarning": true
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:43:00.358Z"
+    },
+    {
+      "event": "eligibility",
+      "details": {
+        "com.gokugen.cookeat.Annual.PriceTest39": {
+          "status": 1,
+          "description": "Not eligible for trial or introductory price."
+        },
+        "com.gokugen.cookeat.Annual.PriceTest44": {
+          "status": 1,
+          "description": "Not eligible for trial or introductory price."
+        },
+        "com.gokugen.cookeat.Annual.PriceTest49": {
+          "status": 1,
+          "description": "Not eligible for trial or introductory price."
+        }
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:43:01.052Z"
+    },
+    {
+      "event": "draft_placement",
+      "details": {
+        "placement": "in_app_paywall"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:43:01.061Z"
+    },
+    {
+      "event": "draft_placement",
+      "details": {
+        "placement": "onboarding_paywall"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:43:01.071Z"
+    },
+    {
+      "event": "initial_entitlement",
+      "details": {
+        "active": true,
+        "product": "com.gokugen.cookeat.Annual.PriceTest39",
+        "isSandbox": true,
+        "periodType": "NORMAL",
+        "expirationDate": "2026-10-21T23:41:51Z"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:43:01.082Z"
+    },
+    {
+      "event": "show",
+      "details": {
+        "offering": "annual_price_44_in_app",
+        "annualProduct": "com.gokugen.cookeat.Annual.PriceTest44"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:43:01.390Z"
+    },
+    {
+      "event": "purchase_started",
+      "details": {
+        "offering": "annual_price_44_in_app",
+        "product": "com.gokugen.cookeat.Annual.PriceTest44",
+        "price": 44.989999999999995,
+        "currency": "EUR"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:43:19.389Z"
+    },
+    {
+      "event": "purchase_completed",
+      "details": {
+        "active": true,
+        "product": "com.gokugen.cookeat.Annual.PriceTest44",
+        "isSandbox": true,
+        "periodType": "NORMAL",
+        "expirationDate": "2026-10-21T23:43:29Z"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:43:33.142Z"
+    },
+    {
+      "event": "restore_completed",
+      "details": {
+        "active": true,
+        "product": "com.gokugen.cookeat.Annual.PriceTest44",
+        "isSandbox": true,
+        "periodType": "NORMAL",
+        "expirationDate": "2026-10-21T23:43:29Z"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:43:54.951Z"
+    },
+    {
+      "event": "show",
+      "details": {
+        "offering": "annual_price_49_in_app",
+        "annualProduct": "com.gokugen.cookeat.Annual.PriceTest49"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:45:01.430Z"
+    },
+    {
+      "event": "show",
+      "details": {
+        "offering": "annual_price_39_in_app",
+        "annualProduct": "com.gokugen.cookeat.Annual.PriceTest39"
+      },
+      "qaId": "cookeat-sandbox-price-qa-20261021-ios-01",
+      "platform": "ios",
+      "at": "2026-10-20T23:45:04.428Z"
+    }
+  ],
+  "conclusions": {
+    "iosPurchases": "PASS all 3",
+    "iosRestore": "PASS all 3",
+    "realPricesEUR": "PASS 49.99 / 39.99 / 44.99",
+    "introMetadata": "PASS zero price, one week, all 6 offerings",
+    "ineligibleAccount": "PASS actual SDK status 1; paid Store sheets, no trial claimed",
+    "eligibleFreeTrial": "NOT TESTED: existing account ineligible; user chose to keep current account",
+    "androidTransactions": "BLOCKED: emulator has no Google account and no genuine Play Store; com.android.vending is LicenseChecker APK",
+    "usdAndBrlRuntime": "NOT TESTED: iPhone Store storefront France/EUR",
+    "cancellationAndRefund": "NOT TESTED",
+    "publicRandomizedEnrollment": "NOT TESTED: experiment remains DRAFT"
+  },
+  "warning": "Existing native RevenueCat auto-prefetch font-registration warning from old hosted paywall. Nonfatal; QA-only custom log handler records occurrence to avoid debug overlay. No production suppression or UI change.",
+  "qaCustomerFinalOffering": "in_app, initial offering restored as explicit QA-only override; retained customer for audit",
+  "localTests": [
+    "test-revenuecat-startup.cjs PASS (mocks)",
+    "test-paywall-copy.cjs PASS (mocks)"
+  ],
+  "mobileBuildCreated": false,
+  "storeSubmissionCreated": false
+}

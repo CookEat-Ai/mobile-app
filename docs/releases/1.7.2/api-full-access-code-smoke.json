@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-10-14T02:08:53.717420+00:00",
+  "freshProductionSession": true,
+  "fullProductAccessCode": true,
+  "discountPercentage": 100,
+  "grantsAdministratorAccess": false,
+  "expiry": null,
+  "codeSource": "production PREMIUM_CODE; explicitly requested by user",
+  "nativePath": "onboarding promo code screen",
+  "nativePromoActivation": true,
+  "accessRetainedAfterRestart": true,
+  "accessRetainedOnAndroid10Upgrade": true,
+  "liveAppleProtectedInstructionsVerified": true,
+  "liveGoogleProtectedInstructionsVerified": true,
+  "authorization": "User explicitly requested the existing API full-access code without expiration instead of the default expiring reviewer credential"
+}

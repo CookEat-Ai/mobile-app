@@ -1,0 +1,242 @@
+[
+  {
+    "name": "Algérie",
+    "googlePrice": "4 850,00 DZD",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Argentine",
+    "googlePrice": "54 500,00 ARS",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Bolivie",
+    "googlePrice": "419,99 BOB",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Costa Rica",
+    "googlePrice": "16 300,00 CRC",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Irak",
+    "googlePrice": "54 300 IQD",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Jordanie",
+    "googlePrice": "25,500 JOD",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Macao",
+    "googlePrice": "289,00 MOP",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Mongolie",
+    "googlePrice": "129 300,00 MNT",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Myanmar (Birmanie)",
+    "googlePrice": "76 000 MMK",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Paraguay",
+    "googlePrice": "200 000 PYG",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Sri Lanka",
+    "googlePrice": "12 000,00 LKR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Burkina Faso",
+    "googlePrice": "32,12 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Gabon",
+    "googlePrice": "32,12 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Guinée-Bissau",
+    "googlePrice": "32,12 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Mali",
+    "googlePrice": "32,12 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Niger",
+    "googlePrice": "32,12 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Côte d’Ivoire",
+    "googlePrice": "23 400 XOF",
+    "inputCurrency": "USD",
+    "inputNetPrice": "33.89",
+    "applePrice": "39.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Géorgie",
+    "googlePrice": "99,00 GEL",
+    "inputCurrency": "USD",
+    "inputNetPrice": "33.89",
+    "applePrice": "39.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Sénégal",
+    "googlePrice": "23 400 XOF",
+    "inputCurrency": "USD",
+    "inputNetPrice": "33.89",
+    "applePrice": "39.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Azerbaïdjan",
+    "googlePrice": "69,99 AZN",
+    "inputCurrency": "USD",
+    "inputNetPrice": "39.99",
+    "applePrice": "39.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Bénin",
+    "googlePrice": "35,69 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "39.99",
+    "applePrice": "39.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Ghana",
+    "googlePrice": "470,00 GHS",
+    "inputCurrency": "USD",
+    "inputNetPrice": "33.33",
+    "applePrice": "39.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Ukraine",
+    "googlePrice": "1 799,99 UAH",
+    "inputCurrency": "USD",
+    "inputNetPrice": "33.33",
+    "applePrice": "39.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Cameroun",
+    "googlePrice": "23 400 XAF",
+    "inputCurrency": "USD",
+    "inputNetPrice": "33.53",
+    "applePrice": "39.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Kenya",
+    "googlePrice": "5 200,00 KES",
+    "inputCurrency": "USD",
+    "inputNetPrice": "34.47",
+    "applePrice": "39.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Maroc",
+    "googlePrice": "354,99 MAD",
+    "inputCurrency": "USD",
+    "inputNetPrice": "29.99",
+    "applePrice": "35.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Ouzbékistan",
+    "googlePrice": "477 100,00 UZS",
+    "inputCurrency": "USD",
+    "inputNetPrice": "35.71",
+    "applePrice": "39.99",
+    "appleCurrency": "USD"
+  },
+  {
+    "name": "Serbie",
+    "googlePrice": "4 199 RSD",
+    "inputCurrency": "EUR",
+    "inputNetPrice": "29.99",
+    "applePrice": "35.99",
+    "appleCurrency": "EUR"
+  },
+  {
+    "name": "Bosnie-Herzégovine",
+    "googlePrice": "40,32 USD",
+    "inputCurrency": "EUR",
+    "inputNetPrice": "35.99",
+    "applePrice": "35.99",
+    "appleCurrency": "EUR"
+  },
+  {
+    "name": "Islande",
+    "googlePrice": "35,69 EUR",
+    "inputCurrency": "USD",
+    "inputNetPrice": "32.25",
+    "applePrice": "39.99",
+    "appleCurrency": "USD"
+  }
+]

@@ -1,0 +1,153 @@
+{
+  "method": "Interactive native XCTest; observations verified afterward",
+  "checks": [
+    {
+      "snapshot": 47,
+      "checked": [
+        "4 / 7",
+        "342.0",
+        "Africaine",
+        "Américaine"
+      ],
+      "passed": true,
+      "observed": [
+        "StaticText, <element>, {{112.3, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'",
+        "Button, <element>, {{20.0, 12.0}, {44.0, 44.0}}, label: 'Retour'",
+        "StaticText, <element>, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'",
+        "StaticText, <element>, {{338.3, 27.3}, {23.7, 13.0}}, label: '4 / 7'",
+        "StaticText, <element>, {{0.0, 96.0}, {466.0, 22.0}}, label: 'Objectif : Prendre du muscle'",
+        "StaticText, <element>, {{20.0, 132.0}, {342.0, 68.0}}, label: 'Quelles cuisines te font envie ?'",
+        "StaticText, <element>, {{20.0, 210.0}, {342.0, 46.0}}, label: 'Choisis une ou plusieurs cuisines, ou garde toutes les cuisines pour varier.'",
+        "Other, <element>, {{20.0, 280.0}, {342.0, 64.0}}, label: 'Toutes les cuisines, ', value: radio button, unch...",
+        "Other, <element>, {{20.0, 354.0}, {164.0, 148.0}}, label: 'Africaine', value: checkbox, checked",
+        "Other, <element>, {{198.0, 354.0}, {164.0, 148.0}}, label: 'Américaine', value: checkbox, checked",
+        "Other, <element>, {{20.0, 514.0}, {164.0, 148.0}}, label: 'Chinoise', value: checkbox, unchecked",
+        "Other, <element>, {{198.0, 514.0}, {164.0, 148.0}}, label: 'Française', value: checkbox, unchecked",
+        "Other, <element>, {{20.0, 674.0}, {164.0, 173.3}}, label: 'Indienne', value: checkbox, unchecked",
+        "Other, <element>, {{198.0, 674.0}, {164.0, 173.3}}, label: 'Internationale / fitness', value: checkbox, unchecked",
+        "Other, <element>, {{20.0, 859.3}, {164.0, 148.0}}, label: 'Italienne', value: checkbox, unchecked",
+        "Other, <element>, {{198.0, 859.3}, {164.0, 148.0}}, label: 'Japonaise', value: checkbox, unchecked",
+        "Other, <element>, {{20.0, 1019.3}, {164.0, 173.3}}, label: 'Méditerranéenne', value: checkbox, unchecked",
+        "Other, <element>, {{198.0, 1019.3}, {164.0, 173.3}}, label: 'Mexicaine', value: checkbox, unchecked",
+        "Other, <element>, {{20.0, 1204.7}, {164.0, 148.0}}, label: 'Moyen-Orient', value: checkbox, unchecked",
+        "Other, <element>, {{198.0, 1204.7}, {164.0, 148.0}}, label: 'Thaïlandaise', value: checkbox, unchecked",
+        "Button, <element>, {{20.0, 588.0}, {426.0, 56.0}}, label: 'Continuer, '"
+      ]
+    },
+    {
+      "snapshot": 51,
+      "checked": [
+        "5 / 7",
+        "Halal, "
+      ],
+      "passed": true,
+      "observed": [
+        "StaticText, <element>, {{112.3, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'",
+        "Button, <element>, {{20.0, 12.0}, {44.0, 44.0}}, label: 'Retour'",
+        "StaticText, <element>, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'",
+        "StaticText, <element>, {{338.3, 27.3}, {23.7, 13.0}}, label: '5 / 7'",
+        "StaticText, <element>, {{0.0, 96.0}, {466.0, 22.0}}, label: 'Objectif : Prendre du muscle'",
+        "StaticText, <element>, {{20.0, 14.0}, {342.0, 68.0}}, label: 'Quelle alimentation te correspond ?'",
+        "StaticText, <element>, {{20.0, 92.0}, {342.0, 46.0}}, label: 'Choisis l’alimentation que tes repas doivent respecter.'",
+        "Other, <element>, {{20.0, 162.0}, {342.0, 64.0}}, label: 'Tout, ', value: radio button, unch...",
+        "Other, <element>, {{20.0, 240.0}, {342.0, 64.0}}, label: 'Végétarien, ', value: radio button, unch...",
+        "Other, <element>, {{20.0, 318.0}, {342.0, 64.0}}, label: 'Végan, ', value: radio button, unch...",
+        "Other, <element>, {{20.0, 396.0}, {342.0, 64.0}}, label: 'Pescétarien, ', value: radio button, unch...",
+        "Other, <element>, {{20.0, 474.0}, {342.0, 64.0}}, label: 'Halal, ', value: radio button, chec...",
+        "Button, <element>, {{20.0, 588.0}, {426.0, 56.0}}, label: 'Continuer, '",
+        "Window, <element>, {{0.0, 0.0}, {466.0, 678.0}}"
+      ]
+    },
+    {
+      "snapshot": 55,
+      "checked": [
+        "6 / 7",
+        "value: porc"
+      ],
+      "passed": true,
+      "observed": [
+        "StaticText, <element>, {{112.3, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'",
+        "Button, <element>, {{20.0, 12.0}, {44.0, 44.0}}, label: 'Retour'",
+        "StaticText, <element>, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'",
+        "StaticText, <element>, {{338.3, 27.3}, {23.7, 13.0}}, label: '6 / 7'",
+        "StaticText, <element>, {{0.0, 96.0}, {466.0, 22.0}}, label: 'Objectif : Prendre du muscle'",
+        "StaticText, <element>, {{20.0, 132.0}, {342.0, 34.0}}, label: 'Des ingrédients à éviter ?'",
+        "StaticText, <element>, {{20.0, 176.0}, {342.0, 46.0}}, label: 'Laisse vide si tu manges de tout. Sinon, sépare les ingrédients par une virgule.'",
+        "TextField, <element>, {{21.0, 247.0}, {340.0, 52.0}}, label: 'Ingrédients à exclure', placeholderValue: 'Ex. porc, cacahuète, coriandre', value: porc",
+        "Button, <element>, {{20.0, 588.0}, {426.0, 56.0}}, label: 'Continuer, '",
+        "Window, <element>, {{0.0, 0.0}, {466.0, 678.0}}"
+      ]
+    },
+    {
+      "snapshot": 54,
+      "checked": [
+        "7 / 7",
+        "Créer ma semaine",
+        "label: '3'"
+      ],
+      "passed": true,
+      "observed": [
+        "StaticText, <element>, {{112.3, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'",
+        "Button, <element>, {{20.0, 12.0}, {44.0, 44.0}}, label: 'Retour'",
+        "StaticText, <element>, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'",
+        "StaticText, <element>, {{338.3, 27.3}, {23.7, 13.0}}, label: '7 / 7'",
+        "StaticText, <element>, {{0.0, 96.0}, {466.0, 22.0}}, label: 'Objectif : Prendre du muscle'",
+        "StaticText, <element>, {{20.0, 132.0}, {342.0, 68.0}}, label: 'On cuisine pour combien ?'",
+        "StaticText, <element>, {{20.0, 210.0}, {342.0, 46.0}}, label: 'Les quantités de chaque recette seront adaptées au nombre de personnes.'",
+        "Button, <element>, {{121.0, 318.0}, {44.0, 44.0}}, label: 'Moins de personnes'",
+        "Button, <element>, {{217.0, 318.0}, {44.0, 44.0}}, label: 'Plus de personnes'",
+        "StaticText, <element>, {{177.0, 329.0}, {28.0, 22.0}}, label: '3'",
+        "StaticText, <element>, {{20.0, 422.0}, {342.0, 16.0}}, label: '2 jours · 8 repas'",
+        "Button, <element>, {{20.0, 588.0}, {426.0, 56.0}}, label: 'Créer ma semaine, '",
+        "Window, <element>, {{0.0, 0.0}, {466.0, 678.0}}"
+      ]
+    },
+    {
+      "snapshot": 30,
+      "checked": [
+        "Ton planning se prépare"
+      ],
+      "passed": true,
+      "observed": [
+        "StaticText, <element>, {{112.3, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'",
+        "StaticText, <element>, {{20.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'",
+        "StaticText, <element>, {{40.0, 474.3}, {386.0, 39.3}}, label: 'Ton planning se prépare'",
+        "Window, <element>, {{0.0, 0.0}, {466.0, 678.0}}"
+      ]
+    },
+    {
+      "snapshot": 58,
+      "checked": [
+        "951.0, 669.0",
+        "CookEat",
+        "4 / 7"
+      ],
+      "passed": true,
+      "observed": [
+        "Window, <element>, {{0.0, -0.0}, {951.0, 669.0}}",
+        "StaticText, <element>, {{354.7, -30.0}, {241.3, 21.3}}, label: 'Serveur indisponible (maintenance)'",
+        "Button, <element>, {{20.0, 12.0}, {44.0, 44.0}}, label: 'Retour'",
+        "StaticText, <element>, {{78.0, 12.3}, {116.7, 43.0}}, label: 'CookEat'",
+        "StaticText, <element>, {{823.3, 27.3}, {23.7, 13.0}}, label: '4 / 7'",
+        "StaticText, <element>, {{0.0, 96.0}, {951.0, 22.0}}, label: 'Objectif : Prendre du muscle'",
+        "StaticText, <element>, {{185.7, 132.0}, {496.0, 34.0}}, label: 'Quelles cuisines te font envie ?'",
+        "StaticText, <element>, {{185.7, 176.0}, {496.0, 23.0}}, label: 'Choisis une ou plusieurs cuisines, ou garde toutes les cuisines pour varier.'",
+        "Other, <element>, {{185.7, 223.0}, {496.0, 64.0}}, label: 'Toutes les cuisines, ', value: radio button, unch...",
+        "Other, <element>, {{185.7, 297.0}, {238.0, 148.0}}, label: 'Africaine', value: checkbox, checked",
+        "Other, <element>, {{443.7, 297.0}, {238.3, 148.0}}, label: 'Américaine', value: checkbox, checked",
+        "Other, <element>, {{185.7, 457.0}, {238.0, 148.0}}, label: 'Chinoise', value: checkbox, unchecked",
+        "Other, <element>, {{443.7, 457.0}, {238.3, 148.0}}, label: 'Française', value: checkbox, unchecked",
+        "Other, <element>, {{185.7, 617.0}, {238.0, 148.0}}, label: 'Indienne', value: checkbox, unchecked",
+        "Other, <element>, {{443.7, 617.0}, {238.3, 148.0}}, label: 'Internationale / fitness', value: checkbox, unchecked",
+        "Other, <element>, {{185.7, 777.0}, {238.0, 148.0}}, label: 'Italienne', value: checkbox, unchecked",
+        "Other, <element>, {{443.7, 777.0}, {238.3, 148.0}}, label: 'Japonaise', value: checkbox, unchecked",
+        "Other, <element>, {{185.7, 937.0}, {238.0, 148.0}}, label: 'Méditerranéenne', value: checkbox, unchecked",
+        "Other, <element>, {{443.7, 937.0}, {238.3, 148.0}}, label: 'Mexicaine', value: checkbox, unchecked",
+        "Other, <element>, {{185.7, 1097.0}, {238.0, 148.0}}, label: 'Moyen-Orient', value: checkbox, unchecked",
+        "Other, <element>, {{443.7, 1097.0}, {238.3, 148.0}}, label: 'Thaïlandaise', value: checkbox, unchecked",
+        "Button, <element>, {{215.7, 579.0}, {520.0, 56.0}}, label: 'Continuer, '"
+      ]
+    }
+  ],
+  "xctest": "TEST EXECUTE SUCCEEDED"
+}

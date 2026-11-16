@@ -142,7 +142,7 @@ export default function ConfigurePlanningScreen() {
       await savePantryIngredientNames(pantry.pantryIngredients);
       await savePlanningGenerationSettings(settings);
       void feedback.confirm();
-      router.push({ pathname: '/planning/loading', params: { config: JSON.stringify(settings), replace: replace || 'false' } });
+      router.push({ pathname: '/planning/loading', params: { config: JSON.stringify(settings), replace: replace || 'false', presentation: String(presentation) } });
     } catch { feedback.error(); setError(t('planning.errors.update')); }
     finally { savingRef.current = false; setSaving(false); }
   };

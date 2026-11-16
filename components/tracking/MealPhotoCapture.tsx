@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-export function MealPhotoCapture({ cameraRef, granted, cameraError, canAskAgain, active, ready, busy, error, onClose, onAllow, onReady, onCameraError, onTake, onPick, onManual, cameraPreview }: {
+export function MealPhotoCapture({ cameraRef, granted, cameraError, canAskAgain, active, ready, busy, error, onClose, onAllow, onReady, onCameraError, onTake, onPick, onManual, onScanIngredients, cameraPreview }: {
     /** Camera surface injection for deterministic native previews; normal capture uses CameraView. */
     cameraPreview?: React.ReactNode;
     cameraRef: React.Ref<CameraView>;
@@ -29,6 +29,7 @@ export function MealPhotoCapture({ cameraRef, granted, cameraError, canAskAgain,
     onTake: () => void;
     onPick: () => void;
     onManual?: () => void;
+    onScanIngredients?: () => void;
 }) {
     const { t } = useTranslation(), insets = useSafeAreaInsets();
     const live = granted && !cameraError;
@@ -42,6 +43,10 @@ export function MealPhotoCapture({ cameraRef, granted, cameraError, canAskAgain,
     </View>;
     const controls = <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 20), paddingLeft: 20 + insets.left, paddingRight: 20 + insets.right }]}>
         {!!error && <Text accessibilityRole="alert" style={[appStyles.error, live && { color: theme.onPrimary }]}>{error}</Text>}
+        {onScanIngredients && live && <TouchableOpacity accessibilityRole="button" disabled={busy} onPress={onScanIngredients} style={[styles.ingredientShortcut, styles.darkPlate]}>
+            <Ionicons name="scan-outline" size={18} color={foreground} accessible={false} />
+            <Text style={[styles.galleryLabel, { color: foreground }]}>{t('tracking.pantryRecipes.scan')}</Text>
+        </TouchableOpacity>}
         <View style={styles.controls}>
             <TouchableOpacity accessibilityRole="button" accessibilityLabel={t('tracking.gallery')} disabled={busy} onPress={onPick} style={[styles.gallery, live && styles.darkPlate]}><Ionicons name="images-outline" size={26} color={foreground} /><Text style={[styles.galleryLabel, { color: foreground }]}>{t('tracking.gallery')}</Text></TouchableOpacity>
             <CameraShutterButton accessibilityLabel={t('tracking.takePhoto')} busy={busy} disabled={!ready || !live} onPress={onTake} />
@@ -77,6 +82,7 @@ const styles = StyleSheet.create({
     controls: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', minHeight: 88 },
     gallery: { width: 88, minHeight: 72, borderRadius:AppRadii.card, alignItems: 'center', justifyContent: 'center', gap: 5 },
     galleryLabel: { fontFamily: 'CronosPro', fontSize: 14 },
+    ingredientShortcut: { minHeight: 44, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingHorizontal: 16, borderRadius: AppRadii.pill },
     permission: { flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 24, gap: 22 },
     permissionIcon: { width: 82, height: 82, borderRadius: AppRadii.pill, backgroundColor: theme.yellow, alignItems: 'center', justifyContent: 'center' },
 });

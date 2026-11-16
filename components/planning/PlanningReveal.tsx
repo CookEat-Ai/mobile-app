@@ -23,45 +23,50 @@ export function usePlanningReveal(hasMeals: boolean, dayIndices: number[], selec
   revealStartRef.current = onRevealStart;
   const selectRef = useRef(selectDay);
   selectRef.current = selectDay;
+  const firstDay = dayIndices[0];
   const daysKey = dayIndices.join(',');
   const stop = useCallback(() => {
     if (timer.current) clearTimeout(timer.current);
     timer.current = null;
     setPlaying(false);
   }, []);
+  const finish = useCallback(() => {
+    if (firstDay !== undefined) selectRef.current(firstDay);
+    stop();
+  }, [firstDay, stop]);
   useFocusEffect(useCallback(() => {
     setFocused(true);
     return () => { setFocused(false); stop(); };
   }, [stop]));
   useLayoutEffect(() => {
     if (!focused || !hasMeals || !daysKey || !planId) { stop(); return; }
-    const generated = consumePlanningReveal(planId);
-    if (!allowed || !generated) { stop(); return; }
+    if (!consumePlanningReveal(planId)) { stop(); return; }
     const days = daysKey.split(',').map(Number);
+    selectRef.current(days[0]);
+    if (!allowed) { stop(); return; }
     let index = 0;
     // Reset the viewport only when a newly generated plan is revealed.
     revealStartRef.current?.();
     setEntrance(value => value + 1);
     setPlaying(true);
     setStep(0);
-    selectRef.current(days[0]);
     const advance = () => {
       index += 1;
-      if (index >= days.length) { stop(); return; }
+      if (index >= days.length) { finish(); return; }
       setStep(index);
       selectRef.current(days[index]);
       timer.current = setTimeout(advance, index === days.length - 1 ? 500 : 360);
     };
     timer.current = setTimeout(advance, days.length === 1 ? 500 : 360);
     return stop;
-  }, [allowed, daysKey, focused, hasMeals, planId, stop]);
+  }, [allowed, daysKey, finish, focused, hasMeals, planId, stop]);
   return {
     visibleDayCount: playing ? step + 1 : dayIndices.length,
     dayAnimationKey: playing ? `${planId}:${entrance}` : undefined,
     animationKey: focused && allowed && hasMeals && playing ? entrance * 10 + step : null,
     stopReveal: stop,
     revealControls: focused && allowed && hasMeals && playing ? <View style={styles.controls}>
-      <TouchableOpacity accessibilityRole="button" onPress={stop} style={styles.replay}>
+      <TouchableOpacity accessibilityRole="button" onPress={finish} style={styles.replay}>
         <Ionicons name="pause-outline" size={18} color={theme.ink} />
         <Text style={styles.replayText}>{t('planningReveal.skip')}</Text>
       </TouchableOpacity>

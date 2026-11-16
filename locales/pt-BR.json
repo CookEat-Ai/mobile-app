@@ -303,7 +303,19 @@
         "cuisine_middle_eastern": "Do Oriente Médio",
         "cuisine_indian": "Indiana",
         "cuisine_asian": "Asiática"
+      },
+      "source": {
+        "tiktok": "TikTok",
+        "instagram": "Instagram",
+        "store_search": "{{store}}",
+        "friend": "Um amigo ou amiga",
+        "other": "Outro"
       }
+    },
+    "source": {
+      "title": "Como você conheceu a gente?",
+      "subtitle": "Isso nos ajuda a saber onde falar do CookEat.",
+      "otherPlaceholder": "Conta pra gente onde (opcional)"
     }
   },
   "quickActions": {
@@ -1912,6 +1924,17 @@
     "requiredMessage": "O CookEat precisa acessar o microfone para gravar sua voz e entender seus ingredientes. Permita o acesso ao microfone nos ajustes."
   },
   "recipeDetail": {
+    "estimatedQuantities": "Quantidades estimadas a partir do vídeo, que não as informa",
+    "goalFit": {
+      "title": "Adaptada ao seu objetivo",
+      "original": "Vídeo: {{calories}} kcal · {{proteins}} g de proteína",
+      "yours": "Sua versão: {{calories}} kcal · {{proteins}} g",
+      "locked": "Desbloqueie as calorias para ver a diferença",
+      "swap": "{{from}} → {{to}}",
+      "quantity": "{{name}}: {{from}} → {{to}}",
+      "showYours": "Minha versão",
+      "showOriginal": "Receita original"
+    },
     "viewPhoto": "Ver foto em tamanho grande",
     "share": "Compartilhar",
     "removeFromFavorites": "Remover dos favoritos",
@@ -2133,8 +2156,8 @@
       "extracting_transcript": "Lendo as legendas…",
       "downloading_audio": "Ouvindo o vídeo…",
       "transcribing": "Transcrevendo as explicações…",
-      "creating_recipe": "Criando a receita...",
-      "saving": "Salvando...",
+      "creating_recipe": ["Criando a receita...", "Adaptando ao seu objetivo..."],
+      "saving": "Adaptando ao seu objetivo...",
       "done": "Receita pronta!"
     },
     "success": "Receita importada!",
@@ -2519,6 +2542,17 @@
     "addBottle": "Garrafa {{ml}} ml"
   },
   "tracking": {
+    "pantryRecipes": {
+      "title": "Receitas compatíveis",
+      "detected": "Ingredientes detectados ({{count}})",
+      "loading": "Buscando receitas compatíveis…",
+      "noMatch": "Nenhuma receita do catálogo corresponde aos ingredientes disponíveis.",
+      "unreadable": "Nenhum ingrediente legível. Tente uma foto mais nítida.",
+      "error": "Não foi possível concluir a busca. Tente novamente.",
+      "scan": "Escanear ingredientes",
+      "addPhotos": "Adicionar fotos",
+      "find": "Buscar receitas"
+    },
     "mealPhoto": "Foto da refeição",
     "createFood": "Criar um alimento",
     "foodName": "Nome do alimento",
